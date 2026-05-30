@@ -217,35 +217,240 @@
 
   /* ===== Print CSS ===== */
   @media print {
-    @page { size: A4; margin: 12mm 14mm; }
-    body, html { background: #fff !important; color: #000; font-size: 11pt; }
+    @page { size: A4; margin: 14mm 14mm 18mm 14mm; }
+    body, html { background: #fff !important; color: #1d1d1f; font-size: 9.5pt; }
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
-    nav.top,.sitebar,.pagehead .pill,.printbar,.printbtn,.printhint,.floatPdf,
-    #addrBtn, #coordBtn,.resetbtn,
-    button#closeCompareBtn,.seg,
-    details > summary,.gasring, #region,.latlng, footer {
+
+    /* ===== Hide all UI chrome: nav, page header, sites bar, form, map, buttons, on-screen footer ===== */
+    nav.top, nav.top *,
+    header.pagehead,
+    .sitebar,
+    .topgrid,
+    .fppanel,
+    .printbar, .printbtn, .printhint,
+    .floatPdf,
+    details,
+    footer,
+    button, .seg,
+    #addrBtn, #coordBtn, .resetbtn, #closeCompareBtn,
+    .provwrap, .provbadge, .provpop {
       display: none !important;
     }
-    details { display: none !important; }
-    #map,.maplegend,.maptools,.leaflet-container,.leaflet-control-container { display: none !important; }.panel { box-shadow: none !important; border: 1px solid #e5e7eb !important;
-      margin: 8px 0 !important; padding: 12px 14px !important;
-      break-inside: avoid; page-break-inside: avoid; border-radius:8px !important; }.verdict { background: #0f172a !important; color: #fff !important;
-      padding: 14px 16px !important; border-radius: 8px;
-      break-inside: avoid; page-break-inside: avoid; }.verdict h2 { font-size: 16pt; margin: 4px 0; }.verdict p { font-size: 10pt; color: #e2e8f0 !important; }.verdict .stats { gap: 14px; margin-top: 10px; }.verdict .stats .n { font-size: 12pt; }.verdict .stats .l { font-size: 8pt; }.verdict .nuclear-caveat { font-size: 9pt; }.regionctx { background: #fff !important; padding: 10px !important; }.regionctx h3 { font-size: 12pt; }.cards { display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 8px !important; }.card { border: 1px solid #e5e7eb !important; padding: 8px 10px !important;
-      break-inside: avoid; page-break-inside: avoid; box-shadow: none !important; border-radius:8px !important; }.card h3 { font-size: 11pt; }.card .ttp { font-size: 18pt !important; }.card .online { font-size: 9pt; }.card .metric { font-size: 9pt; padding: 3px 0; }.card .note { font-size: 8pt; }.card.hardno { opacity: 1 !important; }.fleetctx { font-size: 8pt; padding: 5px 7px; }.fleetctx-mini { font-size: 8pt; }.provwrap,.provbadge,.provpop { display: none !important; }
-    table.cmp { font-size: 9pt; }
-    table.cmp th, table.cmp td { padding: 4px 6px; }.compareview { page-break-before: auto; }
-    table.cmpSites { font-size: 9pt; }
-    table.cmpSites th, table.cmpSites td { padding: 5px 7px; }.printheader {
-      display: block !important; text-align: center; margin-bottom: 10px;
-      padding-bottom: 8px; border-bottom: 2px solid #1d1d1f;
-    }.printheader h1 { font-size: 14pt; margin: 0 0 4px; letter-spacing: -0.01em; }.printheader .meta { font-size: 9pt; color: #64748b; }.printfooter {
-      display: block !important; margin-top: 14px; padding: 8px 10px;
-      border-top: 1px solid #e5e7eb; font-size: 8pt; color: #475569;
-      line-height: 1.5; break-inside: avoid;
-    }.printfooter b { color: #1f2937; }.nextsteps ol { font-size: 10pt; }.nextsteps li { margin: 4px 0; }
-    h2, h3 { break-after: avoid; page-break-after: avoid; }.verdict,.nextsteps,.cards, table.cmp { break-after: auto; }
+
+    /* ===== Layout ===== */
+    .wrap { max-width: 100% !important; padding: 0 !important; margin: 0 !important; }
+    #workbench { display: block !important; }
+
+    /* ===== Print header (first visible element) ===== */
+    .printheader {
+      display: block !important;
+      margin: 0 0 14px;
+      padding: 0 0 10px;
+      border-bottom: 2px solid #1d1d1f;
+    }
+    .printheader h1 {
+      font-size: 16pt; font-weight: 700;
+      margin: 0 0 5px; letter-spacing: -.015em;
+      color: #1d1d1f;
+    }
+    .printheader .meta {
+      font-size: 9pt; color: #6e6e73;
+      line-height: 1.45;
+    }
+    .printheader .meta b { color: #1d1d1f; font-weight: 600; }
+
+    /* ===== Regional context (compact) ===== */
+    .regionctx {
+      background: #fafafa !important;
+      border: 1px solid #d2d2d7 !important;
+      border-radius: 6px !important;
+      padding: 10px 14px !important;
+      margin: 0 0 10px !important;
+      break-inside: avoid; page-break-inside: avoid;
+      box-shadow: none !important;
+    }
+    .regionctx .rk { font-size: 8.5pt; }
+    .regionctx h3 { font-size: 11.5pt; margin: 3px 0 6px; font-weight: 600; }
+    .regionctx p { font-size: 9pt; margin: 0 0 6px; line-height: 1.45; }
+    .regionctx .rgrid { display: flex !important; gap: 8px; margin: 8px 0 6px; flex-wrap: wrap; }
+    .regionctx .rcell { background: #fff !important; padding: 6px 10px !important; min-width: 130px; border: 1px solid #e5e7eb !important; }
+    .regionctx .rcell .l { font-size: 7.5pt; }
+    .regionctx .rcell .n { font-size: 10pt; }
+    .regionctx .src { font-size: 8pt; }
+
+    /* ===== Verdict (signature box) ===== */
+    .verdict {
+      background: #1d1d1f !important; color: #fff !important;
+      padding: 16px 20px !important;
+      border-radius: 8px !important;
+      margin: 0 0 12px !important;
+      break-inside: avoid; page-break-inside: avoid;
+    }
+    .verdict .vk { font-size: 8pt !important; color: #d2d2d7 !important; letter-spacing: .08em; }
+    .verdict h2 { font-size: 15pt !important; margin: 6px 0 8px !important; font-weight: 700; color: #fff; }
+    .verdict p { font-size: 9.5pt !important; color: #d2d2d7 !important; line-height: 1.45; margin: 0 0 8px; max-width: none; }
+    .verdict .stats { display: flex !important; gap: 22px !important; margin-top: 10px !important; flex-wrap: wrap; }
+    .verdict .stats div { padding: 0 !important; border: 0 !important; }
+    .verdict .stats .n { font-size: 13pt !important; font-weight: 700; color: #fff; }
+    .verdict .stats .l { font-size: 7.5pt !important; color: #a1a1a6 !important; }
+    .verdict .nuclear-caveat {
+      font-size: 8.5pt !important;
+      background: rgba(255,255,255,0.08) !important;
+      color: #e5e7eb !important;
+      padding: 8px 10px !important;
+      margin-top: 12px !important;
+    }
+    .verdict .nuclear-caveat b { color: #fff !important; }
+
+    /* ===== Next steps (action list) ===== */
+    .nextsteps {
+      background: #fff !important;
+      border: 1px solid #d2d2d7 !important;
+      padding: 12px 16px !important;
+      margin: 0 0 12px !important;
+      break-inside: avoid; page-break-inside: avoid;
+      border-radius: 6px !important;
+    }
+    .nextsteps h3 { font-size: 8pt; margin: 0 0 8px; color: #6e6e73; letter-spacing: .08em; }
+    .nextsteps ol { font-size: 9pt; padding-left: 18px; margin: 0; }
+    .nextsteps li { margin: 5px 0; line-height: 1.45; }
+    .nextsteps li b { color: #1d1d1f; }
+    .nextsteps .why { font-size: 8pt; color: #6e6e73; margin-top: 8px; padding-top: 6px; border-top: 1px solid #e5e7eb; }
+
+    /* ===== Single-tech cards (2x2 grid) ===== */
+    .cards {
+      display: grid !important;
+      grid-template-columns: 1fr 1fr !important;
+      gap: 8px !important;
+      margin: 0 0 12px !important;
+      page-break-before: always;
+    }
+    .card {
+      background: #fff !important;
+      border: 1px solid #d2d2d7 !important;
+      border-top: 3px solid !important;     /* color comes from inline style */
+      border-radius: 6px !important;
+      padding: 12px 14px !important;
+      box-shadow: none !important;
+      break-inside: avoid; page-break-inside: avoid;
+      position: relative;
+    }
+    .card h3 {
+      font-size: 11pt; font-weight: 700; margin: 0 0 4px;
+      padding-right: 60px;     /* room for rank chip */
+      word-wrap: break-word;
+    }
+    .card .rank {
+      position: absolute; top: 12px; right: 14px;
+      font-size: 8pt; padding: 2px 7px;
+      background: #f5f5f7 !important; color: #6e6e73 !important;
+    }
+    .card .ttp { font-size: 16pt !important; font-weight: 700; line-height: 1.1; margin-top: 6px; }
+    .card .ttp small { font-size: 9pt; color: #6e6e73; font-weight: 500; }
+    .card .online { font-size: 8.5pt; color: #6e6e73; margin-bottom: 6px; }
+    .card .metric { font-size: 8.5pt; padding: 3px 0; }
+    .card .scorebar, .card .scorelbl { font-size: 7.5pt; }
+    .card .flags { margin-top: 6px; gap: 3px; }
+    .card .flag { font-size: 8pt; padding: 3px 6px; }
+    .card .note { font-size: 8pt; line-height: 1.4; }
+
+    /* Recommended badge in print — convert from floating to inline bar */
+    .card.rec {
+      box-shadow: none !important;
+      border: 1px solid #bf6500 !important;
+      border-top: 3px solid #bf6500 !important;
+    }
+    .card.rec::before {
+      content: "★ RECOMMENDED" !important;
+      position: static !important; transform: none !important;
+      display: inline-block !important;
+      margin: 0 0 6px 0 !important;
+      background: #bf6500 !important; color: #fff !important;
+      font-size: 7.5pt !important; padding: 2px 8px !important;
+      border-radius: 99px !important;
+      letter-spacing: .12em; font-weight: 700;
+      box-shadow: none !important;
+      white-space: nowrap;
+    }
+    .card.hardno { opacity: 1 !important; background: #fafafa !important; }
+
+    /* Fleet context inside card */
+    .fleetctx, .fleetctx-mini {
+      font-size: 7.5pt !important; padding: 5px 7px !important;
+      background: #f5f5f7 !important; border: 0 !important;
+      margin-top: 6px !important;
+    }
+    .fleetctx-lbl { font-size: 7pt !important; }
+    .fleetctx-growth { font-size: 7pt !important; }
+
+    /* ===== Hybrid section ===== */
+    .hybrid-section {
+      background: #fff !important; padding: 0 !important;
+      margin: 0 0 12px !important;
+      page-break-before: always;
+    }
+    .hybrid-title { font-size: 13pt; margin: 0 0 4px; font-weight: 700; }
+    .hybrid-sub { font-size: 8.5pt; color: #6e6e73; margin: 0 0 10px; line-height: 1.45; max-width: none; }
+    .hybrid-cards { display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 8px !important; }
+    .mixbar { height: 12px; margin: 5px 0 4px; }
+    .mixseg { font-size: 7pt; }
+    .mixlbl { font-size: 7.5pt; gap: 8px; }
+
+    /* ===== Nuclear PPA section ===== */
+    .nuclear-ppa-section {
+      background: #fffbeb !important;
+      border: 1px solid #fde68a !important;
+      padding: 12px 14px !important;
+      margin: 0 0 12px !important;
+      border-radius: 6px !important;
+      break-inside: avoid; page-break-inside: avoid;
+    }
+    .nuclear-ppa-title { font-size: 11pt; margin: 0 0 4px; }
+    .nuclear-ppa-sub { font-size: 8pt; margin: 0 0 8px; line-height: 1.45; max-width: none; }
+    .nuclear-ppa-foot { font-size: 7.5pt; margin: 8px 0 0; padding-top: 6px; }
+    table.nuclear-ppa-table { font-size: 7.5pt; }
+    table.nuclear-ppa-table th, table.nuclear-ppa-table td { padding: 5px 7px; }
+    .nuclear-ppa-rec { font-size: 7.5pt; padding: 7px 10px; margin-top: 8px; }
+
+    /* ===== Side-by-side comparison ===== */
+    .tblpanel {
+      background: #fff !important;
+      border: 1px solid #d2d2d7 !important;
+      padding: 12px 14px !important;
+      margin: 0 0 10px !important;
+      border-radius: 6px !important;
+      overflow: visible !important;
+      break-inside: avoid; page-break-inside: avoid;
+    }
+    table.cmp {
+      width: 100% !important;
+      font-size: 8pt !important;
+      table-layout: auto;
+    }
+    table.cmp th, table.cmp td {
+      padding: 4px 5px !important;
+      white-space: nowrap;
+      word-wrap: normal;
+    }
+    table.cmp thead th { font-size: 6.5pt !important; }
+
+    /* ===== Print footer ===== */
+    .printfooter {
+      display: block !important;
+      margin-top: 12px;
+      padding: 8px 10px;
+      border-top: 1px solid #d2d2d7;
+      font-size: 7.5pt;
+      color: #6e6e73;
+      line-height: 1.5;
+      break-inside: avoid; page-break-inside: avoid;
+    }
+    .printfooter b { color: #1d1d1f; }
+
+    /* ===== Page break controls ===== */
+    h2, h3 { break-after: avoid; page-break-after: avoid; }
+    .sec-title { break-after: avoid; page-break-after: avoid; }
   }
 
   /* ===== Responsive ===== */
@@ -1188,13 +1393,13 @@ function updatePrintHeaderFooter(D){
   var prioLabel = ({speed:"Speed first", balanced:"Balanced", carbon:"Low carbon"})[prio] || prio;
 
   hdr.innerHTML =
-    '<h1>On-Site Power Intelligence. Single-site analysis</h1>'+
+    '<h1>BTM Feasibility Report</h1>'+
     '<div class="meta">'+
       '<b>'+escapeAttr(place)+'</b>'+
       (coords ? ' · '+coords : '')+
       ' · '+escapeAttr(region)+zone+
       ' · '+itload+' MW IT load · priority: '+prioLabel+
-      ' · Generated '+today+
+      ' · Issued '+today+
     '</div>';
 
   ftr.innerHTML =
@@ -1211,7 +1416,7 @@ function updatePrintHeaderFooter(D){
     var siteCount = Object.keys(appState.sites || {}).length;
     chdr.innerHTML =
       '<h1>On-Site Power Intelligence. '+siteCount+'-site comparison</h1>'+
-      '<div class="meta">Generated '+today+' · Same yardstick · hot-zone mapping · 4 documented honesty corrections</div>';
+      '<div class="meta">Issued '+today+' · Same yardstick · hot-zone mapping · 4 documented honesty corrections</div>';
   }
   if(cftr) cftr.innerHTML = ftr.innerHTML;
 }
