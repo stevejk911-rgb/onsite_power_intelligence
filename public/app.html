@@ -120,11 +120,14 @@
     letter-spacing:.08em;color:var(--muted);}.nextsteps ol{margin:0;padding-left:24px;}.nextsteps li{margin-bottom:11px;line-height:1.55;color:var(--ink-2);font-size:14px;}.nextsteps li b{color:var(--ink);font-weight:600;}.nextsteps .why{font-size:12px;color:var(--muted);margin-top:14px;
     border-top:1px solid var(--line-soft);padding-top:12px;line-height:1.55;}
 
-  /* ===== Cards ===== */.cards{margin-top:16px;display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}.card{background:var(--panel);border:1px solid var(--line);border-radius:18px;
-    padding:18px 18px;border-top:4px solid #999;position:relative;}.card.rec{box-shadow:0 0 0 2px var(--amber),0 16px 40px rgba(191,101,0,0.10);}.card .rank{position:absolute;top:14px;right:14px;font-size:10.5px;font-weight:600;
+  /* ===== Cards ===== */.cards{margin-top:26px;display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}.card{background:var(--panel);border:1px solid var(--line);border-radius:18px;
+    padding:18px 18px;border-top:4px solid #999;position:relative;}.card.rec{box-shadow:0 0 0 2px var(--amber),0 16px 40px rgba(191,101,0,0.10);}
+  .card.rec::before{content:"\2605  RECOMMENDED";position:absolute;top:-14px;left:50%;
+    transform:translateX(-50%);background:var(--amber);color:#fff;font-size:11px;
+    font-weight:700;text-transform:uppercase;letter-spacing:.12em;padding:6px 18px;
+    border-radius:99px;box-shadow:0 4px 12px rgba(191,101,0,0.30);white-space:nowrap;z-index:2;}.card .rank{position:absolute;top:14px;right:14px;font-size:10.5px;font-weight:600;
     color:var(--muted);background:var(--tile);border-radius:999px;padding:3px 9px;letter-spacing:.02em;}
-  .card .rank.rec{background:var(--amber);color:#fff;font-weight:700;letter-spacing:.08em;
-    padding:4px 11px;font-size:10.5px;box-shadow:0 2px 8px rgba(191,101,0,0.25);}.card h3{margin:4px 0 4px;font-size:15px;font-weight:600;letter-spacing:-.01em;}.card .ttp{font-size:32px;font-weight:600;letter-spacing:-.025em;line-height:1.05;margin-top:8px;}.card .ttp small{font-size:13px;font-weight:500;color:var(--muted);}.card .online{font-size:12px;color:var(--muted);margin-bottom:10px;}.metric{display:flex;justify-content:space-between;border-top:1px solid var(--line-soft);
+.card h3{margin:4px 0 4px;font-size:15px;font-weight:600;letter-spacing:-.01em;}.card .ttp{font-size:32px;font-weight:600;letter-spacing:-.025em;line-height:1.05;margin-top:8px;}.card .ttp small{font-size:13px;font-weight:500;color:var(--muted);}.card .online{font-size:12px;color:var(--muted);margin-bottom:10px;}.metric{display:flex;justify-content:space-between;border-top:1px solid var(--line-soft);
     padding:6px 0;font-size:12.5px;}.metric .k{color:var(--muted);}.metric .v{font-weight:500;text-align:right;color:var(--ink);}.scorebar{height:6px;background:var(--line-soft);border-radius:999px;margin-top:10px;overflow:hidden;}.scorebar i{display:block;height:100%;background:var(--ink);border-radius:999px;}.scorelbl{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-top:5px;}.flags{margin-top:10px;display:flex;flex-direction:column;gap:5px;}.flag{font-size:11.5px;border-radius:8px;padding:5px 9px;line-height:1.4;font-weight:500;}.flag.bad{background:#fef2f2;color:#991b1b;}.flag.warn{background:#fffbeb;color:#92400e;}.flag.good{background:#f0fdf4;color:#166534;}.card.hardno{opacity:0.65;background:repeating-linear-gradient(45deg,#fff,#fff 8px,#fafafa 8px,#fafafa 16px);}.card.hardno::before{content:"Not recommended in this hot zone";
     display:block;background:var(--bad);color:#fff;font-size:10px;font-weight:600;
     letter-spacing:.04em;text-transform:uppercase;
@@ -135,7 +138,7 @@
   #fpDiagram{flex:1.1;min-width:300px;max-width:540px;}.fpside{flex:1;min-width:240px;font-size:13px;color:var(--ink-2);}.fpside p{margin:0 0 10px;line-height:1.6;}.fpside b{color:var(--ink);font-weight:600;}
 
   /* ===== Hybrid section ===== */.hybrid-section{margin-top:24px;padding:24px 28px;
-    background:var(--tile);border-radius:18px;}.hybrid-title{font-size:18px;margin:0 0 6px;font-weight:600;letter-spacing:-.015em;}.hybrid-sub{font-size:13px;color:var(--muted);margin:0 0 18px;line-height:1.55;max-width:780px;}.hybrid-cards{margin-top:8px;}.hybrid-card{border-top-width:4px;}.mixbar{display:flex;width:100%;height:18px;border-radius:6px;overflow:hidden;
+    background:var(--tile);border-radius:18px;}.hybrid-title{font-size:18px;margin:0 0 6px;font-weight:600;letter-spacing:-.015em;}.hybrid-sub{font-size:13px;color:var(--muted);margin:0 0 18px;line-height:1.55;max-width:780px;}.hybrid-cards{margin-top:18px;}.hybrid-card{border-top-width:4px;}.mixbar{display:flex;width:100%;height:18px;border-radius:6px;overflow:hidden;
     margin:10px 0 6px;background:var(--line-soft);}.mixseg{display:flex;align-items:center;justify-content:center;
     color:#fff;font-size:10px;font-weight:600;text-shadow:0 1px 2px rgba(0,0,0,0.25);}.mixlbl{display:flex;flex-wrap:wrap;gap:12px;font-size:11px;color:var(--muted);margin-bottom:6px;}.mixlbl span{display:inline-flex;align-items:center;gap:5px;}.mixlbl .dot{display:inline-block;width:9px;height:9px;border-radius:50%;}
 
@@ -1325,8 +1328,7 @@ function renderCards(D){
     el.style.borderTopColor=r.t.color;
     var h="";
     // hardNo 카드는 RECOMMENDED 배지 표시 안 함 (CSS ::before가 비추천 배지 대체)
-    var isTop = (r.rank===1 && r.landFit && !r.hardNo);
-    h+='<div class="rank'+(isTop?' rec':'')+'">'+(isTop?'\u2605 RECOMMENDED':'#'+r.rank)+'</div>';
+    h+='<div class="rank">#'+r.rank+'</div>';
     h+='<h3>'+r.t.name+'</h3>';
     // Lead time, ASSUMPTION_PROVENANCE['lead.'+key] tooltip 추가
     var leadProv = ASSUMPTION_PROVENANCE["lead."+r.key];
@@ -1463,8 +1465,7 @@ function renderHybridCards(D){
       +(r.hardNo?" hardno":"");
     el.style.borderTopColor=r.t.color;
     var h="";
-    var isTopH = (r.rank===1 && r.landFit && !r.hardNo);
-    h+='<div class="rank'+(isTopH?' rec':'')+'">'+(isTopH?'\u2605 RECOMMENDED':'#'+r.rank+' of 7')+'</div>';
+    h+='<div class="rank">#'+r.rank+' of 7</div>';
     h+='<h3>'+r.t.name+'</h3>';
     // Mix breakdown 시각화 (각 발전원 비율 bar)
     h+='<div class="mixbar">';
