@@ -230,7 +230,7 @@
   table.cmpSites.dot{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:7px;}.cv-empty{padding:48px;text-align:center;color:var(--muted);font-size:13px;}.warnbox{background:#fffbeb;border:1px solid #fde68a;color:#92400e;border-radius:10px;
     padding:10px 13px;font-size:12.5px;margin-top:12px;line-height:1.5;}
 
-  /* ===== Print 전용 헤더/푸터 ===== */.printheader,.printfooter{display:none;}
+  /* ===== Print 전용 헤더/푸터/표지 ===== */.printheader,.printfooter,.printcover{display:none;}
 
   /* ===== Print CSS ===== */
   @media print {
@@ -239,20 +239,25 @@
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
 
-    /* ===== Hide all UI chrome: nav, page header, sites bar, form, map, buttons, on-screen footer ===== */
+    /* ===== Hide all UI chrome (aggressive — every selector that might leak) ===== */
+    body > nav,
     nav.top, nav.top *,
-    header.pagehead,
-    .sitebar,
-    .topgrid,
-    .fppanel,
+    body > header,
+    header.pagehead, header.pagehead *,
+    .sitebar, .sitebar *,
+    .topgrid, .topgrid *,
+    #map, #maptools, #maplegend, .leaflet-container, .leaflet-control-container,
+    .fppanel, .fppanel *,
     .printbar, .printbtn, .printhint,
-    .floatPdf,
-    details,
-    footer,
+    .floatPdf, .floatPdf *,
+    .floatBtnPrimary, .floatBtnSecondary,
+    details, details *,
+    body > div.wrap > footer, footer,
     button, .seg,
     #addrBtn, #coordBtn, .resetbtn, #closeCompareBtn,
     .provwrap, .provbadge, .provpop {
       display: none !important;
+      visibility: hidden !important;
     }
 
     /* ===== Layout ===== */
@@ -465,9 +470,68 @@
     }
     .printfooter b { color: #1d1d1f; }
 
+    /* ===== Cover page (first thing in PDF) ===== */
+    .printcover {
+      display: flex !important; visibility: visible !important;
+      flex-direction: column; justify-content: center;
+      min-height: 240mm;
+      page-break-after: always;
+      padding: 0 8mm;
+      visibility: visible !important;
+    }
+    .printcover * { visibility: visible !important; }
+    .printcover .cv-eyebrow {
+      font-size: 10pt; color: #bf6500; text-transform: uppercase;
+      letter-spacing: .15em; font-weight: 700; margin-bottom: 24pt;
+    }
+    .printcover .cv-title {
+      font-size: 36pt; font-weight: 700; letter-spacing: -.02em;
+      line-height: 1.05; color: #1d1d1f; margin: 0 0 16pt;
+    }
+    .printcover .cv-place {
+      font-size: 18pt; font-weight: 500; color: #1d1d1f;
+      margin: 0 0 8pt;
+    }
+    .printcover .cv-meta {
+      font-size: 11pt; color: #6e6e73; line-height: 1.6; margin: 4pt 0;
+    }
+    .printcover .cv-meta b { color: #1d1d1f; font-weight: 600; }
+    .printcover .cv-bottom {
+      margin-top: auto; padding-top: 24pt; border-top: 2px solid #1d1d1f;
+      font-size: 9pt; color: #6e6e73;
+    }
+    .printcover .cv-bottom b { color: #1d1d1f; }
+
+    /* ===== Hybrid section — force single page, smaller cards ===== */
+    .hybrid-section {
+      page-break-before: always;
+      page-break-inside: avoid !important;
+      break-inside: avoid !important;
+    }
+    .hybrid-cards { page-break-inside: avoid !important; }
+    .hybrid-cards .card {
+      padding: 8px 10px !important;
+    }
+    .hybrid-cards .card h3 { font-size: 9.5pt !important; }
+    .hybrid-cards .card .ttp { font-size: 13pt !important; }
+    .hybrid-cards .card .ttp small { font-size: 8pt !important; }
+    .hybrid-cards .card .online { font-size: 7.5pt !important; }
+    .hybrid-cards .card .metric { font-size: 7.5pt !important; padding: 2px 0 !important; }
+    .hybrid-cards .card .flag { font-size: 7pt !important; padding: 2px 5px !important; }
+    .hybrid-cards .card .note { font-size: 7pt !important; }
+    .hybrid-cards .mixbar { height: 10px !important; margin: 4px 0 3px !important; }
+    .hybrid-cards .mixseg { font-size: 6pt !important; }
+    .hybrid-cards .mixlbl { font-size: 7pt !important; gap: 6px !important; }
+    .hybrid-cards .scorebar { height: 4px !important; margin-top: 6px !important; }
+    .hybrid-cards .scorelbl { font-size: 7pt !important; }
+
     /* ===== Page break controls ===== */
     h2, h3 { break-after: avoid; page-break-after: avoid; }
     .sec-title { break-after: avoid; page-break-after: avoid; }
+    .printheader, .verdict, .nextsteps, .nuclear-ppa-section, .tblpanel, .printfooter {
+      page-break-inside: avoid !important;
+      break-inside: avoid !important;
+    }
   }
 
   /* ===== Responsive ===== */
@@ -579,6 +643,9 @@
   </div>
 
   <!-- Print-only header -->
+  <!-- Print-only cover page -->
+  <div class="printcover" id="printcover"></div>
+
   <div class="printheader" id="workbenchPrintHeader"></div>
 
   <!-- 2. REGIONAL CONTEXT -->
@@ -1408,6 +1475,7 @@ function compute(){
    화면에서는 display:none, @media print에서 표시. */
 function updatePrintHeaderFooter(D){
   var hdr = $("workbenchPrintHeader"), ftr = $("workbenchPrintFooter");
+  var cover = $("printcover");
   if(!hdr || !ftr) return;
   var today = new Date().toISOString().slice(0,10);
   var place = currentPlace || "(no site set)";
@@ -1415,9 +1483,26 @@ function updatePrintHeaderFooter(D){
     ? currentLat.toFixed(4) + ", " + currentLng.toFixed(4) : "";
   var region = (REGIONS[currentRegion] || {}).label || currentRegion || "";
   var zone = currentHotZone ? " · " + currentHotZone.short + " hot zone" : "";
-  var itload = num("itload") || ",";
+  var itload = num("itload") || "—";
   var prio = (document.querySelector('input[name="prio"]:checked') || {}).value || "speed";
   var prioLabel = ({speed:"Speed first", balanced:"Balanced", carbon:"Low carbon"})[prio] || prio;
+
+  // ---- Cover page (first page in PDF) ----
+  if(cover){
+    cover.innerHTML =
+      '<div class="cv-eyebrow">BTM Feasibility Report</div>'+
+      '<div class="cv-title">'+escapeAttr(place)+'</div>'+
+      '<div class="cv-place">'+escapeAttr(region)+'</div>'+
+      (zone ? '<div class="cv-meta">'+escapeAttr(zone.replace(/^ · /, ""))+'</div>' : '')+
+      (coords ? '<div class="cv-meta">'+coords+'</div>' : '')+
+      '<div class="cv-meta"><b>'+itload+' MW</b> IT load · <b>Priority:</b> '+prioLabel+'</div>'+
+      '<div class="cv-meta"><b>Issued:</b> '+today+'</div>'+
+      '<div class="cv-bottom">'+
+        '<b>On-Site Power Intelligence</b><br>'+
+        'A behind-the-meter feasibility estimator. Planning grade, ±40% accuracy. '+
+        'Not investment, legal, or engineering advice. Verify with utility, OEM, EPC, and qualified counsel before any commitment.'+
+      '</div>';
+  }
 
   hdr.innerHTML =
     '<h1>BTM Feasibility Report</h1>'+
@@ -2784,27 +2869,38 @@ function renderCompareTable(){
    verdict + KPIs, next steps, scenarios table, nuclear PPA reference,
    and sources / disclaimer footer.
    ============================================================ */
-function downloadWordReport(){
+async function downloadWordReport(){
+  var btn = document.getElementById("docxBtn");
+  var resetBtn = function(){ if(btn){ btn.disabled = false; btn.textContent = "Download Word (.docx)"; } };
+  if(btn){ btn.disabled = true; btn.textContent = "Loading library…"; }
+
+  // Poll-wait up to 12 seconds for docx + FileSaver to load from CDN
+  var start = Date.now();
+  while((typeof docx === "undefined" || typeof saveAs === "undefined") && Date.now() - start < 12000){
+    await new Promise(function(r){ setTimeout(r, 250); });
+    if(btn){ var s = Math.floor((Date.now()-start)/1000); btn.textContent = "Loading library… " + s + "s"; }
+  }
   if(typeof docx === "undefined" || typeof saveAs === "undefined"){
-    alert("Document library is still loading — please try again in a moment.");
+    alert("Document library failed to load. Check your internet connection and try again.\n\n" +
+      "If the problem persists, use 'Save as PDF' instead.");
+    resetBtn();
     return;
   }
-  var btn = document.getElementById("docxBtn");
-  if(btn){ btn.disabled = true; btn.textContent = "Generating…"; }
+
+  if(btn) btn.textContent = "Generating…";
   try {
     var D = compute();
-    var blob = _buildWordDoc(D);
+    var blobPromise = _buildWordDoc(D);
     var siteName = (currentSite && currentSite() && currentSite().name) || "site";
     var slug = siteName.replace(/[^\w-]+/g, "-").toLowerCase();
     var today = new Date().toISOString().slice(0,10);
-    Packer_then(blob, function(b){
-      saveAs(b, "BTM-Feasibility-" + slug + "-" + today + ".docx");
-      if(btn){ btn.disabled = false; btn.textContent = "Download Word (.docx)"; }
-    });
+    var blob = await blobPromise;
+    saveAs(blob, "BTM-Feasibility-" + slug + "-" + today + ".docx");
+    resetBtn();
   } catch(e){
-    console.error(e);
+    console.error("Word generation error:", e);
     alert("Failed to generate Word file: " + (e && e.message ? e.message : e));
-    if(btn){ btn.disabled = false; btn.textContent = "Download Word (.docx)"; }
+    resetBtn();
   }
 }
 
