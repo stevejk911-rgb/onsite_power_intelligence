@@ -1,0 +1,2833 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>On-Site Power Intelligence — Behind-the-Meter Feasibility for AI Data Centers</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+<style>
+  :root{
+    --bg:#eef1f4; --ink:#0f172a; --muted:#64748b; --line:#e2e8f0;
+    --panel:#ffffff; --slate:#0f172a; --amber:#f59e0b; --teal:#0d9488;
+    --turbine:#dc2626; --recip:#ea580c; --fuelcell:#7c3aed; --solar:#16a34a;
+    --bad:#dc2626; --warn:#d97706; --good:#16a34a;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    font-size:14px;line-height:1.5;}
+  header{background:var(--slate);color:#fff;padding:20px 24px;}
+  header h1{margin:0;font-size:20px;letter-spacing:-.01em;}
+  header .tag{margin-top:6px;color:#94a3b8;font-size:13px;max-width:760px;}
+  header .badge{display:inline-block;margin-top:10px;font-size:11px;color:#fcd34d;
+    border:1px solid #475569;border-radius:999px;padding:3px 10px;}
+  .wrap{max-width:1480px;margin:0 auto;padding:18px;}
+  .topgrid{display:grid;grid-template-columns:392px 1fr;gap:16px;}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;
+    box-shadow:0 1px 2px rgba(15,23,42,.04);}
+  .controls{padding:16px;max-height:560px;overflow:auto;}
+  .sec-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;
+    color:var(--muted);margin:16px 0 8px;}
+  .sec-title:first-child{margin-top:0;}
+  label.fld{display:block;margin-bottom:10px;}
+  label.fld span{display:block;font-size:12px;font-weight:600;color:#334155;margin-bottom:3px;}
+  label.fld small{font-weight:400;color:var(--muted);}
+  input[type=number],input[type=date],input[type=text],select{
+    width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:8px;
+    font-size:14px;font-family:inherit;background:#fff;color:var(--ink);}
+  input:focus,select:focus{outline:2px solid #93c5fd;outline-offset:0;border-color:#93c5fd;}
+  /* regional context */
+  .regionctx{margin-top:16px;background:#fff;border:1px solid var(--line);border-left:4px solid var(--teal);
+    border-radius:12px;padding:14px 18px;}
+  .regionctx .rk{font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:var(--teal);font-weight:700;}
+  .regionctx h3{margin:3px 0 6px;font-size:16px;}
+  .regionctx p{margin:0 0 8px;color:#334155;}
+  .regionctx .rgrid{display:flex;flex-wrap:wrap;gap:10px;margin:10px 0 4px;}
+  .regionctx .rcell{background:#f8fafc;border:1px solid var(--line);border-radius:8px;
+    padding:8px 12px;min-width:150px;}
+  .regionctx .rcell .l{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;}
+  .regionctx .rcell .n{font-size:15px;font-weight:700;}
+  .regionctx .src{font-size:11px;color:var(--muted);margin-top:6px;}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+  .presets{display:flex;flex-wrap:wrap;gap:6px;}
+  .presets button,.searchrow button{font:inherit;cursor:pointer;}
+  .chip{background:#f1f5f9;border:1px solid var(--line);border-radius:999px;
+    padding:5px 11px;font-size:12px;color:#334155;}
+  .chip:hover{background:#e2e8f0;}
+  .searchrow{display:flex;gap:6px;}
+  .searchrow input{flex:1;}
+  .searchrow button{background:var(--slate);color:#fff;border:none;border-radius:8px;padding:0 14px;}
+  .latlng{font-size:12px;color:var(--muted);margin-top:6px;}
+  .seg{display:flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;}
+  .seg label{flex:1;text-align:center;}
+  .seg input{position:absolute;opacity:0;pointer-events:none;}
+  .seg label span{display:block;padding:7px 4px;font-size:12px;font-weight:600;
+    color:#475569;cursor:pointer;background:#fff;}
+  .seg label input:checked+span{background:var(--slate);color:#fff;}
+  /* map */
+  .mapwrap{position:relative;overflow:hidden;}
+  #map{height:560px;width:100%;border-radius:12px;background:#dde3e9;}
+  .maptools{position:absolute;top:10px;right:10px;z-index:500;background:#fff;
+    border:1px solid var(--line);border-radius:10px;padding:10px 12px;
+    box-shadow:0 2px 8px rgba(15,23,42,.12);font-size:12px;width:214px;}
+  .maptools b{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);}
+  .maptools label{display:flex;align-items:center;gap:6px;margin-top:6px;cursor:pointer;}
+  .mt-status{margin-top:9px;padding-top:8px;border-top:1px solid var(--line);
+    font-size:11px;color:var(--muted);line-height:1.4;}
+  .maplegend{position:absolute;bottom:12px;left:12px;z-index:500;background:rgba(255,255,255,.94);
+    border:1px solid var(--line);border-radius:10px;padding:9px 11px;font-size:11px;
+    box-shadow:0 2px 8px rgba(15,23,42,.12);}
+  .maplegend .lg{display:flex;align-items:center;gap:6px;margin:3px 0;}
+  .swatch{width:14px;height:14px;border-radius:3px;flex:none;}
+  .swatch.line{height:0;width:16px;border-radius:0;}
+  .mapmsg{display:flex;align-items:center;justify-content:center;height:100%;
+    padding:28px;text-align:center;color:#475569;font-size:13px;line-height:1.65;}
+  /* footprint-to-scale panel */
+  .fppanel{margin-top:16px;padding:16px;}
+  .fpbody{display:flex;gap:22px;align-items:center;flex-wrap:wrap;}
+  #fpDiagram{flex:1.1;min-width:300px;max-width:540px;}
+  .fpside{flex:1;min-width:240px;font-size:13px;color:#334155;}
+  .fpside p{margin:0 0 8px;line-height:1.6;}
+  .fpside b{color:var(--ink);}
+  /* verdict */
+  .verdict{margin-top:16px;border-radius:12px;padding:18px 20px;color:#fff;
+    background:linear-gradient(120deg,#0f172a 0%,#7c2d12 60%,#b45309 100%);
+    border:1px solid #1e293b;}
+  .verdict .vk{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:#fcd34d;}
+  .verdict h2{margin:4px 0 6px;font-size:21px;letter-spacing:-.01em;}
+  .verdict p{margin:0;color:#e2e8f0;max-width:900px;}
+  .verdict .stats{display:flex;flex-wrap:wrap;gap:22px;margin-top:14px;}
+  .verdict .stats div{border-left:2px solid #f59e0b;padding-left:10px;}
+  .verdict .stats .n{font-size:18px;font-weight:700;}
+  .verdict .stats .l{font-size:11px;color:#cbd5e1;text-transform:uppercase;letter-spacing:.05em;}
+  /* Nuclear PPA 비교 옵션 — carbon priority + 부하 >= 300 MW 조건부 표시 */
+  .verdict .nuclear-caveat{
+    margin-top:16px;padding:10px 12px;
+    background:rgba(255,255,255,0.08);border-left:3px solid #fcd34d;
+    border-radius:6px;font-size:12px;line-height:1.5;color:#fef3c7;
+  }
+  .verdict .nuclear-caveat b{color:#fff;}
+  /* sitebar — multi-site portfolio strip */
+  .sitebar{background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 12px;
+    margin-bottom:16px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;
+    box-shadow:0 1px 2px rgba(15,23,42,.04);}
+  .sb-label{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);
+    font-weight:700;padding-right:8px;border-right:1px solid var(--line);}
+  .site-tabs{display:flex;flex-wrap:wrap;gap:6px;flex:1;min-width:200px;}
+  .site-chip{background:#f1f5f9;border:1px solid var(--line);border-radius:8px;
+    padding:6px 11px;font:inherit;font-size:12.5px;cursor:pointer;color:#334155;
+    display:flex;flex-direction:column;align-items:flex-start;gap:1px;line-height:1.25;}
+  .site-chip:hover{background:#e2e8f0;}
+  .site-chip.active{background:var(--slate);color:#fff;border-color:var(--slate);
+    box-shadow:0 1px 3px rgba(15,23,42,.18);}
+  .site-chip.active .site-chip-sub{color:#94a3b8;}
+  .site-chip-name{font-weight:600;}
+  .site-chip-sub{font-size:10.5px;color:var(--muted);}
+  .sb-new{background:#fff;border:1px dashed #94a3b8;color:#475569;border-radius:8px;
+    padding:6px 11px;font:inherit;font-size:12.5px;cursor:pointer;font-weight:600;}
+  .sb-new:hover{background:#f8fafc;border-color:var(--slate);color:var(--slate);}
+  .sb-actions{display:flex;gap:6px;align-items:center;}
+  .sb-icon{background:transparent;border:1px solid var(--line);border-radius:6px;
+    padding:5px 9px;font:inherit;font-size:11.5px;color:#475569;cursor:pointer;}
+  .sb-icon:hover{background:#f1f5f9;}
+  .sb-cta{background:var(--amber);border:none;border-radius:8px;padding:7px 14px;
+    font:inherit;font-size:12.5px;font-weight:700;color:#1f2937;cursor:pointer;}
+  .sb-cta:hover{background:#ea580c;color:#fff;}
+  /* compare mode body toggle */
+  body.mode-compare #workbench{display:none;}
+  body:not(.mode-compare) #compareView{display:none;}
+  /* compare view panel */
+  .compareview{margin-top:0;padding:18px 20px;}
+  .compareview .cv-head{display:flex;justify-content:space-between;align-items:baseline;
+    margin-bottom:14px;gap:12px;flex-wrap:wrap;}
+  .compareview h2{margin:0;font-size:18px;letter-spacing:-.01em;}
+  .compareview .cv-sub{font-size:12.5px;color:var(--muted);}
+  table.cmpSites{width:100%;border-collapse:collapse;font-size:13px;}
+  table.cmpSites th,table.cmpSites td{text-align:right;padding:9px 10px;border-bottom:1px solid var(--line);
+    white-space:nowrap;}
+  table.cmpSites th:first-child,table.cmpSites td:first-child{text-align:left;}
+  table.cmpSites thead th{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);}
+  table.cmpSites tbody tr{cursor:pointer;}
+  table.cmpSites tbody tr:hover{background:#f8fafc;}
+  table.cmpSites .sname{font-weight:700;}
+  table.cmpSites .sname small{display:block;font-weight:400;color:var(--muted);font-size:11px;}
+  table.cmpSites .dot{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:6px;}
+  .cv-empty{padding:40px;text-align:center;color:var(--muted);font-size:13px;}
+  /* next-steps action checklist */
+  .nextsteps{margin-top:16px;padding:16px 20px;}
+  .nextsteps h3{margin:0 0 10px;font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);}
+  .nextsteps ol{margin:0;padding-left:22px;}
+  .nextsteps li{margin-bottom:9px;line-height:1.55;color:#334155;font-size:13.5px;}
+  .nextsteps li b{color:var(--ink);}
+  .nextsteps .why{font-size:12px;color:var(--muted);margin-top:10px;border-top:1px solid var(--line);padding-top:9px;}
+  /* cards */
+  .cards{margin-top:16px;display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+  .card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px;
+    border-top:4px solid #999;position:relative;}
+  .card.rec{box-shadow:0 0 0 2px var(--amber);}
+  .card .rank{position:absolute;top:12px;right:12px;font-size:11px;font-weight:700;
+    color:var(--muted);background:#f1f5f9;border-radius:999px;padding:2px 8px;}
+  .card .recpill{position:absolute;top:-11px;left:14px;background:var(--amber);color:#1f2937;
+    font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;
+    padding:3px 8px;border-radius:999px;}
+  .card h3{margin:2px 0 2px;font-size:14px;}
+  .card .ttp{font-size:30px;font-weight:800;letter-spacing:-.02em;line-height:1.1;}
+  .card .ttp small{font-size:13px;font-weight:600;color:var(--muted);}
+  .card .online{font-size:12px;color:var(--muted);margin-bottom:8px;}
+  .metric{display:flex;justify-content:space-between;border-top:1px solid var(--line);
+    padding:5px 0;font-size:12.5px;}
+  .metric .k{color:var(--muted);}
+  .metric .v{font-weight:600;text-align:right;}
+  .scorebar{height:7px;background:#f1f5f9;border-radius:999px;margin-top:9px;overflow:hidden;}
+  .scorebar i{display:block;height:100%;background:var(--slate);border-radius:999px;}
+  .scorelbl{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-top:4px;}
+  .flags{margin-top:8px;display:flex;flex-direction:column;gap:4px;}
+  .flag{font-size:11px;border-radius:6px;padding:4px 7px;line-height:1.35;font-weight:600;}
+  .flag.bad{background:#fee2e2;color:#7f1d1d;border:1px solid #dc2626;}
+  .flag.warn{background:#fffbeb;color:#92400e;border:1px solid #fde68a;}
+  .flag.good{background:#f0fdf4;color:#166534;border:1px solid #bbf7d0;font-weight:500;}
+  /* hardNo 카드 자체에 시각 신호 — opacity 살짝 줄이고 회색 빗금 효과 (사용자가 한 눈에 비추천 인지) */
+  .card.hardno{opacity:0.7;background:repeating-linear-gradient(45deg,#fff,#fff 8px,#fafafa 8px,#fafafa 16px);}
+  .card.hardno::before{
+    content:"이 hot zone에서 사용 비추천";
+    display:block;background:#dc2626;color:#fff;font-size:10px;font-weight:700;
+    text-align:center;padding:3px 0;margin:-14px -14px 8px -14px;
+    border-radius:8px 8px 0 0;
+  }
+  .note{font-size:11px;color:var(--muted);margin-top:8px;line-height:1.4;}
+
+  /* ===== Print 버튼 + Print CSS (iter2 PDF export) ===== */
+  .printbar{
+    display:flex;align-items:center;gap:12px;
+    margin-top:12px;padding:10px 14px;
+    background:#fff;border:1px dashed var(--line);border-radius:8px;
+  }
+  .printbtn{
+    background:var(--amber);color:#1f2937;font-weight:700;
+    border:none;padding:8px 14px;border-radius:6px;cursor:pointer;
+    font-size:13px;font-family:inherit;
+  }
+  .printbtn:hover{filter:brightness(1.05);}
+  .printbtn:focus-visible{outline:2px solid #92400e;outline-offset:2px;}
+  .printhint{color:var(--muted);font-size:12px;}
+
+  /* Print 전용 헤더/푸터 — 화면에서는 숨김 */
+  .printheader, .printfooter{display:none;}
+
+  /* ===== @media print — PDF export 최적화 ===== */
+  @media print {
+    /* 기본 reset */
+    @page { size: A4; margin: 12mm 14mm; }
+    body, html { background: #fff !important; color: #000; font-size: 11pt; }
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+
+    /* 숨길 요소 — 사용자 조작 UI */
+    header.topbar, .sitebar, .siterow, .navmenu,
+    .topbar, .toplinks, footer,
+    .printbar, .printbtn, .printhint,
+    #addrBtn, #coordBtn, #addrBox, #coordBox,
+    #addr, #coord, .findbtn, .gobtn,
+    .agroup, .preset, .resetbtn,
+    button#closeCompareBtn,
+    details > summary,  /* assumptions·method summary는 숨김 */
+    .gasring, #regionLabel select, #region,
+    .latlng, .source.src, .footnote {
+      display: none !important;
+    }
+    /* assumptions·method 펼침 내용도 숨김 */
+    details { display: none !important; }
+
+    /* 지도는 인쇄에서 별로 가치 없음 (interactive) — 숨김 */
+    #map, .maplegend, .maplayers, .layerctl,
+    .leaflet-container, .leaflet-control-container { display: none !important; }
+
+    /* 메인 panel들 크기 조정 */
+    .panel { box-shadow: none !important; border: 1px solid #e5e7eb !important;
+             margin: 8px 0 !important; padding: 10px 12px !important;
+             break-inside: avoid; page-break-inside: avoid; }
+
+    /* Verdict 박스 — 검은 배경 유지 (인쇄 색상 유지) */
+    .verdict {
+      background: #0f172a !important; color: #fff !important;
+      padding: 14px 16px !important; border-radius: 8px;
+      break-inside: avoid; page-break-inside: avoid;
+    }
+    .verdict h2 { font-size: 16pt; margin: 4px 0; }
+    .verdict p { font-size: 10pt; color: #e2e8f0 !important; }
+    .verdict .stats { gap: 14px; margin-top: 10px; }
+    .verdict .stats .n { font-size: 12pt; }
+    .verdict .stats .l { font-size: 8pt; }
+    .verdict .nuclear-caveat { font-size: 9pt; }
+
+    /* Regional context 패널 */
+    .regionctx { background: #fff !important; padding: 10px !important; }
+    .regionctx h3 { font-size: 12pt; }
+
+    /* 결과 카드 — 4개를 한 페이지에 압축 */
+    .cards {
+      display: grid !important;
+      grid-template-columns: 1fr 1fr !important;
+      gap: 8px !important;
+    }
+    .card {
+      border: 1px solid #e5e7eb !important;
+      padding: 8px 10px !important;
+      break-inside: avoid; page-break-inside: avoid;
+      box-shadow: none !important;
+    }
+    .card h3 { font-size: 11pt; }
+    .card .ttp { font-size: 18pt !important; }
+    .card .online { font-size: 9pt; }
+    .card .metric { font-size: 9pt; padding: 3px 0; }
+    .card .note { font-size: 8pt; }
+    .card.hardno { opacity: 1 !important; }  /* 회색 빗금 유지 위해 opacity 무시 */
+    .recpill { font-size: 8pt; padding: 2px 6px; }
+
+    /* Fleet context 박스 — 작게 표시 */
+    .fleetctx { font-size: 8pt; padding: 5px 7px; }
+    .fleetctx-mini { font-size: 8pt; }
+
+    /* Provenance (i) 배지·popup 숨김 — 인쇄에서 hover 안 됨 */
+    .provwrap, .provbadge, .provpop { display: none !important; }
+
+    /* 비교 표 */
+    table.cmp { font-size: 9pt; }
+    table.cmp th, table.cmp td { padding: 4px 6px; }
+
+    /* Compare view */
+    .compareview { page-break-before: auto; }
+    table.cmpSites { font-size: 9pt; }
+    table.cmpSites th, table.cmpSites td { padding: 5px 7px; }
+
+    /* Print 전용 헤더 — 도구 이름 + 날짜 + URL */
+    .printheader {
+      display: block !important;
+      text-align: center;
+      margin-bottom: 10px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid #f59e0b;
+    }
+    .printheader h1 {
+      font-size: 14pt; margin: 0 0 4px;
+      letter-spacing: -0.01em;
+    }
+    .printheader .meta {
+      font-size: 9pt; color: #64748b;
+    }
+
+    /* Print 전용 푸터 — 데이터 출처·dashboard URL */
+    .printfooter {
+      display: block !important;
+      margin-top: 14px;
+      padding: 8px 10px;
+      border-top: 1px solid #e5e7eb;
+      font-size: 8pt;
+      color: #475569;
+      line-height: 1.5;
+      break-inside: avoid;
+    }
+    .printfooter b { color: #1f2937; }
+
+    /* Next steps 체크리스트 — 인쇄에 핵심 */
+    .nextsteps ol { font-size: 10pt; }
+    .nextsteps li { margin: 4px 0; }
+
+    /* Page break 컨트롤 */
+    h2, h3 { break-after: avoid; page-break-after: avoid; }
+    .verdict, .nextsteps, .cards, table.cmp { break-after: auto; }
+  }
+
+  /* 하이브리드 시나리오 섹션 (Phase 1 MVP, 2026-05-29) */
+  .hybrid-section{
+    margin-top:24px;padding:16px 18px;
+    background:#f8fafc;border:1px solid var(--line);border-radius:10px;
+  }
+  .hybrid-title{font-size:14px;margin:0 0 4px;letter-spacing:-.01em;}
+  .hybrid-sub{font-size:12px;color:var(--muted);margin:0 0 14px;line-height:1.5;}
+  .hybrid-cards{margin-top:8px;}
+  .hybrid-card{border-top-width:4px;}
+  /* Mix breakdown bar — 발전원 비율 시각화 */
+  .mixbar{
+    display:flex;width:100%;height:18px;border-radius:4px;overflow:hidden;
+    margin:8px 0 4px;background:#e5e7eb;
+  }
+  .mixseg{
+    display:flex;align-items:center;justify-content:center;
+    color:#fff;font-size:10px;font-weight:700;
+    text-shadow:0 1px 2px rgba(0,0,0,0.3);
+  }
+  .mixlbl{
+    display:flex;flex-wrap:wrap;gap:10px;font-size:10.5px;color:var(--muted);
+    margin-bottom:6px;
+  }
+  .mixlbl span{display:inline-flex;align-items:center;gap:4px;}
+  .mixlbl .dot{display:inline-block;width:9px;height:9px;border-radius:50%;}
+
+  /* Nuclear PPA 5번째 시나리오 섹션 (David 갭) */
+  .nuclear-ppa-section{
+    margin-top:18px;padding:16px 18px;
+    background:#fef9c3;border:1px solid #fde047;border-radius:10px;
+  }
+  .nuclear-ppa-title{font-size:14px;margin:0 0 4px;color:#713f12;letter-spacing:-.01em;}
+  .nuclear-ppa-sub{font-size:12px;color:#78350f;margin:0 0 12px;line-height:1.5;}
+  .nuclear-ppa-foot{font-size:11.5px;color:#78350f;margin:10px 0 0;line-height:1.5;
+                    padding-top:10px;border-top:1px dashed #fde047;}
+  table.nuclear-ppa-table{
+    width:100%;border-collapse:collapse;font-size:11.5px;background:#fff;
+    border-radius:6px;overflow:hidden;
+  }
+  table.nuclear-ppa-table th{
+    background:#fef3c7;color:#78350f;font-size:10.5px;
+    text-transform:uppercase;letter-spacing:.05em;
+    text-align:left;padding:8px 10px;font-weight:600;
+  }
+  table.nuclear-ppa-table td{
+    padding:8px 10px;border-top:1px solid #fef3c7;vertical-align:top;
+  }
+  table.nuclear-ppa-table td.deal{font-weight:600;color:#1f2937;}
+  table.nuclear-ppa-table .dealsub{font-size:10px;color:var(--muted);margin-top:2px;}
+  table.nuclear-ppa-table td.fit-good{color:#15803d;font-weight:600;}
+  table.nuclear-ppa-table td.fit-small{color:#475569;}
+  table.nuclear-ppa-table td.fit-tight{color:#92400e;font-weight:600;}
+  table.nuclear-ppa-table td.fit-over{color:#7c2d12;font-weight:600;}
+  .nuclear-ppa-rec{
+    margin-top:12px;padding:9px 12px;
+    background:rgba(255,255,255,0.7);border-left:3px solid #f59e0b;border-radius:4px;
+    font-size:12px;color:#78350f;line-height:1.5;
+  }
+  .nuclear-ppa-rec b{color:#451a03;}
+
+  /* Fleet context footer (EIA-860 권위 fleet 데이터 시각화) */
+  .fleetctx{
+    margin-top:10px;padding:8px 10px;
+    background:#f8fafc;border:1px solid var(--line);border-radius:6px;
+    font-size:10.5px;line-height:1.5;
+  }
+  .fleetctx-lbl{
+    font-weight:700;color:#475569;
+    text-transform:uppercase;letter-spacing:0.04em;
+    font-size:9.5px;margin-bottom:4px;
+  }
+  .fleetctx-row{display:flex;justify-content:space-between;gap:8px;}
+  .fleetctx-row span{color:var(--muted);}
+  .fleetctx-row b{color:#1f2937;font-weight:600;text-align:right;}
+  .fleetctx-growth{
+    margin-top:5px;padding-top:5px;border-top:1px dashed var(--line);
+    color:#475569;font-style:italic;font-size:10px;
+  }
+  /* 미니 요약: 추천 #1 외 카드용 — 한 줄, 인지 부하 최소 */
+  .fleetctx-mini{
+    margin-top:10px;padding:6px 10px;
+    background:#f8fafc;border:1px solid var(--line);border-radius:6px;
+    font-size:10.5px;color:#475569;line-height:1.4;
+  }
+
+  /* ===== Provenance badge + custom popup (Task #24 UX 강화) ===== */
+  .provwrap{position:relative;display:inline-block;vertical-align:middle;margin-left:6px;}
+  .provbadge{
+    width:16px;height:16px;line-height:16px;
+    border-radius:50%;color:#fff;font-size:10px;font-weight:700;
+    text-align:center;padding:0;border:none;cursor:pointer;
+    font-family:inherit;display:inline-block;vertical-align:middle;
+  }
+  .provbadge:focus-visible{outline:2px solid var(--amber);outline-offset:2px;}
+  .provbadge:hover{filter:brightness(1.1);}
+  /* Hover로도 popup 열림 (desktop) — 작은 화면에서는 click만 사용 */
+  @media (hover:hover) and (pointer:fine){
+    .provwrap:hover .provpop{display:block;}
+  }
+  .provpop{
+    display:none;position:absolute;z-index:50;
+    top:24px;right:0;width:300px;max-width:90vw;
+    background:#fff;border:1px solid var(--line);border-radius:8px;
+    padding:11px 13px;font-size:12px;line-height:1.5;
+    box-shadow:0 8px 24px rgba(0,0,0,0.12);
+    text-align:left;color:#1f2937;
+  }
+  .provpop.open{display:block;}
+  .prov-conf{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted);margin-bottom:6px;}
+  .prov-confdot{display:inline-block;width:9px;height:9px;border-radius:50%;}
+  .prov-src{font-weight:600;color:#111827;margin-bottom:6px;}
+  .prov-note{color:#374151;margin-bottom:8px;font-size:11px;}
+  .prov-link{margin-top:4px;}
+  .prov-srclink{
+    display:inline-block;font-size:11px;color:var(--amber);
+    text-decoration:underline;font-weight:600;
+  }
+  .prov-srclink:hover{color:#92400e;}
+  /* small screen: popup이 화면 밖으로 안 나가도록 left 조정 */
+  @media (max-width:600px){
+    .provpop{right:auto;left:0;}
+  }
+
+  /* table */
+  .tblpanel{margin-top:16px;padding:14px 16px;overflow:auto;}
+  table.cmp{width:100%;border-collapse:collapse;font-size:13px;}
+  table.cmp th,table.cmp td{text-align:right;padding:8px 10px;border-bottom:1px solid var(--line);
+    white-space:nowrap;}
+  table.cmp th:first-child,table.cmp td:first-child{text-align:left;}
+  table.cmp thead th{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);}
+  table.cmp .tname{font-weight:700;}
+  table.cmp .dot{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:6px;}
+  .yes{color:var(--good);font-weight:700;} .no{color:var(--bad);font-weight:700;}
+  /* details */
+  details.panel{margin-top:16px;padding:0;}
+  details.panel>summary{cursor:pointer;padding:14px 16px;font-weight:700;font-size:13px;list-style:none;}
+  details.panel>summary::-webkit-details-marker{display:none;}
+  details.panel>summary::before{content:"▸ ";color:var(--muted);}
+  details.panel[open]>summary::before{content:"▾ ";}
+  .dbody{padding:0 16px 16px;}
+  .atable{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:8px;}
+  .atable th,.atable td{padding:5px 6px;border-bottom:1px solid var(--line);text-align:center;}
+  .atable th:first-child,.atable td:first-child{text-align:left;}
+  .atable input{width:74px;padding:5px 6px;text-align:right;}
+  .atable thead th{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;}
+  .agrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:6px;}
+  .agrid label{font-size:12px;font-weight:600;color:#334155;}
+  .agrid label small{display:block;font-weight:400;color:var(--muted);}
+  .agrid input{width:100%;margin-top:3px;}
+  .resetbtn{margin-top:12px;background:#f1f5f9;border:1px solid var(--line);border-radius:8px;
+    padding:7px 14px;font:inherit;font-weight:600;cursor:pointer;}
+  .resetbtn:hover{background:#e2e8f0;}
+  .disclaim{font-size:12px;color:#475569;line-height:1.55;}
+  .disclaim b{color:var(--ink);}
+  footer{max-width:1480px;margin:8px auto 28px;padding:0 18px;color:var(--muted);font-size:11.5px;}
+  .warnbox{background:#fffbeb;border:1px solid #fde68a;color:#92400e;border-radius:8px;
+    padding:8px 11px;font-size:12px;margin-top:10px;}
+  @media(max-width:1100px){
+    .topgrid{grid-template-columns:1fr;}
+    .controls{max-height:none;}
+    .cards{grid-template-columns:repeat(2,1fr);}
+    .agrid{grid-template-columns:repeat(2,1fr);}
+  }
+  @media(max-width:620px){.cards{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<header>
+  <h1>On-Site Power Intelligence</h1>
+  <div class="tag">The bottleneck for AI data centers isn't generating electricity — it's the grid delivering it. This tool estimates the fastest path to <b>behind-the-meter</b> power built next to the site, and shows the land it needs on a map.</div>
+  <span class="badge">Planning estimates only — every number below is an editable assumption, not a vendor quote</span>
+</header>
+
+<div class="wrap">
+
+  <!-- ============ SITEBAR (multi-site portfolio strip) ============ -->
+  <div class="sitebar">
+    <div class="sb-label">SITES</div>
+    <div class="site-tabs" id="siteTabs"></div>
+    <button id="newSiteBtn" class="sb-new" type="button">+ New site</button>
+    <div class="sb-actions">
+      <button id="renameBtn" class="sb-icon" type="button" title="Rename current site">Rename</button>
+      <button id="deleteBtn" class="sb-icon" type="button" title="Delete current site">Delete</button>
+      <button id="compareBtn" class="sb-cta" type="button">Compare all sites</button>
+    </div>
+  </div>
+
+  <!-- ============ WORKBENCH (single-site analysis) ============ -->
+  <div id="workbench">
+
+  <div class="topgrid">
+    <!-- ============ CONTROLS ============ -->
+    <div class="panel controls">
+      <div class="sec-title">1 · Site location</div>
+      <div class="searchrow">
+        <input type="text" id="addr" placeholder="Search an address or place…" />
+        <button id="addrBtn" type="button">Find</button>
+      </div>
+      <div class="searchrow" style="margin-top:6px">
+        <input type="text" id="coord" placeholder="Or paste coordinates:  41.3947, -87.9486" />
+        <button id="coordBtn" type="button">Go</button>
+      </div>
+      <div class="latlng" id="latlng">Paste coordinates, search, click the map, or pick a hub below.</div>
+      <div style="margin-top:8px" class="presets" id="presets"></div>
+      <label class="fld" style="margin-top:10px"><span>Region / grid operator
+        <small>auto-detected — editable</small></span>
+        <select id="region"></select></label>
+
+      <div class="sec-title">2 · Demand &amp; schedule</div>
+      <label class="fld"><span>Target IT load <small>(MW, critical load)</small></span>
+        <input type="number" id="itload" value="120" min="1" step="5" /></label>
+      <div class="row2">
+        <label class="fld"><span>Target online date</span>
+          <input type="date" id="target" /></label>
+        <label class="fld"><span>Available land <small>(acres)</small></span>
+          <input type="number" id="land" value="60" min="0" step="5" /></label>
+      </div>
+      <div class="row2">
+        <label class="fld"><span>Gas pipeline distance <small>(miles)</small></span>
+          <input type="number" id="pipe" value="2" min="0" step="0.5" /></label>
+        <label class="fld"><span>Grid queue wait <small>(months)</small></span>
+          <input type="number" id="gridwait" value="60" min="0" step="6" /></label>
+      </div>
+
+      <div class="sec-title">3 · What matters most</div>
+      <div class="seg" id="priority">
+        <label><input type="radio" name="prio" value="speed" checked><span>Speed first</span></label>
+        <label><input type="radio" name="prio" value="balanced"><span>Balanced</span></label>
+        <label><input type="radio" name="prio" value="carbon"><span>Low carbon</span></label>
+      </div>
+      <div class="warnbox" id="inputwarn" style="display:none"></div>
+      <div class="note" style="margin-top:14px">
+        Today's date is used as the schedule baseline. Gas-fired options (turbine, reciprocating engine,
+        fuel cell) need a pipeline tie-in; a long lateral adds time and cost. Solar is sized to actually
+        firm a 24/7 load — which is why its land number is large and honest.
+      </div>
+    </div>
+
+    <!-- ============ MAP ============ -->
+    <div class="panel mapwrap">
+      <div id="map"></div>
+      <div class="maptools" id="maptools">
+        <b>Map layers</b>
+        <label><input type="checkbox" id="lyrTrans" checked> Transmission lines</label>
+        <label><input type="checkbox" id="lyrSub" checked> Substations</label>
+        <label><input type="checkbox" id="lyrPlant" checked> Power plants</label>
+        <label><input type="checkbox" id="lyrPipe"> Gas pipelines</label>
+        <label><input type="checkbox" id="gasring" checked> Gas tie-in ring</label>
+        <div class="mt-status" id="layerStatus">Set a location to load nearby infrastructure.</div>
+      </div>
+      <div class="maplegend" id="maplegend"></div>
+    </div>
+  </div>
+
+  <!-- ============ FOOTPRINT TO SCALE (collapsible) ============ -->
+  <details class="panel fppanel">
+    <summary>Land footprint — drawn to scale</summary>
+    <div class="dbody">
+      <div class="fpbody">
+        <div id="fpDiagram"></div>
+        <div class="fpside" id="fpSide"></div>
+      </div>
+    </div>
+  </details>
+
+  <!-- ============ REGIONAL CONTEXT ============ -->
+  <!-- Print 전용 헤더 — 화면에서는 숨김, 인쇄 시 도구 이름·사이트·날짜 표시 -->
+  <div class="printheader" id="workbenchPrintHeader"></div>
+
+  <div class="regionctx" id="regionContext"></div>
+
+  <!-- ============ VERDICT ============ -->
+  <div class="verdict" id="verdict"></div>
+
+  <!-- Print 버튼 — verdict 영역과 next steps 사이 -->
+  <div class="printbar" id="printbar">
+    <button type="button" class="printbtn" onclick="window.print()" title="PDF로 저장하거나 인쇄 (브라우저 인쇄 대화상자 → 'PDF로 저장' 선택)">
+      📄 PDF로 저장 / 인쇄
+    </button>
+    <span class="printhint">위원회 deck · IC 메모 · CEO 슬라이드에 첨부용</span>
+  </div>
+
+  <!-- ============ NEXT STEPS — the actionable list ============ -->
+  <div class="panel nextsteps" id="nextsteps"></div>
+
+  <!-- ============ CARDS — 단일 4 시나리오 ============ -->
+  <div class="cards" id="cards"></div>
+
+  <!-- ============ HYBRID CARDS — 3 verified preset (Phase 1 MVP) ============ -->
+  <div class="hybrid-section" id="hybridSection">
+    <h3 class="hybrid-title">하이브리드 시나리오 — *verified deployment cases 기반*</h3>
+    <p class="hybrid-sub">단일 발전원 외에 <b>2-3 발전원 mix</b>. Meta Socrates · Bloom AEP · Microsoft 패턴 같은 hyperscaler 표준 전략.
+       위 단일 카드와 *같은 yardstick*으로 정규화 — 직접 비교.</p>
+    <div class="cards hybrid-cards" id="hybridCards"></div>
+  </div>
+
+  <!-- ============ NUCLEAR PPA — 5번째 시나리오 (David 갭, 본 도구 BTM 범위 밖) ============ -->
+  <div class="nuclear-ppa-section" id="nuclearPPASection">
+    <h3 class="nuclear-ppa-title">⚛️ Off-site Nuclear PPA — *본 도구 BTM 범위 밖, 비교용*</h3>
+    <p class="nuclear-ppa-sub">
+      *24/7 carbon-free firm + GW급 부하*의 진짜 competitor. 3개 verified deals — Talen 2024-11 FERC 거부 후 *모든 nuclear-데이터센터 deals이 grid-connected FTM*.
+      PE deal review · IC 메모 · CEO 슬라이드에서 *5번째 시나리오*로 비교 가능.
+    </p>
+    <div id="nuclearPPATable"></div>
+    <p class="nuclear-ppa-foot">
+      <b>의사결정 함의:</b> Carbon-free 24/7 + GW급 부하라면 *on-site BTM 4 시나리오*와 *off-site nuclear PPA*가 둘 다 검토 대상.
+      BTM nuclear는 *FERC 2024-11 Talen 거부 후 사실상 막힘*.
+    </p>
+  </div>
+
+  <!-- ============ TABLE ============ -->
+  <div class="panel tblpanel">
+    <div class="sec-title" style="margin-top:0">Side-by-side comparison</div>
+    <table class="cmp" id="cmp"></table>
+  </div>
+
+  <!-- ============ ASSUMPTIONS ============ -->
+  <details class="panel">
+    <summary>Assumptions — edit any number to match your own data</summary>
+    <div class="dbody" id="assumpBody"></div>
+  </details>
+
+  <!-- ============ METHOD / LIMITS ============ -->
+  <details class="panel">
+    <summary>How this works &amp; what it does not know</summary>
+    <div class="dbody disclaim" id="methodBody"></div>
+  </details>
+
+  <!-- Print 전용 푸터 — 화면에서는 숨김, 인쇄 시 데이터 출처·dashboard URL 명시 -->
+  <div class="printfooter" id="workbenchPrintFooter"></div>
+
+  </div><!-- /#workbench -->
+
+  <!-- ============ COMPARE VIEW (cross-site table) ============ -->
+  <div class="panel compareview" id="compareView">
+    <div class="printheader" id="comparePrintHeader"></div>
+    <div class="cv-head">
+      <div>
+        <h2>Sites compared — same yardstick, all of them</h2>
+        <div class="cv-sub">Click any row to open that site in the workbench.</div>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button type="button" class="printbtn" onclick="window.print()" title="PDF로 저장하거나 인쇄">
+          📄 PDF로 저장
+        </button>
+        <button id="closeCompareBtn" class="sb-icon" type="button">← Back to workbench</button>
+      </div>
+    </div>
+    <div id="cvBody"></div>
+    <div class="printfooter" id="comparePrintFooter"></div>
+  </div>
+
+  <footer>
+    On-Site Power Intelligence · A behind-the-meter feasibility estimator, not an engineering study.
+    Map data & power infrastructure © OpenStreetMap contributors. Geocoding by Nominatim, infrastructure
+    via the Overpass API.
+  </footer>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script>
+"use strict";
+
+/* ============================================================
+   CONFIG — default assumptions (US market, 2025–2026 ranges)
+   Every value is shown in the editable Assumptions panel.
+   ============================================================ */
+var TECH = {
+  turbine:  {name:"Gas Turbine (simple-cycle)", short:"Gas Turbine", color:"#dc2626", fuel:"gas"},
+  recip:    {name:"Reciprocating Gas Engines",  short:"Recip Engines", color:"#ea580c", fuel:"gas"},
+  fuelcell: {name:"Solid-Oxide Fuel Cells",     short:"Fuel Cells",   color:"#7c3aed", fuel:"gas"},
+  solar:    {name:"Solar PV + Battery (BESS)",  short:"Solar + BESS", color:"#16a34a", fuel:"none"}
+};
+var KEYS = ["turbine","recip","fuelcell","solar"];
+
+/* PRESET_NUCLEAR_PPAS — 3 verified nuclear PPA deals (David 갭, 2026-05-29).
+   본 도구 BTM 범위 밖이지만 *carbon-free 24/7 firm GW급 부하*의 진짜 competitor.
+   별도 섹션에 항상 표시 — PE 투자자가 deal review 시 비교 옵션. */
+var PRESET_NUCLEAR_PPAS = [
+  {
+    id: "ms-tmi-ccec",
+    name: "Microsoft + Constellation TMI/CCEC",
+    short: "MS-TMI",
+    capacity_MW: 835,
+    term_years: 20,
+    online_year: 2028,
+    structure: "Grid-connected FTM PPA (from start)",
+    ISO: "PJM",
+    state: "Pennsylvania",
+    USD_billion: null,
+    economic_signal: "3,400 jobs + $3B 세수 announce",
+    significance: "Retired plant resurrection (2019 retire → 2028 restart)",
+    ref_url: "https://www.sec.gov/Archives/edgar/data/0001868275/000186827524000058/ceg-202409208kexh991.htm"
+  },
+  {
+    id: "vistra-comanche",
+    name: "Vistra Comanche Peak",
+    short: "Vistra-CP",
+    capacity_MW: 1200,
+    term_years: 20,
+    extension_years: 20,
+    online_year: 2027,
+    full_ramp_year: 2032,
+    structure: "Grid-connected FTM PPA",
+    ISO: "ERCOT",
+    state: "Texas",
+    USD_billion: null,
+    customer_disclosed: false,
+    significance: "Existing plant reallocation, customer anonymous. Vistra Adjusted FCF 8-10% lift.",
+    ref_url: "https://www.sec.gov/Archives/edgar/data/0001692819/000119312525221774/d43667d8k.htm"
+  },
+  {
+    id: "talen-aws-restructured",
+    name: "Talen-AWS Susquehanna (BTM failed → FTM)",
+    short: "Talen-AWS",
+    capacity_MW: 1920,
+    term_years: 17,
+    online_year: 2027,
+    structure: "Grid-connected FTM PPA (restructured 2025-06)",
+    ISO: "PJM",
+    state: "Pennsylvania",
+    USD_billion: 18,
+    significance: "BTM 시도 → FERC 2024-11 거부 → FTM 전환. 미래 nuclear BTM 사실상 막힘.",
+    ref_url: "https://www.sec.gov/Archives/edgar/data/0001622536/000162828025030559/a20250611pressreleasebusin.htm"
+  }
+];
+
+/* PRESET_HYBRIDS — 3 verified hybrid 시나리오 (Phase 1 MVP, 2026-05-29).
+   각 preset은 *실제 verified deployment case*에서 패턴 추출.
+   단일 4 시나리오 (KEYS)에 추가로 표시 — 사용자가 같은 yardstick으로 비교. */
+var PRESET_HYBRIDS = [
+  {
+    id: "fuel-cell-primary",
+    name: "Fuel Cell + Solar (Bloom AEP 패턴)",
+    short: "FC + Solar 80/20",
+    color: "#5b21b6",  // 진한 보라
+    description: "Fuel cell 80% (firm baseload) + Solar 20% (carbon offset). Bloom Energy AEP 1 GW announcement (2024-11) 같은 *대규모 carbon-free + reliability* 패턴.",
+    mix: { fuelcell: 0.80, solar: 0.20 },
+    ref_case: "Bloom Energy + AEP 1 GW (2024-11 발표)",
+    ref_case_url: "https://investor.bloomenergy.com/press-releases/press-release-details/2024/Bloom-Energy-Announces-Gigawatt-Fuel-Cell-Procurement-Agreement-with-AEP-to-Power-AI-Data-Centers/default.aspx"
+  },
+  {
+    id: "gas-mix",
+    name: "Gas Turbine + Reciprocating (Meta Socrates 패턴)",
+    short: "Gas mix 60/40",
+    color: "#b91c1c",  // 진한 빨강
+    description: "Gas turbine 60% (base) + Reciprocating 40% (quick-start). Meta Socrates Ohio 200 MW (2025-06 OPSB 승인) — 4 OEM mix의 *reliability + load-following* 조합.",
+    mix: { turbine: 0.60, recip: 0.40 },
+    ref_case: "Meta Socrates South Power Generation (Ohio, 200 MW × 2 sites)",
+    ref_case_url: "https://www.power-eng.com/onsite-power/onsite-gas-turbines-reciprocating-engines-to-power-meta-data-center/"
+  },
+  {
+    id: "carbon-free-hybrid",
+    name: "Carbon-Free Hybrid (Microsoft 패턴)",
+    short: "Carbon-free 60/40",
+    color: "#15803d",  // 진한 녹색
+    description: "Fuel cell 60% (firm clean) + Solar+BESS 40% (variable clean). Microsoft 40 GW PPA portfolio + on-site fuel cell 같은 *zero-carbon firm* 모델.",
+    mix: { fuelcell: 0.60, solar: 0.40 },
+    ref_case: "Microsoft 40 GW renewable portfolio (Brookfield $10B 10.5 GW + TMI/CCEC 835 MW)",
+    ref_case_url: "https://carboncredits.com/microsoft-hits-100-renewable-electricity-milestone-with-40gw-clean-energy-portfolio/"
+  }
+];
+
+/* DEFAULTS — 2026-05-29 권위 데이터 기반 업데이트.
+   각 수치의 출처는 ASSUMPTION_PROVENANCE 객체 참조 (도구 하단 출처 패널 표시). */
+var DEFAULTS = {
+  pue:1.30, reserve:0.15, util:0.92,
+  pipeCost:2.0,            // $M per mile of gas lateral
+  solarCF:0.24,            // solar capacity factor (US tracking average)
+  storageHrs:6,            // hours of battery storage — NREL Augustine & Blair 2021 SFS: BESS modeling capped at 10hr. 12hr는 modeled domain 밖. 6hr은 NREL 범위 내 + 현실적 hyperscaler peak-shaving 패턴 (2026-05-29 검증 변경 12→6)
+  /* bessCost (이전 fixed $350/kWh, 12hr storageHrs 가정)는 *2가지 결함* —
+     (1) Cole&Karmakar 2023 4hr 권위. 6hr·8hr·12hr 적용 시 정확도 떨어짐.
+     (2) Cole·Ramasamy·Turan 2025 update에서 *2024 baseline이 30% 더 낮음* ($482→$334/kWh).
+     2026-05-29 검증 후 split 공식으로 교체: energy_cost × duration + power_cost. */
+  // lead time (months) — Wartsila Ohio 282 MW Q2'25 → 2026-2027 인도, Meta Socrates 200 MW 17개월 baseline
+  // 2026-05-29 정직성 정정: fuelcell 12 → 18. 12mo는 Bloom 10-K Item 1 *가속 case* (Bloom 자체 "increasing number" 표현),
+  // 18mo는 같은 10-K Item 1A Risk Factors *정상 sales cycle baseline*. 다른 verified deployment cases (Meta Socrates 17mo, Wartsila 18-21mo)와 align.
+  lead:  {turbine:24, recip:18, fuelcell:18, solar:20},
+  // capex ($/kW) — GridLab 2025-09 IRP/CPCN median, EIA Construction 2023 IC, Bloom 합성 추정, NREL ATB 2024 utility-scale PV
+  capex: {turbine:1500, recip:1354, fuelcell:3800, solar:1300},
+  // BESS energy cost ($/kWh) + power cost ($/kW) split — Cole, Ramasamy & Turan 2025 update (NREL/TP-6A40-93281).
+  // Total: energy_cost × duration_hr + power_cost. 이전 fixed $350/kWh 단순 곱셈은 +15% 과대평가였음.
+  bessEnergyCost: 241,  // $/kWh — battery pack 등 duration-scaled
+  bessPowerCost: 372,   // $/kW — BOS·inverter·연결 fixed
+  foot:  {turbine:0.04, recip:0.06, fuelcell:0.09, solar:6.5},  // acres per MW
+  emis:  {turbine:0.55, recip:0.50, fuelcell:0.35, solar:0.0}   // tCO2 per MWh
+};
+
+/* ASSUMPTION_PROVENANCE — 각 default 수치의 출처·신뢰도·범위·주·URL.
+   2026-05-29 UX 강화 round: url 필드 추가. provBadge가 custom popup으로 표시. */
+var ASSUMPTION_PROVENANCE = {
+  "capex.turbine": {
+    value: 1500, unit: "$/kW",
+    source: "GridLab/EFG/Halcyon 2025-09 IRP/CPCN 실측 median (simple cycle CT, 2025-2029 in-service)",
+    url: "https://gridlab.org/wp-content/uploads/2025/09/GridLab_Gas-Turbine-Costs-Report-1.pdf",
+    confidence: "high",
+    range: [728, 1969],
+    note: "NREL ATB·EIA AEO은 이 값을 40-100% 과소평가 ($562-1,058/kW). GridLab 보고서 실측이 현재 baseline."
+  },
+  "capex.recip": {
+    value: 1354, unit: "$/kW",
+    source: "EIA Construction Cost Data 2023 (Internal Combustion Engine, gas)",
+    url: "https://www.eia.gov/electricity/generatorcosts/",
+    confidence: "high",
+    range: [1100, 1700],
+    note: "Wartsila 18V50SG·Cat 3520 등 — EIA가 공시 정상 (다중 OEM 시장)."
+  },
+  "capex.fuelcell": {
+    value: 3800, unit: "$/kW",
+    source: "합성 추정 (Bloom 10-K product gross margin + DOE target 기반)",
+    url: "https://www.sec.gov/Archives/edgar/data/0001664703/000162828025008747/be-20241231.htm",
+    confidence: "medium",
+    range: [3500, 5000],
+    note: "EIA가 Bloom 독점 구조로 공시 억제. NREL ATB는 SOFC 추적 안 함. 권위 단일 수치 부재."
+  },
+  "capex.solar": {
+    value: 1300, unit: "$/kW AC",
+    source: "NREL ATB 2024 utility-scale PV — Q1 2023 base $1,560/WAC, 2030 Moderate ~$1,090/WAC interpolated. $1,300는 2027-2030 BTM 인도 시점 mid-point (grid connection 차감).",
+    url: "https://atb.nrel.gov/electricity/2024/utility-scale_pv",
+    confidence: "high",
+    range: [900, 1560],
+    note: "Solar PV는 우리 3개 발전원 중 *ATB가 신뢰 가능한 유일한 카테고리* (시장 다중 maker 구조). 다만 BTM 데이터센터는 24/7 firm load라 *land 초과·BESS 부족*으로 단독 추천 자주 부적합. Microsoft 40 GW·Google 22 GW는 모두 *off-site PPA* — on-site BTM 모델 다름."
+  },
+  "lead.turbine": {
+    value: 24, unit: "months",
+    source: "GE Vernova FY2024 aero orders 44/sales 27 = 공급 제약, Solar Turbines mobile 12-18mo 가속 가능",
+    url: "https://www.gevernova.com/news/press-releases/ge-vernova-reports-fourth-quarter-full-year-2024-financial-results",
+    confidence: "medium",
+    range: [18, 36],
+    note: "Industrial frame (H-class)는 36-48mo. Aeroderivative 24-30mo. Mobile (Solar PGM 130) 12-18mo."
+  },
+  "lead.recip": {
+    value: 18, unit: "months",
+    source: "Wartsila Ohio 282 MW Q2'25 booking → 2026-2027 delivery (verified). Meta Socrates 4-OEM mix 17개월 완공도 cross-check.",
+    url: "https://www.power-eng.com/onsite-power/onsite-gas-turbines-reciprocating-engines-to-power-meta-data-center/",
+    confidence: "high"
+  },
+  "lead.fuelcell": {
+    value: 18, unit: "months",
+    source: "Bloom 10-K FY2024 Item 1A Risk Factors *정상 baseline*: 'Our sales cycle is typically 12 to 18 months... between nine to eighteen months or more from contract until installation'. 18mo = sales 12-18 mid-point 보수적 추정.",
+    url: "https://www.sec.gov/Archives/edgar/data/0001664703/000162828025008747/be-20241231.htm",
+    confidence: "high",
+    range: [12, 36],
+    note: "*2026-05-29 정정*: 이전 default 12mo는 Bloom 10-K Item 1 *가속 case* ('increasing number of transactions...less than twelve months')였음. 정상 baseline은 21-36mo (sales 12-18 + install 9-18). 12mo는 *Bloom-hyperscaler 가속 협상 성공한 예외 case* — 사용자가 직접 12로 조정해 가속 시나리오 모델링 가능. Meta Socrates 17mo, Wartsila 18-21mo verified 거래와 align."
+  },
+  "lead.solar": {
+    value: 20, unit: "months",
+    source: "산업 표준 18-24mo (NREL ATB methodology + EPC contracts) — module + inverter + balance-of-system",
+    url: "https://atb.nrel.gov/electricity/2024/utility-scale_pv",
+    confidence: "high",
+    note: "데이터센터 BTM 단독 solar는 land 부족·24/7 firm 한계로 자주 부적합. Microsoft 40 GW + Google 22 GW는 모두 off-site PPA."
+  },
+  "bessEnergyCost": {
+    value: 241, unit: "$/kWh (battery pack, duration scales)",
+    source: "Cole·Ramasamy·Turan 2025 update (NREL/TP-6A40-93281) Figure 2 — bottom-up cost model, 직선 회귀 y=240.8x+379.16 (R²=0.9999). Energy component만 = $241/kWh.",
+    url: "https://www.nrel.gov/docs/fy25osti/93281.pdf",
+    confidence: "high",
+    range: [108, 339],
+    note: "이전 fixed $350/kWh는 *2가지 결함 발견 2026-05-29*: (1) Cole&Karmakar 2023이 4hr 전용이라 6hr 적용 부정확. (2) 2025 update에서 2024 baseline이 **30% 더 낮음** ($482→$334/kWh). Split 공식으로 교체 → 모든 duration 정확."
+  },
+  "bessPowerCost": {
+    value: 372, unit: "$/kW (BOS·inverter·연결, fixed)",
+    source: "Cole·Ramasamy·Turan 2025 update Figure 2 — power component fit $379/kW, adjusted -$7 for 4hr exact match → $372/kW.",
+    url: "https://www.nrel.gov/docs/fy25osti/93281.pdf",
+    confidence: "high",
+    note: "Power cost = duration 무관 fixed. BOS(SBOS+EBOS+Installation Labor+Permitting+Sales Tax+Contingency+EPC Overhead+Profit) 합. 시스템 power rating(kW)으로 scales."
+  },
+  "storageHrs": {
+    value: 6, unit: "hours",
+    source: "Augustine & Blair 2021 (NREL/TP-5700-78694) — Storage Futures Study가 BESS modeling을 *10hr으로 cap*. 6hr은 NREL modeled 범위 내 + 현실적 hyperscaler peak-shaving 패턴 (1 cycle/day).",
+    url: "https://www.nrel.gov/docs/fy21osti/78694.pdf",
+    confidence: "high",
+    range: [2, 10],
+    note: "이전 default 12hr는 *NREL modeled domain 밖* — 2026-05-29 검증 후 변경. 10hr 이상은 extrapolation. *어떤 duration이라도* solar+BESS 단독으로는 24/7 firm load 불가능 (1-2일 흐림 ride-through 필요 24-48hr). 실제 hyperscaler 패턴: off-site PPA + on-site gas/fuel cell hybrid."
+  }
+};
+
+/* FLEET_CONTEXT — 각 발전원의 미국 fleet 권위 데이터 (EIA-860 2024).
+   결과 카드 하단에 "시장 컨텍스트" 라인으로 표시. 사용자가 결정의 *시장 위치*를 직접 인식. */
+var FLEET_CONTEXT = {
+  turbine: {
+    us_fleet_MW: 158614,
+    us_fleet_label: "158.6 GW",
+    btm_fit_MW: 21545,
+    btm_fit_label: "21.5 GW (Aero <50 MW, 13.6%)",
+    bol_2024_MW: 1970,
+    top_operator: "TVA 7,061 MW (모두 utility — BTM dev 미반영)",
+    growth_signal: "BOL 2020 933 MW 저점 → 2024 1,970 MW (2x 회복)",
+    source: "EIA-860 2024 (scripts/fetch-eia860-gas-turbines.js)"
+  },
+  recip: {
+    us_fleet_MW: 7921,
+    us_fleet_label: "7.9 GW (가스만)",
+    btm_fit_MW: 2028,
+    btm_fit_label: "2.0 GW (Wartsila-class 15-25 MW, 25.6%)",
+    bol_2024_MW: 457,
+    top_operator: "South Texas Electric Coop 426 MW",
+    growth_signal: "BOL 2024 457 MW = 2021-23 평균의 2.7x — *데이터센터 보급 가속*",
+    source: "EIA-860 2024 (디젤 3,330 units 제외 — 가스만)"
+  },
+  fuelcell: {
+    us_fleet_MW: 363.8,
+    us_fleet_label: "363.8 MW",
+    btm_fit_MW: 363.8,
+    btm_fit_label: "전체 (모두 BTM 적합)",
+    bol_2024_MW: 14,
+    top_operator: "Bloom Energy 106.6 MW (29%)",
+    growth_signal: "2016 137 MW → 2024 363.8 MW (8년 2.65x). Bloom AEP 1 GW announcement = 현재 fleet 2.75x",
+    source: "EIA-860 2024 (scripts/fetch-eia860-fuelcells.js)"
+  },
+  solar: {
+    us_fleet_MW: 148000,
+    us_fleet_label: "148 GW utility-scale (NREL 2024)",
+    btm_fit_MW: null,
+    btm_fit_label: "BTM on-site는 *off-site PPA가 dominant*",
+    bol_2024_MW: null,
+    top_operator: "Microsoft 40 GW + Google 22 GW PPA 모두 off-site",
+    growth_signal: "NREL projection 148 → 432 GW by 2035 (+192%)",
+    source: "NREL ATB 2024 + Standard Scenarios"
+  }
+};
+
+var WEIGHTS = {
+  speed:    {speed:0.60, cost:0.15, land:0.15, carbon:0.10},
+  balanced: {speed:0.35, cost:0.25, land:0.20, carbon:0.20},
+  carbon:   {speed:0.30, cost:0.15, land:0.15, carbon:0.40}
+};
+
+var PRESETS = [
+  {n:"Ashburn, VA",      lat:39.0438, lng:-77.4874},
+  {n:"Dallas–Ft Worth",  lat:32.8998, lng:-97.0403},
+  {n:"Will County, IL",  lat:41.3947, lng:-87.9486},
+  {n:"Phoenix, AZ",      lat:33.4484, lng:-112.0740},
+  {n:"Atlanta, GA",      lat:33.7490, lng:-84.3880},
+  {n:"Columbus, OH",     lat:39.9612, lng:-82.9988},
+  {n:"Santa Clara, CA",  lat:37.3541, lng:-121.9552}
+];
+
+/* ----- Regional context: ISO-level planning estimates (US) -----
+   gridWait = typical large-load energization time, months (coarse).
+   gasMiles = typical default distance to a usable gas tie-in (estimate). */
+var REGIONS = {
+  PJM:   {label:"PJM Interconnection — Mid-Atlantic & Great Lakes", iso:"PJM",
+          gridWait:60, gasMiles:3, gasRating:"Moderate–High",
+          gas:"Dense interstate network; Marcellus/Utica supply is close.",
+          note:"Severe interconnection backlog. PJM is rewriting its large-load and co-location rules; net-new transmission-dependent load commonly takes 4–7 years to energize."},
+  ERCOT: {label:"ERCOT — Texas", iso:"ERCOT",
+          gridWait:30, gasMiles:2, gasRating:"High",
+          gas:"Densest gas infrastructure in the US (Permian, Eagle Ford).",
+          note:"Historically the fastest US grid to energize new load, but the large-load queue grew roughly 300% in 2025 and new curtailment / remote-disconnect rules now apply."},
+  MISO:  {label:"MISO — Midwest & Mid-South", iso:"MISO",
+          gridWait:48, gasMiles:4, gasRating:"Moderate",
+          gas:"Varies — strong along the Illinois and Gulf corridors, thinner in the Upper Midwest.",
+          note:"Large-load growth is straining the queue; energization timelines vary widely by utility."},
+  CAISO: {label:"CAISO — California", iso:"CAISO",
+          gridWait:72, gasMiles:6, gasRating:"Constrained",
+          gas:"Limited in-state pipeline headroom; gas permitting is difficult.",
+          note:"Long interconnection timelines and strict air permitting make new combustion hard — fuel cells and solar + storage are the more realistic on-site options here."},
+  SPP:   {label:"SPP — Central Plains", iso:"SPP",
+          gridWait:42, gasMiles:3, gasRating:"High",
+          gas:"Mid-continent gas corridor with ample supply.",
+          note:"Less congested than PJM, but transmission build-out still gates large new load."},
+  ISONE: {label:"ISO New England", iso:"ISO-NE",
+          gridWait:54, gasMiles:8, gasRating:"Constrained",
+          gas:"Well-documented winter pipeline constraints into New England.",
+          note:"Winter gas supply is tight; on-site gas generation may need dual-fuel capability or on-site LNG/oil backup."},
+  NYISO: {label:"NYISO — New York", iso:"NYISO",
+          gridWait:54, gasMiles:7, gasRating:"Constrained",
+          gas:"Pipeline expansion is politically constrained, especially downstate.",
+          note:"Gas access limits and state emissions law (CLCPA) favor fuel cells and solar + storage over combustion."},
+  SE:    {label:"Southeast — vertically integrated utilities", iso:"Non-RTO",
+          gridWait:42, gasMiles:4, gasRating:"Moderate–High",
+          gas:"Expanding Gulf and Southeast pipeline / LNG build-out.",
+          note:"Vertically integrated utilities (Georgia Power, Southern Co., Duke, TVA) can sometimes move faster than RTO queues, but data-center load growth here is heavy."},
+  WEST:  {label:"Western US — non-RTO / WECC", iso:"Non-RTO / WECC",
+          gridWait:48, gasMiles:6, gasRating:"Variable",
+          gas:"Strong in the Rockies (CO/WY/NM); thin in the desert Southwest and Pacific Northwest.",
+          note:"A patchwork of utilities with no single queue — timelines depend heavily on the specific serving utility."}
+};
+var REGION_ORDER = ["PJM","ERCOT","MISO","CAISO","SPP","ISONE","NYISO","SE","WEST"];
+
+/* state (lowercase) -> primary region. Coarse; IL is split by latitude below. */
+var STATE_REGION = {
+  "alabama":"SE","arizona":"WEST","arkansas":"MISO","california":"CAISO","colorado":"WEST",
+  "connecticut":"ISONE","delaware":"PJM","district of columbia":"PJM","florida":"SE",
+  "georgia":"SE","idaho":"WEST","illinois":"MISO","indiana":"PJM","iowa":"MISO",
+  "kansas":"SPP","kentucky":"PJM","louisiana":"MISO","maine":"ISONE","maryland":"PJM",
+  "massachusetts":"ISONE","michigan":"MISO","minnesota":"MISO","mississippi":"MISO",
+  "missouri":"MISO","montana":"WEST","nebraska":"SPP","nevada":"WEST","new hampshire":"ISONE",
+  "new jersey":"PJM","new mexico":"WEST","new york":"NYISO","north carolina":"SE",
+  "north dakota":"MISO","ohio":"PJM","oklahoma":"SPP","oregon":"WEST","pennsylvania":"PJM",
+  "rhode island":"ISONE","south carolina":"SE","south dakota":"SPP","tennessee":"SE",
+  "texas":"ERCOT","utah":"WEST","vermont":"ISONE","virginia":"PJM","washington":"WEST",
+  "west virginia":"PJM","wisconsin":"MISO","wyoming":"WEST"
+};
+
+/* Extra one-line context for a few high-activity states (research-grounded). */
+var STATE_NOTES = {
+  "illinois":"Will County and the south-Chicago metro are the center of the Illinois data-center boom — ComEd reports 75+ data-center applications totaling ~28 GW, and a state study projects a ComEd-area capacity shortfall by 2029. Northern Illinois is also a major gas hub (a dozen-plus interstate pipelines, the Chicago Hub) — gas access is strong here.",
+  "virginia":"Northern Virginia ('Data Center Alley') is the world's largest data-center market; Dominion's load-interconnection timelines have stretched to several years.",
+  "ohio":"Central Ohio (AEP Ohio) has quoted some of the longest large-load interconnection waits in the US — on the order of seven years.",
+  "texas":"ERCOT's structural speed advantage is real, but its large-load queue exceeded 200 GW by the end of 2025.",
+  "california":"Strict air permitting makes new gas combustion difficult; fuel cells and solar + storage dominate on-site plans.",
+  "georgia":"Georgia Power has seen exceptional data-center load growth and is adding generation rapidly."
+};
+
+/* ============================================================
+   HELPERS
+   ============================================================ */
+function $(id){return document.getElementById(id);}
+function num(id){var v=parseFloat($(id).value);return isFinite(v)?v:0;}
+function pad(n){return n<10?"0"+n:""+n;}
+function fmtDate(d){return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());}
+function addMonths(d,n){return new Date(d.getFullYear(),d.getMonth()+Math.round(n),d.getDate());}
+var MON=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+function monthYear(d){return MON[d.getMonth()]+" "+d.getFullYear();}
+function monthsFromNow(str){
+  if(!str) return 999;
+  var t=new Date(str+"T00:00:00"), now=new Date();
+  return (t.getFullYear()-now.getFullYear())*12 + (t.getMonth()-now.getMonth());
+}
+function fmtMoney(M){
+  if(M>=1000) return "$"+(M/1000).toFixed(2)+"B";
+  return "$"+Math.round(M)+"M";
+}
+function fmtAcres(a){
+  if(a>=1000) return Math.round(a).toLocaleString()+" ac ("+(a/640).toFixed(1)+" sq mi)";
+  if(a>=100) return Math.round(a).toLocaleString()+" ac";
+  return a.toFixed(1)+" ac";
+}
+function fmtCO2(t){
+  if(t<=0) return "~0 (on-site)";
+  if(t>=1e6) return (t/1e6).toFixed(2)+" Mt/yr";
+  return Math.round(t/1000).toLocaleString()+"k t/yr";
+}
+function normLowerBetter(vals){
+  var mn=Math.min.apply(null,vals), mx=Math.max.apply(null,vals);
+  return vals.map(function(v){return mx===mn?1:(mx-v)/(mx-mn);});
+}
+function acresToRadius(a){return Math.sqrt((a*4046.8564)/Math.PI);} // metres
+
+/* ============================================================
+   ASSUMPTIONS PANEL — built from DEFAULTS, read live from DOM
+   ============================================================ */
+function buildAssumptions(){
+  var h='';
+  h+='<div class="sec-title" style="margin-top:4px">Demand</div>';
+  h+='<div class="agrid">';
+  h+=afield("a_pue","PUE","total ÷ IT power",DEFAULTS.pue,0.01);
+  h+=afield("a_reserve","Reserve margin","spare capacity, e.g. 0.15",DEFAULTS.reserve,0.05);
+  h+=afield("a_util","Utilization","firm-source duty cycle",DEFAULTS.util,0.01);
+  h+=afield("a_pipeCost","Gas lateral cost","$M per mile",DEFAULTS.pipeCost,0.5);
+  h+='</div>';
+
+  h+='<div class="sec-title">Per technology</div>';
+  h+='<table class="atable"><thead><tr>'+
+     '<th>Technology</th><th>Lead time<br>(months)</th><th>Capex<br>($/kW)</th>'+
+     '<th>Footprint<br>(acres/MW)</th><th>Emissions<br>(tCO₂/MWh)</th></tr></thead><tbody>';
+  KEYS.forEach(function(k){
+    h+='<tr><td class="tname"><span class="dot" style="background:'+TECH[k].color+
+       ';display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:6px"></span>'+TECH[k].short+'</td>';
+    h+='<td><input type="number" id="a_lead_'+k+'" value="'+DEFAULTS.lead[k]+'" step="1" min="1"></td>';
+    h+='<td><input type="number" id="a_capex_'+k+'" value="'+DEFAULTS.capex[k]+'" step="50" min="1"></td>';
+    h+='<td><input type="number" id="a_foot_'+k+'" value="'+DEFAULTS.foot[k]+'" step="0.01" min="0.001"></td>';
+    h+='<td><input type="number" id="a_emis_'+k+'" value="'+DEFAULTS.emis[k]+'" step="0.05" min="0"'+
+       (k==="solar"?" disabled":"")+'></td></tr>';
+  });
+  h+='</tbody></table>';
+
+  h+='<div class="sec-title">Solar + BESS sizing</div>';
+  h+='<div class="agrid">';
+  h+=afield("a_solarCF","Solar capacity factor","avg output ÷ nameplate",DEFAULTS.solarCF,0.01);
+  h+=afield("a_storageHrs","Storage duration","hours of battery to firm load",DEFAULTS.storageHrs,1);
+  h+=afield("a_bessEnergyCost","BESS energy cost","$/kWh — battery pack (duration scales)",DEFAULTS.bessEnergyCost,5);
+  h+=afield("a_bessPowerCost","BESS power cost","$/kW — BOS, inverter, fixed",DEFAULTS.bessPowerCost,10);
+  h+='</div>';
+  h+='<button class="resetbtn" id="resetA" type="button">Reset to defaults</button>';
+  $("assumpBody").innerHTML=h;
+  $("resetA").addEventListener("click",resetAssumptions);
+  bindAssumptionInputs();
+}
+function afield(id,name,sub,val,step){
+  return '<label>'+name+'<small>'+sub+'</small>'+
+    '<input type="number" id="'+id+'" value="'+val+'" step="'+step+'"></label>';
+}
+function bindAssumptionInputs(){
+  var ids=["a_pue","a_reserve","a_util","a_pipeCost","a_solarCF","a_storageHrs",
+           "a_bessEnergyCost","a_bessPowerCost"];
+  KEYS.forEach(function(k){ids.push("a_lead_"+k,"a_capex_"+k,"a_foot_"+k,"a_emis_"+k);});
+  ids.forEach(function(id){var el=$(id);if(el)el.addEventListener("input",recompute);});
+}
+function resetAssumptions(){
+  $("a_pue").value=DEFAULTS.pue; $("a_reserve").value=DEFAULTS.reserve;
+  $("a_util").value=DEFAULTS.util; $("a_pipeCost").value=DEFAULTS.pipeCost;
+  $("a_solarCF").value=DEFAULTS.solarCF; $("a_storageHrs").value=DEFAULTS.storageHrs;
+  $("a_bessEnergyCost").value=DEFAULTS.bessEnergyCost;
+  $("a_bessPowerCost").value=DEFAULTS.bessPowerCost;
+  KEYS.forEach(function(k){
+    $("a_lead_"+k).value=DEFAULTS.lead[k];
+    $("a_capex_"+k).value=DEFAULTS.capex[k];
+    $("a_foot_"+k).value=DEFAULTS.foot[k];
+    $("a_emis_"+k).value=DEFAULTS.emis[k];
+  });
+  recompute();
+}
+function readA(){
+  var A={pue:num("a_pue"),reserve:num("a_reserve"),util:num("a_util"),
+    pipeCost:num("a_pipeCost"),solarCF:num("a_solarCF")||0.24,
+    storageHrs:num("a_storageHrs"),
+    bessEnergyCost:num("a_bessEnergyCost"),
+    bessPowerCost:num("a_bessPowerCost"),
+    lead:{},capex:{},foot:{},emis:{}};
+  KEYS.forEach(function(k){
+    A.lead[k]=num("a_lead_"+k); A.capex[k]=num("a_capex_"+k);
+    A.foot[k]=num("a_foot_"+k); A.emis[k]=(k==="solar")?0:num("a_emis_"+k);
+  });
+  return A;
+}
+
+/* ============================================================
+   FEASIBILITY ENGINE
+   ============================================================ */
+function compute(){
+  var A=readA();
+  var itload=num("itload");
+  var pipe=num("pipe"), gridwait=num("gridwait"), land=num("land");
+  var m2t=monthsFromNow($("target").value);
+  var prio=document.querySelector('input[name="prio"]:checked').value;
+  var W=WEIGHTS[prio];
+
+  var facilityMW=itload*A.pue;                 // average electrical load to serve
+  var designMW=facilityMW*(1+A.reserve);       // firm plant capacity incl. reserve
+
+  // Hot zone capex uplift — 매칭된 sub-region이 있으면 capex_mul 적용
+  // 매칭 안 되면 1.0 (baseline 그대로). techHardNo는 추천 시나리오에서 제외.
+  var capexMul = currentHotZone ? currentHotZone.capexMul : 1.0;
+  var hardNoTech = (currentHotZone && currentHotZone.techHardNo) ? currentHotZone.techHardNo : [];
+
+  var res=KEYS.map(function(k){
+    var t=TECH[k], r={key:k,t:t,notes:[],flags:[]};
+    if(k==="solar"){
+      r.capMW=A.solarCF>0?facilityMW/A.solarCF:0;          // DC nameplate to firm the load
+      r.bessMWh=facilityMW*A.storageHrs;
+      r.landAcres=r.capMW*A.foot[k];
+      // BESS capex split formula — NREL/TP-6A40-93281 (Cole·Ramasamy·Turan 2025 update):
+      //   Total ($/kW) = Energy Cost ($/kWh) × Duration + Power Cost ($/kW)
+      // y=240.8x+379.16 (R²=0.9999) — battery pack은 duration scales, BOS는 fixed.
+      // BESS 시스템은 facilityMW(부하 MW)로 sized; energy storage = facilityMW × storageHrs MWh.
+      r.bessCapexM = (r.bessMWh * A.bessEnergyCost + facilityMW * A.bessPowerCost) / 1000;
+      r.solarCapexM = r.capMW*A.capex[k]*capexMul/1000;     // PV 부분 단독 추적
+      r.capexM = r.solarCapexM + r.bessCapexM;
+      r.annualCO2=0;
+      r.lateralMonths=0; r.lateralCost=0;
+      r.leadTotal=A.lead[k];
+      r.capLabel="Nameplate";
+      r.notes.push("Sized to firm a 24/7 load: "+Math.round(r.capMW).toLocaleString()+
+        " MW-DC + "+Math.round(r.bessMWh).toLocaleString()+" MWh battery. "+
+        "내역: 솔라 "+fmtMoney(r.solarCapexM)+" + BESS "+fmtMoney(r.bessCapexM)+".");
+      // BESS duration caveat — NREL Augustine & Blair 2021 SFS는 BESS modeling을 *10hr으로 cap*.
+      // 그 이상은 extrapolation. 그리고 *어떤 duration이라도* solar+BESS만으로는 24/7 firm load 약속 못함.
+      r.notes.push("⚠ Solar+BESS는 *24/7 firm을 약속 못함* — 1-2일 연속 흐림 ride-through 불가. "+
+        "실제 hyperscaler는 *off-site PPA (annual matching)* + on-site gas/fuel cell (firm) 혼합 사용. "+
+        "Microsoft 40 GW + Google 22 GW PPA 모두 off-site.");
+      if(A.storageHrs > 10){
+        r.notes.push("⚠ BESS "+A.storageHrs+"hr는 NREL modeled domain 밖 (Augustine & Blair 2021 SFS: BESS modeling capped at 10hr). "+
+          "10hr 이상은 *extrapolation* — 정확도 떨어짐.");
+      }
+    }else{
+      r.capMW=designMW;
+      r.landAcres=r.capMW*A.foot[k];
+      r.lateralMonths=0; r.lateralCost=0;
+      if(t.fuel==="gas" && pipe>0.5){
+        r.lateralMonths=Math.min(3+pipe*0.5,24);
+        r.lateralCost=pipe*A.pipeCost;
+      }
+      r.capexM=r.capMW*A.capex[k]*capexMul/1000 + r.lateralCost;
+      r.leadTotal=A.lead[k]+r.lateralMonths;
+      r.annualCO2=r.capMW*8760*A.util*A.emis[k];
+      r.capLabel="Plant capacity";
+      if(r.lateralMonths>0)
+        r.notes.push("Includes "+pipe+" mi gas lateral (+"+Math.round(r.lateralMonths)+
+          " mo, +"+fmtMoney(r.lateralCost)+").");
+    }
+    // Hot zone capex uplift 표기 (사용자에게 가시화)
+    if(currentHotZone && capexMul !== 1.0){
+      r.notes.push(currentHotZone.short+" hot zone: capex ×"+capexMul+" applied.");
+    }
+    // techHardNo: 시나리오는 계산하되 flag 추가하여 ranking 페널티 적용
+    if(hardNoTech.indexOf(k) >= 0){
+      r.flags.push({t:currentHotZone.short+"에서 사실상 비추천 (환경 규제·시장 구조)", sev:"bad"});
+      r.hardNo = true;
+    }
+    return r;
+  });
+
+  // relative scoring (lower is better for every metric)
+  var sp=normLowerBetter(res.map(function(r){return r.leadTotal;}));
+  var co=normLowerBetter(res.map(function(r){return r.capexM;}));
+  var la=normLowerBetter(res.map(function(r){return r.landAcres;}));
+  var ca=normLowerBetter(res.map(function(r){return r.annualCO2;}));
+
+  res.forEach(function(r,i){
+    r.sub={speed:sp[i]*100,cost:co[i]*100,land:la[i]*100,carbon:ca[i]*100};
+    r.score=W.speed*r.sub.speed+W.cost*r.sub.cost+W.land*r.sub.land+W.carbon*r.sub.carbon;
+    r.landFit=r.landAcres<=land && land>0;
+    r.meetsDeadline=r.leadTotal<=m2t;
+    r.onlineDate=addMonths(new Date(),r.leadTotal);
+    if(!r.landFit) r.flags.push({t:"Exceeds the "+land+"-acre land budget",sev:"bad"});
+    if(!r.meetsDeadline) r.flags.push({t:"Misses the target online date",sev:"warn"});
+    if(r.t.fuel==="gas" && pipe>20)
+      r.flags.push({t:"Gas tie-in is "+pipe+" mi away — major schedule & cost risk",sev:"warn"});
+    if(r.key==="solar")
+      r.flags.push({t:"Solar alone cannot firm a 24/7 load — needs heavy overbuild + storage",sev:"warn"});
+    if(r.landFit && r.meetsDeadline)
+      r.flags.push({t:"Fits the land and hits the schedule",sev:"good"});
+    // Hot zone hardNo (Silicon Valley·Quincy WA의 gas turbine·recip 등)는 *land 초과보다 더 강한* 페널티.
+    // -1500 = Solar의 land 초과(-1000)보다 낮음 → hardNo 시나리오는 ranking 최하위로 밀려남.
+    r.rankScore=r.score-(r.landFit?0:1000)-(r.meetsDeadline?0:60)-(r.hardNo?1500:0);
+  });
+
+  // ============================================================
+  // 하이브리드 시나리오 계산 (Phase 1 MVP, 2026-05-29)
+  // 단일 4 시나리오와 *같은 yardstick*으로 합쳐 정규화 → Priya 갭 해소
+  // ============================================================
+  var hybrids = PRESET_HYBRIDS.map(function(h){
+    var partials = {}, hardNoConflict = false, hasGas = false;
+    var totalCapexM = 0, totalLandAcres = 0, totalCO2 = 0, totalCapMW = 0, bessTotalMWh = 0;
+    var maxLead = 0;
+
+    Object.keys(h.mix).forEach(function(k){
+      var ratio = h.mix[k];
+      var t = TECH[k], partial = { ratio: ratio };
+
+      if(k === "solar"){
+        var partialFacilityMW = facilityMW * ratio;
+        partial.capMW = A.solarCF > 0 ? partialFacilityMW / A.solarCF : 0;
+        partial.bessMWh = partialFacilityMW * A.storageHrs;
+        partial.land = partial.capMW * A.foot[k];
+        partial.capex = (partial.capMW * A.capex[k] * capexMul
+                       + partial.bessMWh * A.bessEnergyCost
+                       + partial.capMW * A.bessPowerCost) / 1000;
+        partial.co2 = 0;
+        bessTotalMWh += partial.bessMWh;
+      } else {
+        var partialDesignMW = designMW * ratio;
+        partial.capMW = partialDesignMW;
+        partial.land = partialDesignMW * A.foot[k];
+        partial.capex = partialDesignMW * A.capex[k] * capexMul / 1000;
+        partial.co2 = partialDesignMW * 8760 * A.util * A.emis[k];
+        if(t.fuel === "gas") hasGas = true;
+      }
+      partial.lead = A.lead[k];
+
+      partials[k] = partial;
+      totalCapexM += partial.capex;
+      totalLandAcres += partial.land;
+      totalCO2 += partial.co2;
+      totalCapMW += partial.capMW;
+      if(partial.lead > maxLead) maxLead = partial.lead;
+      if(hardNoTech.indexOf(k) >= 0) hardNoConflict = true;
+    });
+
+    // Gas lateral — gas-using 부분이 있으면 한 번만
+    var lateralMonths = 0, lateralCost = 0;
+    if(hasGas && pipe > 0.5){
+      lateralMonths = Math.min(3 + pipe * 0.5, 24);
+      lateralCost = pipe * A.pipeCost;
+    }
+    totalCapexM += lateralCost;
+
+    var r = {
+      key: "hybrid_" + h.id,
+      h: h,
+      isHybrid: true,
+      t: { name: h.name, short: h.short, color: h.color, fuel: hasGas ? "gas" : "none" },
+      partials: partials,
+      capMW: totalCapMW,
+      bessMWh: bessTotalMWh,
+      capexM: totalCapexM,
+      landAcres: totalLandAcres,
+      annualCO2: totalCO2,
+      leadTotal: maxLead + lateralMonths,
+      lateralMonths: lateralMonths,
+      lateralCost: lateralCost,
+      hardNo: hardNoConflict,
+      notes: [],
+      flags: [],
+      capLabel: "Mixed capacity"
+    };
+
+    // Notes
+    var mixStr = Object.keys(h.mix).map(function(k){
+      return TECH[k].short + " " + Math.round(h.mix[k] * 100) + "%";
+    }).join(" + ");
+    r.notes.push("구성: " + mixStr + ". 참고: " + h.ref_case);
+    if(lateralMonths > 0){
+      r.notes.push("Gas lateral " + pipe + " mi (+" + Math.round(lateralMonths) + " mo, +"
+                   + fmtMoney(lateralCost) + ") — gas 부분 공유.");
+    }
+    if(hardNoConflict && currentHotZone){
+      var hardNoNames = hardNoTech.filter(function(k){return h.mix[k];})
+        .map(function(k){return TECH[k].short;}).join(", ");
+      r.flags.push({t: currentHotZone.short + "에서 " + hardNoNames + " 비추천 — 하이브리드 mix 부적합", sev: "bad"});
+    }
+    return r;
+  });
+
+  // 단일 + 하이브리드 통합 — 같은 정규화 pool
+  var allRes = res.concat(hybrids);
+
+  // 통합 normalization (lead/cost/land/carbon 같은 yardstick)
+  var allLeads = allRes.map(function(r){return r.leadTotal;});
+  var allCosts = allRes.map(function(r){return r.capexM;});
+  var allLands = allRes.map(function(r){return r.landAcres;});
+  var allCarbons = allRes.map(function(r){return r.annualCO2;});
+  var nSp = normLowerBetter(allLeads);
+  var nCo = normLowerBetter(allCosts);
+  var nLa = normLowerBetter(allLands);
+  var nCa = normLowerBetter(allCarbons);
+
+  // 하이브리드만 score·landFit·flags 처리 (단일은 위에서 이미 처리됨)
+  hybrids.forEach(function(r, i){
+    var idx = res.length + i;  // allRes에서의 인덱스
+    r.sub = {
+      speed: nSp[idx] * 100,
+      cost: nCo[idx] * 100,
+      land: nLa[idx] * 100,
+      carbon: nCa[idx] * 100
+    };
+    r.score = W.speed*r.sub.speed + W.cost*r.sub.cost + W.land*r.sub.land + W.carbon*r.sub.carbon;
+    r.landFit = r.landAcres <= land && land > 0;
+    r.meetsDeadline = r.leadTotal <= m2t;
+    r.onlineDate = addMonths(new Date(), r.leadTotal);
+    if(!r.landFit) r.flags.push({t: "Exceeds the " + land + "-acre land budget", sev: "bad"});
+    if(!r.meetsDeadline) r.flags.push({t: "Misses the target online date", sev: "warn"});
+    if(r.t.fuel === "gas" && pipe > 20)
+      r.flags.push({t: "Gas tie-in is " + pipe + " mi away — major schedule & cost risk", sev: "warn"});
+    if(r.landFit && r.meetsDeadline && !r.hardNo)
+      r.flags.push({t: "Fits the land and hits the schedule (hybrid mix)", sev: "good"});
+    r.rankScore = r.score - (r.landFit?0:1000) - (r.meetsDeadline?0:60) - (r.hardNo?1500:0);
+  });
+
+  // 단일도 통합 normalize에 맞춰 재계산 (정확한 같은 yardstick)
+  res.forEach(function(r, i){
+    r.sub = {
+      speed: nSp[i] * 100,
+      cost: nCo[i] * 100,
+      land: nLa[i] * 100,
+      carbon: nCa[i] * 100
+    };
+    r.score = W.speed*r.sub.speed + W.cost*r.sub.cost + W.land*r.sub.land + W.carbon*r.sub.carbon;
+    r.rankScore = r.score - (r.landFit?0:1000) - (r.meetsDeadline?0:60) - (r.hardNo?1500:0);
+  });
+
+  var ranked = allRes.slice().sort(function(a,b){return b.rankScore - a.rankScore;});
+  ranked.forEach(function(r,i){r.rank = i+1;});
+
+  return {res:res, hybrids:hybrids, allRes:allRes, ranked:ranked, rec:ranked[0],
+          gridwait:gridwait, m2t:m2t, land:land, itload:itload,
+          facilityMW:facilityMW, designMW:designMW, prio:prio};
+}
+
+/* ============================================================
+   RENDER
+   ============================================================ */
+/* Print 전용 헤더·푸터 갱신 — recompute 시 자동 호출.
+   화면에서는 display:none, @media print에서 표시. */
+function updatePrintHeaderFooter(D){
+  var hdr = $("workbenchPrintHeader"), ftr = $("workbenchPrintFooter");
+  if(!hdr || !ftr) return;
+  var today = new Date().toISOString().slice(0,10);
+  var place = currentPlace || "(사이트 미지정)";
+  var coords = currentLat != null && currentLng != null
+    ? currentLat.toFixed(4) + ", " + currentLng.toFixed(4) : "";
+  var region = (REGIONS[currentRegion] || {}).label || currentRegion || "";
+  var zone = currentHotZone ? " · " + currentHotZone.short + " hot zone" : "";
+  var itload = num("itload") || "—";
+  var prio = (document.querySelector('input[name="prio"]:checked') || {}).value || "speed";
+  var prioLabel = ({speed:"Speed first", balanced:"Balanced", carbon:"Low carbon"})[prio] || prio;
+
+  hdr.innerHTML =
+    '<h1>On-Site Power Intelligence — 단일 사이트 분석</h1>'+
+    '<div class="meta">'+
+      '<b>'+escapeAttr(place)+'</b>'+
+      (coords ? ' · '+coords : '')+
+      ' · '+escapeAttr(region)+zone+
+      ' · '+itload+' MW IT load · priority: '+prioLabel+
+      ' · 생성: '+today+
+    '</div>';
+
+  ftr.innerHTML =
+    '<div><b>데이터 출처 + 신뢰도</b>: 우리 도구는 18+ verified source · 10 hot zones · 5 deployment cases 기반. '+
+      'EIA-860 · NREL ATB · SEC EDGAR (Bloom, GE Vernova, Talen, Constellation, Vistra) · GridLab/EFG/Halcyon IRP filings · Bloom 10-K Item 1 직접 인용.</div>'+
+    '<div style="margin-top:5px"><b>전체 데이터 자산 dashboard</b>: '+
+      window.location.origin+'/data-sources.html '+
+      '· <b>정직성 정정 이력</b>: 4번 (Talen-AWS · BESS storageHrs 12→6 · BESS split 공식 · Fuel cell lead 12→18)</div>'+
+    '<div style="margin-top:5px;font-style:italic">본 자료는 *behind-the-meter 타당성 추정치*. '+
+      '엔지니어링 study 아님. ±40% 정확도 가정. utility·OEM·EPC 견적으로 검증 후 의사결정.</div>';
+
+  // Compare view용도 같이 갱신
+  var chdr = $("comparePrintHeader"), cftr = $("comparePrintFooter");
+  if(chdr){
+    var siteCount = Object.keys(appState.sites || {}).length;
+    chdr.innerHTML =
+      '<h1>On-Site Power Intelligence — '+siteCount+' 사이트 비교</h1>'+
+      '<div class="meta">생성: '+today+' · 같은 yardstick·hot zone 매핑·정직성 4번 정정 검증된 모델</div>';
+  }
+  if(cftr) cftr.innerHTML = ftr.innerHTML;
+}
+
+function recompute(){
+  var itl=num("itload");
+  if(itl<=0){
+    $("inputwarn").style.display="block";
+    $("inputwarn").textContent="Enter a target IT load greater than 0 MW to run the analysis.";
+    return;
+  }
+  $("inputwarn").style.display="none";
+  var D=compute();
+  renderVerdict(D);
+  renderNextSteps(D);
+  renderCards(D);
+  renderTable(D);
+  drawFootprintSVG(D);
+  drawMap(D);
+  updatePrintHeaderFooter(D);    // print 전용 header/footer 갱신
+  // sync the current site's state to localStorage on every recompute
+  if(typeof appState !== "undefined" && appState.currentId) persistCurrentSite();
+}
+
+/* Turn the recommendation into a concrete week-1 contact list. This is the
+ * "what do I do Monday morning" piece — it directly serves the target user
+ * (data center developers, hyperscaler infra strategists) by closing the gap
+ * between the verdict and action. */
+function renderNextSteps(D){
+  var box=$("nextsteps"); if(!box) return;
+  var rec=D.rec;
+  if(!rec || !rec.landFit){ box.innerHTML=""; box.style.display="none"; return; }
+  box.style.display="";
+  var R=REGIONS[currentRegion]||{};
+  /* OEM 명단 — 2026-05-29 vendor 검증 기반.
+     Aero GT (Solar Turbines Titan/PGM, Siemens SGT-A, GE Vernova LM)와 industrial frame을 분리.
+     Recip은 Wartsila 282 MW Ohio 거래 검증 기반 우선순위 조정. */
+  var oems={
+    turbine: "Solar Turbines (CAT) Titan 250 또는 PGM 130 mobile, Siemens Energy SGT400/SGT-A, GE Vernova LM2500/LM6000 — 단 GE LM은 FY2024 orders 44/sales 27 공급 제약. Industrial frame H-class는 36-48mo lead, 데이터센터 BTM에 큼.",
+    recip:   "Wärtsilä 18V50SG (Ohio 282 MW Q2'25 거래 검증, 18-21mo), Caterpillar 3520 (Meta Socrates 15대 검증), INNIO Jenbacher",
+    fuelcell:"Bloom Energy SOFC ('less than 12 months booking-to-revenue' 10-K 인용), FuelCell Energy MCFC (Bridgeport·Derby CT 사이트 검증)",
+    solar:   "regional utility-scale solar EPCs + BESS integrators (Tesla Megapack, Fluence, Wartsila Storage)"
+  };
+  var h='<h3>Next steps — turn this into this week’s email list</h3><ol>';
+  h+='<li><b>Serving utility — written load-interconnection estimate.</b> Ask for a timeline and '+
+     'substation-headroom assessment for a '+Math.round(rec.capMW).toLocaleString()+' MW load at '+
+     '<i>'+(currentPlace||"this site")+'</i>. The '+(R.iso||"regional")+' typical is '+
+     (R.gridWait||60)+' months — the real number only comes from them. 단, Meta Socrates처럼 *physically not connected* BTM도 옵션 (OPSB 2025-06-09 승인).</li>';
+  if(rec.t.fuel==="gas"){
+    h+='<li><b>Pipeline operator — capacity &amp; pressure.</b> Confirm deliverable gas volume and '+
+       'pressure at the site. Distance ('+num("pipe")+' mi) is a proxy — what binds is whether the '+
+       'line has capacity for this load. Meta Socrates는 24인치 파이프 2개.</li>';
+  }
+  h+='<li><b>OEM budgetary quotes.</b> Get order-of-magnitude pricing and current delivery slots from '+
+     oems[rec.key]+'. The '+Math.round(rec.leadTotal)+'-month default은 권위 데이터 기반 (Bloom 10-K, Wartsila Q2\'25, GridLab 2025-09 IRP filings) — 실제 backlog는 vendor별로 빠르게 변동. ' +
+     (rec.key === "turbine" ? "*GE Vernova는 KU/LG&E에 $25M reservation fee 요구* (2030 인도 슬롯 — KY PSC 2025-00045) — Tier 1 OEM은 슬롯 자체에 fee 발생 가능." : "") + '</li>';
+  if(rec.t.fuel==="gas"){
+    h+='<li><b>State air agency — permitting feasibility.</b> Pre-check air-emissions permitting for '+
+       Math.round(rec.capMW)+' MW of '+rec.t.short+' at this site — nonattainment status, BACT/LAER '+
+       'expectations, modeling needs.</li>';
+  }else{
+    h+='<li><b>Land &amp; off-take feasibility.</b> Verify the parcel is large enough and zoned for '+
+       'utility-scale solar, and scope a PPA or self-supply structure for the BESS.</li>';
+  }
+  h+='</ol><div class="why">These are the four numbers the tool cannot give you — and they move the '+
+     'recommendation more than anything else. The point of this screen is to shrink your week-1 '+
+     'contact list to exactly this.</div>';
+  box.innerHTML=h;
+}
+
+function renderVerdict(D){
+  var rec=D.rec, v=$("verdict");
+  var anyFit=D.ranked.some(function(r){return r.landFit;});
+  var html="";
+  if(!anyFit){
+    var smallest=D.res.slice().sort(function(a,b){return a.landAcres-b.landAcres;})[0];
+    html='<div class="vk">No option fits the land budget</div>'+
+      '<h2>None of the four options fit within '+D.land+' acres</h2>'+
+      '<p>The smallest footprint is '+smallest.t.name+' at '+fmtAcres(smallest.landAcres)+
+      '. Increase the available land, reduce the IT load, or phase the build to make on-site viable.</p>';
+  }else{
+    var saved=D.gridwait-rec.leadTotal;
+    var speedLine = saved>0
+      ? "That is roughly <b>"+Math.round(saved)+" months ahead</b> of waiting out a "+D.gridwait+
+        "-month grid interconnection queue — power is the schedule, and this is the faster path to it."
+      : "A "+D.gridwait+"-month grid queue would not be slower than this — re-check the queue estimate, "+
+        "because on-site only wins when it beats the queue.";
+    html='<div class="vk">Fastest feasible path to power · priority: '+
+      ({speed:"Speed first",balanced:"Balanced",carbon:"Low carbon"}[D.prio])+'</div>'+
+      '<h2>'+rec.t.name+' — first power in ~'+Math.round(rec.leadTotal)+' months</h2>'+
+      '<p>'+speedLine+(rec.meetsDeadline?"":" Note: this still misses your stated target date — the target may be unrealistic for any option.")+'</p>'+
+      '<div class="stats">'+
+        stat(Math.round(rec.leadTotal)+" mo","Time to power")+
+        stat(monthYear(rec.onlineDate),"Earliest online")+
+        stat(fmtMoney(rec.capexM),"Est. capex")+
+        stat(fmtAcres(rec.landAcres),"Land needed")+
+        stat(fmtCO2(rec.annualCO2),"Operating CO₂")+
+      '</div>';
+
+    // 조건부 nuclear caveat: carbon priority + 부하 > 300 MW일 때만 표시 (인지 부하 회피)
+    // 우리 도구는 4 발전원만 계산하나, GW급 carbon-free 부하는 nuclear PPA가 진짜 competitor
+    if(D.prio === "carbon" && num("itload") >= 300){
+      html += '<div class="nuclear-caveat">'+
+        '💡 <b>비교 옵션 — off-site nuclear PPA</b> (본 도구 범위 밖). '+
+        'Microsoft TMI/CCEC 835 MW · Vistra Comanche 1,200 MW · Talen-AWS 1,920 MW 모두 *grid-connected FTM PPA*로 carbon-free 24/7 firm. '+
+        '*BTM nuclear는 FERC 2024-11 거부 후 사실상 막힘*. GW급 carbon-free 부하라면 본 도구 4 시나리오와 *함께 비교 권장*.'+
+        '</div>';
+    }
+  }
+  v.innerHTML=html;
+}
+function stat(n,l){return '<div><div class="n">'+n+'</div><div class="l">'+l+'</div></div>';}
+
+function renderCards(D){
+  // 단일 시나리오만 메인 cards 영역에 표시 (4개)
+  var c=$("cards"); c.innerHTML="";
+  var singles = D.ranked.filter(function(r){ return !r.isHybrid; });
+  singles.forEach(function(r){
+    var el=document.createElement("div");
+    el.className="card"+(r.rank===1&&r.landFit&&!r.hardNo?" rec":"")+(r.hardNo?" hardno":"");
+    el.style.borderTopColor=r.t.color;
+    var h="";
+    // hardNo 카드는 RECOMMENDED 배지 표시 안 함 (CSS ::before가 비추천 배지 대체)
+    if(r.rank===1&&r.landFit&&!r.hardNo) h+='<div class="recpill">Recommended</div>';
+    h+='<div class="rank">#'+r.rank+'</div>';
+    h+='<h3>'+r.t.name+'</h3>';
+    // Lead time — ASSUMPTION_PROVENANCE['lead.'+key] tooltip 추가
+    var leadProv = ASSUMPTION_PROVENANCE["lead."+r.key];
+    h+='<div class="ttp">'+Math.round(r.leadTotal)+' <small>months</small>'+
+       (leadProv?provBadge(leadProv,"lead"):'')+'</div>';
+    h+='<div class="online">Online ~ '+monthYear(r.onlineDate)+'</div>';
+    h+=metric(r.capLabel,Math.round(r.capMW).toLocaleString()+" MW");
+    // Capex — ASSUMPTION_PROVENANCE['capex.'+key] tooltip 추가
+    var capexProv = ASSUMPTION_PROVENANCE["capex."+r.key];
+    h+=metric("Est. capex",fmtMoney(r.capexM)+(capexProv?provBadge(capexProv,"capex"):''));
+    h+=metric("Land needed",fmtAcres(r.landAcres));
+    h+=metric("Land fit",r.landFit
+        ?'<span class="yes">fits</span>'
+        :'<span class="no">over by '+fmtAcres(r.landAcres-D.land)+'</span>');
+    h+=metric("Operating CO₂",fmtCO2(r.annualCO2));
+    h+='<div class="scorebar"><i style="width:'+Math.max(2,r.score).toFixed(0)+
+       '%;background:'+r.t.color+'"></i></div>';
+    h+='<div class="scorelbl"><span>Fit score</span><span>'+Math.round(r.score)+' / 100</span></div>';
+    h+='<div class="flags">';
+    r.flags.forEach(function(f){h+='<div class="flag '+f.sev+'">'+f.t+'</div>';});
+    h+='</div>';
+    r.notes.forEach(function(n){h+='<div class="note">'+n+'</div>';});
+    // Fleet context footer — EIA-860 2024 권위 fleet 데이터
+    // 인지 부하 감소: #1 카드만 full 표시, 나머지 카드는 *한 줄 미니 요약*만
+    var fc = FLEET_CONTEXT[r.key];
+    if(fc){
+      var isTopCard = (r.rank===1 && r.landFit && !r.hardNo);
+      if(isTopCard){
+        // 추천 #1 카드: full fleet context
+        h+='<div class="fleetctx">'+
+           '<div class="fleetctx-lbl">시장 컨텍스트 — EIA-860 2024</div>'+
+           '<div class="fleetctx-row"><span>미국 fleet</span><b>'+fc.us_fleet_label+'</b></div>'+
+           '<div class="fleetctx-row"><span>BTM 적합 사이즈</span><b>'+fc.btm_fit_label+'</b></div>'+
+           '<div class="fleetctx-row"><span>2024 신규 BOL</span><b>'+
+              (fc.bol_2024_MW != null ? fc.bol_2024_MW.toLocaleString()+" MW" : "—")+'</b></div>'+
+           '<div class="fleetctx-row"><span>최대 운영자</span><b>'+fc.top_operator+'</b></div>'+
+           '<div class="fleetctx-growth">'+fc.growth_signal+'</div>'+
+           '</div>';
+      } else {
+        // 다른 카드: 한 줄 미니 요약만 (시장 비교용)
+        h+='<div class="fleetctx-mini">시장: '+fc.us_fleet_label+' · BTM 적합 '+fc.btm_fit_label+'</div>';
+      }
+    }
+    el.innerHTML=h;
+    c.appendChild(el);
+  });
+
+  // 하이브리드 카드 별도 그리드
+  renderHybridCards(D);
+  // Nuclear PPA 비교 섹션 (David 5번째 시나리오)
+  renderNuclearPPATable(D);
+}
+
+/* renderNuclearPPATable — 3 verified nuclear PPA deals를 표 형식으로 비교.
+   사용자 IT load 기준으로 equivalent fit 자동 표시. */
+function renderNuclearPPATable(D){
+  var c = $("nuclearPPATable"); if(!c) return;
+  var userLoad = D.itload || 0;
+  var h = '<table class="nuclear-ppa-table">'+
+    '<thead><tr>'+
+      '<th>Deal</th>'+
+      '<th>Capacity</th>'+
+      '<th>Term</th>'+
+      '<th>Structure</th>'+
+      '<th>ISO·State</th>'+
+      '<th>Online</th>'+
+      '<th>당신 부하 fit</th>'+
+      '<th>Significance</th>'+
+    '</tr></thead><tbody>';
+
+  PRESET_NUCLEAR_PPAS.forEach(function(p){
+    // Fit 평가: 사용자 IT load 대비 PPA capacity
+    var fitPct = userLoad > 0 ? Math.round(userLoad / p.capacity_MW * 100) : 0;
+    var fitClass, fitLabel;
+    if(fitPct < 30){
+      fitClass = "fit-small";
+      fitLabel = fitPct + "% — 너무 큼";
+    } else if(fitPct <= 90){
+      fitClass = "fit-good";
+      fitLabel = fitPct + "% — 적합";
+    } else if(fitPct <= 130){
+      fitClass = "fit-tight";
+      fitLabel = fitPct + "% — 추가 PPA 필요";
+    } else {
+      fitClass = "fit-over";
+      fitLabel = fitPct + "% — 다중 PPA";
+    }
+
+    var termStr = p.term_years + "yr" + (p.extension_years ? " + " + p.extension_years + "opt" : "");
+    var dollarStr = p.USD_billion ? "$" + p.USD_billion + "B" : "비공개";
+    var rampStr = p.full_ramp_year && p.online_year && p.full_ramp_year > p.online_year
+      ? p.online_year + "→" + p.full_ramp_year : p.online_year;
+
+    h += '<tr>'+
+      '<td class="deal"><a href="'+p.ref_url+'" target="_blank" rel="noopener" '+
+        'style="color:#1f2937;text-decoration:none;font-weight:600">'+p.short+
+        ' <span style="color:#7c3aed">↗</span></a>'+
+        '<div class="dealsub">'+p.name+'</div></td>'+
+      '<td><b>'+p.capacity_MW.toLocaleString()+' MW</b><div class="dealsub">'+dollarStr+'</div></td>'+
+      '<td>'+termStr+'</td>'+
+      '<td><div style="font-size:11px">'+p.structure+'</div></td>'+
+      '<td>'+p.ISO+'<div class="dealsub">'+p.state+'</div></td>'+
+      '<td>'+rampStr+'</td>'+
+      '<td class="'+fitClass+'">'+fitLabel+'</td>'+
+      '<td><div style="font-size:11px;color:#475569">'+p.significance+'</div></td>'+
+      '</tr>';
+  });
+
+  h += '</tbody></table>';
+
+  // 사용자 부하 기준 권장 framing
+  if(userLoad >= 800){
+    h += '<div class="nuclear-ppa-rec">💡 <b>당신의 '+userLoad+' MW 부하</b>는 *GW급 nuclear PPA 후보*. '+
+         'BTM 시나리오와 nuclear PPA 둘 다 IC 메모·CEO 슬라이드에 포함 권장. '+
+         '*Talen restructured 패턴 (BTM 시도 → FTM 전환)*에 주의.</div>';
+  } else if(userLoad >= 200){
+    h += '<div class="nuclear-ppa-rec">💡 <b>당신의 '+userLoad+' MW 부하</b>는 *nuclear PPA 단독 너무 큼*. '+
+         'BTM이 적합. Nuclear는 *다중 사이트 portfolio* 차원에서만 비교.</div>';
+  }
+
+  c.innerHTML = h;
+}
+
+/* renderHybridCards — 3 verified hybrid 시나리오 (Phase 1 MVP).
+   단일 카드와 같은 yardstick으로 정규화된 결과를 별도 섹션에 표시. */
+function renderHybridCards(D){
+  var c=$("hybridCards"); if(!c) return;
+  c.innerHTML="";
+  var hybrids = D.ranked.filter(function(r){ return r.isHybrid; });
+  hybrids.forEach(function(r){
+    var el=document.createElement("div");
+    el.className="card hybrid-card"
+      +(r.rank===1&&r.landFit&&!r.hardNo?" rec":"")
+      +(r.hardNo?" hardno":"");
+    el.style.borderTopColor=r.t.color;
+    var h="";
+    if(r.rank===1&&r.landFit&&!r.hardNo) h+='<div class="recpill">Recommended</div>';
+    h+='<div class="rank">#'+r.rank+' (전체 7 중)</div>';
+    h+='<h3>'+r.t.name+'</h3>';
+    // Mix breakdown 시각화 (각 발전원 비율 bar)
+    h+='<div class="mixbar">';
+    Object.keys(r.h.mix).forEach(function(k){
+      var pct = Math.round(r.h.mix[k] * 100);
+      h+='<span class="mixseg" style="background:'+TECH[k].color+';width:'+pct+'%" title="'+
+        TECH[k].short+' '+pct+'%">'+pct+'%</span>';
+    });
+    h+='</div>';
+    h+='<div class="mixlbl">';
+    Object.keys(r.h.mix).forEach(function(k){
+      h+='<span><span class="dot" style="background:'+TECH[k].color+'"></span>'+TECH[k].short+'</span>';
+    });
+    h+='</div>';
+    h+='<div class="ttp">'+Math.round(r.leadTotal)+' <small>months</small></div>';
+    h+='<div class="online">Online ~ '+monthYear(r.onlineDate)+'</div>';
+    h+=metric(r.capLabel,Math.round(r.capMW).toLocaleString()+" MW");
+    h+=metric("Est. capex",fmtMoney(r.capexM));
+    h+=metric("Land needed",fmtAcres(r.landAcres));
+    h+=metric("Land fit",r.landFit
+        ?'<span class="yes">fits</span>'
+        :'<span class="no">over by '+fmtAcres(r.landAcres-D.land)+'</span>');
+    h+=metric("Operating CO₂",fmtCO2(r.annualCO2));
+    h+='<div class="scorebar"><i style="width:'+Math.max(2,r.score).toFixed(0)+
+       '%;background:'+r.t.color+'"></i></div>';
+    h+='<div class="scorelbl"><span>Fit score</span><span>'+Math.round(r.score)+' / 100</span></div>';
+    h+='<div class="flags">';
+    r.flags.forEach(function(f){h+='<div class="flag '+f.sev+'">'+f.t+'</div>';});
+    h+='</div>';
+    r.notes.forEach(function(n){h+='<div class="note">'+n+'</div>';});
+    el.innerHTML=h;
+    c.appendChild(el);
+  });
+}
+
+function metric(k,v){return '<div class="metric"><span class="k">'+k+'</span><span class="v">'+v+'</span></div>';}
+
+/* provBadge — value 옆 (i) 배지 + custom HTML popup.
+   - Hover (desktop) / click·Enter (mobile/keyboard) 둘 다 작동
+   - 출처 URL 직접 link
+   - a11y: role=button, aria-expanded, aria-describedby, keyboard focus·ESC */
+var _provIdCounter = 0;
+function provBadge(prov, kind){
+  if(!prov) return '';
+  var confColor = prov.confidence === "high" ? "#16a34a"
+    : prov.confidence === "medium" ? "#eab308"
+    : "#dc2626";
+  var confLabel = prov.confidence === "high" ? "높음 (verified)"
+    : prov.confidence === "medium" ? "중간 (partial)"
+    : "낮음 (estimate)";
+  var rangeStr = prov.range ? prov.range[0]+'–'+prov.range[1]+' '+prov.unit : "";
+  var id = "prov_" + (++_provIdCounter);
+  var popupId = id + "_pop";
+  var srcLink = prov.url
+    ? '<a href="'+escapeAttr(prov.url)+'" target="_blank" rel="noopener noreferrer" class="prov-srclink">출처 열기 ↗</a>'
+    : '';
+  // Popup HTML — display:none initial, JS toggles on hover/click
+  var popup =
+    '<div class="provpop" id="'+popupId+'" role="tooltip" aria-hidden="true">'+
+      '<div class="prov-conf"><span class="prov-confdot" style="background:'+confColor+'"></span>'+
+      '신뢰도: <b>'+escapeAttr(confLabel)+'</b>'+
+      (rangeStr ? ' · 범위 '+escapeAttr(rangeStr) : '')+'</div>'+
+      '<div class="prov-src">'+escapeAttr(prov.source || '(출처 미명시)')+'</div>'+
+      (prov.note ? '<div class="prov-note">'+escapeAttr(prov.note)+'</div>' : '')+
+      (srcLink ? '<div class="prov-link">'+srcLink+'</div>' : '')+
+    '</div>';
+  // Badge (i) — tabbable button, popup 위치 absolute
+  return '<span class="provwrap">'+
+    '<button type="button" class="provbadge" '+
+      'aria-label="이 값의 출처·신뢰도 보기 — 신뢰도 '+escapeAttr(confLabel)+'" '+
+      'aria-expanded="false" aria-describedby="'+popupId+'" '+
+      'style="background:'+confColor+'" '+
+      'onclick="toggleProvPopup(this, event)" '+
+      'onkeydown="if(event.key===\'Escape\'){closeAllProvPopups();this.blur();}">i</button>'+
+    popup+
+  '</span>';
+}
+
+function escapeAttr(s){
+  return String(s == null ? "" : s)
+    .replace(/&/g,"&amp;").replace(/"/g,"&quot;")
+    .replace(/</g,"&lt;").replace(/>/g,"&gt;");
+}
+
+/* Popup toggle — 다른 popup 모두 닫고 이거만 열기. */
+function toggleProvPopup(btn, ev){
+  if(ev) ev.stopPropagation();
+  var pop = btn.parentNode.querySelector(".provpop");
+  var isOpen = pop.classList.contains("open");
+  closeAllProvPopups();
+  if(!isOpen){
+    pop.classList.add("open");
+    pop.setAttribute("aria-hidden", "false");
+    btn.setAttribute("aria-expanded", "true");
+  }
+}
+function closeAllProvPopups(){
+  document.querySelectorAll(".provpop.open").forEach(function(p){
+    p.classList.remove("open");
+    p.setAttribute("aria-hidden", "true");
+    var btn = p.parentNode.querySelector(".provbadge");
+    if(btn) btn.setAttribute("aria-expanded", "false");
+  });
+}
+// 외부 click·ESC로 popup 닫기 (global listener — 한 번만 등록)
+if(!window._provGlobalBound){
+  window._provGlobalBound = true;
+  document.addEventListener("click", function(e){
+    if(!e.target.closest(".provwrap")) closeAllProvPopups();
+  });
+  document.addEventListener("keydown", function(e){
+    if(e.key === "Escape") closeAllProvPopups();
+  });
+}
+
+function renderTable(D){
+  // Phase 1 MVP: 단일 + 하이브리드 모두 한 표에 (같은 yardstick)
+  var rows = D.allRes || D.res;
+  var h='<thead><tr><th>Technology</th><th>Time to power</th><th>Online</th>'+
+    '<th>Capex</th><th>Land</th><th>Fits land</th><th>CO₂ / yr</th><th>Score</th></tr></thead><tbody>';
+  rows.forEach(function(r){
+    h+='<tr><td class="tname"><span class="dot" style="background:'+r.t.color+'"></span>'+r.t.short+'</td>'+
+      '<td>'+Math.round(r.leadTotal)+' mo</td>'+
+      '<td>'+monthYear(r.onlineDate)+'</td>'+
+      '<td>'+fmtMoney(r.capexM)+'</td>'+
+      '<td>'+fmtAcres(r.landAcres)+'</td>'+
+      '<td>'+(r.landFit?'<span class="yes">yes</span>':'<span class="no">no</span>')+'</td>'+
+      '<td>'+fmtCO2(r.annualCO2)+'</td>'+
+      '<td>'+Math.round(r.score)+'</td></tr>';
+  });
+  h+='</tbody>';
+  $("cmp").innerHTML=h;
+}
+
+/* ============================================================
+   MAP
+   ============================================================ */
+var map, siteMarker, siteLL={lat:39.0438,lng:-77.4874}, mapLayers=[];
+var lg={}, infraData=null, needRefit=true, solarInfo=null;
+var currentRegion="PJM", currentPlace="", currentStateNote="", regionAuto=true;
+var currentLat=null, currentLng=null;  // hot zone 매칭용 — setSite에서 매번 갱신
+
+function mapFallback(){
+  map=null;
+  ["maplegend","maptools"].forEach(function(id){var e=$(id); if(e) e.style.display="none";});
+  $("map").innerHTML='<div class="mapmsg">The interactive map needs a web browser with internet — '+
+    'open this file in Chrome or Safari to see it, with real transmission, substation and pipeline '+
+    'layers. The land-footprint diagram below works everywhere, and the full analysis is unaffected.</div>';
+}
+function initMap(){
+  if(typeof L==="undefined"){ mapFallback(); return; }
+  try{
+    map=L.map("map",{scrollWheelZoom:true}).setView([39.5,-96],4);
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{
+      maxZoom:19,
+      attribution:'© OpenStreetMap contributors'
+    }).addTo(map);
+
+    var pinIcon=L.divIcon({className:"",html:
+      '<div style="width:20px;height:20px;border-radius:50% 50% 50% 0;'+
+      'background:#0f172a;border:3px solid #f59e0b;transform:rotate(-45deg);'+
+      'box-shadow:0 2px 6px rgba(0,0,0,.4)"></div>',
+      iconSize:[20,20],iconAnchor:[10,18]});
+
+    siteMarker=L.marker([siteLL.lat,siteLL.lng],{draggable:true,icon:pinIcon}).addTo(map);
+    siteMarker.on("dragend",function(){
+      var p=siteMarker.getLatLng(); setSite(p.lat,p.lng,false);   // don't refit on drag
+    });
+    map.on("click",function(e){ setSite(e.latlng.lat,e.latlng.lng,false); }); // don't refit on click
+
+    lg.trans=L.layerGroup(); lg.sub=L.layerGroup();
+    lg.plant=L.layerGroup(); lg.pipe=L.layerGroup();
+    renderLegend();
+  }catch(err){
+    mapFallback();
+  }
+}
+
+/* Move the site, then auto-detect region and load nearby infrastructure. */
+function setSite(lat,lng,refit){
+  siteLL={lat:lat,lng:lng};
+  currentLat = lat; currentLng = lng;   // hot zone 매칭 state 갱신
+  if(siteMarker) siteMarker.setLatLng([lat,lng]);
+  if(refit!==false) needRefit=true;   // default true; click/drag pass false to preserve the view
+  updateLatLng();
+  // 좌표 박스 자동 동기화 (사용자 요청 2026-05-29) — 어떤 액션이든 (preset·지명검색·맵클릭·드래그·좌표입력)
+  if($("coord")) $("coord").value = lat.toFixed(4) + ", " + lng.toFixed(4);
+  recompute();              // instant visual update
+  detectRegion(lat,lng);    // async: refine region + grid/gas defaults + addr 박스 동기화
+  fetchInfra(lat,lng);      // async: load real OSM power infrastructure
+  fetchSolar(lat,lng);      // async: site-specific solar capacity factor (NREL)
+}
+function updateLatLng(){
+  $("latlng").textContent="Site: "+siteLL.lat.toFixed(4)+", "+siteLL.lng.toFixed(4)+
+    "  ·  drag the pin to adjust";
+}
+function clearMapLayers(){
+  mapLayers.forEach(function(l){map.removeLayer(l);});
+  mapLayers=[];
+}
+var INFRA_BBOX=0.10;   // degrees around the site to search / frame (~10 km)
+
+function drawMap(D){
+  if(!map) return;                       // app preview / no Leaflet -> static message stands
+  clearMapLayers();
+  var c=[siteLL.lat,siteLL.lng];
+  var bb=L.latLngBounds([siteLL.lat-INFRA_BBOX,siteLL.lng-INFRA_BBOX],
+                        [siteLL.lat+INFRA_BBOX,siteLL.lng+INFRA_BBOX]);
+  // gas tie-in ring (user input — a distance, direction unknown)
+  if($("gasring").checked){
+    var pipe=num("pipe");
+    if(pipe>0){
+      var gr=L.circle(c,{radius:pipe*1609.34,color:"#b45309",weight:2,
+        dashArray:"4 6",fill:false});
+      gr.bindTooltip("Gas tie-in distance ≈ "+pipe+" mi (your input — direction unknown)",{sticky:true});
+      gr.addTo(map); mapLayers.push(gr); bb.extend(gr.getBounds());
+    }
+  }
+  if(needRefit){ map.fitBounds(bb,{padding:[28,28],maxZoom:14}); needRefit=false; }
+}
+function renderLegend(){
+  if(!$("maplegend")) return;
+  var rows=[
+    ['<span class="swatch" style="background:#0f172a;border:2px solid #f59e0b"></span>','Data center site'],
+    ['<span class="swatch line" style="border-top:3px solid #dc2626"></span>','Transmission line'],
+    ['<span class="swatch" style="background:#2563eb;border-radius:50%"></span>','Substation'],
+    ['<span class="swatch" style="background:#7c3aed;border-radius:50%"></span>','Power plant'],
+    ['<span class="swatch line" style="border-top:3px dashed #c2410c"></span>','Gas pipeline'],
+    ['<span class="swatch line" style="border-top:3px dashed #b45309"></span>','Gas tie-in ring']
+  ];
+  var h='<div style="font-weight:700;margin-bottom:3px">Map legend</div>';
+  rows.forEach(function(r){ h+='<div class="lg">'+r[0]+r[1]+'</div>'; });
+  $("maplegend").innerHTML=h;
+}
+
+/* ============================================================
+   REAL INFRASTRUCTURE LAYERS — OpenStreetMap via the Overpass API
+   Community-sourced data: good for US transmission & substations,
+   patchier for gas pipelines. Browser + internet only.
+   ============================================================ */
+function setLayerStatus(m){ var e=$("layerStatus"); if(e) e.textContent=m; }
+
+function fetchInfra(lat,lng){
+  if(!map) return;
+  if(typeof fetch==="undefined"){ setLayerStatus("Map layers need a browser with internet."); return; }
+  var thisId = (typeof appState !== "undefined" ? appState.currentId : null);
+  setLayerStatus("Loading nearby infrastructure…");
+  fetch("/api/infra?lat="+lat+"&lon="+lng)
+  .then(function(r){ if(!r.ok) throw new Error("HTTP "+r.status); return r.json(); })
+  .then(function(j){
+    if(thisId !== appState.currentId) return;             // stale — user switched site
+    if(j && j.error) throw new Error(j.error);
+    infraData=parseInfra((j&&j.elements)||[]); drawInfraLayers();
+  })
+  .catch(function(){
+    if(thisId !== appState.currentId) return;
+    var msg = infraData
+      ? "Layer fetch failed — showing the previous successful result for this area."
+      : "Couldn't load infrastructure layers from the server.";
+    var el = $("layerStatus");
+    if(el){
+      el.innerHTML = escapeHtml(msg) +
+        ' <a href="#" id="retryInfra" style="color:#dc2626;font-weight:600">Retry ↻</a>';
+      var r = $("retryInfra");
+      if(r) r.addEventListener("click", function(e){
+        e.preventDefault();
+        fetchInfra(lat, lng);
+      });
+    }
+  });
+}
+/* Site-specific solar capacity factor from NREL PVWatts (via the backend). */
+function fetchSolar(lat,lng){
+  if(typeof fetch==="undefined") return;
+  var thisId = (typeof appState !== "undefined" ? appState.currentId : null);
+  fetch("/api/solar?lat="+lat+"&lon="+lng)
+  .then(function(r){ return r.json(); })
+  .then(function(d){
+    if(thisId !== appState.currentId) return;             // stale — user switched site
+    if(d && typeof d.capacityFactor==="number" && d.capacityFactor>0){
+      solarInfo={cf:d.capacityFactor, src:d.source||"NREL PVWatts"};
+      var el=$("a_solarCF"); if(el) el.value=d.capacityFactor.toFixed(3);
+      renderRegionContext(false);
+      recompute();
+    }
+  })
+  .catch(function(){});
+}
+function parseInfra(els){
+  var out={trans:[],sub:[],plant:[],pipe:[]};
+  els.forEach(function(el){
+    var t=el.tags||{};
+    if(el.type==="way" && el.geometry && el.geometry.length){
+      var pts=el.geometry.map(function(g){return [g.lat,g.lon];});
+      if(t.power==="line") out.trans.push({pts:pts,tags:t});
+      else if(t.man_made==="pipeline") out.pipe.push({pts:pts,tags:t});
+      else if(t.power==="substation") out.sub.push({ll:centroid(pts),tags:t});
+      else if(t.power==="plant"||t.power==="generator") out.plant.push({ll:centroid(pts),tags:t});
+    }else if(el.type==="node" && isFinite(el.lat)){
+      if(t.power==="substation") out.sub.push({ll:[el.lat,el.lon],tags:t});
+      else if(t.power==="plant"||t.power==="generator") out.plant.push({ll:[el.lat,el.lon],tags:t});
+    }
+  });
+  return out;
+}
+function centroid(pts){
+  var la=0,lo=0; pts.forEach(function(p){la+=p[0];lo+=p[1];});
+  return [la/pts.length,lo/pts.length];
+}
+function voltTip(t){
+  if(!t.voltage) return "";
+  var v=parseInt((""+t.voltage).split(";")[0],10);
+  return isFinite(v) ? " · "+(v>=1000?Math.round(v/1000)+" kV":v+" V") : "";
+}
+function drawInfraLayers(){
+  if(!map||!infraData) return;
+  ["trans","sub","plant","pipe"].forEach(function(k){ lg[k].clearLayers(); });
+  infraData.trans.forEach(function(o){
+    L.polyline(o.pts,{color:"#dc2626",weight:2,opacity:.85})
+      .bindTooltip("Transmission line"+voltTip(o.tags),{sticky:true}).addTo(lg.trans);
+  });
+  infraData.pipe.forEach(function(o){
+    L.polyline(o.pts,{color:"#c2410c",weight:2.5,opacity:.85,dashArray:"5 5"})
+      .bindTooltip("Gas pipeline"+(o.tags.name?" · "+o.tags.name:
+        (o.tags.operator?" · "+o.tags.operator:"")),{sticky:true}).addTo(lg.pipe);
+  });
+  infraData.sub.forEach(function(o){
+    L.circleMarker(o.ll,{radius:5,color:"#1e3a8a",weight:1.5,fillColor:"#2563eb",fillOpacity:.9})
+      .bindTooltip((o.tags.name||"Substation")+voltTip(o.tags),{sticky:true}).addTo(lg.sub);
+  });
+  infraData.plant.forEach(function(o){
+    var src=o.tags["plant:source"]||o.tags["generator:source"]||o.tags.source||"";
+    L.circleMarker(o.ll,{radius:6,color:"#5b21b6",weight:1.5,fillColor:"#7c3aed",fillOpacity:.9})
+      .bindTooltip((o.tags.name||"Power plant")+(src?" · "+src:""),{sticky:true}).addTo(lg.plant);
+  });
+  applyLayerVisibility();
+  var n=infraData, tot=n.trans.length+n.sub.length+n.plant.length+n.pipe.length;
+  setLayerStatus(tot
+    ? n.trans.length+" lines · "+n.sub.length+" substations · "+n.plant.length+" plants"+
+      (n.pipe.length?" · "+n.pipe.length+" gas lines":"")
+    : "No OSM-mapped infrastructure within ~10 km of this point.");
+}
+function applyLayerVisibility(){
+  if(!map) return;
+  [["lyrTrans","trans"],["lyrSub","sub"],["lyrPlant","plant"],["lyrPipe","pipe"]].forEach(function(p){
+    var box=$(p[0]), grp=lg[p[1]];
+    if(!box||!grp) return;
+    if(box.checked){ if(!map.hasLayer(grp)) grp.addTo(map); }
+    else if(map.hasLayer(grp)) map.removeLayer(grp);
+  });
+}
+
+/* ============================================================
+   OFFLINE FOOTPRINT DIAGRAM — dependency-free SVG fallback,
+   used when the interactive Leaflet map cannot load
+   ============================================================ */
+function svgWrap(inner){
+  return '<svg viewBox="0 0 600 560" width="100%" height="100%" '+
+    'preserveAspectRatio="xMidYMid meet" '+
+    'style="background:#f8fafc;border-radius:12px;font-family:inherit">'+inner+'</svg>';
+}
+function niceDistance(m){
+  var mi=m/1609.34, nice=[0.05,0.1,0.25,0.5,1,2,5,10,25,50,100,200], pick=nice[0];
+  for(var i=0;i<nice.length;i++){ if(nice[i]<=mi) pick=nice[i]; }
+  return pick*1609.34;
+}
+function fmtDist(m){
+  var mi=m/1609.34;
+  return (mi<1?mi.toFixed(2):(""+Math.round(mi*10)/10))+" mi";
+}
+function drawFootprintSVG(D){
+  var items=[];
+  if(D.land>0) items.push({label:"Available land — "+fmtAcres(D.land),
+    color:"#0d9488",metres:acresToRadius(D.land),kind:"land"});
+  D.res.forEach(function(r){
+    items.push({label:r.t.short+" — "+fmtAcres(r.landAcres),
+      color:r.t.color,metres:acresToRadius(r.landAcres),kind:"fp"});
+  });
+  var cap='<text x="300" y="24" text-anchor="middle" fill="#475569" font-size="12">'+
+    'Each ring = the land that option’s plant occupies, to scale</text>';
+  if(items.length<2){
+    $("fpDiagram").innerHTML=svgWrap(cap+'<text x="300" y="260" text-anchor="middle" '+
+      'fill="#94a3b8" font-size="14">Enter an IT load and available land</text>');
+    $("fpSide").innerHTML=""; return;
+  }
+  var maxM=Math.max.apply(null,items.map(function(x){return x.metres;}));
+  var cx=300, cy=235, R=195, scale=R/maxM, inner=cap;
+  items.slice().sort(function(a,b){return b.metres-a.metres;}).forEach(function(it){
+    var pr=Math.max(it.metres*scale,1.3);
+    var dash=(it.kind==="land")?' stroke-dasharray="7 5"':'';
+    var fo=(it.kind==="fp")?0.16:0.06;
+    inner+='<circle cx="'+cx+'" cy="'+cy+'" r="'+pr.toFixed(1)+'" fill="'+it.color+'" '+
+      'fill-opacity="'+fo+'" stroke="'+it.color+'" stroke-width="2"'+dash+'>'+
+      '<title>'+it.label+'</title></circle>';
+  });
+  inner+='<circle cx="'+cx+'" cy="'+cy+'" r="5" fill="#0f172a" stroke="#f59e0b" stroke-width="2.5"/>';
+  var barM=Math.min(niceDistance(maxM/3),maxM), barPx=barM*scale, bx=44, by=455;
+  inner+='<line x1="'+bx+'" y1="'+by+'" x2="'+(bx+barPx)+'" y2="'+by+'" stroke="#475569" stroke-width="2"/>'+
+    '<line x1="'+bx+'" y1="'+(by-4)+'" x2="'+bx+'" y2="'+(by+4)+'" stroke="#475569" stroke-width="2"/>'+
+    '<line x1="'+(bx+barPx)+'" y1="'+(by-4)+'" x2="'+(bx+barPx)+'" y2="'+(by+4)+'" stroke="#475569" stroke-width="2"/>'+
+    '<text x="'+bx+'" y="'+(by-9)+'" fill="#475569" font-size="12">'+fmtDist(barM)+' radius</text>';
+  var ly=482;
+  items.forEach(function(it,i){
+    var lx=44+(i%2)*278, yy=ly+Math.floor(i/2)*21;
+    inner+='<rect x="'+lx+'" y="'+(yy-10)+'" width="13" height="13" rx="2" fill="'+it.color+'" '+
+      'fill-opacity="'+(it.kind==="fp"?0.5:0.2)+'" stroke="'+it.color+'" stroke-width="1.5"/>'+
+      '<text x="'+(lx+20)+'" y="'+yy+'" fill="#334155" font-size="12">'+it.label+'</text>';
+  });
+  $("fpDiagram").innerHTML=svgWrap(inner);
+  var solar=D.res[3];
+  var small=D.res.slice().sort(function(a,b){return a.landAcres-b.landAcres;})[0];
+  var ratio=small.landAcres>0?Math.round(solar.landAcres/small.landAcres):0;
+  $("fpSide").innerHTML=
+    '<p><b>Why a separate panel.</b> On a geographic map these footprints are either an invisible '+
+    'dot or they swallow the screen — so the area comparison lives here, at one controlled scale.</p>'+
+    '<p>The gas-fired plants are tiny: '+small.t.short+' is smallest at '+fmtAcres(small.landAcres)+
+    ', a corner of the site. Solar + BESS needs '+fmtAcres(solar.landAcres)+
+    (ratio>1?' — about '+ratio+'× the smallest option':'')+', because it is sized to firm a 24/7 load.</p>'+
+    '<p style="color:#64748b;font-size:12px">Dashed ring = your available land ('+fmtAcres(D.land)+'). '+
+    'An option whose ring spills outside it does not fit.</p>';
+}
+
+/* ============================================================
+   GEOCODING (Nominatim) — optional, fails gracefully
+   ============================================================ */
+/* 좌표 박스 값을 parse — valid한 lat,lng면 [lat,lng], 아니면 null. */
+function parseCoordInput(){
+  var raw = $("coord").value.trim();
+  if(!raw) return null;
+  var parts = raw.split(/[,\s]+/).filter(function(x){return x.length;});
+  if(parts.length < 2) return null;
+  var lat = parseFloat(parts[0]), lng = parseFloat(parts[1]);
+  if(!isFinite(lat) || !isFinite(lng)) return null;
+  if(lat < -90 || lat > 90 || lng < -180 || lng > 180) return null;
+  return [lat, lng];
+}
+
+function geocode(){
+  var q=$("addr").value.trim();
+  // 충돌 처리 (사용자 요청 2026-05-29): 좌표 박스에 *유효한 좌표*가 있으면 좌표 우선
+  // — Find 버튼 눌렀어도 coord가 있으면 그게 진실로 간주
+  var coordParsed = parseCoordInput();
+  if(coordParsed){
+    $("latlng").textContent = "지명·좌표 둘 다 입력 — 좌표 우선 적용";
+    gotoCoord();
+    return;
+  }
+  if(!q) return;
+  if(typeof fetch==="undefined"){
+    $("latlng").textContent="Address search needs internet — paste coordinates or pick a hub instead.";
+    return;
+  }
+  var btn=$("addrBtn"); btn.textContent="…";
+  fetch("/api/geo?q="+encodeURIComponent(q))
+    .then(function(r){return r.json();})
+    .then(function(d){
+      btn.textContent="Find";
+      if(d&&d.length){
+        setSite(parseFloat(d[0].lat),parseFloat(d[0].lon));
+        // setSite 안에서 coord 박스가 자동 동기화됨
+      }
+      else $("latlng").textContent="No match found — paste coordinates or click the map instead.";
+    })
+    .catch(function(){
+      btn.textContent="Find";
+      $("latlng").textContent="Address search unavailable — paste coordinates or click the map instead.";
+    });
+}
+
+/* Parse a pasted "lat, lng" string. */
+function gotoCoord(){
+  var parsed = parseCoordInput();
+  if(parsed){
+    setSite(parsed[0], parsed[1]);
+    // setSite + detectRegion이 addr 박스를 reverse geocode 결과로 자동 채움
+  }else{
+    $("latlng").textContent="좌표 형식 인식 실패 — 예: 41.3947, -87.9486";
+  }
+}
+
+/* Reverse-geocode the site -> US state -> grid region, then auto-fill defaults. */
+function detectRegion(lat,lng){
+  var coordLabel="Site at "+lat.toFixed(4)+", "+lng.toFixed(4);
+  var thisId = (typeof appState !== "undefined" ? appState.currentId : null);
+  if(typeof fetch==="undefined"){
+    currentPlace=coordLabel; regionAuto=false; renderRegionContext(true); recompute(); return;
+  }
+  $("regionContext").innerHTML='<div class="rk">Regional context</div>'+
+    '<p style="margin:6px 0 0;color:#64748b">Detecting grid region for this location…</p>';
+  fetch("/api/geo?lat="+lat+"&lon="+lng)
+    .then(function(r){return r.json();})
+    .then(function(d){
+      if(thisId !== appState.currentId) return;          // stale — user switched site
+      var a=(d&&d.address)||{};
+      if((a.country_code||"").toLowerCase()!=="us"){
+        currentPlace=d&&d.display_name?d.display_name.split(",").slice(0,2).join(",").trim():"";
+        // 지명 박스 자동 동기화 — non-US도 reverse 결과로 채움
+        if($("addr") && currentPlace) $("addr").value = currentPlace;
+        currentStateNote=""; regionAuto=false;
+        renderRegionContext(true); recompute(); return;
+      }
+      var state=(a.state||"").toLowerCase();
+      var county=a.county||a.city||a.town||a.municipality||"";
+      var key=regionFromState(state,lat,lng);
+      currentPlace=(county?county+", ":"")+(a.state||"United States");
+      // 지명 박스 자동 동기화 (사용자 요청 2026-05-29) — 좌표 입력·맵 클릭·드래그 시 자동 채움
+      if($("addr")) $("addr").value = currentPlace;
+      currentStateNote=STATE_NOTES[state]||"";
+      if(key){ regionAuto=true; applyRegion(key,true); }
+      else { regionAuto=false; renderRegionContext(true); recompute(); }
+    })
+    .catch(function(){
+      if(thisId !== appState.currentId) return;
+      currentPlace=coordLabel; regionAuto=false; renderRegionContext(true); recompute();
+    });
+}
+function regionFromState(state,lat,lng){
+  if(state==="illinois") return lat>=40.7?"PJM":"MISO"; // northern IL (ComEd) is PJM
+  return STATE_REGION[state]||null;
+}
+
+/* ============================================================
+   DATA-CENTER HOT ZONE OVERLAY (sub-region uplift)
+   ----------------------------------------------------------------
+   ISO mapping(PJM/ERCOT/...)만으로는 NoVA vs Columbus 같은 차이를
+   못 잡는다. Verified hot zone 5곳에 grid wait / gas distance / capex
+   uplift를 매핑. 매칭되면 ISO baseline에 uplift 곱/덧셈.
+   출처는 data/regions/data-center-hot-zones.json (full provenance).
+   ============================================================ */
+var HOT_ZONES = [
+  { id:"nova-loudoun-fairfax", name:"Northern Virginia (Loudoun/Fairfax/PWC)",
+    short:"NoVA", iso:"PJM", utility:"Dominion Energy",
+    lat:39.0, lng:-77.5, radiusKm:35,
+    gridWaitMul:1.6, gasMilesAdd:4, capexMul:1.10,
+    note:"Dominion 4,000 MW 데이터센터 부하 vs 2,100 MW 처리 가능 (2028). PJM queue 최대 15년. *Grid 의존 가장 불리한 시장 — BTM이 경쟁우위가 아닌 필수*."
+  },
+  { id:"columbus-franklin-licking", name:"Columbus Ohio (Franklin/Licking/Delaware)",
+    short:"Columbus OH", iso:"PJM", utility:"AEP Ohio",
+    lat:40.0, lng:-82.9, radiusKm:50,
+    gridWaitMul:1.1, gasMilesAdd:-2, capexMul:1.0,
+    note:"AEP Ohio 데이터센터 pipeline 30 GW → 13 GW (2025-07 PUCO tariff 도입). Marcellus·Utica 가스 풍부, *BTM에 가장 우호*. Meta Socrates + Wartsila 282 MW 거래 검증 사례."
+  },
+  { id:"silicon-valley-santa-clara", name:"Silicon Valley (Santa Clara/San Jose)",
+    short:"Silicon Valley", iso:"CAISO", utility:"SVP + PG&E",
+    lat:37.36, lng:-121.95, radiusKm:25,
+    gridWaitMul:1.3, gasMilesAdd:0, capexMul:1.25,
+    note:"California 환경 규제로 *gas turbine·reciprocating 사실상 불가*. Bloom SOFC가 default. FC NEM expired end-2023 — 신규 export 인센티브 없음.",
+    techHardNo:["turbine","recip"]
+  },
+  { id:"dfw-dallas-tarrant", name:"Dallas-Fort Worth (Dallas/Tarrant/Collin)",
+    short:"DFW", iso:"ERCOT", utility:"Oncor + AEP Texas",
+    lat:32.78, lng:-96.80, radiusKm:50,
+    gridWaitMul:0.7, gasMilesAdd:-2, capexMul:0.95,
+    note:"ERCOT *energy-only* + 가스 매우 풍부 (Permian/Eagle Ford/Haynesville). 노조 약함. *BTM 가장 우호 (Columbus 다음)*. 2021 winter storm으로 hyperscaler grid 회피 강화."
+  },
+  { id:"phoenix-maricopa", name:"Phoenix metro (Maricopa)",
+    short:"Phoenix", iso:"WALC", utility:"APS + SRP",
+    lat:33.5, lng:-112.0, radiusKm:45,
+    gridWaitMul:1.0, gasMilesAdd:2, capexMul:1.05,
+    note:"Arizona 솔라 자원 강함 (GHI 1,850 kWh/m²/yr). *Solar+BESS이 매력적인 유일한 hot zone*. Microsoft·Google·Apple active. 가스 import 의존 단점."
+  },
+  /* ===== Round 2 (2026-05-29 추가) ===== */
+  { id:"atlanta-south-douglas-coweta", name:"Atlanta South (Fulton·Douglas·Coweta)",
+    short:"Atlanta", iso:"Southeast (SOCO)", utility:"Georgia Power",
+    lat:33.49, lng:-84.75, radiusKm:50,
+    gridWaitMul:1.4, gasMilesAdd:-2, capexMul:0.95,
+    note:"*미국 #2 데이터센터 시장* (NoVA 다음). GA Power IT load 1.7→19.7 GW (4년 11.6x). 2025-12 GA PSC가 10 GW 신규 capacity 승인 (5 gas plants). South Atlanta 9.1 GW planned. Coweta County Project Sail 829-acre Prologis/Atlas."
+  },
+  { id:"reno-tahoe-storey", name:"Reno-Tahoe (Storey / TRIC)",
+    short:"Reno-Tahoe", iso:"WECC (NV Energy)", utility:"NV Energy",
+    lat:39.55, lng:-119.40, radiusKm:30,
+    gridWaitMul:1.1, gasMilesAdd:2, capexMul:1.0,
+    note:"*세계 5위 신흥 시장* (Cushman & Wakefield 2025). Switch Citadel 2,000 acres (Tahoe Reno 1 = 세계 최대 콜로 1.3M sqft). Apple·Google·Microsoft·Switch·Vantage 모두 active. *물 부족*이 cooling 제약."
+  },
+  { id:"hillsboro-silicon-forest", name:"Hillsboro Oregon (Silicon Forest)",
+    short:"Hillsboro OR", iso:"WECC (PGE+BPA)", utility:"Portland General Electric",
+    lat:45.52, lng:-122.99, radiusKm:25,
+    gridWaitMul:0.8, gasMilesAdd:5, capexMul:1.10,
+    note:"*Vacancy 0.2% — 미국 최저* (2025 H1). AWS 62 sites · Meta 10. PGE-Gridcare AI software로 *interconnection 가속* (80 MW pilot → 2029 400 MW). BPA hydro carbon-free 우위. Gas BTM은 Oregon DEQ permit 어려움. 2025 POWER Act (HB 3546)."
+  },
+  { id:"chicago-comed-ameren", name:"Chicago metro (ComEd PJM + Ameren MISO)",
+    short:"Chicago", iso:"PJM/MISO split", utility:"ComEd (북) / Ameren (남)",
+    lat:41.85, lng:-87.65, radiusKm:60,
+    gridWaitMul:1.5, gasMilesAdd:0, capexMul:1.05,
+    note:"ComEd *75+ apps / 28 GW backlog* (NoVA 4,000 MW의 7배). Joliet 795-acre IL 최대 데이터센터 승인. *ComEd shortfall 2029, Ameren 2031*. Midwest 가스 풍부. IL = 미국 #1 원전 주 (11 reactors) — 원전 PPA 옵션."
+  },
+  { id:"quincy-wa-grant-pud", name:"Quincy Washington (Grant County PUD)",
+    short:"Quincy WA", iso:"WECC (BPA)", utility:"Grant County PUD (hydro)",
+    lat:47.23, lng:-119.85, radiusKm:20,
+    gridWaitMul:1.3, gasMilesAdd:8, capexMul:0.85,
+    note:"*유일하게 BTM 불필요* — Wanapum + Priest Rapids dams 2,000+ MW hydro · 단가 *3¢/kWh* (미국 최저) · 100% carbon-free. Microsoft 21 buildings · Sabey generators 연 8시간만. 단 *2025 capacity maxed out* — 신규 wait 시작.",
+    techHardNo:["turbine","recip"]
+  }
+];
+
+var currentHotZone = null;  // 매칭된 hot zone (없으면 null)
+
+/* Great-circle distance (km) — Haversine */
+function haversineKm(lat1,lng1,lat2,lng2){
+  var R=6371, toRad=function(d){return d*Math.PI/180;};
+  var dLat=toRad(lat2-lat1), dLng=toRad(lng2-lng1);
+  var a=Math.sin(dLat/2)*Math.sin(dLat/2) +
+    Math.cos(toRad(lat1))*Math.cos(toRad(lat2))*Math.sin(dLng/2)*Math.sin(dLng/2);
+  return 2*R*Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+}
+
+/* Find the closest hot zone within its radius. Returns null if none match. */
+function matchHotZone(lat,lng){
+  if(typeof lat !== "number" || typeof lng !== "number") return null;
+  var best=null, bestD=Infinity;
+  HOT_ZONES.forEach(function(z){
+    var d=haversineKm(lat,lng,z.lat,z.lng);
+    if(d <= z.radiusKm && d < bestD){ best=z; bestD=d; }
+  });
+  return best;
+}
+
+/* Apply a region: set the dropdown, auto-fill grid/gas inputs, render context.
+   2026-05-29 update: hot zone 매칭 시 uplift factor를 default에 적용. */
+function applyRegion(key,fillNumbers){
+  currentRegion=key;
+  $("region").value=key;
+  // Hot zone 매칭은 현재 currentLat/currentLng이 set된 경우에만
+  var zone = (typeof currentLat==="number" && typeof currentLng==="number")
+    ? matchHotZone(currentLat, currentLng) : null;
+  currentHotZone = zone;
+  if(fillNumbers){
+    var baseWait = REGIONS[key].gridWait;
+    var baseGas  = REGIONS[key].gasMiles;
+    if(zone){
+      $("gridwait").value = Math.round(baseWait * zone.gridWaitMul);
+      $("pipe").value     = Math.max(0, baseGas + zone.gasMilesAdd);
+    } else {
+      $("gridwait").value = baseWait;
+      $("pipe").value     = baseGas;
+    }
+  }
+  renderRegionContext(false);
+  recompute();
+}
+function renderRegionContext(failed){
+  var box=$("regionContext");
+  if(failed){
+    box.innerHTML='<div class="rk">Regional context</div>'+
+      '<h3>'+(currentPlace||"Region not auto-detected")+'</h3>'+
+      '<p>Could not map this location to a US grid region automatically — this tool covers the '+
+      'US only. Pick a region from the dropdown on the left and the grid-queue and gas defaults '+
+      'will auto-fill.</p>';
+    return;
+  }
+  var R=REGIONS[currentRegion];
+  var z=currentHotZone;  // 매칭된 hot zone (있으면 sub-region uplift 적용됨)
+  var h='<div class="rk">Regional context'+
+    (regionAuto?" — auto-detected from coordinates":" — selected manually")+'</div>';
+  h+='<h3>'+(currentPlace||"Selected region")+'</h3>';
+  h+='<p><b>'+R.label+'</b>'+ (z?' · <b style="color:#7c3aed">'+z.short+' hot zone</b>':'') +'</p>';
+  var displayWait = z ? Math.round(R.gridWait * z.gridWaitMul) : R.gridWait;
+  var displayGas  = z ? Math.max(0, R.gasMiles + z.gasMilesAdd) : R.gasMiles;
+  h+='<div class="rgrid">'+
+     rcell("Grid operator", (z?z.utility+' ('+z.iso+')' : R.iso))+
+     rcell((z?"Sub-region grid queue":"Typical grid queue"), displayWait+" months"+
+           (z && z.gridWaitMul!==1 ? ' <span style="color:#7c3aed;font-size:0.85em">('+(z.gridWaitMul>1?"+":"")+
+           Math.round((z.gridWaitMul-1)*100)+"% vs "+R.iso+" baseline)</span>" : ""))+
+     rcell("On-site gas access", R.gasRating + (z && z.gasMilesAdd ? ' <span style="color:#7c3aed;font-size:0.85em">('+(z.gasMilesAdd>0?"+":"")+z.gasMilesAdd+" mi vs baseline)</span>" : ""))+
+     '</div>';
+  h+='<p>'+R.note+'</p>';
+  if(z){
+    h+='<div style="background:#f3e8ff;border-left:3px solid #7c3aed;padding:0.7rem 0.9rem;margin:0.7rem 0;border-radius:4px">'+
+       '<div style="font-weight:700;color:#581c87;margin-bottom:0.3rem">Sub-region overlay: '+z.name+'</div>'+
+       '<p style="margin:0">'+z.note+'</p>'+
+       (z.techHardNo && z.techHardNo.length ? '<p style="margin:0.5rem 0 0">⚠ <b>이 hot zone에서 비추천:</b> '+
+         z.techHardNo.map(function(k){return TECH[k]?TECH[k].short:k;}).join(', ')+'</p>':'')+
+       '<div style="font-size:0.85em;color:#581c87;margin-top:0.4rem">Capex 배수 '+z.capexMul+'× · 데이터 출처: <code>data/regions/data-center-hot-zones.json</code></div>'+
+       '</div>';
+  }
+  h+='<p><b>Gas:</b> '+R.gas+'</p>';
+  if(currentStateNote) h+='<p><b>Local note:</b> '+currentStateNote+'</p>';
+  h+='<div class="src">Coarse ISO-level planning estimate'+(z?', refined by verified sub-region overlay':'')+
+     '. The grid-queue wait ('+displayWait+' mo) and gas tie-in distance ('+displayGas+' mi) have been '+
+     'auto-filled into the inputs above — replace them with real figures from the serving utility and '+
+     'pipeline operator before relying on the result.</div>';
+  if(solarInfo) h+='<div class="src" style="border-top:1px solid var(--line);margin-top:6px;'+
+    'padding-top:6px">Site solar capacity factor: <b>'+solarInfo.cf.toFixed(2)+'</b> ('+solarInfo.src+
+    ') — this has replaced the generic 0.24 default in the Solar + BESS estimate.</div>';
+  box.innerHTML=h;
+}
+function rcell(l,n){return '<div class="rcell"><div class="l">'+l+'</div><div class="n">'+n+'</div></div>';}
+function buildRegionSelect(){
+  var h="";
+  REGION_ORDER.forEach(function(k){
+    h+='<option value="'+k+'">'+REGIONS[k].label+'</option>';
+  });
+  $("region").innerHTML=h;
+}
+
+/* ============================================================
+   PRESETS + METHOD TEXT
+   ============================================================ */
+function buildPresets(){
+  var box=$("presets");
+  PRESETS.forEach(function(p){
+    var b=document.createElement("button");
+    b.type="button"; b.className="chip"; b.textContent=p.n;
+    b.title="Set the site to "+p.n+" and auto-detect its grid region";
+    b.addEventListener("click",function(){ setSite(p.lat,p.lng); });
+    box.appendChild(b);
+  });
+}
+function buildMethod(){
+  $("methodBody").innerHTML=
+    '<p><b>The idea.</b> An AI data center\'s real constraint is how fast it can secure electricity. '+
+    'Generation is not the scarce thing — grid <i>delivery</i> is, because interconnection queues run '+
+    '3–7 years in many US markets. When the queue is the bottleneck, the fastest electrons come from '+
+    'generation built on the site itself, behind the meter. This tool ranks four on-site options on '+
+    'speed, cost, land, and carbon.</p>'+
+    '<p><b>How the math works.</b> Required capacity = IT load × PUE × (1 + reserve margin). '+
+    'Gas-fired options add a pipeline-lateral penalty in time and cost when the tie-in is far. '+
+    'Solar is deliberately sized to <i>firm</i> a round-the-clock load — nameplate = average load ÷ '+
+    'capacity factor, plus battery storage — which is why its land and capex come out large. Each '+
+    'option is scored relative to the others (fastest, cheapest, smallest, cleanest each earn 100 on '+
+    'that metric); the weighting depends on the priority you choose. Land is treated as a hard '+
+    'constraint — an option that does not fit cannot be recommended.</p>'+
+    '<p><b>Regional auto-context.</b> When you set a location, the tool reverse-geocodes it to a US '+
+    'state, maps that state to a grid region (PJM, ERCOT, MISO, CAISO, SPP, ISO-NE, NYISO, the '+
+    'Southeast, or the non-RTO West), and auto-fills a region-typical grid-queue wait and gas tie-in '+
+    'distance. Those defaults are coarse ISO-level estimates — a fast starting point, not measurements. '+
+    'They drop straight into the editable inputs so you can replace them the moment you have real '+
+    'utility and pipeline figures.</p>'+
+    '<p><b>The map &amp; the footprint panel.</b> In a browser, the map shows real power infrastructure '+
+    'near the site — transmission lines, substations, power plants and gas pipelines — pulled live '+
+    'from OpenStreetMap via the Overpass API. That is community-mapped data: solid for US transmission '+
+    'and substations, patchier for gas pipelines, and not survey-grade — an absent feature does not '+
+    'prove nothing is there. The land footprints live in their own to-scale panel instead of on the '+
+    'map, because area comparison and geography cannot share one map legibly.</p>'+
+    '<p><b>What this is NOT.</b> It is a planning estimator, not an engineering study and not a vendor '+
+    'quote. The defaults are mid-range US figures for 2025–2026 and they move constantly — turbine '+
+    'backlogs, capex, and queue times in particular. <b>Treat every output as ±40% and verify with '+
+    'OEMs, EPCs, and your utility before committing.</b></p>'+
+    '<p><b>What it genuinely does not know.</b> It has no licensed capacity data — available transfer '+
+    'capacity, a substation’s spare headroom, a pipeline’s deliverable volume and pressure — nor '+
+    'parcel boundaries, zoning, air-permit limits, water access, or seismic and flood constraints. '+
+    'Available land and IT load are <i>your</i> inputs; the gas distance and grid-queue wait are '+
+    '<i>regional estimates</i>, not site measurements. The region mapping is coarse — a few states '+
+    '(Illinois most notably) are split across two grid operators, and here Illinois is divided by '+
+    'latitude only. It also assumes a single technology per scenario — in practice most fast-tracked '+
+    'sites use a hybrid (fuel cells or turbines for firm power, solar to trim fuel cost and emissions) '+
+    'and bridge with temporary rental gensets. Emissions shown are operational only and ignore '+
+    'upstream methane and embodied carbon.</p>'+
+
+    '<p><b>Data provenance (2026-05-29 권위 데이터 갱신).</b> 기본 capex·lead time 수치는 합성 추정이 '+
+    '아닌 *실측 또는 권위 공시* 기반:</p>'+
+    '<ul style="margin:0.5rem 0 0.5rem 1.5rem; line-height:1.55">'+
+    '<li><b>가스터빈 capex $1,500/kW</b> — GridLab/EFG/Halcyon 2025-09 보고서 ('+
+       '<a href="https://gridlab.org/wp-content/uploads/2025/09/GridLab_Gas-Turbine-Costs-Report-1.pdf" target="_blank" rel="noopener">PDF</a>'+
+       '), state PSC IRP/CPCN filings 기반 simple cycle CT 2025-2029 median. '+
+       'NREL ATB·EIA AEO 같은 공식 데이터는 *현재 시장 가격을 26-52% 과소평가* — 이 값을 권위 baseline으로 채택.</li>'+
+    '<li><b>가스 reciprocating capex $1,354/kW</b> — EIA Construction Cost Data 2023 ('+
+       '<a href="https://www.eia.gov/electricity/generatorcosts/" target="_blank" rel="noopener">link</a>'+
+       '), Internal Combustion Engine 평균. 다중 OEM 시장이라 EIA가 공시 정상 수행.</li>'+
+    '<li><b>Fuel cell capex $3,800/kW</b> — Bloom 10-K product gross margin + DOE H2/FC 목표 기반 *합성 추정*. '+
+       'EIA는 Bloom 독점 구조로 공시 억제, NREL ATB는 SOFC 미추적 — *권위 단일 수치 부재가 구조적*. ±30% 범위로 취급.</li>'+
+    '<li><b>Lead time</b> — Bloom 10-K FY2024 인용 ("less than twelve months"), Wartsila Ohio 282 MW Q2\'25→2026-2027 인도 (18-21mo), '+
+       'GE Vernova FY2024 aero orders 44/sales 27 (공급 제약 신호). Meta Socrates 200 MW BTM는 17개월 baseline.</li>'+
+    '<li><b>미국 fuel cell fleet 363.8 MW</b> — EIA-860 2024 ('+
+       '<a href="https://www.eia.gov/electricity/data/eia860/" target="_blank" rel="noopener">EIA-860</a>'+
+       ') ZIP 직접 다운로드 + Prime Mover=\'FC\' 필터. 186 generators. CA 42% + CT 28% + NY 16% = 86.5%.</li>'+
+    '<li><b>미국 가스터빈(GT) fleet 158.6 GW</b> — EIA-860 2024 직접 추출. 2,333 units (디젤 460 제외). '+
+       '*Aero <50 MW (데이터센터 BTM sweet spot): 21.5 GW (13.6%)*. Mid-frame 50-150 MW: 53.7%. Top operator TVA·Duke·FPL·Dominion = 모두 utility.</li>'+
+    '<li><b>미국 가스 reciprocating(IC) fleet 7.9 GW</b> — *디젤 3,330 units 제외 가스만*. *Wartsila-class 15-25 MW: 2.0 GW (25.6%)*. 2024 신규 BOL 457 MW = 2021-2023 평균의 *2.7x* — 데이터센터 보급 가속 신호.</li>'+
+    '<li><b>데이터센터 BTM은 *새 시장*</b> — 미국 가스 fleet 166 GW 중 BTM 적합 사이즈 (Aero GT + Wartsila-class IC + Fuel Cell) ≈ *24 GW = US fleet 2%*. Williams Companies·Meta·Crusoe 같은 BTM developer는 *EIA-860 2024에 아직 미반영* (2025-2027 BOL이라 다음 release에서 변화 예상).</li>'+
+    '<li><b>비교 옵션: off-site nuclear PPA</b> *(우리 도구 범위 밖)* — 3개 verified GW급 deals: Microsoft TMI/CCEC 835 MW + Vistra Comanche Peak 1,200 MW + Talen-AWS 1,920 MW. *모두 grid-connected FTM PPA* — BTM nuclear는 FERC 2024-11 Talen 거부 후 *사실상 막힘*. 24/7 carbon-free firm 우선순위 + GW급 부하라면 본 도구의 4개 시나리오 외에 *원전 PPA*도 비교 가치.</li>'+
+    '<li><b>검증된 케이스 스터디</b> — Meta Socrates South 200 MW BTM (Williams Companies + Sidecat/Meta, Ohio New Albany, OPSB 2025-06-09 승인): '+
+       'Solar Turbines Titan 250 × 3 + PGM 130 × 9 + Siemens SGT400 × 3 + Cat 3520 × 15 = 4 OEM mix, 17개월 완공. *우리 도구의 사용 사례 그 자체*.</li>'+
+    '</ul>'+
+    '<p style="margin-top:0.5rem">전체 데이터 출처 + 신뢰도 등급 + 후속 작업 목록은 repo의 '+
+       '<code>data/provenance.md</code>와 발전원별 JSON (<code>data/fuelcells/</code>, <code>data/gasturbines/</code>, '+
+       '<code>data/deployment-cases/</code>)에 한 줄도 빠짐없이 기록되어 있음. '+
+       '🟢 정부공공 / 🟡 기업 자체발표 / 🔴 유료·재배포 금지로 분류해 *법적 risk pre-screening*까지 완료.</p>'+
+    '<p style="margin-top:0.8rem;padding:10px 14px;background:#f1f5f9;border-left:3px solid var(--amber);border-radius:4px">'+
+       '📊 <b><a href="data-sources.html" style="color:#92400e">데이터 자산 dashboard 보기 →</a></b> &nbsp;'+
+       '<span style="color:#475569;font-size:0.92em">우리 도구 뒤의 18+ verified source · 5 deployment cases · 10 hot zones · 5 구조적 발견을 한 페이지에서 스캔.</span></p>';
+}
+
+/* ============================================================
+   APP STATE — multi-site portfolio backed by localStorage
+   ============================================================ */
+var STORAGE_KEY = "opi_sites_v1";
+var appState = { currentId: null, sites: {} };
+
+function escapeHtml(s){
+  return String(s == null ? "" : s).replace(/[&<>"']/g, function(c){
+    return ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"})[c];
+  });
+}
+
+function newSiteId(){ return "s_" + Math.random().toString(36).slice(2,10); }
+
+function makeDefaultSite(id, name){
+  return {
+    id: id, name: name || "New site", createdAt: Date.now(),
+    lat: 39.0438, lng: -77.4874,
+    placeName: "Ashburn, Virginia (default)",
+    regionKey: "PJM", regionAuto: true,
+    stateNote: (typeof STATE_NOTES !== "undefined" ? (STATE_NOTES["virginia"] || "") : ""),
+    itload: 120,
+    target: fmtDate(addMonths(new Date(), 36)),
+    land: 60, pipe: 3, gridwait: 60,
+    priority: "speed",
+    summary: ""
+  };
+}
+
+function loadState(){
+  try {
+    var raw = localStorage.getItem(STORAGE_KEY);
+    if(raw){
+      var parsed = JSON.parse(raw);
+      if(parsed && parsed.sites && Object.keys(parsed.sites).length){
+        appState = parsed;
+        if(!appState.sites[appState.currentId]){
+          appState.currentId = Object.keys(appState.sites)[0];
+        }
+        return;
+      }
+    }
+  } catch(e){ /* corrupted or unavailable — fall through */ }
+  var id = newSiteId();
+  appState = { currentId: id, sites: {} };
+  appState.sites[id] = makeDefaultSite(id, "Site 1");
+}
+
+function saveState(){
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(appState)); } catch(e){}
+}
+
+function currentSite(){ return appState.sites[appState.currentId]; }
+
+function persistCurrentSite(){
+  var s = currentSite();
+  if(!s) return;
+  s.lat = siteLL.lat; s.lng = siteLL.lng;
+  s.placeName = currentPlace;
+  s.regionKey = currentRegion;
+  s.regionAuto = !!regionAuto;
+  s.stateNote = currentStateNote || "";
+  s.itload = num("itload");
+  s.target = $("target").value;
+  s.land = num("land");
+  s.pipe = num("pipe");
+  s.gridwait = num("gridwait");
+  var p = document.querySelector('input[name="prio"]:checked');
+  s.priority = p ? p.value : "speed";
+  s.summary = s.itload + " MW";
+  saveState();
+}
+
+function loadSiteIntoForm(){
+  var s = currentSite();
+  if(!s) return;
+  siteLL = { lat: s.lat, lng: s.lng };
+  currentPlace = s.placeName || "";
+  currentRegion = s.regionKey || "PJM";
+  currentStateNote = s.stateNote || "";
+  regionAuto = !!s.regionAuto;
+  solarInfo = null;
+  if(siteMarker) siteMarker.setLatLng([s.lat, s.lng]);
+  $("itload").value = s.itload;
+  $("target").value = s.target;
+  $("land").value = s.land;
+  $("pipe").value = s.pipe;
+  $("gridwait").value = s.gridwait;
+  var pi = document.querySelector('input[name="prio"][value="' + s.priority + '"]');
+  if(pi) pi.checked = true;
+  if($("region")) $("region").value = s.regionKey;
+  updateLatLng();
+  needRefit = true;
+  renderRegionContext(false);
+  recompute();
+  fetchInfra(s.lat, s.lng);
+  fetchSolar(s.lat, s.lng);
+}
+
+function switchSite(id){
+  if(!appState.sites[id]) return;
+  persistCurrentSite();
+  appState.currentId = id;
+  saveState();
+  loadSiteIntoForm();
+  renderSiteTabs();
+}
+
+function newSite(){
+  persistCurrentSite();
+  var id = newSiteId();
+  var name = "Site " + (Object.keys(appState.sites).length + 1);
+  appState.sites[id] = makeDefaultSite(id, name);
+  appState.currentId = id;
+  saveState();
+  renderSiteTabs();
+  loadSiteIntoForm();
+}
+
+function renameSite(){
+  var s = currentSite();
+  if(!s) return;
+  var name = prompt("Site name:", s.name);
+  if(name && name.trim()){
+    s.name = name.trim().slice(0, 60);
+    saveState();
+    renderSiteTabs();
+  }
+}
+
+function deleteSite(){
+  if(Object.keys(appState.sites).length <= 1){
+    alert("Cannot delete the only site — create another first.");
+    return;
+  }
+  var s = currentSite();
+  if(!s) return;
+  if(!confirm('Delete "' + s.name + '"?')) return;
+  delete appState.sites[appState.currentId];
+  appState.currentId = Object.keys(appState.sites)[0];
+  saveState();
+  renderSiteTabs();
+  loadSiteIntoForm();
+}
+
+function renderSiteTabs(){
+  var box = $("siteTabs");
+  if(!box) return;
+  var ids = Object.keys(appState.sites);
+  var html = "";
+  ids.forEach(function(id){
+    var s = appState.sites[id];
+    var active = (id === appState.currentId);
+    var sub = s.summary || (s.itload + " MW");
+    html += '<button class="site-chip' + (active ? ' active' : '') + '" data-id="' + id + '" type="button">' +
+      '<span class="site-chip-name">' + escapeHtml(s.name) + '</span>' +
+      '<span class="site-chip-sub">' + escapeHtml(sub) + '</span>' +
+      '</button>';
+  });
+  box.innerHTML = html;
+  box.querySelectorAll(".site-chip").forEach(function(el){
+    el.addEventListener("click", function(){ switchSite(el.dataset.id); });
+  });
+}
+
+/* ============================================================
+   COMPARE VIEW — cross-site table (same yardstick, all sites)
+   ============================================================ */
+function toggleCompare(force){
+  var on;
+  if(force === true) on = true;
+  else if(force === false) on = false;
+  else on = !document.body.classList.contains("mode-compare");
+  document.body.classList.toggle("mode-compare", on);
+  var btn = $("compareBtn");
+  if(btn) btn.textContent = on ? "← Back to workbench" : "Compare all sites";
+  if(on){
+    persistCurrentSite();
+    renderCompareTable();
+  }
+}
+
+function computeForSite(siteId){
+  var s = appState.sites[siteId];
+  if(!s) return null;
+  var save = {
+    itload: $("itload").value,
+    target: $("target").value,
+    land: $("land").value,
+    pipe: $("pipe").value,
+    gridwait: $("gridwait").value,
+    priority: (document.querySelector('input[name="prio"]:checked') || {}).value || "speed",
+    hotZone: currentHotZone,        // hot zone state도 임시 저장
+    lat: currentLat, lng: currentLng
+  };
+  $("itload").value = s.itload;
+  $("target").value = s.target;
+  $("land").value = s.land;
+  $("pipe").value = s.pipe;
+  $("gridwait").value = s.gridwait;
+  // 사이트별 lat/lng로 hot zone 다시 매핑 — compute()가 currentHotZone을 참조하므로 필수
+  currentLat = s.lat; currentLng = s.lng;
+  currentHotZone = matchHotZone(s.lat, s.lng);
+  var pi = document.querySelector('input[name="prio"][value="' + s.priority + '"]');
+  if(pi) pi.checked = true;
+  var D;
+  try { D = compute(); } catch(e){ D = null; }
+  $("itload").value = save.itload;
+  $("target").value = save.target;
+  $("land").value = save.land;
+  $("pipe").value = save.pipe;
+  $("gridwait").value = save.gridwait;
+  currentHotZone = save.hotZone;    // hot zone state 복원
+  currentLat = save.lat; currentLng = save.lng;
+  pi = document.querySelector('input[name="prio"][value="' + save.priority + '"]');
+  if(pi) pi.checked = true;
+  return D;
+}
+
+function renderCompareTable(){
+  var box = $("cvBody");
+  if(!box) return;
+  var ids = Object.keys(appState.sites);
+  if(!ids.length){
+    box.innerHTML = '<div class="cv-empty">No sites yet — add a site first.</div>';
+    return;
+  }
+  var rows = ids.map(function(id){
+    return { s: appState.sites[id], D: computeForSite(id) };
+  });
+
+  // 동일 결과 감지: site별 핵심 결과 시그니처가 모두 같으면 사용자에게 경고.
+  // signature는 region + IT load + recommended tech + 반올림 lead time + 반올림 capex M.
+  // 모든 site의 시그니처가 같으면 → 사용자가 입력 차이를 두지 않았거나 sub-region overlay가 안 잡힌 것.
+  var bannerHtml = "";
+  if(rows.length >= 2){
+    var sigs = rows.map(function(r){
+      if(!r.D || !r.D.rec) return null;
+      var rec = r.D.rec, s = r.s;
+      return [s.regionKey, s.itload, rec.key, Math.round(rec.leadTotal), Math.round(rec.capexM)].join("|");
+    }).filter(Boolean);
+    var allSame = sigs.length >= 2 && sigs.every(function(x){return x===sigs[0];});
+    if(allSame){
+      bannerHtml =
+        '<div style="background:#fef3c7;border-left:4px solid #f59e0b;padding:0.8rem 1rem;margin:0 0 1rem 0;border-radius:6px">' +
+        '<div style="font-weight:700;color:#78350f;margin-bottom:0.3rem">⚠ 모든 사이트가 동일한 결과를 내고 있어 — 입력이 같기 때문</div>' +
+        '<p style="margin:0 0 0.4rem;color:#78350f;font-size:0.92em">' +
+        '사이트들이 같은 region에 있고 IT load·land·gas distance·grid wait 모두 default 그대로일 가능성. ' +
+        '실제 site는 *같은 PJM 안에서도 Loudoun VA(Dominion) vs Columbus OH(AEP)처럼 결과가 크게 달라야* 정상이야.</p>' +
+        '<p style="margin:0;color:#78350f;font-size:0.92em"><b>해결법 3가지:</b> ' +
+        '(1) 각 사이트의 위치가 *데이터센터 hot zone* 안에 있으면 자동 매핑됨 (NoVA·Columbus OH·DFW·Phoenix·Silicon Valley 현재 5곳 지원). ' +
+        '범위 밖이면 매핑 안 됨 — workbench에서 좌표 다시 확인. ' +
+        '(2) 각 사이트의 grid queue / gas distance / capex를 *실측 값*으로 직접 조정. ' +
+        '(3) 사이트별 IT load·land 입력을 실제 값으로 분리.</p>' +
+        '</div>';
+    }
+  }
+
+  var html = bannerHtml + '<table class="cmpSites"><thead><tr>' +
+    '<th>Site</th><th>Region</th><th>IT load</th><th>Recommended</th>' +
+    '<th>Time</th><th>Capex</th><th>Land</th><th>Fits</th>' +
+    '<th>CO₂ / yr</th><th>Score</th></tr></thead><tbody>';
+  rows.forEach(function(r){
+    if(!r.D || !r.D.rec) return;
+    var s = r.s, rec = r.D.rec;
+    var iso = (REGIONS[s.regionKey] || {}).iso || "—";
+    // Hot zone 매칭 정보를 region 컬럼에 inline 표시 (compare view에서도 가시화)
+    var zone = matchHotZone(s.lat, s.lng);
+    var regionCell = iso + (zone ? '<br><small style="color:#7c3aed">'+zone.short+'</small>' : '');
+    var placeLine = (s.placeName ? ' · ' + escapeHtml(s.placeName) : '');
+    html += '<tr data-id="' + s.id + '">' +
+      '<td class="sname">' + escapeHtml(s.name) +
+        '<small>' + s.lat.toFixed(3) + ', ' + s.lng.toFixed(3) + placeLine + '</small></td>' +
+      '<td>' + regionCell + '</td>' +
+      '<td>' + s.itload + ' MW</td>' +
+      '<td><span class="dot" style="background:' + rec.t.color + '"></span>' + rec.t.short + '</td>' +
+      '<td>' + Math.round(rec.leadTotal) + ' mo</td>' +
+      '<td>' + fmtMoney(rec.capexM) + '</td>' +
+      '<td>' + fmtAcres(rec.landAcres) + '</td>' +
+      '<td>' + (rec.landFit ? '<span class="yes">yes</span>' : '<span class="no">no</span>') + '</td>' +
+      '<td>' + fmtCO2(rec.annualCO2) + '</td>' +
+      '<td>' + Math.round(rec.score) + '</td>' +
+      '</tr>';
+  });
+  html += '</tbody></table>';
+  box.innerHTML = html;
+  box.querySelectorAll("tbody tr").forEach(function(tr){
+    tr.addEventListener("click", function(){
+      var id = tr.dataset.id;
+      toggleCompare(false);
+      switchSite(id);
+    });
+  });
+}
+
+/* ============================================================
+   INIT
+   ============================================================ */
+function init(){
+  // default target = today + 36 months
+  $("target").value=fmtDate(addMonths(new Date(),36));
+  buildAssumptions();
+  buildRegionSelect();
+  buildPresets();
+  buildMethod();
+  initMap();
+
+  ["itload","target","land","pipe","gridwait"].forEach(function(id){
+    $(id).addEventListener("input",recompute);
+  });
+  document.querySelectorAll('input[name="prio"]').forEach(function(el){
+    el.addEventListener("change",recompute);
+  });
+  ["lyrTrans","lyrSub","lyrPlant","lyrPipe"].forEach(function(id){
+    $(id).addEventListener("change",applyLayerVisibility);
+  });
+  $("gasring").addEventListener("change",recompute);
+  $("addrBtn").addEventListener("click",geocode);
+  $("addr").addEventListener("keydown",function(e){ if(e.key==="Enter") geocode(); });
+  $("coordBtn").addEventListener("click",gotoCoord);
+  $("coord").addEventListener("keydown",function(e){ if(e.key==="Enter") gotoCoord(); });
+  $("region").addEventListener("change",function(){
+    regionAuto=false; applyRegion($("region").value,true);
+  });
+
+  // ---- Sitebar wiring (multi-site portfolio) ----
+  $("newSiteBtn").addEventListener("click", newSite);
+  $("renameBtn").addEventListener("click", renameSite);
+  $("deleteBtn").addEventListener("click", deleteSite);
+  $("compareBtn").addEventListener("click", function(){ toggleCompare(); });
+  $("closeCompareBtn").addEventListener("click", function(){ toggleCompare(false); });
+
+  // ---- Load saved sites (or create the default Ashburn site on first run) ----
+  loadState();
+  renderSiteTabs();
+  loadSiteIntoForm();
+}
+document.addEventListener("DOMContentLoaded",init);
+</script>
+</body>
+</html>

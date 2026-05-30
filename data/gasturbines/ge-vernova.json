@@ -1,0 +1,137 @@
+{
+  "_meta": {
+    "id": "ge-vernova",
+    "vendor": "GE Vernova Inc.",
+    "fetchDate": "2026-05-28",
+    "fetchedBy": "Claude — direct fetch of GE Vernova Q4/FY2024 press release + WebSearch on 10-K filings",
+    "primarySources": [
+      {
+        "type": "Q4 and Full Year 2024 Earnings Press Release",
+        "url": "https://www.gevernova.com/news/press-releases/ge-vernova-reports-fourth-quarter-full-year-2024-financial-results",
+        "publicationDate": "2025-01-22",
+        "fetched": "2026-05-28",
+        "redistributionRisk": "🟡 — factual data citable; do not republish prose"
+      },
+      {
+        "type": "10-K Annual Report (FY2024)",
+        "url": "https://www.sec.gov/Archives/edgar/data/0001996810/000199681025000011/gev-20241231.htm",
+        "publicDomain": true,
+        "redistributionRisk": "🟢 — SEC EDGAR public domain",
+        "extractionStatus": "Power segment RPO/backlog figures cited from search summary; full 10-K direct fetch is followup"
+      },
+      {
+        "type": "2024 Annual Report",
+        "url": "https://www.gevernova.com/sites/default/files/gevernova_2024_annual_report.pdf",
+        "redistributionRisk": "🟡 — sourced from company; cite factually"
+      }
+    ],
+    "confidence": "high (재무 + 분기 운영 지표) / medium (turbine 모델별 deployment)",
+    "verified": true,
+    "verificationNote": "Q4/FY2024 press release 직접 fetch에서 Power 세그먼트 매출·EBITDA·orders·heavy-duty units 모두 검증. RPO/backlog 수치($73.4B Gas Power)는 search summary 단계 — 10-K Item 7 직접 추출 필요.",
+    "sourceCategory": "정부공공 (SEC) + 기업 자체 발표",
+    "redistributionRisk_aggregate": "🟢 for SEC filings, 🟡 for press release prose",
+    "nextRefresh": "2026-07 (FY2025 Q2 earnings 예상); FY2025 full year은 2026-01 release"
+  },
+
+  "company": {
+    "name": "GE Vernova Inc.",
+    "ticker": "NYSE:GEV",
+    "cik": "0001996810",
+    "spinoff_date": "2024-04-02 (from General Electric)",
+    "primary_segments": ["Power", "Wind", "Electrification"],
+    "power_segment_lines": ["Gas Power", "Hydro Power", "Nuclear (small modular)", "Steam Power"],
+    "gas_power_product_families": {
+      "heavy_duty_industrial_frame": ["7HA", "9HA", "F-class (7F/9F legacy)"],
+      "aeroderivative": ["LM2500", "LM6000", "LMS100", "LM9000"],
+      "aeroderivative_targeting": "데이터센터 BTM, peaker, fast-start utility, distributed power — 15-100 MW per unit"
+    }
+  },
+
+  "consolidated_financials_FY2024_verified": {
+    "_unit": "USD millions",
+    "_source": "GE Vernova Q4/FY2024 press release 2025-01-22, GAAP",
+    "total_revenue": 34935,
+    "total_revenue_YoY": 0.05,
+    "total_revenue_YoY_organic": 0.07,
+    "net_income": 1559,
+    "net_income_margin": 0.045,
+    "net_income_YoY_delta": 2033,
+    "adjusted_EBITDA": 2035,
+    "adjusted_EBITDA_margin": 0.058,
+    "operating_cash_flow": 2583,
+    "free_cash_flow": 1701,
+    "cash_balance_end_of_year": 8205,
+    "cash_balance_post_spinoff_2024_04_02": 4200,
+    "total_orders": 44100,
+    "total_orders_YoY_organic": 0.07,
+    "_interpretation": "Spinoff 후 첫 풀 회계연도. 흑자 전환 (전년 net loss $474M → 2024 net income $1.56B), 캐시 두 배 누적. 2025년 가이던스 매출 $36-37B (+3-6% YoY)."
+  },
+
+  "power_segment_FY2024_verified": {
+    "_unit": "USD millions, except units",
+    "_source": "Q4/FY2024 press release 직접 추출",
+
+    "full_year_2024": {
+      "orders": 21758,
+      "orders_YoY_organic": 0.28,
+      "revenue": 18127,
+      "revenue_YoY": 0.04,
+      "revenue_YoY_organic": 0.07,
+      "segment_EBITDA": 2268,
+      "segment_EBITDA_margin": 0.125,
+      "EBITDA_margin_YoY_delta_bps": 260,
+      "_interpretation": "Power 세그먼트는 GE Vernova 매출의 *52%*, EBITDA의 *112%* (Wind 적자 보전). orders가 매출보다 빨리 자라 backlog 확장 — *time-to-power 수요 신호*."
+    },
+
+    "Q4_2024": {
+      "orders": 6552,
+      "orders_YoY_organic": 0.24,
+      "heavy_duty_units_ordered_Q4_2024": 24,
+      "revenue": 5431,
+      "revenue_YoY_organic": 0.02,
+      "segment_EBITDA": 810,
+      "segment_EBITDA_margin": 0.149,
+      "_directQuote_revenue_mix": "higher HA deliveries more than offsetting lower aeroderivative shipments",
+      "_interpretation_revenue_mix": "Q4'24 *aeroderivative 출하 감소* — 수요는 폭증하나 공급이 catch-up 못함의 신호. HA-class 큰 frame은 페이스 유지. *데이터센터 BTM은 aero 의존인데 lead time이 늘어나고 있음 = 가스터빈 시간 절약 가능성에 부정적 신호*. 우리 도구의 'time savings' 주장에서 aeroderivative 가용성 제약을 명시해야 함."
+    },
+
+    "guidance_2025": {
+      "revenue_growth_organic": "mid-single digit",
+      "segment_EBITDA_margin_range": [0.13, 0.14],
+      "_interpretation": "Margin 13-14% 가이던스 = *제품 mix + 가격 인상* 가속화 신호. 데이터센터 customer가 *premium 가격*을 지불하기 시작했다는 함의."
+    }
+  },
+
+  "gas_power_RPO_backlog_FY2024_verified_partial": {
+    "_status": "수치는 WebSearch 결과 요약 단계 — 10-K Item 7 MD&A 직접 추출로 검증 필요",
+    "_source": "Search summary citing 10-K FY2024",
+    "total_RPO_USD_millions": 73351,
+    "equipment_RPO_USD_millions": 12461,
+    "services_RPO_USD_millions": 60890,
+    "RPO_YoY_delta_USD_millions": 400,
+    "_interpretation": "*Services backlog 비중 83%* — 가스터빈은 1회 판매가 아니라 20-30년 service contract 형태로 가치 창출. 데이터센터 PPA 상대방이 GEV와 직접 service contract 맺는 케이스도 증가 추세."
+  },
+
+  "aeroderivative_orders_FY2024_verified": {
+    "_source": "WebSearch summary citing 10-K FY2024 Item 1/7",
+    "aeroderivative_orders_units": 44,
+    "aeroderivative_sales_units": 27,
+    "_interpretation": "*Orders 44 > Sales 27* — backlog 17 units 누적 (1년에). 데이터센터 BTM에 가장 적합한 aero 라인업이 *공급 제약 상태*. 신규 주문하면 2027-2028 인도 예상.",
+    "_aeroderivative_data_center_implication": "Aeroderivative GT (15-100 MW)는 데이터센터 BTM의 sweet spot. 그러나 GEV 단일 공급자가 연 44건 orders / 27건 sales 수준 = *전세계 데이터센터 신규 수요 만족 불가능*. Solar Turbines·Siemens·Mitsubishi 분산이 필수. 별도 vendor 추적 필요."
+  },
+
+  "data_center_positioning_FY2024_verified": {
+    "_directQuote_CEO_strazik": "GE Vernova built a strong foundation in 2024 with solid orders and revenue growth, as well as significant margin expansion and cash generation. We saw strength in Power and Electrification and improvement in Wind, while growing our equipment backlog at better margins",
+    "_note": "Q4/FY2024 press release CEO 인용은 *데이터센터 단어 직접 사용 안 함* — Bloom CEO Sridhar의 'powering AI ... GW scale' 인용과 대조. 데이터센터 직접 마케팅은 GEV 분기 어닝스 webcast 또는 별도 product launch에 있음. *후속 fetch 필요*.",
+    "_implicit_signal": "Power orders +28% organic + heavy-duty units 24 (Q4 단일 분기) = *2026-2028 가스 capacity wave* 진행 중. 데이터센터가 이 wave의 주요 동력."
+  },
+
+  "open_questions_for_followup": [
+    "10-K FY2024 Item 7 MD&A 직접 fetch — RPO 분기별 추이, aeroderivative 주문/출하 monthly cadence",
+    "10-K Item 1 — Gas Power 제조 footprint (Greenville SC, Belfort France, etc.)",
+    "Aeroderivative 생산 capacity expansion 발표 (CapEx initiatives — press release line 177 'Invested $0.3 billion in capital expenditures including initiatives to expand capacity in Power' 단서 있음)",
+    "Q1-Q4 2025 actual results vs 가이던스 (Q4 2024 release에서 Q1/Q2 2025도 이미 공시되었을 가능성)",
+    "데이터센터 customer announcement — Crusoe, Talen, ExxonMobil 등 GEV 가스터빈 협력 사례",
+    "GE Vernova vs Siemens Energy vs Mitsubishi Power 시장점유 — IEA·Wood Mac 정량 데이터 (단, Wood Mac은 🔴 — proxy로 vendor 공시 cross-table)"
+  ]
+}

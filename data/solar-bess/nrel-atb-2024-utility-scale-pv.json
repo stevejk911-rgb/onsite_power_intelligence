@@ -1,0 +1,173 @@
+{
+  "_meta": {
+    "id": "nrel-atb-2024-utility-scale-pv",
+    "fetchDate": "2026-05-29",
+    "fetchedBy": "Claude — direct fetch of NREL ATB 2024 Utility-Scale PV page",
+    "primarySources": [
+      {
+        "type": "NREL ATB 2024 — Utility-Scale PV (Electricity)",
+        "url": "https://atb.nrel.gov/electricity/2024/utility-scale_pv",
+        "directFetched": "2026-05-29",
+        "publicDomain": true,
+        "redistributionRisk": "🟢 (with attribution)",
+        "underlying_methodology": "Bottom-up benchmarking by Ramasamy et al. (NREL), 100 MW-DC (74.6 MW-AC) one-axis tracking system with bifacial modules, ILR 1.34. Historical comparison vs Bolinger et al. LBNL Utility-Scale Solar 2023."
+      },
+      {
+        "type": "Ramasamy et al. 2023 — Q1 2023 cost benchmark",
+        "url": "https://www.nrel.gov/docs/fy23osti/87303.pdf",
+        "publicDomain": true,
+        "redistributionRisk": "🟢"
+      },
+      {
+        "type": "LBNL Bolinger et al. 2023 — Utility-Scale Solar 2023 Edition",
+        "url": "https://emp.lbl.gov/sites/default/files/emp-files/utility_scale_solar_2023_edition_slides.pdf",
+        "publicDomain": true,
+        "redistributionRisk": "🟢"
+      }
+    ],
+    "confidence": "high (NREL 권위 source, 가스터빈/연료전지와 달리 solar PV는 ATB가 명시적 잘 추적)",
+    "verified": true,
+    "verificationNote": "Fossil/SOFC와 달리 solar PV는 ATB의 *core 강점 영역*. 시장 다중 OEM + 다중 EPC + 다중 모듈 maker = 공시 정상. NREL ATB가 *권위 단일 source*로 직접 사용 가능.",
+    "sourceCategory": "정부공공",
+    "redistributionRisk_aggregate": "🟢",
+    "nextRefresh": "2026-Q2 (ATB 2026 예상)"
+  },
+
+  "structural_finding_solar_well_tracked": {
+    "headline": "*Solar PV는 우리가 검증한 3가지 발전원 중 *유일하게 NREL ATB 데이터가 신뢰 가능한* 카테고리.",
+    "vs_fuelcell": "FC-003: SOFC는 ATB 미추적, EIA 공시 억제 (Bloom 독점). 우리는 합성 추정 사용.",
+    "vs_gas_turbine": "GT-006: ATB·EIA AEO이 가스 CC를 26-52% 과소평가 (GridLab IRP filings 발견).",
+    "vs_solar": "ATB가 *실측 historical (LBNL Bolinger) + 권위 prospective projection*를 모두 정합. 우리 도구의 *가장 신뢰 가능한 데이터원*.",
+    "why": "시장 구조가 다른 발전원과 다름 — solar는 (a) 다수 module maker (Trina, Jinko, First Solar, LONGi, Q Cells) + 다수 inverter maker + 다수 EPC + 다수 IPP. 단일 회사 dominance 없음. EIA/NREL이 정상적으로 공시 가능."
+  },
+
+  "verified_capex_overnight": {
+    "_definition": "Overnight capital cost (excludes construction financing). Includes grid connection cost. 100 MW-DC system, one-axis tracking, bifacial modules.",
+    "_unit": "USD per WAC (= USD per kW AC × 1000)",
+    "_currency_basis": "2022$ for base year",
+
+    "historical_and_base": {
+      "2022_USD_per_WAC": 1.43,
+      "2022_USD_per_kW_AC": 1430,
+      "2023_USD_per_WAC": 1.56,
+      "2023_USD_per_kW_AC": 1560,
+      "_source_2022": "Ramasamy et al. 2022 — Q1 2022 benchmark",
+      "_source_2023": "Ramasamy et al. 2023 — Q1 2023 benchmark",
+      "_note": "2023이 2022보다 *비쌈* (+9.1%). Module 가격 변동 + interest rate + tariff 영향. ATB가 일반적으로 가정하는 'cost decline straight line'에서 *벗어난 해*. 도구의 default를 단일 연도 baseline보다 *2023-2026 range*로 다루는 게 정직."
+    },
+
+    "future_projections_2035_USD_per_WAC": {
+      "Conservative_lower_R_and_D": 1.19,
+      "Moderate_current_R_and_D": 0.90,
+      "Advanced_increased_R_and_D": 0.68
+    },
+
+    "future_projections_2050_USD_per_WAC": {
+      "Conservative": 0.90,
+      "Moderate": 0.68,
+      "Advanced": 0.56,
+      "_note": "Advanced 2035 ≈ Moderate 2050. Conservative 2050 ≈ Moderate 2035."
+    },
+
+    "recommended_planning_baseline_for_tool": {
+      "value_USD_per_kW_AC": 1400,
+      "rationale": "2023 base $1,560 (current 실측) + 2030 ATB Moderate ($1,090 추정, linear interp) → *2027-2030 데이터센터 BTM 인도 시점*에 ~$1,400/kW AC가 합리적 mid-point. 단, *grid connection cost 포함* — BTM에 grid connection 없으면 차감 필요 (~$100-200/kW). Pure overnight BTM capex는 ~$1,200-1,300/kW AC가 더 정확.",
+      "_status": "도구 DEFAULT.capex.solar를 $1,100 → $1,300으로 업데이트 권장 (-$100 BTM grid connection 차감)"
+    }
+  },
+
+  "verified_FOM_fixed_O_and_M": {
+    "_unit": "USD per kW AC-year",
+    "2022": 24,
+    "2023_value": 22,
+    "2023_breakdown": {
+      "system_related": 14.4,
+      "property_related": 5.4,
+      "administration_related": 2.4
+    },
+    "range_LBNL_survey": [0, 54],
+    "_interpretation": "$22/kWAC-yr는 *typical*. BTM 데이터센터는 hyperscaler가 system을 own할 때 self-perform 가능 — 일부 비용 절감. 시설 zoning·property tax 의무 면제 가능 (개별 협상)."
+  },
+
+  "verified_capacity_factor_by_GHI": {
+    "_unit": "AC capacity factor (annual average)",
+    "_basis": "10 resource classes binned by GHI (Global Horizontal Irradiance kWh/m²/day). 2021 NSRDB data via reV model. ILR 1.34, one-axis tracking, bifacial.",
+    "class_1_GHI_above_5_75": 0.340,
+    "class_2_GHI_5_5_to_5_75": 0.329,
+    "class_3_GHI_5_25_to_5_5": 0.313,
+    "class_4_GHI_5_to_5_25": 0.298,
+    "class_5_GHI_4_75_to_5": 0.283,
+    "class_6_GHI_4_5_to_4_75": 0.269,
+    "class_7_GHI_4_25_to_4_5": 0.255,
+    "class_8_GHI_4_to_4_25": 0.245,
+    "class_9_GHI_3_75_to_4": 0.233,
+    "class_10_GHI_below_3_75": 0.214,
+    "us_historical_cumulative_median_2007_2021": 0.24,
+    "us_historical_range_2007_2021": [0.09, 0.35],
+    "data_center_hot_zone_CF_estimates": {
+      "Phoenix_Maricopa": 0.31,
+      "DFW_Dallas_Tarrant": 0.27,
+      "NoVA_Loudoun_Fairfax": 0.25,
+      "Columbus_Franklin": 0.22,
+      "Silicon_Valley_Santa_Clara": 0.27,
+      "_caveat": "Our tool calls NREL PV Watts API per-site for actual CF (fetchSolar) — 이 정적 값들은 hot zone description용만."
+    }
+  },
+
+  "representative_technology_2024": {
+    "system_size_MW_DC": 100,
+    "system_size_MW_AC": 74.6,
+    "ILR_DC_to_AC_ratio": 1.34,
+    "tracking": "single-axis tracking",
+    "module_type": "bifacial",
+    "us_market_2022_context": "140 PV installations >5 MWAC totaling 10.3 GWAC placed in service. Average ~73 MWAC. 86% of installed capacity >50 MWAC, 52% >100 MWAC.",
+    "deployment_trajectory_2024_to_2035": "+192% (148 GW → 432 GW per NREL Standard Scenarios Mid-case)"
+  },
+
+  "hyperscaler_PPA_context_2025": {
+    "_source": "WebSearch — TotalEnergies SEC 6-K filings, multiple trade press",
+
+    "Microsoft": {
+      "2020_renewable_portfolio_GW": 1.8,
+      "2025_renewable_portfolio_GW": 40,
+      "growth_5yr_multiple": 22,
+      "Brookfield_partnership_USD_billion": 10,
+      "Brookfield_new_capacity_GW": 10.5,
+      "_quote_significance": "8x larger than any previous corporate PPA",
+      "_strategy": "Off-site PPA + REC matching. *On-site는 supplemental/credit*, primary는 large off-site PPA."
+    },
+
+    "Google": {
+      "2025_PPA_portfolio_GW": 22,
+      "concept_pioneer": "24/7 carbon-free energy (CFE)",
+      "TotalEnergies_15yr_PPA_TWh": 1.5,
+      "TotalEnergies_solar_farm_location": "Montpelier, Ohio (announced 2025-11)",
+      "2025_new_PPAs_ISOs": ["PJM", "ERCOT", "SPP", "MISO"],
+      "_strategy": "*24/7 hourly matching*. Pure annual REC matching이 아닌 *시간 단위 carbon-free*. 그러나 100% 매칭 어려움."
+    },
+
+    "24_7_carbon_free_reality": {
+      "best_in_class_achievement_pct": 97,
+      "_quote_reccessary": "innovative 24/7 matched renewable structures are achieving 97% carbon-free operations",
+      "Google_considers_gas_without_CCS": true,
+      "_significance": "*Google이 gas without carbon capture를 AI 데이터센터에 검토 중*. 24/7 100% carbon-free 실패 인정. 우리 도구의 *현실주의 framing 강화* — solar+BESS만으로 데이터센터 BTM 안 됨, gas 또는 nuclear 필수.",
+      "_source_distilled_earth": "https://www.distilled.earth/p/google-is-weighing-natural-gas-without"
+    }
+  },
+
+  "implications_for_our_tool_BTM_solar_BESS": {
+    "challenge_1_24_7_firm_power": "데이터센터는 *24/7 firm load*. Solar+BESS만으로는 *연중 가용성 부족* — 겨울 단기 일조 부족, 1-2일 연속 흐림에서 BESS 12hr 부족. 도구가 이미 *huge nameplate + 12hr BESS*로 sizing하지만 *land budget 초과* 자주 발생 (현실 반영).",
+    "challenge_2_offsite_PPA_is_real_strategy": "Microsoft 40 GW + Google 22 GW는 모두 *off-site*. 우리 도구는 *on-site* BTM tool — 이 둘은 *상호 보완*이지 대체 아님. 명시적 framing 추가 필요.",
+    "challenge_3_solar_fits_only_hot_zones": "Solar BTM이 *진짜 의미 있는 hot zone은 Phoenix 단독* (GHI Class 2 = CF 33%, land 풍부). NoVA·Columbus는 CF 25%·22%로 BTM ROI 낮음.",
+    "opportunity": "*Solar PPA (off-site) + on-site gas/fuel cell hybrid*가 hyperscaler 표준. 우리 도구가 시나리오에 *'fuel cell + off-site solar PPA hybrid'*를 추가하면 hyperscaler 사용자에게 매력적."
+  },
+
+  "open_questions_for_followup": [
+    "ATB 2024 Excel workbook 다운로드 (https://data.openei.org/files/6006/2024_v3_Workbook.xlsx) — Year-by-year CAPEX/CF projection table 추출",
+    "Utility-Scale PV+Battery 페이지 — co-located solar+BESS 별도 ATB 카테고리",
+    "Utility-Scale Battery Storage 페이지 — standalone BESS $/kWh (현재 도구 $350/kWh assumption)",
+    "Microsoft Brookfield 거래 세부 — site-specific MW, location, COD",
+    "Google TotalEnergies Montpelier Ohio 발전소 사양 — 1.5 TWh / 15yr = ~114 MW solar 평균 출력 (high CF Ohio 추정 ~ 25-27%)",
+    "데이터센터 BTM-specific solar 거래 (rare — 대부분 off-site PPA)"
+  ]
+}

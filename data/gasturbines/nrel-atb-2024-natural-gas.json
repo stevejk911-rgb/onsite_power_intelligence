@@ -1,0 +1,114 @@
+{
+  "_meta": {
+    "id": "nrel-atb-2024-natural-gas",
+    "fetchDate": "2026-05-28",
+    "fetchedBy": "Claude — direct fetch of NREL ATB 2024 Fossil Energy Technologies page",
+    "primarySources": [
+      {
+        "type": "NREL Annual Technology Baseline (ATB) 2024 — Electricity, Fossil Energy Technologies",
+        "url": "https://atb.nrel.gov/electricity/2024/fossil_energy_technologies",
+        "directFetched": "2026-05-28",
+        "publicDomain": true,
+        "redistributionRisk": "🟢 (with attribution)",
+        "underlying_methodology": "NETL Cost and Performance Baseline for Fossil Energy Plants Volume 1 (Schmitt et al., 2022a), plus 2024 H-class 1x1 addition (Leptinsky et al., 2024). 2018$ basis escalated to July 2022$ via CEPCI, Handy-Whitman, BLS CPI."
+      },
+      {
+        "type": "NREL ATB 2024 Data (interactive)",
+        "url": "https://atb.nrel.gov/electricity/2024/data",
+        "extractionStatus": "narrative page fetched; 실제 $/kW·heat rate 수치는 별도 Data 페이지 또는 다운로드 — Task #15 진행 예정"
+      },
+      {
+        "type": "DOE Catalog ATB 2024 Cost and Performance Data",
+        "url": "https://catalog.data.gov/dataset/2024-annual-technology-baseline-atb-cost-and-performance-data-for-electricity-generation-t",
+        "redistributionRisk": "🟢"
+      }
+    ],
+    "confidence": "high (방법론·plant 사양) / pending (실제 $/kW 수치는 별도 페이지)",
+    "verified": true,
+    "verificationNote": "Fossil Energy Technologies 페이지 직접 fetch 완료. *narrative + plant 사양*은 모두 확인. *실제 capex 수치*는 Data 페이지에 분리되어 있어 후속 fetch 필요.",
+    "sourceCategory": "정부공공",
+    "redistributionRisk_aggregate": "🟢",
+    "nextRefresh": "2026-07 (ATB 2024b가 이미 있음 — 2026 mid-year에 ATB 2025 release 예상)"
+  },
+
+  "structural_finding_aero_gap": {
+    "headline": "NREL ATB는 utility-scale industrial frame GT만 추적. *데이터센터 BTM에 가장 적합한 aeroderivative GT (15-100 MW)는 사각지대*.",
+    "what_ATB_tracks": [
+      "F-class simple-cycle NGCT (233 MW net)",
+      "F-class 2x1 NGCC (727 MW net)",
+      "H-class 2x1 NGCC (992 MW net)",
+      "H-class 1x1 NGCC (649 MW net) — *2024 ATB 신규, '1 GW 미만 plant용' 명시*",
+      "Coal PC, Coal IGCC",
+      "Future NGFC (natural gas fuel cell, 2035+ 시나리오만)"
+    ],
+    "what_ATB_does_not_track": [
+      "Aeroderivative GT: LM2500 (~25 MW), LM6000 (~50 MW), LMS100 (~100 MW), LM9000 (~75 MW)",
+      "Smaller industrial GT: Solar Mercury/Titan/Centaur (5-30 MW)",
+      "Reciprocating gas engine: Wartsila, Cat 3500/G3500, INNIO Jenbacher",
+      "Combined cycle below ~600 MW"
+    ],
+    "implication_for_tool": "데이터센터 BTM (100-400 MW 부하)에 적합한 6-12대 aero GT 또는 다수 reciprocating engine 구성은 ATB로 직접 calibrate 불가. *우리 도구는 ATB H-class 1x1 (649 MW) 값을 baseline으로 받고 vendor 공시 + EIA Construction Cost prime-mover 데이터로 trianglate해 aero 추정 영역을 명시*. 단, H-class 1x1은 데이터센터 단일 캠퍼스 (>500 MW급 hyperscale)에 직접 적용 가능.",
+    "why_ATB_doesnt_track_aero": "ATB의 목적은 *bulk power system planning* — 50 MW 이하는 통계적 노이즈. ATB가 잘못된 게 아니라 *우리의 use case가 ATB scope 밖*. 정직하게 명시.",
+    "comparison_to_fuelcell_finding": "FC-003에서 발견: EIA가 *공시 억제* (Bloom 독점). GT-001 발견: ATB가 *scope 밖* (utility-scale focus). 둘 다 도구의 데이터 한계를 *구조적으로* 인정하는 근거."
+  },
+
+  "industrial_frame_NGCC_specs_2024_ATB": {
+    "_basis": "ISO conditions, Midwest US, evaporative cooling, NSPS-compliant emission controls",
+    "_currency": "2018$ escalated to July 2022$",
+
+    "F_class_simple_cycle_NGCT": {
+      "net_output_MW": 233,
+      "configuration": "Single state-of-the-art F-class turbine",
+      "carbon_capture": "Not offered — NGCT simple cycle은 CC 옵션 없음",
+      "use_case": "Peaker, fast-start, distributed power",
+      "_capex_per_kW_2024": "별도 Data 페이지 필요 — 통상 $700-900/kW (EIA 2023 EPC $562/kW와 비교 시 ATB는 ISO 1축 더 정밀)"
+    },
+
+    "F_class_2x1_NGCC": {
+      "net_output_MW": 727,
+      "configuration": "Two F-class CT/HRSG trains + common steam turbine",
+      "steam_cycle": "Single-reheat, 16.5 MPa / 585°C / 585°C",
+      "carbon_capture_options": ["unabated", "95% capture (new build)", "97% capture (new build)", "90% retrofit", "95% retrofit"],
+      "_capex_per_kW_2024_unabated": "별도 Data 페이지 — 통상 $900-1,100/kW"
+    },
+
+    "H_class_2x1_NGCC": {
+      "net_output_MW": 992,
+      "configuration": "Two H-class CT/HRSG trains + common steam turbine",
+      "steam_cycle": "Single-reheat, 18.5 MPa / 585°C / 562°C",
+      "carbon_capture_options": ["unabated", "95% capture", "97% capture"],
+      "_efficiency_advantage": "H-class > F-class (~62-64% vs 58-60% LHV) — 연료비 감축"
+    },
+
+    "H_class_1x1_NGCC_NEW_in_2024_ATB": {
+      "net_output_MW": 649,
+      "configuration": "Single H-class CT/HRSG + steam turbine",
+      "steam_cycle": "Single-reheat, 17.3 MPa / 585°C / 585°C",
+      "_purpose": "*명시적 인용*: 'to provide cost and performance for deploying H-class technology for smaller plants (i.e., less than nominal 1 Gigawatt for a new-build conventional new electricity generating unit (EGU))'",
+      "data_center_relevance": "*가장 적합한 ATB 옵션* for hyperscale 데이터센터 캠퍼스 (300-600 MW 부하). 단 데이터센터 1개 빌딩(20-50 MW)에는 여전히 너무 큼 → aero 필요.",
+      "source": "Leptinsky et al., 2024 — NETL 출간 6월 2024"
+    }
+  },
+
+  "advanced_technology_scenarios": {
+    "_purpose": "ATB는 3개 시나리오 (Conservative/Moderate/Advanced) 별 future cost 트라젝토리 제공",
+    "Conservative": "Learning-by-doing only, no targeted R&D, advanced tech doesn't commercialize",
+    "Moderate": "Limited targeted R&D, NGFC commercial 2035+",
+    "Advanced": "Aggressive R&D, X-class (3,100°F firing), NGFC achieves higher performance 2035+, PCCC capex -50%",
+    "_data_center_planning_implication": "현재 데이터센터 사이트에 deploy하는 가스터빈은 *Conservative or Moderate baseline*; Advanced 시나리오는 2030년대 후반 hyperscale 캠퍼스의 미래 옵션."
+  },
+
+  "ngfc_natural_gas_fuel_cell_mention": {
+    "_status": "ATB가 *future advanced technology*로 NGFC를 인정하지만, *현재 commercial offering은 추적하지 않음*",
+    "_quote": "Atmospheric pressure solid oxide fuel cell technology for the topping cycle paired with a steam Rankine bottoming cycle",
+    "_relevance": "Bloom Energy SOFC는 ATB의 NGFC scenario와 *유사하지만 동일하지 않음* — Bloom은 atmospheric SOFC + 별도 grid export, NETL의 NGFC는 SOFC + steam bottoming cycle 통합. 따라서 ATB의 NGFC 데이터는 Bloom에 *직접 적용 불가*.",
+    "_consistency_with_FC_003_finding": "ATB가 Bloom 같은 *현재 commercial SOFC*를 추적하지 않는다는 우리의 FC-003 결론(2026-05-28)을 ATB narrative가 *명시적으로 확인*. NGFC는 '2035+ 미래 기술'로 분류."
+  },
+
+  "open_questions_for_followup": [
+    "ATB Data 페이지에서 F-class CT/CC, H-class 1x1·2x1 CC의 실제 overnight capital cost ($/kW), heat rate (Btu/kWh), fixed O&M ($/kW-yr), variable O&M ($/MWh) 2024-2050 projection 추출",
+    "Aeroderivative GT 별도 vendor 추적 — GE Vernova LM 라인업 datasheet, Solar Turbines 모델별 capex",
+    "GridLab 2025 'New Reality of Power Generation: Increasing Gas Turbine Costs' 보고서 — 2024-2025 공급 제약으로 인한 가격 인상폭 (정량)",
+    "DOE NETL 'Cost and Performance Baseline Volume 1 Revision 4a' (Schmitt et al., 2022a) PDF에서 detail spec 추출"
+  ]
+}

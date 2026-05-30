@@ -1,0 +1,422 @@
+{
+  "_meta": {
+    "id": "bloom-energy",
+    "vendor": "Bloom Energy Corporation",
+    "fetchDate": "2026-05-28",
+    "fetchedBy": "Claude — direct fetch of Bloom Energy Q4/FY2024 press release + 10-K Item 1 & Item 1A from SEC EDGAR",
+    "primarySources": [
+      {
+        "type": "Q4 and Full Year 2024 Earnings Press Release",
+        "url": "https://investor.bloomenergy.com/press-releases/press-release-details/2025/Bloom-Energy-Reports-Fourth-Quarter-and-Full-Year-2024-Financial-Results-with-Record-Full-Year-Revenues/default.aspx",
+        "publicationDate": "2025-02-27",
+        "fetched": "2026-05-28",
+        "redistributionRisk": "🟡 — factual data citable; do not republish prose"
+      },
+      {
+        "type": "10-K Annual Report (Item 1 Business + Item 1A Risk Factors)",
+        "fiscalYear": "FY2024 (ended Dec 31, 2024)",
+        "url": "https://www.sec.gov/Archives/edgar/data/0001664703/000162828025008747/be-20241231.htm",
+        "publicDomain": true,
+        "redistributionRisk": "🟢 — SEC EDGAR public domain",
+        "extractionStatus": "Item 1 (Business) + Item 1A (Risk Factors) directly fetched and extracted 2026-05-28. Item 7 MD&A (MW shipped/acceptances, backlog $) NOT YET EXTRACTED — file was truncated at ~471 lines (≈Risk Factors mid-section). Separate fetch of MD&A section required."
+      },
+      {
+        "type": "Investor Relations press releases (deployment announcements)",
+        "url": "https://investor.bloomenergy.com/press-releases/"
+      }
+    ],
+    "confidence": "high (financials, Item 1 Business facts), medium (Item 7 MD&A unverified)",
+    "verified": true,
+    "verificationNote": "Financial line items cross-checked against the official Q4/FY2024 press release. Item 1 (Business) facts directly extracted from 10-K: customer concentration (top 3 = 23%/16%/14%), SK ecoplant commitments, manufacturing footprint, employee count, patent count, service organization. Item 7 MD&A (MW shipped/acceptances, $ backlog, MW backlog) requires a separate 10-K fetch — currently the highest-priority TODO.",
+    "sourceCategory": "정부공공 (SEC) + 기업 자체 발표",
+    "redistributionRisk_aggregate": "🟢 for SEC filings, 🟡 for press release prose",
+    "nextRefresh": "2026-08 (FY2025 Q2 10-Q expected late July 2026); FY2025 10-K already filed early 2026 — verify FY2025 numbers in next iteration"
+  },
+
+  "company": {
+    "name": "Bloom Energy Corporation",
+    "ticker": "NYSE:BE",
+    "cik": "0001664703",
+    "primaryProduct": "Solid-Oxide Fuel Cell (SOFC) — Bloom Energy Server",
+    "secondaryProducts": ["Solid Oxide Electrolyzer (hydrogen)", "Carbon capture (R&D stage)"],
+    "fuelInputs": ["natural gas", "biogas", "hydrogen (capable)"],
+    "primaryMarkets": ["United States", "South Korea (via SK ecoplant JV)", "India", "Japan", "Taiwan"],
+    "factories_verified_10K_Item2": {
+      "Fremont_California": {
+        "facilities": "다수 시설 (HQ + 제조). 본문상 89K sqft + 73K sqft hydrogen 시설 + 164K sqft 임대 (Feb 2036까지)",
+        "status": "active, primary US manufacturing"
+      },
+      "Newark_Delaware": {
+        "facilities": "178,000 sqft + 25-acre 인접 부지 확장",
+        "status": "active"
+      },
+      "Sunnyvale_California": {
+        "facilities": "(closing)",
+        "status": "shutdown in process"
+      },
+      "_source": "10-K FY2024 Item 1/Item 2 직접 추출"
+    }
+  },
+
+  "workforce_FY2024_10K_verified": {
+    "total_employees": 2127,
+    "US_employees": 1716,
+    "India_employees": 362,
+    "other_employees": 49,
+    "field_service_personnel": 182,
+    "remote_monitoring_command_centers": 2,
+    "remote_monitoring_centers_locations": ["United States", "India"],
+    "monitoring_scope": "24x7 monitoring of 500+ system parameters",
+    "_source": "10-K FY2024 Item 1 Business — 직접 추출"
+  },
+
+  "intellectualProperty_FY2024_10K_verified": {
+    "US_patents_active": 358,
+    "US_patents_pending": 148,
+    "international_patents_active": 177,
+    "international_patents_pending": 430,
+    "_source": "10-K FY2024 Item 1 Business — 직접 추출"
+  },
+
+  "customerConcentration_FY2024_10K_verified": {
+    "top_customer_share": 0.23,
+    "second_customer_share": 0.16,
+    "third_customer_share": 0.14,
+    "top_three_combined_share": 0.53,
+    "_directQuote": "in the year ended December 31, 2024, three customers accounted for approximately 23%, 16% and 14% of our total revenue",
+    "_source": "10-K FY2024 Item 1A Risk Factors — 직접 추출 (line 441)",
+    "_interpretation": "Top 3 = 53% of FY2024 revenue. Top customer (23%) reconciles with SK ecoplant (23% disclosed in press release). Other 2 (16% + 14%) likely AEP or similar large US/international account — *not separately named in Item 1A*. Material concentration risk for any single account."
+  },
+
+  "SK_ecoplant_partnership_10K_verified": {
+    "phase_1_commitment_2022_2024_MW": 500,
+    "phase_2_commitment_through_2027_MW": 250,
+    "total_committed_MW": 750,
+    "_source": "10-K FY2024 Item 1 Business — 직접 추출",
+    "_interpretation": "Bloom-SK 협력은 단순 distributor가 아니라 *명시적 GW급 출하 보장* 구조. FY2024 매출 $338.6M 중 23%가 SK = 약 $338M (확인). 단계 2가 $250 MW까지 약정되어 있어 2025-2027 매출 가시성 일부 보장."
+  },
+
+  "manufacturing_capacity_signals_10K_verified": {
+    "Newark_DE_expansion": "25 acres adjacent 부지 추가 — 명시적 capacity expansion intent",
+    "Fremont_CA_hydrogen_facility": "73K sqft 별도 시설 — electrolyzer 라인",
+    "stated_gigawatt_readiness": "CEO 2025-02-27 인용: 'ready to be deployed at GW scale starting this year' — 분기 단위 GW 출하 능력 자기 선언",
+    "_caveat": "구체적 명목 연 생산 능력 (MW/year) 수치는 Item 1에 직접 명시되지 않음 — Item 7 MD&A 또는 8-K supplement에서 확인 필요"
+  },
+
+  "time_to_power_signal_10K_verified": {
+    "_directQuote": "Over the past twelve months, in light of time to power needs that we expect to continue in 2025, we have seen an increasing number of transactions move from a booking to revenue in less than twelve months",
+    "_source": "10-K FY2024 Item 1 Business — 직접 추출",
+    "_interpretation": "*1원칙 정확히 일치* — 그리드 대기열이 6년인데 데이터센터는 18-36개월 안에 전력이 필요하다 → 그래서 booking-to-revenue가 12개월 이하로 단축. 우리 도구가 답해야 할 정확한 그 질문(시간 절약)을 Bloom 본인이 공시문서에 명시.",
+    "vs_typical_sales_cycle": "정상 사이클은 9-18개월 (Item 1A Risk Factors). 12개월 이하는 '가속' 케이스."
+  },
+
+  "ITC_status_FY2024_10K_verified": {
+    "status_end_FY2024": "expired",
+    "applicability": "fuel cells running on non-zero carbon fuel (natural gas)",
+    "preserved_through": "Existing project pipeline preserves ITC through 2028 (pre-expiry commitments)",
+    "_source": "10-K FY2024 Item 1A Risk Factors — 직접 추출 (line 415)",
+    "_interpretation_for_tool": "*신규 자연가스 연료전지 프로젝트는 30% ITC 없이 경제성을 만들어야 함*. 우리 도구의 capex/LCOE 계산에서 fuel cell 시나리오의 federal incentive 항목을 (a) 기존 pipeline용 = 30% 활성, (b) 신규 = 0%로 분기 처리해야 함. 단, 청정 수소 fuel cell은 별도 IRA Section 45V 적용 가능."
+  },
+
+  "California_FC_NEM_status_10K_verified": {
+    "tariff_name": "Fuel Cell Net Energy Metering (FC NEM)",
+    "status": "expired end of 2023 for new customers",
+    "existing_customers": "Can remain on tariff if they meet greenhouse gas emission standards (same-or-better than grid resources displaced)",
+    "_source": "10-K FY2024 Item 1A Risk Factors — 직접 추출 (line 430)",
+    "_interpretation_for_tool": "캘리포니아 신규 fuel cell 사이트는 *수출(export) 인센티브 없음*. 24/7 일정출력 fuel cell이 데이터센터 BTM 부하 초과분을 그리드로 보내도 정산 안됨. → fuel cell sizing은 *부하 이하*로 (또는 BESS 페어링) 권고."
+  },
+
+  "competitive_positioning_10K_verified": {
+    "stated_competitors": ["traditional utilities", "co-generation systems (CHP)", "nuclear", "hydro", "coal", "geothermal", "solar+storage", "wind+storage", "other fuel cell companies", "diesel backup generators"],
+    "electrolyzer_competitors": ["Alkaline electrolysis", "Proton/PEM electrolysis", "AEM electrolysis"],
+    "_source": "10-K FY2024 Item 1A Risk Factors — 직접 추출 (lines 434-435)",
+    "_interpretation_for_tool": "Bloom 본인이 *공식적으로 diesel 백업 발전기를 경쟁자로 분류*. 우리 도구의 시나리오 비교 슬롯에 diesel backup이 들어가야 일관성."
+  },
+
+  "sales_cycle_10K_verified": {
+    "typical_sales_cycle_months": "12 to 18",
+    "time_from_contract_to_install_months": "9 to 18+",
+    "stated_extending_factors": ["customer budget cycle", "financing structure selection", "contract term negotiation", "larger projects extending cycle"],
+    "installation_blocking_factors": ["permits", "utility interconnection queues", "T&D upgrade requirements", "EH&S requirements", "weather", "customer facility construction schedule", "financing timing"],
+    "_source": "10-K FY2024 Item 1A Risk Factors — 직접 추출 (line 406-407)",
+    "_interpretation_for_tool": "시간 절약 메시지의 *공식 baseline*. 일반 sales cycle 12-18개월 + 설치 9-18개월 = *21-36개월 baseline*. CEO 인용 'less than 12 months'는 가속 케이스. 우리 도구가 'X 개월 절약' 주장할 때 이 baseline을 명시해야 신뢰성 유지."
+  },
+
+  "financials_FY2024_verified": {
+    "_unit": "USD",
+    "_source": "Bloom Energy press release dated 2025-02-27, GAAP figures",
+
+    "revenue_breakdown": {
+      "totalRevenue_USD": 1473856000,
+      "totalRevenueYoY": 0.105,
+      "product": 1085153000,
+      "installation": 122318000,
+      "service": 213542000,
+      "electricity": 52843000,
+      "_priorYear2023": {
+        "totalRevenue": 1333470000,
+        "product": 975245000,
+        "installation": 92796000,
+        "service": 183065000,
+        "electricity": 82364000
+      }
+    },
+
+    "profitability": {
+      "grossProfit_USD": 404648000,
+      "grossMargin": 0.275,
+      "nonGAAP_grossMargin": 0.287,
+      "operatingIncome_USD": 22909000,
+      "operatingMargin": 0.016,
+      "nonGAAP_operatingIncome_USD": 107602000,
+      "netLoss_USD": -27203000,
+      "netLossToCommonStockholders_USD": -29227000,
+      "_priorYear2023_grossMargin": 0.148,
+      "_priorYear2023_operatingIncome_USD": -208907000,
+      "_priorYear2023_netLoss_USD": -307937000,
+      "_note": "2024 was the year Bloom flipped from operating loss to operating income — a structural inflection."
+    },
+
+    "Q4_2024_strength": {
+      "Q4_revenue_USD": 572393000,
+      "Q4_revenueYoY": 0.604,
+      "Q4_grossMargin": 0.383,
+      "Q4_operatingIncome_USD": 104706000,
+      "Q4_cashFlowFromOperations_USD": 484228000,
+      "_note": "Q4'24 alone generated $484M of operating cash flow vs $92M for the full year — Q4 was a major payment-collection inflection."
+    },
+
+    "balanceSheet_endOfYear": {
+      "cashAndEquivalents_USD": 802851000,
+      "restrictedCash_short_USD": 110622000,
+      "restrictedCash_long_USD": 37498000,
+      "totalAssets_USD": 2657354000,
+      "totalLiabilities_USD": 2072138000,
+      "totalStockholdersEquity_USD": 585216000,
+      "recourseDebt_long_USD": 1010350000,
+      "accumulatedDeficit_USD": -3897618000
+    },
+
+    "customerConcentration_relatedParty_SKecoplant": {
+      "FY2024_revenue_USD": 338600000,
+      "FY2024_share_of_total": 0.23,
+      "FY2023_revenue_USD": 487200000,
+      "FY2023_share_of_total": 0.365,
+      "_interpretation": "SK ecoplant (Korea JV partner) revenue concentration dropped from ~37% in 2023 to ~23% in 2024 — Bloom's US business grew faster than Korea, reducing single-customer dependency. Still material concentration risk for any single fiscal year."
+    },
+
+    "outlook_FY2025_provided_2025_02_27": {
+      "revenue_low_USD": 1650000000,
+      "revenue_high_USD": 1850000000,
+      "revenue_midpoint_growthYoY": 0.19,
+      "nonGAAP_grossMargin_target": 0.29,
+      "nonGAAP_operatingIncome_low_USD": 135000000,
+      "nonGAAP_operatingIncome_high_USD": 165000000
+    }
+  },
+
+  "ceo_positioning_quote_2025_02_27": {
+    "speaker": "KR Sridhar, Founder, Chairman, and CEO",
+    "quote": "We are the solution of choice for powering AI, whether that's large data centers that need reliable power now, or businesses that are going to use AI for productivity gains. Our proven solution is ready to be deployed at GW scale starting this year.",
+    "_relevance": "Directly supports our tool's positioning — Bloom self-identifies as *the* AI data-center on-site power solution with GW-scale readiness."
+  },
+
+  "majorAnnouncements_2024": [
+    {
+      "customer": "American Electric Power (AEP)",
+      "type": "Procurement agreement",
+      "totalCommitmentMW": 1000,
+      "initialOrderMW": 100,
+      "useCase": "AI data centers",
+      "regions": "AEP service territory — Ohio, Texas, others",
+      "significance": "Largest commercial fuel-cell procurement in the world to date (per Bloom announcement)",
+      "sourceURL": "https://investor.bloomenergy.com/press-releases/press-release-details/2024/Bloom-Energy-Announces-Gigawatt-Fuel-Cell-Procurement-Agreement-with-AEP-to-Power-AI-Data-Centers/default.aspx"
+    },
+    {
+      "customer": "FPM Development",
+      "type": "Utility resilience deal",
+      "totalMW": 20,
+      "useCase": "Grid resilience",
+      "locations": "2 strategic locations in Los Angeles, California",
+      "sourceURL": "https://investor.bloomenergy.com/press-releases/press-release-details/2024/Bloom-Energy-Secures-20-MW-Utility-Deal-with-FPM-Development-to-Rapidly-Fortify-Grid-Resilience-in-California/default.aspx"
+    },
+    {
+      "customer": "Silicon Valley Power (for AWS data centers)",
+      "type": "Municipal utility agreement",
+      "totalMW": 20,
+      "useCase": "AWS data center on-site power",
+      "locations": "Santa Clara, California",
+      "significance": "Largest Silicon Valley data center on-site power capacity agreement (per Bloom announcement)",
+      "sourceURL": "https://investor.bloomenergy.com/press-releases/press-release-details/2024/Bloom-Energy-Announces-Largest-Silicon-Valley-Data-Center-Power-Capacity-Agreement/default.aspx"
+    }
+  ],
+
+  "FY2025_round_2_verified_2026_05_29": {
+    "_status": "FY2025 10-K (be-20251231.htm) + Q3 2025 supplemental 직접 fetch — 2026-05-29 추가 검증 round",
+    "_sources": [
+      {
+        "type": "Bloom Energy 10-K FY2025",
+        "url": "https://www.sec.gov/Archives/edgar/data/0001664703/000162828026006516/be-20251231.htm",
+        "_status": "Item 1 + 1A 추출 완료 (114KB / 795 lines fetch). *Item 7 MD&A는 또 truncated* — FY2024 fetch 패턴과 동일."
+      },
+      {
+        "type": "Bloom Energy Q3 2025 supplemental (8-K Exhibit 99.2, 2025-10-28)",
+        "url": "https://www.sec.gov/Archives/edgar/data/0001664703/000162828025046745/q32025supplementalfinanc.htm",
+        "_status": "Full fetch 완료 — slide 1-15 모두 추출"
+      }
+    ],
+
+    "Q3_2025_verified_financials": {
+      "_unit": "USD millions",
+      "_source": "Bloom Q3 2025 supplemental slide 4 + 15",
+      "total_revenue": 519.0,
+      "total_revenue_YoY_pct": 57.1,
+      "non_GAAP_gross_margin": 0.304,
+      "GAAP_gross_margin": 0.292,
+      "GM_YoY_delta_pts": 5.1,
+      "non_GAAP_operating_income": 46.2,
+      "non_GAAP_operating_margin": 0.089,
+      "adjusted_EBITDA": 59.0,
+      "non_GAAP_EPS": 0.15,
+      "GAAP_net_loss": -23.1,
+      "segment_breakdown_Q3_2025": {
+        "Product": {"revenue": 384.3, "GAAP_GM": 0.350, "non_GAAP_GM": 0.359},
+        "Install": {"revenue": 65.8, "GAAP_GM": 0.089, "non_GAAP_GM": 0.100},
+        "Service": {"revenue": 58.6, "GAAP_GM": 0.116, "non_GAAP_GM": 0.144},
+        "Electricity": {"revenue": 10.4, "GAAP_GM": 0.438, "non_GAAP_GM": 0.438}
+      },
+      "_interpretation": "*Product segment이 매출 74% + 35% GM* — Bloom 마진 성장의 핵심. Service GM 11.6% (낮음) — Service revenue가 backlog $14B로 *향후 GM 큰 폭 상승 예상* (Q4 2025 search에서 service GM 20% 보고)."
+    },
+
+    "historical_GM_trend_2020_2024_verified": {
+      "_source": "Bloom Q3 2025 supplemental slide 9 — full GAAP→non-GAAP reconciliation",
+      "_unit": "GAAP / non-GAAP gross margin %",
+      "_rows": [
+        {"year": 2020, "revenue_USD_M": 794.2, "GAAP_GM": 0.209, "non_GAAP_GM": 0.231},
+        {"year": 2021, "revenue_USD_M": 972.2, "GAAP_GM": 0.203, "non_GAAP_GM": 0.217},
+        {"year": 2022, "revenue_USD_M": 1199.1, "GAAP_GM": 0.124, "non_GAAP_GM": 0.230},
+        {"year": 2023, "revenue_USD_M": 1333.5, "GAAP_GM": 0.148, "non_GAAP_GM": 0.258},
+        {"year": 2024, "revenue_USD_M": 1473.9, "GAAP_GM": 0.275, "non_GAAP_GM": 0.287}
+      ],
+      "_interpretation": "*GAAP GM 2020 20.9% → 2024 27.5%* (점진적 상승). 2022·2023 GAAP GM 급락(12-15%)은 *asset impairment*($108-130M) 인식 — non-GAAP은 정상 trajectory. 2024부터 *structural inflection*."
+    },
+
+    "historical_operating_income_2020_2024_verified": {
+      "_source": "Bloom Q3 2025 supplemental slide 11",
+      "_unit": "USD millions, GAAP / non-GAAP",
+      "_rows": [
+        {"year": 2020, "GAAP_OpIncome": -80.8, "non_GAAP_OpIncome": -6.9},
+        {"year": 2021, "GAAP_OpIncome": -114.5, "non_GAAP_OpIncome": -38.4},
+        {"year": 2022, "GAAP_OpIncome": -261.0, "non_GAAP_OpIncome": -33.5},
+        {"year": 2023, "GAAP_OpIncome": -208.9, "non_GAAP_OpIncome": 19.2},
+        {"year": 2024, "GAAP_OpIncome": 22.9, "non_GAAP_OpIncome": 107.6}
+      ],
+      "_interpretation": "*GAAP 흑자 전환은 2024년이 첫 해*. Non-GAAP은 2023부터 흑자. 4-year accumulated GAAP loss $665M. 2024 흑자전환 + Q3 2025 OpIncome $46.2M (4-quarter run-rate ~$180M)은 *structural profitability* 단계 진입."
+    },
+
+    "FY2025_strategic_partnerships_verified_10K_Item_1": {
+      "AEP_status_2025": {
+        "_quote": "In 2025, we began working with AEP to deploy projects across the service territory as well as the project development landscape broadly through their capacity as both a channel and financing partner",
+        "_source": "FY2025 10-K Item 1, line 408",
+        "_significance": "*100 MW initial order deploy 시작 명시*. 단 정량 status (shipped? accepted?)는 *Item 7 MD&A 필요 — 또 truncated됨*."
+      },
+      "Brookfield_AI_Infrastructure_Fund_2025_08": {
+        "_quote": "prospective financing framework of up to $5.0 billion over five years... AI Infrastructure Fund created by Brookfield",
+        "_significance": "*$5B 5-year financing framework* — Bloom의 customer financing capacity 차원에서 결정적. Microsoft Brookfield $10B 10.5 GW renewable deal과 *별개*."
+      },
+      "SK_ecoplant_partnership": {
+        "_class_A_stock_ownership_pct": 2.5,
+        "_status": "2018부터 지속. 한국 누적 deployed *682 MW*"
+      },
+      "customer_concentration_FY2025_verified": {
+        "_quote": "During the year ended December 31, 2025, revenue from three of these customers and distributors, the first of which is related party, accounted for approximately 43%, 13% and 12% of our total revenue.",
+        "_source": "FY2025 10-K Item 1, line 412",
+        "top_3_combined_pct": 68,
+        "top_customer_pct": 43,
+        "_top_customer_identity": "SK ecoplant (related party)",
+        "_interpretation_critical": "*Top customer 비중 23% (FY2024) → 43% (FY2025) = +20pp*. SK ecoplant가 한국 hydrogen·AI data center wave를 *2x 가속*하는 신호. *동시에 Bloom의 customer concentration risk 크게 증가*. Top 3 = 68% (FY2024 53%에서 +15pp)."
+      }
+    },
+
+    "AI_data_center_positioning_FY2025_10K_verified": {
+      "_quote_markets_section": "AI workloads are increasing demand for reliable, continuously available electricity... We participate across multiple channels of the data center ecosystem—including hyperscalers, colocation operators, neocloud providers, developers, and infrastructure investors—each anchored by lighthouse customers and supported by active commercial pipelines.",
+      "_source": "FY2025 10-K Item 1, line 216-218",
+      "_segment_categories_verified": ["hyperscalers", "colocation operators", "neocloud providers", "developers", "infrastructure investors"],
+      "_significance": "*Bloom 공식 customer segmentation* — 우리 도구 페르소나 4개 (data center dev, hyperscaler infra strategist, BTM dev/IPP, infra investor)와 *3개 직접 일치*. 우리 도구의 target market 정확성 검증.",
+      "_quote_FLS_priority": "our ability to be successful in the AI data center market",
+      "_FLS_significance": "Forward-looking statements 우선순위 항목으로 명시 — *AI 데이터센터가 Bloom의 #1 strategic risk이자 opportunity*."
+    },
+
+    "technical_differentiation_FY2025_10K_verified": {
+      "voltage_standard_compatibility": {
+        "_quote": "delivers output compatible with emerging 800 VDC data center standards",
+        "_source": "FY2025 10-K Item 1, line 278",
+        "_significance": "*NVIDIA Rubin + post-Rubin rack architecture와 align*. 800 VDC는 차세대 AI 데이터센터 power standard — Bloom이 이미 호환. *Gas turbine·reciprocating은 AC 출력*이라 추가 변환 필요."
+      },
+      "AI_workload_response_speed": {
+        "_quote": "at least twice as fast as turbines and engines... supercapacitors capable of more than a million cycles",
+        "_source": "FY2025 10-K Item 1, line 302",
+        "_significance": "*Bloom의 turbine·reciprocating 대비 공식 차별화 발언*. 우리 도구의 시나리오 비교에서 *load-following capability* 변수 추가 가치."
+      },
+      "reliability_specs_verified": {
+        "non_redundant_availability_pct": 99.9,
+        "redundant_availability_pct": 99.999,
+        "_source": "FY2025 10-K Item 1, line 298",
+        "_significance": "*Tier IV 데이터센터 spec (99.995%) 호환 가능*. Single-source BTM에서 *redundancy 추가 옵션*도 명시됨."
+      }
+    },
+
+    "global_installed_base_FY2025_verified": {
+      "total_sites": 1100,
+      "countries": 9,
+      "south_korea_deployed_MW": 682,
+      "_source": "FY2025 10-K Item 1, line 169 + 238",
+      "_significance": "전세계 1,100 sites — *EIA-860 미국 fleet 363.8 MW (186 generators)와 같은 단위에서 미국 비중 추정*. 9개국 분산은 *공급망·서비스 글로벌 capacity* 신호."
+    },
+
+    "workforce_FY2025_verified": {
+      "total_FTE_dec_31_2025": 2214,
+      "YoY_growth_pct": 4,
+      "PhD_count": 62,
+      "PhD_fields": ["Materials Science", "Electrical Engineering", "Chemical Engineering", "Mechanical Engineering", "Civil Engineering", "Nuclear Engineering"],
+      "_interpretation": "FY2024 2,127 → FY2025 2,214 = +4% (모더레이트 growth). PhD 62명 (특히 *Nuclear Engineering* — solid oxide → fuel cell + 향후 SMR-fuel cell 협력 가능성)."
+    },
+
+    "ITC_post_FY2024_expiration_FY2025_verified": {
+      "_quote_old_ITC": "The ITC for fuel cells operating on non-zero carbon fuels expired at the end of 2024. In light of the expiration of section 48 ITC, we entered into qualifying transactions that will allow certain of our customers to benefit from the ITC for projects placed into service by December 31, 2028.",
+      "_quote_new_OBBBA_ITC": "the OBBBA modified the 30% section 48E ITC to specifically include fuel cells... applicable for fuel cells the construction of which begins after December 31, 2025, and before December 31, 2033, with the credit phasing out thereafter through December 31, 2035.",
+      "_source": "FY2025 10-K Item 1, line 500-513",
+      "gap_year_2025": "*2025년 신규 시작 프로젝트는 ITC gap year* (safe-harbored 거래 제외). 새 OBBBA ITC는 *2026 construction start*부터 적용.",
+      "OBBBA_act_full_name": "One Big Beautiful Bill Act",
+      "_interpretation_for_tool": "도구의 capex 시나리오에서 fuel cell의 *2025 신규 = ITC 없음*, *2026+ 신규 = 30% ITC 회복* 명시 필요. 사용자가 *현재 BTM 의사결정* 시점에 따라 *연료전지 capex 30% 차이*."
+    },
+
+    "Q4_2025_service_backlog_search_verified": {
+      "_source": "WebSearch 2026-05-29 — Bloom Q4 2025 earnings call (2026-02-05, Motley Fool transcript)",
+      "service_backlog_USD_billion": 14,
+      "service_attach_rate_pct": 100,
+      "Q4_2025_service_GM_pct": 20,
+      "FY2026_revenue_guidance_USD_billion": [1.65, 1.85],
+      "_interpretation": "**서비스 backlog $14B = Bloom의 *long-term annuity revenue stream***. Service GM 20%로 매우 안정. *100% attach rate* = 모든 신규 product 판매가 service 계약 동반. 도구의 *총 ownership cost* framing에 critical.",
+      "_FY2026_guidance_unchanged_from_FY2025": "Bloom이 FY2026 가이던스를 FY2025와 *동일 range $1.65-1.85B*로 유지 — 보수적. 단 *Q3 2025 alone $519M run-rate = $2.08B annualized*라 가이던스 *upside bias*."
+    },
+
+    "FY2025_Round_2_remaining_open_questions": [
+      "[HIGH PRIORITY] FY2025 product MW acceptances / shipped — 1차 fetch에서 또 못 받음. Q4 2025 earnings call transcript 또는 *Q4 2025 supplemental* (8-K Exhibit) 별도 fetch 필요.",
+      "FY2025 product backlog (revenue 측 backlog, 서비스 backlog $14B와 별도) — *지속적 산정 어려움*. 산업 표준은 RPO (Remaining Performance Obligations).",
+      "AEP 100 MW initial order shipped/accepted 상태 — Q4 2025 transcript에서 KR Sridhar 또는 Dan Berenbaum이 update 가능성.",
+      "Newark DE + Fremont CA 명목 연 생산 능력 (MW/year) — Item 2 Properties에 sqft만 있고 *production rate* 미명시. 별도 OEM·EPC 자료 필요.",
+      "Customer 43% 14% 12% identification 정확화 — SK ecoplant 외 2 customer (16%, 14%)는 *AEP·Microsoft·Caruso·CAISO 데이터센터* 등 후보. 정확 매핑은 Q4 earnings call에서 추정 가능."
+    ]
+  },
+
+  "open_questions_for_followup": [
+    "[HIGH PRIORITY] Q4 2025 supplemental (8-K Exhibit 99.2, 2026-02-05) — MW shipped + backlog 정량",
+    "Q4 2025 earnings call transcript — CEO/CFO verbatim 발언 + AEP status update",
+    "10-K Item 7 MD&A 정확 fetch — FY2024·FY2025 두 번 truncated. *page-range fetch* 방법 미발견.",
+    "10-K Item 8 Financial Statements — RPO breakdown + customer concentration verification",
+    "10-K Item 2 Properties — 명목 연 생산 능력 (MW/year) by facility",
+    "Bloom 'Electricity-as-a-Service' (EaaS) PPA $/MWh ranges — Equinix REIT disclosures, Caruso filings",
+    "State incentive program disclosures (CA SGIP, CT FCDM) — funded fuel cell projects의 $/kW 단가"
+  ]
+}

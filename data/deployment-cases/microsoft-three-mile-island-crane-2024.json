@@ -1,0 +1,140 @@
+{
+  "_meta": {
+    "id": "microsoft-three-mile-island-crane-2024",
+    "case_name": "Microsoft + Constellation Energy — Three Mile Island Unit 1 재가동 (Crane Clean Energy Center, CCEC)",
+    "fetchDate": "2026-05-29",
+    "fetchedBy": "Claude — WebSearch verified 2026-05-29 (Talen-AWS 정정 round 이후 패턴 적용 — verified 표기 전 직접 search 필수)",
+    "primarySources": [
+      {
+        "type": "Constellation Energy 8-K (2024-09-20) — Microsoft PPA + TMI Unit 1 restart 발표",
+        "url": "https://www.sec.gov/Archives/edgar/data/0001868275/000186827524000058/ceg-202409208kexh991.htm",
+        "publicDomain": true,
+        "redistributionRisk": "🟢"
+      },
+      {
+        "type": "Constellation official press release — Crane Clean Energy Center 발표",
+        "url": "https://www.constellationenergy.com/news/2024/Constellation-to-Launch-Crane-Clean-Energy-Center-Restoring-Jobs-and-Carbon-Free-Power-to-The-Grid.html",
+        "redistributionRisk": "🟡"
+      },
+      {
+        "type": "Utility Dive — Constellation plans 2028 restart",
+        "url": "https://www.utilitydive.com/news/constellation-three-mile-island-nuclear-power-plant-microsoft-data-center-ppa/727652/",
+        "redistributionRisk": "🟡"
+      },
+      {
+        "type": "DCD — TMI to return as Microsoft signs 20-year 835MW PPA",
+        "url": "https://www.datacenterdynamics.com/en/news/three-mile-island-nuclear-power-plant-to-return-as-microsoft-signs-20-year-835mw-ai-data-center-ppa/",
+        "redistributionRisk": "🟡"
+      },
+      {
+        "type": "Orrick (법무) — Microsoft 20-Year PPA 분석",
+        "url": "https://www.orrick.com/en/News/2024/10/Microsoft-Signs-20-Year-PPA-with-Constellation",
+        "redistributionRisk": "🟡 — 법무 분석"
+      },
+      {
+        "type": "Utility Dive — PJM market monitor 반대",
+        "url": "https://www.utilitydive.com/news/pjm-market-monitor-constellations-nuclear-crane-waiver/818216/",
+        "redistributionRisk": "🟡"
+      }
+    ],
+    "confidence": "high — SEC 8-K 직접 인용 + 다중 산업 언론 cross-checked + 법무 분석",
+    "verified": true,
+    "verificationNote": "2026-05-29 WebSearch 검증 round에서 직접 확인. Talen-AWS 정정 round 이후 모든 deployment case는 WebSearch 후에만 verified 표기.",
+    "sourceCategory": "정부공공 (SEC) + 기업 공식 + 산업 언론",
+    "redistributionRisk_aggregate": "🟢 for SEC / 🟡 for press·legal analysis"
+  },
+
+  "case_significance_for_our_tool": {
+    "why_this_case_matters": [
+      "*카본-free PPA 모델의 결정적 사례* — 한 hyperscaler가 *retired 원전 단일 재가동*을 위해 20년 PPA 체결",
+      "**Grid-connected (FTM) 모델 *처음부터*** — Talen-AWS와 달리 BTM 시도 자체를 *건너뜀*. FERC 거부 후 nuclear BTM이 사실상 막힌 시장 반응.",
+      "**PJM 안에서 retired nuclear 재가동의 첫 사례** — 2019년 retire → 2028 restart. 데이터센터 수요가 *retired plant까지 자원으로 만듦*.",
+      "**Microsoft 40 GW PPA 전략의 *flagship asset***. 다른 39 GW는 분산된 wind·solar·gas·storage. TMI 단일 835 MW는 *carbon-free + 24/7 firm*의 *완벽 조합*.",
+      "**우리 도구 framing 강화** — *원전 PPA off-site는 fuel cell·gas BTM의 competitor*. 사용자가 carbon priority + 24/7 firm을 모두 원할 때 *현실적 비교 옵션*."
+    ]
+  },
+
+  "facility_summary": {
+    "facility_name_after": "Crane Clean Energy Center (CCEC)",
+    "facility_name_before": "Three Mile Island Nuclear Generating Station, Unit 1",
+    "location": "Pennsylvania (PJM)",
+    "reactor_type": "Pressurized water reactor (PWR)",
+    "capacity_MW": 835,
+    "retired_year": 2019,
+    "expected_restart_year": 2028,
+    "license_extension_target_year": 2054,
+    "naming_significance": "Named for Christopher Crane, late former Exelon CEO (Constellation spin-off from Exelon 2022)",
+    "_homes_equivalent": "~800,000 homes worth of power"
+  },
+
+  "PPA_structure": {
+    "buyer": "Microsoft (data center load)",
+    "seller": "Constellation Energy (CEG)",
+    "announcement_date": "2024-09-20",
+    "term_years": 20,
+    "structure": "Grid-connected, Front-of-the-Meter (FTM) PPA",
+    "carbon_status": "100% carbon-free (nuclear)",
+    "_NOT_BTM_reason": "FERC 2024-11 Talen-AWS 거부 이후 nuclear BTM 사실상 막힘. CCEC는 *처음부터 FTM 모델로 설계* — 단일 plant 출력 grid 경유 송전.",
+    "economic_impact_announced": {
+      "direct_indirect_jobs": 3400,
+      "state_federal_taxes_USD_billion": 3,
+      "_period": "기간 미명시 (likely 20yr term)"
+    }
+  },
+
+  "regulatory_dynamics": {
+    "PJM_market_monitor_opposition": {
+      "_status": "PJM market monitor (IMM)이 Constellation의 *일부 waiver 요청에 반대* (2026-Q1)",
+      "_concerns": "Specific reliability + market manipulation 우려. 정확한 docket text는 후속 직접 fetch 권장.",
+      "_implication": "*Nuclear restart도 regulatory friction 있음* — 단 Talen BTM 거부보다는 약한 수준. CCEC PPA 자체는 *grid-connected = standard structure*라 큰 문제 없을 것."
+    },
+    "NRC_license_renewal": "Constellation은 NRC에 license renewal 신청 — 2054년까지 운영 연장 목표"
+  },
+
+  "lessons_for_our_tool": {
+    "lesson_1_nuclear_PPA_is_FTM_only_now": "*Talen 이후 모든 nuclear-데이터센터 deals은 grid-connected FTM*. BTM nuclear는 FERC 거부 후 *사실상 막혔음*. 우리 도구가 원전을 발전원으로 추가하지 않더라도, *carbon priority 사용자에게 grid-connected nuclear PPA 옵션*은 명시 가치.",
+    "lesson_2_retired_plant_resurrection": "데이터센터 수요가 *retired 자원까지 활성화*. 향후 *Vermont Yankee, Indian Point, Palisades* 등 다른 retired plant 재가동 시도 가능성. 우리 도구의 시장 framing에 *기존 자원 재활용 wave* 포함.",
+    "lesson_3_20yr_PPA_signals_capex_certainty": "*20년 PPA = 데이터센터 수요의 *진짜 long-term certainty 신호***. Hyperscaler가 *향후 20년간 carbon-free 24/7 GW급 부하*를 보증.",
+    "lesson_4_microsoft_strategy_diversification": "Microsoft 40 GW PPA portfolio에서 *TMI 835 MW는 2.1%*. 즉 *집중 X, 다양화 O*. 우리 도구 사용자가 데이터센터 BTM/PPA 결정 시 *Microsoft-style portfolio*가 reference 모델.",
+    "lesson_5_BTM_for_speed_PPA_for_carbon": "*Meta Socrates BTM 200 MW 17개월 = 빠른 시간*. *MS-CCEC PPA 835 MW 2028 = carbon-free 4년 wait*. 사용자의 priority (speed vs carbon)에 따라 BTM vs PPA가 다른 선택. *우리 도구의 priority weighting과 정확히 align*."
+  },
+
+  "comparison_with_3_nuclear_deals_PJM_FTM_dominant": {
+    "_purpose": "Nuclear-데이터센터 거래 패턴 정량화",
+    "Talen_AWS_Susquehanna_BTM_failed_2024_11": {
+      "structure_attempted": "BTM",
+      "outcome": "FERC REJECTED → restructured to FTM 2025-06",
+      "final_capacity_MW": 1920,
+      "term_years": 17,
+      "USD_billion": 18
+    },
+    "Microsoft_Constellation_CCEC_FTM_2024_09": {
+      "structure_attempted": "FTM (from start)",
+      "outcome": "Active — 2028 online target",
+      "capacity_MW": 835,
+      "term_years": 20,
+      "USD_billion": null,
+      "_economic_impact_USD_billion_taxes": 3
+    },
+    "Vistra_Comanche_Peak_FTM_2025_09": {
+      "structure_attempted": "FTM",
+      "outcome": "Active — Q4 2027 delivery → 2032 full ramp",
+      "capacity_MW": 1200,
+      "term_years": 20,
+      "extension_option_years": 20,
+      "customer_disclosed": false,
+      "customer_description": "large, investment grade company (데이터센터 거의 확실)"
+    },
+    "_pattern_summary": "*3개 nuclear-데이터센터 deals 모두 grid-connected FTM*. Talen은 BTM 시도 후 실패해 FTM 전환. MS·Vistra는 *처음부터 FTM*. **BTM nuclear는 사실상 dead market**.",
+    "_total_committed_carbon_free_capacity_MW": 3955,
+    "_total_PPA_term_years_range": "17–20+"
+  },
+
+  "open_questions_for_followup": [
+    "PJM IMM (market monitor)의 정확한 waiver 반대 docket text 직접 fetch",
+    "Constellation 분기 보고서 — TMI restart capex + schedule 진척",
+    "NRC license renewal application 진척",
+    "Microsoft 40 GW portfolio 내 TMI 외 nuclear PPA 또 있는지 (Three Mile Island Unit 2는 1979년 partial meltdown으로 dismantled)",
+    "*PA state regulator (PUC)*의 PPA 인가 — Pennsylvania state law 검토"
+  ]
+}

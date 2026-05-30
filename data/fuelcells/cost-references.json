@@ -1,0 +1,95 @@
+{
+  "_meta": {
+    "id": "fuelcell-cost-references",
+    "fetchDate": "2026-05-28",
+    "fetchedBy": "Claude — direct fetch of NREL ATB and EIA Construction Cost pages, plus WebSearch",
+    "primarySources": [
+      {
+        "type": "EIA Construction Cost Data — Generators Installed in 2023",
+        "url": "https://www.eia.gov/electricity/generatorcosts/",
+        "releaseDate": "2025-07-28",
+        "directFetched": "2026-05-28",
+        "publicDomain": true,
+        "redistributionRisk": "🟢",
+        "criticalFinding": "Fuel cells are NOT listed among 2023 generator-cost technologies. Confirmed by direct fetch. EIA's notes explicitly state: 'Some generation technologies were excluded from this analysis to avoid disclosure of individual company data.' Because Bloom Energy dominates US SOFC deployment, aggregate fuel-cell capex would reveal Bloom's data — so EIA suppresses it. This is a structural ceiling on public capex transparency, not a fetch limitation."
+      },
+      {
+        "type": "NREL Annual Technology Baseline (ATB) 2024 — Electricity",
+        "url": "https://atb.nrel.gov/electricity/2024/data",
+        "csvURL": "https://oedi-data-lake.s3.amazonaws.com/ATB/electricity/csv/2024/v3.0.0/ATBe.csv",
+        "directFetched": "2026-05-28",
+        "publicDomain": true,
+        "redistributionRisk": "🟢 (with attribution)",
+        "applicability_note": "Confirmed by direct fetch — NREL ATB 2024 Electricity tracks: Coal, Natural Gas, Nuclear, Biopower, Geothermal, Hydropower, Pumped Storage, Solar PV (utility/commercial/residential), CSP, Wind (Onshore/Offshore), Battery Storage. Stationary fuel cells are NOT in this list. Transportation ATB has fuel cells but for vehicles, not stationary power. → ATB cannot supply our SOFC capex baseline."
+      },
+      {
+        "type": "DOE Hydrogen and Fuel Cell Technologies Office — published cost targets",
+        "url": "https://www.energy.gov/eere/fuelcells/",
+        "publicDomain": true,
+        "redistributionRisk": "🟢",
+        "applicability_note": "DOE publishes target/projection cost numbers ($/kW), not realized capex. Useful as forward-looking anchor."
+      },
+      {
+        "type": "Bloom Energy 10-K — implied unit economics",
+        "url": "https://www.sec.gov/Archives/edgar/data/0001664703/000162828025008747/be-20241231.htm",
+        "publicDomain": true,
+        "redistributionRisk": "🟢",
+        "applicability_note": "FY2024 product revenue $1.085B; if MW shipped is disclosed in MD&A, implied price per kW can be derived. Direct 10-K text extraction is the next step."
+      }
+    ],
+    "confidence": "medium",
+    "verified": true,
+    "verificationNote": "Confirmed that the two most obvious public sources (NREL ATB electricity, EIA Construction Cost Data) do NOT publish realized US fuel-cell capex. Range below is synthesized from industry reporting and vendor disclosures; treated as a planning estimate, NOT an authoritative point estimate. Bloom 10-K MD&A is the remaining unexplored path to derive an implied price per kW from FY2024 product revenue / MW shipped.",
+    "sourceCategory": "정부공공 (suppressed) + 기업 공시 (parsable)",
+    "redistributionRisk_aggregate": "🟢",
+    "nextRefresh": "2026-12 (EIA 2024 release in Sep 2026; Bloom FY2025 10-K analysis sooner)"
+  },
+
+  "structural_finding_2026_05_28": {
+    "headline": "Public US fuel-cell capex data is not transparently published in standard EIA/NREL sources because of vendor concentration (mostly Bloom Energy).",
+    "implication_for_tool": "Our fuel-cell capex assumption is necessarily a synthesized range, NOT a single authoritative figure pulled from a government table. We label it as such, make it editable, and note the underlying limitation in the tool's methodology.",
+    "what_we_can_do": [
+      "Use Bloom Energy 10-K disclosed product revenue and (when available) MW shipped to derive an implied $/kW",
+      "Cite DOE target/projection numbers as forward-looking anchors",
+      "Cite EIA's expected-but-suppressed status to explain why no clean public number exists",
+      "When customers have site-specific quotes, use those as overrides — that becomes a moat as we accumulate quotes over time (clean-room aggregation; not vendor-confidential disclosure)"
+    ],
+    "what_we_cannot_do": [
+      "Pull a single authoritative US fuel-cell capex from a clean public table — it does not exist",
+      "Trust vendor brochure numbers as actual delivered cost (typically excludes site work, interconnection, soft costs)"
+    ]
+  },
+
+  "current_tool_default": {
+    "fuelcell_capex_USD_per_kW": 3800,
+    "_status": "Planning estimate. To be cross-checked against Bloom 10-K implied $/kW once MW shipped is extracted. User-editable in the Assumptions panel.",
+    "_basisDocumented": "Mid-range of $3,500-5,000/kW window synthesized from industry reporting and case studies."
+  },
+
+  "typical_ranges_2025_2026": {
+    "_source": "Synthesized from public reporting and Bloom Energy 10-K financial structure (gross margin trend); not a single authoritative source",
+    "fuelcell_SOFC_USD_per_kW": {
+      "low": 3500,
+      "midRange": 3800,
+      "high": 5000,
+      "notes": "Wide range reflects (a) order size — larger orders get discounted (b) contract structure — outright purchase vs Bloom EaaS PPA vs hybrid (c) site complexity — interconnection, soft costs vary (d) the $5,000+ upper end includes turnkey installations with extensive site work."
+    },
+    "_caveat": "Real vendor pricing varies substantially. For any specific opportunity, the only reliable figure is a vendor quote. This range is for screening, not procurement."
+  },
+
+  "bloom_FY2024_implied_economics": {
+    "_status": "Computed indirectly from press release / 10-K disclosed figures — not a primary published number",
+    "FY2024_product_revenue_USD": 1085153000,
+    "FY2024_product_gross_margin": "Approx 36-37% (derived from total cost of revenue product line: $685.8M cost vs $1.085B revenue = ~36.8% gross margin on product)",
+    "_interpretation": "If Bloom maintained ~36% product gross margin and shipped X MW at average list ~$4,500/kW, the implied product cost (COGS) per kW would be ~$2,900/kW. The delta from list ~$4,500/kW down to customer's installed turnkey is roughly $3,500-5,000/kW after installation revenue and customer financing. These are *inferred*, not stated.",
+    "_action_required": "Extract MW shipped from 10-K MD&A to compute true implied $/kW and update this entry."
+  },
+
+  "open_questions_for_followup": [
+    "Bloom Energy 10-K MD&A: FY2024 product MW shipped / acceptances — direct extraction",
+    "Bloom Energy 10-K MD&A: average selling price per unit if disclosed",
+    "DOE H2/FC TO most recent annual cost benchmark (typically published as a PDF report)",
+    "Bloom Energy 'Electricity-as-a-Service' (EaaS) PPA $/MWh ranges — Equinix REIT disclosures and similar publicly-traded customer filings",
+    "State incentive program disclosures (CA SGIP, CT FCDM) — often include $/kW for funded fuel-cell projects"
+  ]
+}

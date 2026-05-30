@@ -1,0 +1,126 @@
+{
+  "_meta": {
+    "id": "gridlab-2025-actual-capex",
+    "fetchDate": "2026-05-29",
+    "fetchedBy": "Claude — direct fetch of GridLab + EFG + Halcyon white paper PDF",
+    "primarySources": [
+      {
+        "type": "GridLab 'The New Reality of Power Generation: An Analysis of Increasing Gas Turbine Costs in the U.S.' white paper",
+        "url": "https://gridlab.org/wp-content/uploads/2025/09/GridLab_Gas-Turbine-Costs-Report-1.pdf",
+        "publicationDate": "September 2025",
+        "fetched": "2026-05-29",
+        "authors_and_methodology": "GridLab (commissioning), Energy Futures Group (analysis), Halcyon (IRP/CPCN data mining via AI platform), Phil Besuner (regression analysis 40+ yr experience)",
+        "redistributionRisk": "🟢 (with attribution) — GridLab은 nonprofit, IRP/CPCN data는 공공 도메인 (state PSC filings)"
+      }
+    ],
+    "confidence": "high (IRP/CPCN filings = state-regulated utility 공시문서, 법적 책임 기준)",
+    "verified": true,
+    "verificationNote": "GridLab 보고서 PDF 직접 fetch 완료. 데이터 출처는 state PSC IRP/CPCN filings — 공공 도메인이나 Halcyon platform이 AI로 mining해 정리. 정량 표는 본문에 직접 인용 가능.",
+    "sourceCategory": "정부공공 (state PSC filings, GridLab 인용)",
+    "redistributionRisk_aggregate": "🟢",
+    "nextRefresh": "GridLab은 연간 업데이트 의도; Halcyon platform은 실시간 IRP/CPCN mining"
+  },
+
+  "structural_finding_third_data_gap": {
+    "headline": "*공개된 권위 데이터(NREL ATB, EIA AEO)가 현재 가스터빈 비용을 40-100% 과소평가*. 실제 비용은 state PSC IRP/CPCN filings에 있으나 종종 confidential.",
+    "comparison_table_2030_CC_per_kW": {
+      "NREL_ATB_2024_moderate_scenario_2030_USD_per_kW_nominal": 1638,
+      "EIA_AEO_2025_Sargent_Lundy_2030_USD_per_kW_nominal": 1058,
+      "GridLab_actual_2030_IRP_filings_USD_per_kW": 2200,
+      "gap_NREL_underestimate_pct": 26,
+      "gap_EIA_underestimate_pct": 52
+    },
+    "comparison_table_2025_2026_CC_per_kW": {
+      "older_projects_2026_2027_inservice_USD_per_kW_range": [1116, 1427],
+      "newer_projects_2028_2030_inservice_USD_per_kW_typical": 2000,
+      "_quote": "Projects for completion in 2026 and 2027 were reported at $1,116/kW to $1,427/kW... recent CCGT projects are routinely reporting costs of $2,000/kW or more"
+    },
+    "why_public_data_is_lagging": [
+      "NREL ATB는 NETL technoeconomic 모델 기반, *commercial offering quote*가 아닌 *engineering bottom-up*",
+      "EIA AEO는 Sargent & Lundy 컨설팅 모델 기반, 2023 데이터에 2% inflation 가정만",
+      "둘 다 *현재 OEM pricing power와 reservation fee 트렌드*를 모델에 반영 안 함",
+      "최신 IRP/CPCN filings (2024-2025)에 진짜 데이터 있으나, 종종 redacted 또는 confidential",
+      "Halcyon 같은 AI platform이 *공개된 부분만 mining*해 정리하는 것이 현재 차선책"
+    ],
+    "implication_for_our_tool": "*가스터빈 시나리오의 capex baseline을 NREL ATB가 아닌 GridLab 데이터로 설정해야 정확*. 단, 우리는 GridLab 데이터를 *attribution과 함께* 사용 — 'GridLab/EFG/Halcyon (Sep 2025) — IRP filings 기반 실측'."
+  },
+
+  "OEM_pricing_power_evidence": {
+    "reservation_fees_required": true,
+    "_quote": "the three OEMs requiring a reservation fee to secure a manufacturing slot",
+    "OEMs": ["GE Vernova", "Siemens Energy", "Mitsubishi Power"],
+    "verified_example": {
+      "customer": "Kentucky Utilities (KU) + Louisville Gas & Electric (LG&E)",
+      "OEM": "GE Vernova",
+      "reservation_fee_USD_millions": 25,
+      "slot_purpose": "Turbine delivery in time for 2030 commercial operation",
+      "_source": "KY PSC Case No. 2025-00045 — Direct Testimony of Lonnie E. Bellar p. 11",
+      "_interpretation": "*$25M up-front* just to reserve a slot — 이는 GE Vernova의 supply 제약 + pricing power가 *실제 거래에서 monetize*되고 있음. Bloom 같은 fuel cell OEM은 reservation fee 없음 (아직). 시장 시그널이 명확."
+    }
+  },
+
+  "verified_actual_capex_data_2025_2031_simple_cycle_CT": {
+    "_n_units": 10,
+    "_unit_data_USD_per_kW_with_inservice": [
+      {"plant": "A.B. Brown", "state": "IN", "year": 2025, "capacity_MW": 460, "USD_per_kW": 728, "ISO": "MISO", "status": "Actual"},
+      {"plant": "Apache GT5/6", "state": "AZ", "year": 2025, "capacity_MW": 84, "USD_per_kW": 920, "ISO": "WALC", "status": "Actual"},
+      {"plant": "Parr Replacement GT5/6", "state": "SC", "year": 2025, "capacity_MW": 114, "USD_per_kW": 1544, "ISO": "SCEG", "status": "Estimate"},
+      {"plant": "Aberdeen CT", "state": "SD", "year": 2026, "capacity_MW": 1260, "USD_per_kW": 1969, "ISO": "SWPP", "status": "-"},
+      {"plant": "Castle Bluff Energy Center", "state": "MO", "year": 2027, "capacity_MW": 800, "USD_per_kW": 1125, "ISO": "MISO", "status": "Estimate"},
+      {"plant": "Lone Star Power Station", "state": "TX", "year": 2028, "capacity_MW": 453, "USD_per_kW": 1699, "ISO": "ERCOT", "status": "Estimate"},
+      {"plant": "North Valmy New Peakers", "state": "NV", "year": 2028, "capacity_MW": 400, "USD_per_kW": 1433, "ISO": "NEVP", "status": "Estimated"},
+      {"plant": "Urquhart Replacement CT7", "state": "SC", "year": 2028, "capacity_MW": 200, "USD_per_kW": 1965, "ISO": "SCEG", "status": "Estimate"},
+      {"plant": "Chesterfield Energy Reliability Center", "state": "VA", "year": 2029, "capacity_MW": 944, "USD_per_kW": 1557, "ISO": "PJM", "status": "Estimate"},
+      {"plant": "Horseshoe Lake", "state": "OK", "year": 2029, "capacity_MW": 448, "USD_per_kW": 1130, "ISO": "SWPP", "status": "Actual"}
+    ],
+    "summary_stats": {
+      "range_USD_per_kW": [728, 1969],
+      "median_USD_per_kW": 1500,
+      "EIA_Construction_2023_actual_simple_cycle_CT_USD_per_kW": 562,
+      "_interpretation": "EIA Construction 2023 ($562) vs GridLab IRP 2025-2029 median ($1,500): *2.7x 격차*. EIA Construction은 2023 실제 가동 시작 generator 평균, GridLab은 2025-2029 신규 계획 generator. 즉 *2-3년 내 신규 install 비용이 2-3배 상승*."
+    }
+  },
+
+  "verified_actual_capex_data_2025_2031_combined_cycle": {
+    "_n_units": 10,
+    "_unit_data_USD_per_kW_with_inservice": [
+      {"plant": "Orange County Advanced Power Station (OCAPS)", "state": "TX", "year": 2026, "capacity_MW": 1215, "USD_per_kW": 1300, "ISO": "MISO", "status": "Estimate"},
+      {"plant": "Mill Creek 5", "state": "KY", "year": 2027, "capacity_MW": 640, "USD_per_kW": 1427, "ISO": "LGEE", "status": "Actual"},
+      {"plant": "Muscatine CHP Project", "state": "IA", "year": 2028, "capacity_MW": 45, "USD_per_kW": 2165, "ISO": "MISO", "status": "Estimate"},
+      {"plant": "Legend Power Station", "state": "TX", "year": 2028, "capacity_MW": 754, "USD_per_kW": 2125, "ISO": "ERCOT", "status": "Estimate"},
+      {"plant": "Homer City Generating Station", "state": "PA", "year": "2028/2029", "capacity_MW": 4500, "USD_per_kW": 2222, "ISO": "PJM", "status": "Estimate"},
+      {"plant": "Cayuga CC Project", "state": "IN", "year": "2029/2030", "capacity_MW": 1476, "USD_per_kW": 2256, "ISO": "MISO", "status": "Estimate"},
+      {"plant": "Cooper CCGT", "state": "KY", "year": 2030, "capacity_MW": 745, "USD_per_kW": 1768, "ISO": "PJM", "status": "Estimate"},
+      {"plant": "Brown 12", "state": "KY", "year": 2030, "capacity_MW": 645, "USD_per_kW": 2144, "ISO": "PJM", "status": "Estimate"},
+      {"plant": "McNew Generating Station", "state": "KS", "year": 2030, "capacity_MW": 710, "USD_per_kW": 2255, "ISO": "SWPP", "status": "-"},
+      {"plant": "Mill Creek 6", "state": "KY", "year": 2031, "capacity_MW": 645, "USD_per_kW": 2194, "ISO": "LGEE", "status": "Estimate"}
+    ],
+    "summary_stats": {
+      "range_USD_per_kW": [1300, 2256],
+      "median_USD_per_kW": 2155,
+      "EIA_Construction_2023_actual_CC_USD_per_kW": 898,
+      "_interpretation": "EIA Construction 2023 CC ($898) vs GridLab IRP 2025-2031 median ($2,155): *2.4x 격차*. CC는 가장 가격 상승이 가파른 카테고리. *Mill Creek 5(2027) $1,427 → Mill Creek 6(2031) $2,194 — 같은 utility 같은 site 4년 후 +54% 가격*. 가격 상승은 명확."
+    }
+  },
+
+  "implications_for_data_center_BTM": {
+    "challenge_1_utility_lockup": "Utility scale GT는 2028-2031까지 슬롯 묶임. 데이터센터 BTM도 *같은 OEM pool 경쟁* — Solar Turbines/Caterpillar/Wartsila reciprocating으로 우회 가능하나 그들도 자체 lead time.",
+    "challenge_2_capex_floor_higher": "*우리 도구의 가스 capex baseline은 NREL ATB 아닌 GridLab 데이터로 설정*. 데이터센터 BTM은 추가 premium (+10-30%) — 작은 단위, 단일 customer risk, 빠른 일정.",
+    "challenge_3_cost_curves_diverging_by_OEM_tier": "Tier 1 OEM (GE/Siemens/Mitsubishi) = 가격 상승 + lead time 연장. Tier 2 OEM (Solar/Wartsila) = 상대적 가용성 우위, *공급 제약 본격화되면 같은 트렌드 따를 가능성*. 우리 도구는 OEM tier별 다른 시나리오 모델 필요.",
+    "opportunity_for_BTM_BUYERS": "*Reservation fee를 utility처럼 지불할 수 있는 hyperscaler는 슬롯 확보 우위*. Bloom/Wartsila/Solar처럼 *reservation fee 없는 OEM*과의 거래가 mid-tier 데이터센터 dev에게 차별점."
+  },
+
+  "regional_variation_qualitative": {
+    "_source": "GridLab Figure 5 (정확 수치는 차트, 표 X)",
+    "_higher_cost_regions": ["PJM", "SCEG"],
+    "_lower_cost_regions": ["ERCOT", "MISO (parts)"],
+    "_interpretation": "*PJM이 가장 비쌈* — 노조 + 토지비 + 규제. *ERCOT/MISO가 상대적 저렴* — Texas/Ohio/Indiana 같은 가스 공급 풍부 + ERCOT 별도 regulatory regime. 데이터센터가 ERCOT(Texas), MISO(Ohio/Iowa)로 몰리는 *경제적 이유*."
+  },
+
+  "open_questions_for_followup": [
+    "GridLab Figure 5 regional 정확 수치 (현재 그래프만) — Halcyon platform에 직접 접근 가능 시 추출",
+    "데이터센터 BTM 특화 데이터 추출 — Meta Socrates, Crusoe ExxonMobil 거래 등 *non-utility BTM* 단가 비교",
+    "EIA Construction Cost 2024 (예상 2026-09 release) — 2024년 실측이 GridLab estimates와 어떻게 align되는지 비교",
+    "OEM tier 2 (Solar, Wartsila, INNIO)의 reservation fee 등장 시점 모니터링"
+  ]
+}

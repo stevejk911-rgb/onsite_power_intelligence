@@ -1,0 +1,149 @@
+{
+  "_meta": {
+    "id": "nrel-cole-ramasamy-turan-2025-bess-update",
+    "fetchDate": "2026-05-29",
+    "fetchedBy": "Claude — direct fetch of Cole·Ramasamy·Turan 2025 BESS Cost Projection Update PDF",
+    "primarySources": [
+      {
+        "type": "Cole·Ramasamy·Turan 2025 — 'Cost Projections for Utility-Scale Battery Storage: 2025 Update' (NREL/TP-6A40-93281, June 2025)",
+        "url": "https://www.nrel.gov/docs/fy25osti/93281.pdf",
+        "directFetched": "2026-05-29",
+        "publicDomain": true,
+        "redistributionRisk": "🟢",
+        "_methodology": "Bottom-up cost model + 16개 industry publication literature review. Cole & Karmakar 2023의 *successor* — 2024 baseline 30% 하향 조정."
+      }
+    ],
+    "confidence": "high — primary NREL source 직접 fetch (full PDF, truncated 없음)",
+    "verified": true,
+    "verificationNote": "PDF 직접 fetch 완료. Augustine & Blair 2021은 truncated 됐지만 이 2025 update가 *진짜 우리가 필요한 데이터*를 제공 — Figure 2의 split 공식 명시.",
+    "sourceCategory": "정부공공",
+    "redistributionRisk_aggregate": "🟢",
+    "nextRefresh": "2027 (Cole·Ramasamy·Turan 2026 update 예상)"
+  },
+
+  "structural_finding_2024_baseline_30pct_lower": {
+    "headline": "*Cole & Karmakar 2023 → Cole·Ramasamy·Turan 2025 update에서 2024 baseline 30% 하향*. 이전 우리 도구 default $350/kWh는 *NREL 자체가 2025년에 부정확하다고 인정한 2023 추정에 기반*했음.",
+    "comparison": {
+      "Cole_Karmakar_2023_baseline_2022_USD_per_kWh": 482,
+      "Cole_Ramasamy_Turan_2025_baseline_2024_USD_per_kWh": 334,
+      "delta_pct": -30.7,
+      "_quote_2025_update": "Costs in this 2025 update report are most closely aligned with the low projection from the 2023 report primarily due to lower estimates for current battery system costs",
+      "_significance": "NREL이 *자체적으로 2023 estimates를 너무 높다고 인정*. 실제 시장 가격이 더 빠르게 하락. 우리 도구 update 필수."
+    },
+    "implications": [
+      "이전 도구 default $350/kWh = *NREL 2030 mid $279/kWh 대비 25% 과대평가*",
+      "Solar+BESS 시나리오가 *실제보다 비싸게* 표시되어 ranking에서 부당하게 불리",
+      "2024-05-29 이전 우리 도구 결과는 *Solar+BESS 사용 결정에 보수적 편향*을 가졌음"
+    ]
+  },
+
+  "verified_split_formula": {
+    "_quote_Section_2_2": "the energy cost is $241/kWh, and the power cost is $372/kW",
+    "_quote_Figure_2_linear_regression": "y = 240.8x + 379.16, R² = 0.9999",
+    "_explanation": "Bottom-up cost model로 1-10hr duration 모두 계산 후 직선 회귀. y절편(power cost $379/kW)을 4hr 정확 fit 위해 $7/kW 하향 → $372/kW. 완벽 linear (R²=0.9999) — 우리 도구에 *직접 적용 가능*.",
+    "_formula": "Total ($/kW) = Energy Cost ($/kWh) × Duration (hr) + Power Cost ($/kW)",
+    "_inverse_formula_for_per_kWh": "Total ($/kWh) = Energy Cost + Power Cost / Duration",
+
+    "_verified_2024_costs_by_duration_USD_per_kW": {
+      "2hr": 854,
+      "3hr": 1095,
+      "4hr": 1336,
+      "5hr": 1577,
+      "6hr": 1818,
+      "7hr": 2059,
+      "8hr": 2300,
+      "9hr": 2541,
+      "10hr": 2782
+    },
+
+    "_verified_2024_costs_by_duration_USD_per_kWh": {
+      "2hr": 427,
+      "3hr": 365,
+      "4hr": 334,
+      "5hr": 315,
+      "6hr": 303,
+      "7hr": 294,
+      "8hr": 287,
+      "9hr": 282,
+      "10hr": 278,
+      "_note_longer_duration_cheaper_per_kWh": "duration 길수록 *fixed BOS가 더 많은 MWh에 분산* → $/kWh 감소. Power $/kW는 정반대로 short duration이 저렴."
+    }
+  },
+
+  "verified_2024_baseline_components_bottom_up": {
+    "_total_2024_USD_per_kWh": 334,
+    "_total_2024_basis": "2024$, 4hr duration",
+    "components": {
+      "Li_ion_battery_cabinets_LFP": 210,
+      "Bi_directional_inverter": 26,
+      "SBOS_structural": 5,
+      "EBOS_electrical": 44,
+      "Installation_labor": 2,
+      "Permitting_interconnection": 3,
+      "Sales_tax": 12,
+      "Contingency": 7,
+      "EPC_overhead": 6,
+      "Profit": 14,
+      "_share_battery_pack_pct": 63,
+      "_share_BOS_pct": 13,
+      "_share_inverter_pct": 8,
+      "_share_soft_costs_pct": 16
+    }
+  },
+
+  "verified_year_by_year_4hr_projection": {
+    "_source": "Table 2, Appendix — Cole·Ramasamy·Turan 2025",
+    "_unit": "USD per kWh in 2024$, 4-hour duration overnight capital cost",
+    "_rows": [
+      [2024, 334, 334, 334],
+      [2025, 295, 321, 350],
+      [2026, 255, 308, 366],
+      [2027, 243, 301, 363],
+      [2028, 231, 293, 360],
+      [2029, 219, 286, 357],
+      [2030, 207, 279, 354],
+      [2035, 147, 243, 339],
+      [2040, 134, 221, 329],
+      [2045, 121, 200, 318],
+      [2050, 108, 178, 307]
+    ],
+    "_columns": ["year", "low", "mid", "high"]
+  },
+
+  "verified_operating_parameters_2025_update": {
+    "round_trip_efficiency": 0.85,
+    "calendar_lifetime_years": 15,
+    "FOM_pct_of_capital": 0.04,
+    "FOM_change_from_2023_update": "2.5% → 4% — *augmentation 비용 더 포함*",
+    "VOM": 0,
+    "cycle_assumption": "1 cycle/day",
+    "inflation_assumption": "2.5%"
+  },
+
+  "tool_implementation_changes_2026_05_29": {
+    "old": {
+      "DEFAULTS_bessCost_USD_per_kWh": 350,
+      "calculation": "bessCapexM = bessMWh × bessCost / 1000",
+      "issue": "Fixed $350/kWh는 6hr storage에서만 적정. 다른 duration 변경 시 부정확. Cole&Karmakar 2023 4hr 권위에 기반 — 그러나 2025 update에서 30% 하향 조정됨."
+    },
+    "new": {
+      "DEFAULTS_bessEnergyCost_USD_per_kWh": 241,
+      "DEFAULTS_bessPowerCost_USD_per_kW": 372,
+      "calculation": "bessCapexM = (bessMWh × bessEnergyCost + facilityMW × bessPowerCost) / 1000",
+      "advantage": "*모든 duration에 정확*. 6hr default + 사용자가 storageHrs 변경 시 자동 정확. NREL 2025 update bottom-up cost model 직접 적용.",
+      "validation": {
+        "6hr_old_calc_USD_per_kW": 2100,
+        "6hr_new_calc_USD_per_kW": 1818,
+        "delta_pct": -13.4,
+        "_significance": "이전 도구가 6hr BESS를 *13% 과대평가*했음. 정정 후 Solar+BESS 시나리오가 *실제 NREL baseline*에 align."
+      }
+    }
+  },
+
+  "open_questions_for_followup": [
+    "Cole·Ramasamy·Turan 2025 update의 future cost projection 사용자 input 확장 — 2027-2030 인도 시점에 따른 cost 변화 모델링",
+    "LFP-only chemistry assumption 검증 — 데이터센터 BTM은 sodium-ion·flow battery 같은 alternative chemistry 가능성",
+    "NREL ATB 2024b update (2024 Q4 release) vs Cole 2025 update 일관성 검증",
+    "Bottom-up cost model의 *데이터센터 BTM 적용성* — utility-scale 가정 vs hyperscaler dedicated facility 차이 (예: 보안·redundancy 추가 요구)"
+  ]
+}

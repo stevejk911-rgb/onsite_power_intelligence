@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>On-Site Power Intelligence — AI 데이터센터 전력, 90초 결정</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;}
+  :root{
+    --ink:#0f172a;
+    --amber:#f59e0b;
+    --amber-dark:#92400e;
+    --muted:#64748b;
+    --line:#e5e7eb;
+  }
+  html,body{
+    height:100%;
+    background:#fff;
+    color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",sans-serif;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:inherit;text-decoration:none;}
+
+  /* Top nav */
+  nav{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:18px 32px;
+    border-bottom:1px solid var(--line);
+  }
+  nav .logo{font-size:15px;font-weight:800;letter-spacing:-.01em;}
+  nav .logo span{color:var(--amber);}
+  nav .navlinks{display:flex;gap:22px;font-size:13px;color:var(--muted);}
+  nav .navlinks a:hover{color:var(--ink);}
+
+  /* Hero */
+  .hero{
+    max-width:880px;margin:0 auto;
+    padding:88px 32px 56px;
+    text-align:center;
+  }
+  .badge{
+    display:inline-block;
+    font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--amber-dark);background:#fef3c7;
+    padding:5px 11px;border-radius:99px;
+    margin-bottom:24px;
+  }
+  h1{
+    font-size:48px;font-weight:800;letter-spacing:-.025em;line-height:1.1;
+    margin-bottom:18px;
+  }
+  h1 .accent{color:var(--amber);}
+  .sub{
+    font-size:18px;color:var(--muted);
+    max-width:600px;margin:0 auto 32px;line-height:1.55;
+  }
+  .cta{
+    display:inline-flex;align-items:center;gap:10px;
+    background:var(--ink);color:#fff;
+    font-size:16px;font-weight:700;
+    padding:14px 28px;border-radius:8px;
+    transition:transform .15s,box-shadow .15s;
+  }
+  .cta:hover{
+    transform:translateY(-2px);
+    box-shadow:0 8px 24px rgba(15,23,42,0.18);
+  }
+  .cta-note{
+    font-size:12px;color:var(--muted);margin-top:12px;
+  }
+
+  /* 3 핵심 강점 */
+  .pillars{
+    max-width:980px;margin:0 auto;
+    padding:48px 32px;
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:32px;
+    border-top:1px solid var(--line);
+    border-bottom:1px solid var(--line);
+  }
+  .pillar{text-align:center;}
+  .pillar .emoji{font-size:30px;margin-bottom:8px;display:block;}
+  .pillar h3{font-size:15px;font-weight:700;margin-bottom:4px;letter-spacing:-.01em;}
+  .pillar p{font-size:13px;color:var(--muted);line-height:1.5;}
+
+  /* 누구를 위한 도구 */
+  .who{
+    max-width:880px;margin:0 auto;
+    padding:48px 32px;
+    text-align:center;
+  }
+  .who h2{
+    font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+    color:var(--muted);margin-bottom:24px;
+  }
+  .who-row{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:24px;
+  }
+  .who-card{
+    border:1px solid var(--line);border-radius:10px;
+    padding:18px 16px;
+    text-align:left;
+  }
+  .who-card .role{
+    font-size:14px;font-weight:700;margin-bottom:5px;
+  }
+  .who-card .scene{
+    font-size:12px;color:var(--muted);line-height:1.5;
+  }
+
+  /* Footer / 신뢰성 */
+  .trust{
+    background:#f8fafc;
+    padding:40px 32px;
+    text-align:center;
+    border-top:1px solid var(--line);
+  }
+  .trust .nums{
+    display:flex;justify-content:center;gap:48px;flex-wrap:wrap;
+    margin-bottom:20px;
+  }
+  .trust .n{font-size:24px;font-weight:800;color:var(--ink);}
+  .trust .l{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-top:2px;}
+  .trust .links{display:flex;justify-content:center;gap:18px;font-size:13px;color:var(--muted);}
+  .trust .links a:hover{color:var(--amber-dark);}
+
+  /* Bottom CTA */
+  .bottom-cta{
+    padding:48px 32px;text-align:center;
+  }
+  .bottom-cta h2{
+    font-size:24px;font-weight:700;margin-bottom:16px;letter-spacing:-.01em;
+  }
+
+  /* Footer text */
+  footer.foot{
+    padding:24px 32px;
+    text-align:center;font-size:11px;color:var(--muted);
+    border-top:1px solid var(--line);
+  }
+
+  /* Mobile */
+  @media (max-width:680px){
+    h1{font-size:34px;}
+    .sub{font-size:16px;}
+    .pillars{grid-template-columns:1fr;gap:28px;padding:36px 24px;}
+    .who-row{grid-template-columns:1fr;}
+    .hero{padding:56px 24px 40px;}
+    .trust .nums{gap:24px;}
+    nav{padding:14px 20px;}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="landing.html" class="logo">On-Site <span>Power</span> Intelligence</a>
+  <div class="navlinks">
+    <a href="data-sources.html">데이터</a>
+    <a href="index.html">도구 →</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="badge">AI 데이터센터 · Behind-the-Meter 전력</div>
+  <h1>좌표 하나로,<br>전력 결정 <span class="accent">90초</span>.</h1>
+  <p class="sub">
+    그리드 인터커넥션 대기열 6–15년. AI 데이터센터는 못 기다린다.<br>
+    좌표 1개 입력 → on-site 발전 옵션 10개를 *같은 잣대*로 비교.
+  </p>
+  <a href="index.html" class="cta">
+    도구 사용하기
+    <span style="font-size:18px">→</span>
+  </a>
+  <div class="cta-note">무료 · 가입 없음 · 90초</div>
+</section>
+
+<section class="pillars">
+  <div class="pillar">
+    <span class="emoji">🗺️</span>
+    <h3>10 데이터센터 hot zone</h3>
+    <p>NoVA·Columbus·DFW·Atlanta·Quincy WA 등<br>좌표 → sub-region 자동 매핑</p>
+  </div>
+  <div class="pillar">
+    <span class="emoji">⚖️</span>
+    <h3>10 시나리오 비교</h3>
+    <p>단일 4 + 하이브리드 3<br>+ Nuclear PPA 3 verified deals</p>
+  </div>
+  <div class="pillar">
+    <span class="emoji">📄</span>
+    <h3>한 번 클릭, PDF</h3>
+    <p>위원회 deck · IC 메모 · CEO 슬라이드<br>그대로 첨부</p>
+  </div>
+</section>
+
+<section class="who">
+  <h2>누구를 위한 도구</h2>
+  <div class="who-row">
+    <div class="who-card">
+      <div class="role">데이터센터 부지선정</div>
+      <p class="scene">EPC 부르기 전 5분 안에<br><i>전력 스토리가 말이 되나</i> 확인</p>
+    </div>
+    <div class="who-card">
+      <div class="role">하이퍼스케일러 인프라</div>
+      <p class="scene">이사회·CEO 슬라이드용<br><i>부지·시나리오 비교</i></p>
+    </div>
+    <div class="who-card">
+      <div class="role">PE 인프라 투자자</div>
+      <p class="scene">Sponsor의 BTM 가설<br><i>IC 메모 backup</i></p>
+    </div>
+  </div>
+</section>
+
+<section class="trust">
+  <div class="nums">
+    <div><div class="n">18+</div><div class="l">verified sources</div></div>
+    <div><div class="n">10</div><div class="l">hot zones</div></div>
+    <div><div class="n">5</div><div class="l">deployment cases</div></div>
+    <div><div class="n">4</div><div class="l">정직성 정정</div></div>
+  </div>
+  <div class="links">
+    EIA · NREL · SEC EDGAR · GridLab · Bloom 10-K · Wartsila · GE Vernova
+  </div>
+</section>
+
+<section class="bottom-cta">
+  <h2>좌표 하나로 시작.</h2>
+  <a href="index.html" class="cta">
+    도구 사용하기
+    <span style="font-size:18px">→</span>
+  </a>
+</section>
+
+<footer class="foot">
+  Built with rigor and honesty. v1 · 2026 · 모든 기능 무료.
+</footer>
+
+</body>
+</html>

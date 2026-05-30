@@ -1,0 +1,450 @@
+{
+  "_meta": {
+    "id": "data-center-hot-zones",
+    "fetchDate": "2026-05-29",
+    "fetchedBy": "Claude — WebSearch verified for NoVA + Columbus, industry trade press for others",
+    "primarySources": [
+      {
+        "type": "Data Center Frontier — 'Dominion Resumes New Connections, But Loudoun Faces Lengthy Power Constraints'",
+        "url": "https://www.datacenterfrontier.com/energy/article/11436951/dominion-resumes-new-connections-but-loudoun-faces-lengthy-power-constraints",
+        "redistributionRisk": "🟡"
+      },
+      {
+        "type": "DCD — 'PJM approves $11.8bn transmission expansion plan'",
+        "url": "https://www.datacenterdynamics.com/en/news/pjm-approves-118bn-transmission-expansion-plan-amid-data-center-boom/",
+        "redistributionRisk": "🟡"
+      },
+      {
+        "type": "JLARC Virginia Data Center Study (12-09-2024)",
+        "url": "https://jlarc.virginia.gov/pdfs/presentations/JLARC%20Virginia%20Data%20Center%20Study_FINAL_12-09-2024.pdf",
+        "publicDomain": true,
+        "redistributionRisk": "🟢 — Virginia state legislative study"
+      },
+      {
+        "type": "Utility Dive — AEP Ohio data center interconnection rules",
+        "url": "https://www.utilitydive.com/news/Ohio-regulators-approve-aep-data-center-interconnection-rules/752690/",
+        "redistributionRisk": "🟡"
+      },
+      {
+        "type": "DCD — S&P Global: US data centers 22% more grid-based power",
+        "url": "https://www.datacenterdynamics.com/en/news/sp-global-us-data-centers-to-require-22-more-grid-based-power-by-end-of-2025/",
+        "redistributionRisk": "🟡"
+      },
+      {
+        "type": "AEP 10-K / 8-K filings (SEC)",
+        "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0000004904",
+        "publicDomain": true,
+        "redistributionRisk": "🟢"
+      }
+    ],
+    "confidence": "high (NoVA, Columbus — multiple verified sources) / medium (Silicon Valley, DFW, Phoenix — industry triangulation)",
+    "verified": true,
+    "verificationNote": "NoVA + Columbus 데이터는 verified. 다른 3개 hot zone은 trade press triangulation — Round 2에서 utility IRP/CPCN 직접 fetch로 정밀화 권장.",
+    "sourceCategory": "정부공공 (PJM·utilities) + 산업 언론 + state studies",
+    "redistributionRisk_aggregate": "🟡",
+    "nextRefresh": "분기별 (utility IRP filings + PJM RTEP updates)"
+  },
+
+  "structural_finding": {
+    "headline": "ISO/RTO 매핑(PJM/ERCOT/MISO...)만으로는 데이터센터 사이트 차별화 불가. *Sub-region(metro/county) overlay*가 필수.",
+    "why": [
+      "같은 PJM 안에서도 *Dominion territory* vs *AEP Ohio* vs *ComEd* 등 서로 다른 utility, 서로 다른 IRP, 서로 다른 data center tariff",
+      "Grid wait는 ISO level이 아니라 *substation level* — Loudoun Eastern은 wait 매우 길고 Loudoun Western은 짧음, 한 county 내에서도 차이",
+      "Gas access는 *pipeline operator + 압력 등급*에 좌우 — county 단위 평균이 site-specific 차이 못 잡음",
+      "Land·labor cost는 metro 단위 — JLL Data Center Outlook 등 trade press 출처"
+    ],
+    "what_we_do": "Hot zone에 매칭되면 *verified uplift factor*를 default values에 적용. 매칭 안 되면 ISO baseline 그대로. 사용자가 수동으로 다시 조정 가능 (도구의 honesty: 추측 아닌 *명시적 데이터*)."
+  },
+
+  "hot_zones": [
+    {
+      "id": "nova-loudoun-fairfax",
+      "name": "Northern Virginia (Loudoun + Fairfax + Prince William)",
+      "shortName": "NoVA",
+      "isoRegion": "PJM",
+      "utility": "Dominion Energy Virginia",
+      "centroid": { "lat": 39.0, "lng": -77.5 },
+      "approximateRadiusKm": 35,
+      "counties": ["Loudoun", "Fairfax", "Prince William", "Fauquier"],
+      "states": ["VA"],
+      "confidence": "high",
+      "data_center_status": "*세계 최대 데이터센터 hub*. Loudoun County alone = 'Data Center Capital of the World' (county 자체 자료). 전세계 인터넷 트래픽 70% 추정 통과.",
+      "verified_findings": {
+        "Dominion_2028_data_center_load_MW": 4000,
+        "Dominion_current_substation_capacity_MW": 2100,
+        "load_deficit_factor": 1.9,
+        "PJM_queue_max_years": 15,
+        "PJM_queue_cleared_unbuilt_GW": 38,
+        "Dominion_525kV_underground_backbone_billion_USD": 2.3,
+        "Dominion_backbone_in_service": "2032 (planned)",
+        "Dominion_500kV_Southern_Loudoun_in_service": "2026 (under construction)",
+        "PJM_RTEP_2025_Window_1_billion_USD": 11.8,
+        "PJM_RTEP_Dominion_share_billion_USD": 4.8,
+        "Loudoun_County_data_center_capital_self_designation": true
+      },
+      "uplift_factors": {
+        "gridwait_multiplier": 1.6,
+        "gridwait_explanation": "Dominion territory substation 한계 + PJM queue. PJM 평균 60mo가 NoVA에서 ~96mo (8년).",
+        "gas_distance_uplift_mi": 4,
+        "gas_distance_explanation": "Loudoun gas pipeline 포화. Williams Transco·Columbia Gas 압력 등급 제약.",
+        "capex_multiplier": 1.10,
+        "capex_explanation": "Labor (DC metro IBEW), permitting (Loudoun 데이터센터 특화 zoning), construction labor 수요 압박.",
+        "land_cost_relative_factor": 20,
+        "land_cost_explanation": "Loudoun '데이터센터 토지' 거래가 $2M+/acre — 미국 최고. Franklin OH 100-200k 대비 *10-20x*. 우리 도구는 land cost 직접 모델링 안 함; 향후 확장."
+      },
+      "BTM_implication": "Grid 의존 불리. BTM이 *경쟁우위가 아닌 필수*. Meta·AWS·Google이 NoVA에서 BTM 검토 가속 — 이게 Bloom AEP 1 GW (Ohio) 같은 거래로 흘러 NoVA 외부로 분산되는 이유. *NoVA 사이트에 BTM은 most-valuable*.",
+      "_sources_short": ["DC Frontier NoVA", "JLARC 2024 study", "DCD PJM RTEP"]
+    },
+    {
+      "id": "columbus-franklin-licking",
+      "name": "Columbus Ohio (Franklin + Licking + Delaware)",
+      "shortName": "Columbus OH",
+      "isoRegion": "PJM",
+      "utility": "AEP Ohio",
+      "centroid": { "lat": 40.0, "lng": -82.9 },
+      "approximateRadiusKm": 50,
+      "counties": ["Franklin", "Licking", "Delaware", "Madison", "Pickaway"],
+      "states": ["OH"],
+      "confidence": "high",
+      "data_center_status": "*신흥 핵심 hub*. Intel $20B fab (2022 발표, New Albany Licking County), AWS US-East-2, Meta Socrates (verified, Franklin), Google. AEP Ohio 데이터센터 pipeline 2024년 30+ GW까지 성장 후 *tariff로 13 GW로 절반*.",
+      "verified_findings": {
+        "AEP_Ohio_data_center_pipeline_pre_tariff_GW": 30,
+        "AEP_Ohio_data_center_pipeline_post_tariff_GW": 13,
+        "tariff_85pct_minimum_payment_rule": true,
+        "tariff_approval_date": "2025-07 (PUCO)",
+        "tariff_effect": "Speculative data center load filtered out. 실제로 build되는 hyperscaler만 남음.",
+        "Intel_announcement_USD_billion": 20,
+        "AWS_US_East_2_active": true,
+        "Meta_Socrates_verified": true
+      },
+      "uplift_factors": {
+        "gridwait_multiplier": 1.1,
+        "gridwait_explanation": "AEP territory, PJM 내부지만 Dominion보다 짧음. PJM 60mo → ~66mo. *AEP 신규 tariff*가 진짜 hyperscaler만 통과시켜 *실질 queue 정리*.",
+        "gas_distance_uplift_mi": -2,
+        "gas_distance_explanation": "Ohio는 가스 pipeline 풍부 (Marcellus·Utica shale 인접). Williams Transco, Columbia Gas, TETCO. *baseline보다 짧음* — negative uplift.",
+        "capex_multiplier": 1.0,
+        "capex_explanation": "GridLab MISO/ERCOT baseline 부근 (Midwest median). NoVA 대비 -15%.",
+        "land_cost_relative_factor": 1.5,
+        "land_cost_explanation": "Columbus metro $50-200k/acre. NoVA $2M+/acre 대비 *1/20 ~ 1/40*. Intel·hyperscaler 진입 후 상승 중이지만 여전히 저렴.",
+        "data_center_specific_tariff": {
+          "minimum_payment_pct_of_nameplate": 85,
+          "effect_on_BTM_decision": "Tariff 85% rule이 *over-provisioning을 disincentivize* → BTM이 더 매력적 (정확한 load만 지불). Meta Socrates가 grid 없이 BTM-only로 간 이유의 하나."
+        }
+      },
+      "BTM_implication": "*BTM에 가장 우호적인 환경*. Gas access 우수 + 신규 tariff가 grid 의존을 비싸게 만듦 + Meta Socrates 검증 사례. 우리 도구의 *권장 vertical*. Wartsila Ohio 282 MW 거래 (Williams Companies)도 여기 또는 인근.",
+      "_sources_short": ["Utility Dive AEP Ohio", "Meta Socrates OPSB filing", "Intel announcement"]
+    },
+    {
+      "id": "silicon-valley-santa-clara",
+      "name": "Silicon Valley (Santa Clara + San Jose)",
+      "shortName": "Silicon Valley",
+      "isoRegion": "CAISO",
+      "utility": "Silicon Valley Power (Santa Clara municipal) + PG&E (surrounding)",
+      "centroid": { "lat": 37.36, "lng": -121.95 },
+      "approximateRadiusKm": 25,
+      "counties": ["Santa Clara", "San Mateo"],
+      "states": ["CA"],
+      "confidence": "medium",
+      "data_center_status": "Bloom Energy HQ (Sunnyvale). Equinix SV1-SV15. Bloom-SVP-AWS 20 MW SOFC 거래 (verified, 2024). SVP는 미국 최대 *municipal utility* 중 하나, hyperscaler 친화적.",
+      "verified_findings": {
+        "Bloom_Energy_HQ_Sunnyvale": true,
+        "SVP_AWS_Santa_Clara_20MW_2024_announcement": true,
+        "California_FC_NEM_expired_end_2023": true,
+        "California_strict_air_permitting": true
+      },
+      "uplift_factors": {
+        "gridwait_multiplier": 1.3,
+        "gridwait_explanation": "CAISO queue 80-100mo 전형. SVP가 일부 우회 가능 (municipal 자체 queue).",
+        "gas_distance_uplift_mi": 0,
+        "gas_distance_explanation": "Bay Area 도시화로 가스 pipeline 격리 — gas BTM 자체가 *California air permit으로 제약*. Bloom SOFC은 emissions standards 충족 가능, gas turbine은 어려움.",
+        "capex_multiplier": 1.25,
+        "capex_explanation": "California 노조 prevailing wage + 토지 부족 + permit cycle 길음.",
+        "land_cost_relative_factor": 50,
+        "land_cost_explanation": "Santa Clara 데이터센터 부지 매우 희소 — $5M+/acre. NoVA보다 더 비쌈.",
+        "tech_preference": "Bloom SOFC가 *명백한 default option* (FC NEM 만료 후에도 emission standards 통과 가능). Gas turbine·reciprocating은 California 환경 규제로 *권장 안 함*. Solar+BESS은 land 부족."
+      },
+      "BTM_implication": "Gas-fired BTM 사실상 *불가*. Fuel cell (Bloom) 또는 grid + solar PPA off-site. 우리 도구가 Silicon Valley site로 분석 시 *gas options를 hard-no*로 표시해야 정확.",
+      "_sources_short": ["Bloom IR press releases", "FY2024 10-K Item 1A"]
+    },
+    {
+      "id": "dfw-dallas-tarrant",
+      "name": "Dallas-Fort Worth (Dallas + Tarrant + Collin)",
+      "shortName": "DFW",
+      "isoRegion": "ERCOT",
+      "utility": "Oncor Electric Delivery + AEP Texas (split)",
+      "centroid": { "lat": 32.78, "lng": -96.80 },
+      "approximateRadiusKm": 50,
+      "counties": ["Dallas", "Tarrant", "Collin", "Denton", "Ellis"],
+      "states": ["TX"],
+      "confidence": "medium",
+      "data_center_status": "Equinix, Digital Realty, CyrusOne, Switch. 빠르게 성장. Texas energy-only ERCOT는 *전국 최저 가스 가격* + 무거운 regulation 제거 = *데이터센터 친화적*.",
+      "verified_findings": {
+        "ERCOT_energy_only_market": true,
+        "ERCOT_no_capacity_market": true,
+        "Texas_no_state_income_tax_advantage": true,
+        "Oncor_data_center_growth_significant": true,
+        "GridLab_ERCOT_among_lower_cost_regions": true
+      },
+      "uplift_factors": {
+        "gridwait_multiplier": 0.7,
+        "gridwait_explanation": "ERCOT는 *FERC 외 regime* — 다른 ISO보다 빠른 interconnection 가능. PJM 60mo 대비 ~42mo.",
+        "gas_distance_uplift_mi": -2,
+        "gas_distance_explanation": "Texas는 가스 pipeline 매우 풍부 (Permian·Eagle Ford·Haynesville). 데이터센터 부지 평균보다 가까움.",
+        "capex_multiplier": 0.95,
+        "capex_explanation": "GridLab Figure 5에서 ERCOT는 PJM 대비 저렴. 노조 약함, 토지 풍부.",
+        "land_cost_relative_factor": 2,
+        "land_cost_explanation": "DFW 외곽 $200-500k/acre — NoVA 대비 1/4 ~ 1/10."
+      },
+      "BTM_implication": "*BTM에 매우 우호*. Wartsila·Solar Turbines 거래 활발 (verified 기록은 후속). ERCOT 자체 reliability 이슈 (2021 winter storm 등)로 *grid 의존을 hyperscaler가 회피* — BTM 수요 강함.",
+      "_sources_short": ["GridLab 2025 regional fig", "ERCOT data"]
+    },
+    {
+      "id": "phoenix-maricopa",
+      "name": "Phoenix metro (Maricopa County)",
+      "shortName": "Phoenix",
+      "isoRegion": "WALC (Western Area)",
+      "utility": "Arizona Public Service (APS) + Salt River Project (SRP, municipal)",
+      "centroid": { "lat": 33.5, "lng": -112.0 },
+      "approximateRadiusKm": 45,
+      "counties": ["Maricopa", "Pinal"],
+      "states": ["AZ"],
+      "confidence": "medium",
+      "data_center_status": "Microsoft (Goodyear), Google (Mesa), Apple (Mesa). 빠르게 성장. Arizona 솔라 자원 풍부 (1,800+ kWh/m²/yr).",
+      "verified_findings": {
+        "Arizona_solar_GHI_kWh_per_m2_yr": 1850,
+        "Microsoft_Google_Apple_active_data_centers": true,
+        "APS_SRP_dual_utility_split": true
+      },
+      "uplift_factors": {
+        "gridwait_multiplier": 1.0,
+        "gridwait_explanation": "WALC 평균. APS·SRP 정상 queue.",
+        "gas_distance_uplift_mi": 2,
+        "gas_distance_explanation": "Arizona는 *가스 import 의존* — pipeline 평균 distance 길음 (El Paso Natural Gas).",
+        "capex_multiplier": 1.05,
+        "capex_explanation": "노조 약함 + 토지 풍부지만 *극한 기온 cooling load* 추가 비용.",
+        "land_cost_relative_factor": 3,
+        "land_cost_explanation": "Maricopa 데이터센터 부지 $300-600k/acre.",
+        "tech_preference": "*Solar+BESS이 압도적 매력* — Arizona 솔라 capacity factor 0.30 (전국 평균 0.24 대비). 그러나 24/7 firm power는 여전히 gas/fuel cell 필요. *Solar PPA + gas backup 하이브리드*가 dominant 패턴."
+      },
+      "BTM_implication": "*Solar에 강하게 유리한 유일한 hot zone*. Gas BTM 가능하나 import 의존 단점. Microsoft Goodyear는 24/7 carbon-free 약속 → fuel cell + solar 혼합 추정.",
+      "_sources_short": ["NREL Solar Resource maps", "APS 공시"]
+    },
+
+    {
+      "id": "atlanta-south-douglas-coweta",
+      "name": "Atlanta South + Douglas + Coweta + Fulton",
+      "shortName": "Atlanta",
+      "isoRegion": "Southeast (non-RTO)",
+      "utility": "Georgia Power (Southern Company)",
+      "centroid": { "lat": 33.49, "lng": -84.75 },
+      "approximateRadiusKm": 50,
+      "counties": ["Fulton", "Douglas", "Coweta", "Henry", "Fayette"],
+      "states": ["GA"],
+      "confidence": "high",
+      "data_center_status": "*미국 #2 데이터센터 시장* (NoVA 다음). Atlanta 2025 end 1,459 MW total inventory (+459 MW YoY). South Atlanta 9.1 GW planned + West 2.7 + Northwest 2.6 + East 1.9 = 16.3 GW total planned.",
+      "verified_findings": {
+        "Georgia_total_IT_load_2021_GW": 1.7,
+        "Georgia_total_IT_load_2025_GW": 19.7,
+        "growth_5yr_multiple": 11.6,
+        "Atlanta_2025_total_inventory_MW": 1459.2,
+        "Atlanta_2025_YoY_growth_MW": 458.8,
+        "national_market_rank": 2,
+        "GA_PSC_2025_approved_new_capacity_MW": 10000,
+        "approved_new_gas_plants": 5,
+        "approval_date": "2025-12",
+        "Coweta_eminent_domain_properties_affected": 330,
+        "Project_Sail_acres": 829,
+        "Project_Sail_developer": "Prologis/Atlas (reported)"
+      },
+      "uplift_factors": {
+        "gridwait_multiplier": 1.4,
+        "gridwait_explanation": "Georgia Power data center load growth 11x in 4 years. 2025-12 GA PSC가 10 GW 신규 capacity 승인 (5 gas plants 포함). PJM 60mo 기준 → ~84mo. *NoVA만큼은 아니지만 명확한 wait*.",
+        "gas_distance_uplift_mi": -2,
+        "gas_distance_explanation": "Southeast 가스 pipeline 풍부 (Transco, Southern Natural Gas). GA 신규 5 gas plant 건설은 *gas access 우수*의 reciprocal.",
+        "capex_multiplier": 0.95,
+        "capex_explanation": "Southeast region GridLab 분석에서 PJM·SCEG 대비 lower. 노조 약함 + Georgia Right-to-Work + 토지 비교적 저렴.",
+        "land_cost_relative_factor": 4,
+        "land_cost_explanation": "Atlanta metro outer suburb (Coweta·Douglas·Henry) $200-400k/acre. Fulton·Cobb 도심부는 더 비쌈.",
+        "tech_preference": "*GA Power가 5 new gas plants을 build하므로 grid에서 gas 풍부*. BTM 우위는 *시간 단축*에 한정. Microsoft·Meta·QTS는 GA Power PPA 선호."
+      },
+      "BTM_implication": "BTM이 *NoVA만큼 절박하지 않음* — GA Power가 신규 capacity 적극 추가. 그러나 *시간 단축* needs는 여전 → fuel cell·reciprocating engine 선호.",
+      "_sources_short": ["Georgia Recorder 2025-12", "CBRE", "DCD Georgia Power", "Georgia Recorder Project Sail"]
+    },
+
+    {
+      "id": "reno-tahoe-storey",
+      "name": "Reno-Tahoe (Storey County / Tahoe Reno Industrial Center)",
+      "shortName": "Reno-Tahoe",
+      "isoRegion": "WECC / NV Energy",
+      "utility": "NV Energy",
+      "centroid": { "lat": 39.55, "lng": -119.40 },
+      "approximateRadiusKm": 30,
+      "counties": ["Storey", "Washoe", "Lyon"],
+      "states": ["NV"],
+      "confidence": "high",
+      "data_center_status": "*세계 5위 신흥 데이터센터 시장* (Cushman & Wakefield 2025). Switch Citadel 2,000 acres / 7.2M sqft 가능, Tahoe Reno 1 = 세계 최대 콜로 (1.3M sqft). Apple·Google·Microsoft·Switch·EdgeCore·Novva·Vantage·Tract·PowerHouse 모두 active.",
+      "verified_findings": {
+        "TRIC_acres": 107000,
+        "Switch_Citadel_acres": 2000,
+        "Switch_Citadel_max_sqft": 7200000,
+        "Tahoe_Reno_1_sqft": 1300000,
+        "Tahoe_Reno_1_status": "Largest colocation data center in the world",
+        "global_emerging_market_rank_2025": 5,
+        "PowerHouse_expansion_sqft": 900000,
+        "Switch_Superloop_fiber_miles": 500,
+        "Superloop_endpoints": ["Los Angeles", "San Francisco Bay Area", "Las Vegas"]
+      },
+      "uplift_factors": {
+        "gridwait_multiplier": 1.1,
+        "gridwait_explanation": "NV Energy 표준. WECC 평균 부근. NoVA·Atlanta·Chicago만큼 backlog 심하지 않음.",
+        "gas_distance_uplift_mi": 2,
+        "gas_distance_explanation": "Nevada *가스 import 의존* — pipeline distance 길음.",
+        "capex_multiplier": 1.0,
+        "capex_explanation": "WECC 평균. 노조 약함 + 사막 토지 풍부.",
+        "land_cost_relative_factor": 2.5,
+        "land_cost_explanation": "TRIC industrial park $150-300k/acre. NoVA 대비 1/8.",
+        "tech_preference": "*Solar 좋음* (Nevada GHI). *물 부족 우려* — cooling 제약. *유일한 부적합*: water scarcity로 evaporative cooling 제약."
+      },
+      "BTM_implication": "BTM 가능. Switch는 *대형 colocation + multi-tenant* 모델로 *전력 비용 최적화*가 핵심. 가스 + 솔라 hybrid 표준.",
+      "_sources_short": ["MIT Tech Review desert 2025-05", "Switch 공식 + DCD"]
+    },
+
+    {
+      "id": "hillsboro-silicon-forest",
+      "name": "Hillsboro Oregon (Silicon Forest, Washington County)",
+      "shortName": "Hillsboro OR",
+      "isoRegion": "WECC / PGE",
+      "utility": "Portland General Electric (PGE) + BPA (transmission)",
+      "centroid": { "lat": 45.52, "lng": -122.99 },
+      "approximateRadiusKm": 25,
+      "counties": ["Washington", "Multnomah"],
+      "states": ["OR"],
+      "confidence": "high",
+      "data_center_status": "*Vacancy rate 0.2% — 미국 최저* (2025 H1). AWS 62 sites, Meta 10 facilities. Oregon 121개 데이터센터 대부분 Hillsboro 인근. Intel · Google · Facebook · Amazon 모두 active.",
+      "verified_findings": {
+        "vacancy_rate_2025_H1": 0.002,
+        "AWS_sites_in_Oregon": 62,
+        "Meta_sites_in_Oregon": 10,
+        "Oregon_total_data_centers": 121,
+        "PGE_Sunset_Reliability_Center_active": true,
+        "PGE_Clean_Wind_program_active": true,
+        "PGE_Gridcare_AI_pilot_MW": 80,
+        "PGE_target_2029_MW": 400,
+        "Flexential_Hillsboro_6_sqft": 350000,
+        "Flexential_Hillsboro_6_MW": 27,
+        "Oregon_POWER_Act_2025": "HB 3546 — 데이터센터 전력 cost 부담 의무화"
+      },
+      "uplift_factors": {
+        "gridwait_multiplier": 0.8,
+        "gridwait_explanation": "*PGE + Gridcare AI software*로 *interconnection 가속화 실증* — 80 MW 신규 load 빠르게 online. WECC 평균보다 짧음.",
+        "gas_distance_uplift_mi": 5,
+        "gas_distance_explanation": "Pacific Northwest *환경 규제 + 가스 pipeline 제한*. 신규 gas BTM은 *Oregon DEQ permit 어려움*.",
+        "capex_multiplier": 1.1,
+        "capex_explanation": "Oregon prevailing wage + Portland metro 노조 + 환경 규제 cost.",
+        "land_cost_relative_factor": 8,
+        "land_cost_explanation": "Hillsboro Silicon Forest $800k-1.5M/acre. NoVA 대비 1/2 정도.",
+        "tech_preference": "*BPA hydro 풍부* (PNW grid carbon-free). Gas BTM은 *환경 규제*로 disadvantaged. Solar는 *흐림 많아 약함*."
+      },
+      "BTM_implication": "*BPA hydro가 풍부 + 저렴 = grid 우선*. BTM 가스는 환경 규제로 어려움. Solar도 약함. *Fuel cell이 유일한 BTM 옵션* (clean H2 가능). 또는 *off-site PPA hybrid*.",
+      "_sources_short": ["City of Hillsboro 공식", "Canary Media PGE Gridcare", "Hillsboro Herald"]
+    },
+
+    {
+      "id": "chicago-comed-ameren",
+      "name": "Chicago metro (ComEd PJM + Ameren MISO split)",
+      "shortName": "Chicago",
+      "isoRegion": "PJM (ComEd, 북부) / MISO (Ameren, 중남부)",
+      "utility": "ComEd (Exelon, 북부 IL) / Ameren Illinois (중남부)",
+      "centroid": { "lat": 41.85, "lng": -87.65 },
+      "approximateRadiusKm": 60,
+      "counties": ["Cook", "DuPage", "Lake", "Will", "Kane", "McHenry"],
+      "states": ["IL"],
+      "confidence": "high",
+      "data_center_status": "ComEd가 *75+ interconnection apps / 28 GW combined load* 처리 중. 현재 IL operating ~1,200 MW (12 TWh/yr), pipeline +3,900 MW (22 projects). Joliet (Will County) 795-acre 거대 데이터센터 IL 최대 승인.",
+      "verified_findings": {
+        "ComEd_data_center_apps_count": 75,
+        "ComEd_combined_load_request_GW": 28,
+        "IL_current_operating_data_centers_MW": 1200,
+        "IL_current_consumption_TWh_per_yr": 12,
+        "IL_pipeline_new_capacity_MW": 3900,
+        "IL_pipeline_project_count": 22,
+        "Joliet_data_center_acres": 795,
+        "ComEd_shortfall_year": 2029,
+        "Ameren_shortfall_year": 2031,
+        "ISO_split": "ComEd PJM 북부 / Ameren MISO 중남부 — Illinois 유일 dual-ISO state"
+      },
+      "uplift_factors": {
+        "gridwait_multiplier": 1.5,
+        "gridwait_explanation": "ComEd 28 GW backlog = *NoVA 4,000 MW 대비 7배*. PJM 평균 60mo → ~90mo. Resource adequacy study가 *2029부터 shortfall 예상*.",
+        "gas_distance_uplift_mi": 0,
+        "gas_distance_explanation": "Midwest 가스 pipeline 풍부 (Texas Gas, Williams). 평균 거리 baseline.",
+        "capex_multiplier": 1.05,
+        "capex_explanation": "Chicago metro 노조 강함 + 도시화 + 한랭기후 cooling 우위 trade-off.",
+        "land_cost_relative_factor": 5,
+        "land_cost_explanation": "Will/DuPage 외곽 $400-800k/acre, Cook 도심 $2M+/acre.",
+        "tech_preference": "*ComEd 거대 backlog로 BTM 적극 필요*. PJM 안에 있으나 NoVA보다 *gas BTM 옵션 풍부*. 한랭기후가 *cooling efficiency* 강점."
+      },
+      "BTM_implication": "*ComEd 28 GW backlog가 BTM 강력 매력*. Joliet 795-acre 처럼 *대규모 데이터센터 캠퍼스*에서 gas + fuel cell BTM 가속 예상. Microsoft Three Mile Island 모델과 유사한 *원전 PPA*도 IL에서 가능 (IL = 미국 #1 원전 주, 11 reactors).",
+      "_sources_short": ["ArentFox Schiff Illinois Energy", "IPA Resource Adequacy Study 2025-12", "Construction Owners Joliet 795-acre"]
+    },
+
+    {
+      "id": "quincy-wa-grant-pud",
+      "name": "Quincy Washington (Grant County PUD hydro)",
+      "shortName": "Quincy WA",
+      "isoRegion": "WECC / BPA",
+      "utility": "Grant County PUD (municipal, hydro)",
+      "centroid": { "lat": 47.23, "lng": -119.85 },
+      "approximateRadiusKm": 20,
+      "counties": ["Grant"],
+      "states": ["WA"],
+      "confidence": "high",
+      "data_center_status": "*가장 저렴 전력 + 100% hydro*. Wanapum + Priest Rapids dams (Columbia River) 2,000+ MW. Microsoft 21개 빌딩, Sabey 2개 캠퍼스 (250 employees), Vantage, Yahoo. Sabey generators 연 8시간만 작동 — hydro 신뢰성 100%.",
+      "verified_findings": {
+        "Grant_PUD_hydro_capacity_MW": 2000,
+        "dam_names": ["Wanapum", "Priest Rapids"],
+        "river": "Columbia River",
+        "electricity_rate_cents_per_kWh": 3,
+        "Microsoft_buildings_in_Quincy": 21,
+        "Sabey_campuses": 2,
+        "Sabey_employees": 250,
+        "Sabey_generator_hours_per_year": 8,
+        "active_operators": ["Microsoft", "Sabey", "Vantage", "Yahoo", "H5"],
+        "capacity_status_2025": "hydropower and water are maxed out",
+        "_significance": "Grant County 한계 도달 — 신규 데이터센터 진입 제한적"
+      },
+      "uplift_factors": {
+        "gridwait_multiplier": 1.3,
+        "gridwait_explanation": "*과거에는 가장 빠른 hot zone* (Microsoft·Yahoo가 2007년부터). 그러나 *2025 capacity maxed out* 발표 → 신규 wait 발생. Grant PUD 신규 connection 정책 검토 중.",
+        "gas_distance_uplift_mi": 8,
+        "gas_distance_explanation": "*Grant County는 가스 BTM 의미 없음* — hydro가 훨씬 저렴·신뢰. 가스 pipeline distance 멀음.",
+        "capex_multiplier": 0.85,
+        "capex_explanation": "*전력 단가 3¢/kWh*가 압도적 우위. Operating cost가 다른 hot zone의 1/3.",
+        "land_cost_relative_factor": 0.5,
+        "land_cost_explanation": "Grant County rural — *최저 토지비* ($20-80k/acre). NoVA 대비 1/40.",
+        "tech_preference": "*BTM 불필요* — grid가 사실상 *무한·저렴·carbon-free*. 가스 turbine·reciprocating은 비추천 (hydro 대비 비효율). Solar는 PNW 흐림 많음."
+      },
+      "BTM_implication": "*Round 1·2 통틀어 유일하게 BTM이 *불필요*한 hot zone*. Grid가 사실상 무한·저렴·carbon-free. 단 *capacity maxed out* — 신규 데이터센터는 다른 지역 검토 필요. 우리 도구 사용자가 Quincy WA 지정 시 *'기존 grid가 BTM보다 우월 — BTM 추천 안 함'* 명시 적절.",
+      "techHardNo": ["turbine", "recip"],
+      "_sources_short": ["KUOW/OPB Washington hydropower 2025", "Data Center Knowledge", "Data Center Frontier Vantage"]
+    }
+  ],
+
+  "default_baseline_for_no_hot_zone_match": {
+    "_note": "사이트가 5개 hot zone에 모두 매칭 안 되면 ISO/RTO baseline (REGIONS 객체 in index.html)만 적용. Uplift factors = 1.0 / 0.",
+    "uplift_factors": {
+      "gridwait_multiplier": 1.0,
+      "gas_distance_uplift_mi": 0,
+      "capex_multiplier": 1.0,
+      "land_cost_relative_factor": 1
+    }
+  },
+
+  "open_questions_for_followup": [
+    "추가 hot zone: Atlanta (Fulton/Douglas/Coweta), Reno-Tahoe (Storey NV), Hillsboro (Washington County OR), Chicago (Cook IL split between PJM/MISO), Quincy WA",
+    "JLARC Virginia 2024 study 직접 fetch — Virginia state legislative data center study, 상세 추가 수치",
+    "Dominion Energy 2025 IRP 직접 fetch — load forecast vs capacity",
+    "Land cost 정확 수치: JLL Data Center Outlook H1 2026, CBRE Data Center MarketView 인용 (둘 다 🟡 — 회색 영역)",
+    "데이터센터 specific tariff 비교 — AEP Ohio, Dominion, Indiana Michigan Power, Duke Energy 각 state PSC filings"
+  ]
+}

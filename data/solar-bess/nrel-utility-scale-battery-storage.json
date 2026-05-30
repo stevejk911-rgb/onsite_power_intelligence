@@ -1,0 +1,171 @@
+{
+  "_meta": {
+    "id": "nrel-utility-scale-battery-storage",
+    "fetchDate": "2026-05-29",
+    "fetchedBy": "Claude — direct fetch of NREL ATB Battery Storage narrative page + Cole & Karmakar 2023 primary report PDF (NREL/TP-6A40-85332)",
+    "primarySources": [
+      {
+        "type": "NREL ATB 2024 — Utility-Scale Battery Storage",
+        "url": "https://atb.nrel.gov/electricity/2024/utility-scale_battery_storage",
+        "directFetched": "2026-05-29",
+        "publicDomain": true,
+        "redistributionRisk": "🟢 (with attribution)"
+      },
+      {
+        "type": "Cole & Karmakar 2023 — 'Cost Projections for Utility-Scale Battery Storage: 2023 Update' (NREL/TP-6A40-85332)",
+        "url": "https://www.nrel.gov/docs/fy23osti/85332.pdf",
+        "directFetched": "2026-05-29",
+        "publicDomain": true,
+        "redistributionRisk": "🟢",
+        "_note": "ATB Battery Storage의 *underlying primary source*. 16개 industry publication literature review 기반."
+      },
+      {
+        "type": "Ramasamy et al. 2022 — NREL bottom-up cost model (NREL/TP-7A40-83586)",
+        "url": "https://doi.org/10.2172/1891204",
+        "publicDomain": true,
+        "redistributionRisk": "🟢",
+        "_note": "Cole & Karmakar의 2022 baseline ($482/kWh)의 출처. 다음 라운드에서 직접 fetch 권장."
+      },
+      {
+        "type": "Augustine & Blair 2021 — Storage Futures Study (NREL/TP-5700-78694) — direct fetch 2026-05-29",
+        "url": "https://www.nrel.gov/docs/fy21osti/78694.pdf",
+        "publicDomain": true,
+        "redistributionRisk": "🟢",
+        "directFetched": "2026-05-29",
+        "_verified_findings_from_direct_fetch": {
+          "formula_endorsed": "Total ($/kW) = Battery Pack ($/kWh) × Duration + BOS ($/kW)",
+          "formula_quote": "Technology total capital cost ($/kW) for a given duration is calculated by multiplying storage duration by the energy capital cost component value ($/kWh) and adding the power capital cost component ($/kW). [Section 2.5, lines 397-399]",
+          "BESS_modeling_cap_hours": 10,
+          "BESS_cap_quote": "storage durations for BESS are limited to 10 hours [line 627]",
+          "_implication_critical": "*우리 도구의 default 12hr는 NREL modeled domain 밖*. 6hr으로 변경 (NREL 범위 내).",
+          "modeled_durations_hours": [2, 4, 6, 8, 10],
+          "modeled_size_MW": 60,
+          "round_trip_efficiency_pct": 86,
+          "rte_note": "Augustine & Blair 86% vs Cole & Karmakar 85% — 1%p 차이 (RTE는 우리 도구에서 미사용).",
+          "cycle_assumptions_per_year": {
+            "short_duration": 660,
+            "mid_4_to_12hr": 330,
+            "long_duration": 52
+          },
+          "_extraction_limitation": "PDF가 page 32 (line 1577)에서 truncated — Section 3 (cost projection 수치), Table 2 (LIB inputs), Figures 26-34 (실제 numeric curves), Appendix A Table 6 모두 미수신. 정확한 $/kWh·$/kW split 수치는 ATB Excel workbook에서 추출 가능 (TODO)."
+        }
+      }
+    ],
+    "confidence": "high — primary NREL source PDF 직접 fetch, 표 2 every year 수치 verified",
+    "verified": true,
+    "verificationNote": "ATB narrative + Cole & Karmakar 2023 PDF 모두 직접 fetch. 16개 industry source (BNEF, Lazard, Wood Mac, EIA AEO, IEA, IHS-PJM, EPRI, etc.) literature review.",
+    "sourceCategory": "정부공공",
+    "redistributionRisk_aggregate": "🟢",
+    "nextRefresh": "2026-Q2 (Cole & Karmakar 2024/2025 update 예상)"
+  },
+
+  "structural_finding_BESS_well_tracked": {
+    "headline": "*Solar PV처럼 BESS도 NREL ATB이 *권위 source*로 신뢰 가능*. 가스터빈/연료전지 데이터 갭과 다름.",
+    "why_well_tracked": [
+      "시장 다중 vendor (Tesla Megapack, Fluence, BYD, CATL, Wartsila Storage, Sungrow, LG ES) — 단일 회사 dominance 없음",
+      "LIB 산업이 EV·소비자 전자·utility 3 sector cross-cut — 가격 transparency 높음",
+      "NREL이 16개 publication을 *literature review*해 low/mid/high 합성 — 단일 회사 estimate 의존 회피",
+      "Lazard LCOS·BNEF·EPRI 모두 매년 공표"
+    ],
+    "comparison_to_other_powersources": {
+      "fuelcell_FC_003": "EIA 공시 억제 + ATB 미추적 = *합성 추정 only*",
+      "gas_CC_GT_006": "ATB·EIA AEO이 26-52% 과소평가 = *GridLab IRP filings 별도 source 필수*",
+      "solar_PV_solar_001": "ATB 직접 신뢰 가능",
+      "BESS_this_entry": "ATB 직접 신뢰 가능, *4-hour duration 한정*"
+    }
+  },
+
+  "verified_4hr_capital_cost_2022_dollars_per_kWh": {
+    "_definition": "Total system overnight capital cost for 4-hour duration utility-scale battery system, complete (battery pack + inverter + BOS). 60 MW reference design.",
+    "_2022_baseline": 482,
+    "_baseline_source": "Ramasamy et al. 2022 (NREL bottom-up)",
+
+    "_full_table_2022_to_2050": {
+      "_units": "USD per kWh in 2022$",
+      "_columns": ["year", "low_cost", "mid_cost", "high_cost"],
+      "_rows": [
+        [2022, 482, 482, 482],
+        [2023, 347, 463, 500],
+        [2024, 327, 443, 503],
+        [2025, 310, 388, 496],
+        [2026, 297, 376, 477],
+        [2027, 284, 363, 459],
+        [2028, 271, 351, 440],
+        [2029, 258, 338, 422],
+        [2030, 245, 326, 403],
+        [2031, 240, 321, 400],
+        [2032, 236, 316, 398],
+        [2033, 232, 311, 395],
+        [2034, 227, 306, 392],
+        [2035, 223, 301, 389],
+        [2040, 202, 276, 376],
+        [2045, 180, 251, 362],
+        [2050, 159, 226, 348]
+      ],
+      "_source": "Cole & Karmakar 2023 Appendix Table 2 — full year-by-year 데이터 직접 추출"
+    },
+
+    "_key_observations": [
+      "**Short-term cost increases** — 2022→2025 high case가 $482 → $496 (오히려 *증가*). 공급망 disruption + lithium price + EV 경쟁 수요.",
+      "**Mid case 2030 = $326/kWh** — 우리 도구의 default $350와 *거의 정확 일치* (차이 $24, 7%).",
+      "**Low case 2030 = $245/kWh** — Tesla·LG ES vertical integration + LFP scale-up 가속 시나리오",
+      "**High case 2030 = $403/kWh** — supply chain constraint 지속 시나리오",
+      "**2050 spread** $159-$348 — 27년 후에도 *2x 이상 uncertainty*. Long-term planning에서 single point 사용 부적절."
+    ]
+  },
+
+  "verified_operating_parameters": {
+    "round_trip_efficiency": 0.85,
+    "calendar_lifetime_years": 15,
+    "FOM_pct_of_capital_USD_per_kW": 0.025,
+    "FOM_explanation": "2.5% of $/kW capacity cost. *Battery augmentation 포함* — degradation 상쇄해 lifetime 전체 rated capacity 유지.",
+    "VOM_USD_per_MWh": 0,
+    "VOM_explanation": "*전체 operating cost를 FOM에 할당*. 1 cycle/day 가정.",
+    "default_cycles_per_day": 1,
+    "default_capacity_factor_4hr": 0.167,
+    "capacity_factor_explanation": "4/24 = 0.167 (1 cycle/day). 데이터센터 24/7 firm load 적용 시 *다른 cycling pattern* — 우리 도구는 12hr storage라 더 적은 cycle (per day 2 charge), lifetime degradation 더 빠를 가능성."
+  },
+
+  "verified_technology": {
+    "chemistry_primary": "Lithium-iron-phosphate (LFP) — 2022년부터 stationary storage primary chemistry",
+    "chemistry_secondary": "Nickel-manganese-cobalt (NMC) — EV·소비자 전자 우세, stationary는 감소",
+    "duration_options_ATB": [2, 4, 6, 8, 10],
+    "duration_data_completeness": "*4-hour만 full literature support*. 다른 duration은 energy/power cost split equation으로 도출.",
+    "duration_cost_relationship": {
+      "_formula": "Total Cost ($/kW) = Battery Pack ($/kWh) × Duration (hr) + BOS ($/kW)",
+      "_implication_for_longer_duration": "Longer duration → *$/kWh 감소, $/kW 증가*. 4hr → 12hr는 *$/kW가 약 3배*. 우리 도구의 12hr는 *$/kWh는 더 저렴*하나 *$/kW 부담 큼*."
+    }
+  },
+
+  "validation_of_our_tool_default": {
+    "tool_default_bessCost_USD_per_kWh": 350,
+    "NREL_2030_mid_case_USD_per_kWh": 326,
+    "delta_pct": 7.4,
+    "verdict": "*도구 default가 NREL Mid case 2030과 거의 일치 — 7% 차이*. 데이터센터 BTM 인도 시점(2027-2030)의 mid-point baseline로 *통계적으로 정합*. 그러나 다음 주의 필요:",
+    "caveats": [
+      "**이 수치는 4-hour duration 기준**. 우리 도구는 12-hour storage 사용 — *energy/power cost split equation* 적용 필요. 12hr는 $/kWh는 더 저렴(~$280-300), 그러나 $/kW는 훨씬 비쌈",
+      "**2022$ basis** — 2026 실측은 inflation reflected nominal $ 10-15% 더 높음 (~$385-405/kWh)",
+      "**Overnight capital cost only** — interconnection·grid sync·system integration 미포함. BTM 데이터센터 turnkey는 +20-30%",
+      "**1 cycle/day default** — 데이터센터 firm load는 *2 cycle/day 이상* 가능, *lifetime degradation 더 빠름* → 실효 LCOS 더 높음"
+    ],
+    "recommendation": "현재 $350 유지가 *적정 baseline*. 단 ASSUMPTION_PROVENANCE에 *범위 명시*: low $245 (2030), high $403 (2030), mid $326. 사용자가 시나리오별로 조정 가능."
+  },
+
+  "structural_data_limitation_durations_other_than_4hr": {
+    "_status": "2026-05-29 보강 round 이후 핵심 발견 통합",
+    "issue_1_NREL_10hr_cap": "*Augustine & Blair 2021 직접 fetch에서 발견*: NREL이 BESS modeling을 *명시적으로 10hr으로 cap*. 우리 도구의 이전 default 12hr는 *modeled domain 밖*. 6hr으로 변경 (2026-05-29).",
+    "issue_2_4hr_literature_dominant": "Cole & Karmakar 2023 cost projections는 *4hr만 robust*. 다른 duration은 energy/power cost split equation으로 도출.",
+    "what_NREL_provides_verified": "공식 endorsed: `Total ($/kW) = Battery Pack ($/kWh) × Duration + BOS ($/kW)`. 그러나 Battery Pack/BOS 분리 *수치*는 ATB Excel workbook 또는 Augustine PDF Section 3/Appendix A에만 — text 추출 안 됨.",
+    "what_we_do_after_correction": "Default storageHrs 6hr (NREL modeled 범위 내). 사용자가 직접 input으로 변경 가능 (assumptions panel). 10hr 초과 시 *extrapolation* caveat 자동 표시.",
+    "data_center_specific_storage_duration_realistic": "*어떤 BESS duration이라도* solar+BESS 단독으로는 24/7 firm load 불가능 — 1-2일 연속 흐림 ride-through에 24-48hr 필요 (현실적으로 사용 안 됨). 실제 hyperscaler 패턴: *off-site PPA (annual matching) + on-site gas/fuel cell (firm)*. Microsoft 40 GW + Google 22 GW PPA 모두 off-site."
+  },
+
+  "open_questions_for_followup": [
+    "ATB 2024 Excel workbook (https://data.openei.org/files/6006/2024_v3_Workbook.xlsx) — energy/power cost split table 추출 → 12hr·24hr duration 정확한 $/kW 도출",
+    "Ramasamy et al. 2022 NREL bottom-up cost model (NREL/TP-7A40-83586) — battery pack + inverter + BOS 세부 breakdown",
+    "Augustine & Blair 2021 Storage Futures Study — power/energy cost share 트라젝토리 2022-2050",
+    "Lazard LCOS 2025 Edition — 실측 BESS LCOS (storage 비용 + cycling cost 통합)",
+    "데이터센터 BTM solar+BESS 실 사례 — 정말 12hr storage 한 hyperscaler 있는지 (대부분 *off-site PPA*로 우회)",
+    "Tesla Megapack·Wartsila Quantum 등 commercial product spec — list price 공개 여부"
+  ]
+}

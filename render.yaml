@@ -1,0 +1,22 @@
+# Render Infrastructure-as-Code config
+# Docs: https://render.com/docs/blueprint-spec
+#
+# When you create the Render service via "New + Blueprint" and point it at this
+# repo, Render will read this file and set everything up automatically.
+# You can also configure manually in the dashboard; this file is optional.
+
+services:
+  - type: web
+    name: onsite-power-intelligence
+    runtime: node
+    plan: free               # spins down after 15 min idle, ~30s cold start
+    region: oregon           # cheapest free region
+    branch: main
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /
+    envVars:
+      - key: NODE_VERSION
+        value: "20"
+      - key: NREL_API_KEY    # leave blank to use the rate-limited shared DEMO_KEY
+        sync: false          # value set per-service in Render dashboard (kept out of repo)

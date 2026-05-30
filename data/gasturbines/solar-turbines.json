@@ -1,0 +1,155 @@
+{
+  "_meta": {
+    "id": "solar-turbines",
+    "vendor": "Solar Turbines Incorporated (a Caterpillar subsidiary)",
+    "fetchDate": "2026-05-29",
+    "fetchedBy": "Claude — WebSearch + Power Engineering article direct fetch",
+    "primarySources": [
+      {
+        "type": "Power Engineering article (Meta Socrates project)",
+        "url": "https://www.power-eng.com/onsite-power/onsite-gas-turbines-reciprocating-engines-to-power-meta-data-center/",
+        "publicationDate": "2025-06-11",
+        "fetched": "2026-05-29",
+        "redistributionRisk": "🟡"
+      },
+      {
+        "type": "Solar Turbines product pages",
+        "url": "https://www.solarturbines.com/en_US/solutions/applications/data-centers.html",
+        "redistributionRisk": "🟡 — 자체 발표 사실 인용 가능"
+      },
+      {
+        "type": "Caterpillar 10-K (parent company SEC filings)",
+        "url": "https://www.caterpillar.com/en/investors/financial-information.html",
+        "publicDomain": true,
+        "redistributionRisk": "🟢",
+        "extractionStatus": "Energy & Transportation segment 매출 안에 Solar Turbines가 포함 — 별도 line item 미공개"
+      }
+    ],
+    "confidence": "medium (제품 사양은 verified, 단가·deployment 통계 미공개)",
+    "verified": true,
+    "verificationNote": "Meta Socrates 실제 거래에서 Titan 250, PGM 130, SMT 130 모델명·수량 검증. 단가·연간 출하량은 비공개.",
+    "sourceCategory": "민간 산업 언론 + 기업 자체 발표 + SEC (간접)",
+    "redistributionRisk_aggregate": "🟡",
+    "nextRefresh": "2026-Q2 (CAT 10-K FY2025)"
+  },
+
+  "company": {
+    "name": "Solar Turbines Incorporated",
+    "parent": "Caterpillar Inc. (NYSE:CAT)",
+    "founded": "1927 (Caterpillar 인수 1981)",
+    "headquarters": "San Diego, California",
+    "primary_products": "Industrial gas turbine generator sets + gas compressors",
+    "size_range_MW": [1.2, 50],
+    "data_center_strategic_partnership": "Caterpillar + Vertiv 협력 (2024-2025 발표) — 통합 데이터센터 power + cooling 솔루션"
+  },
+
+  "product_lines_data_center_relevant": {
+    "Mercury_50": {
+      "unit_MW": 4.6,
+      "type": "Recuperated industrial GT",
+      "efficiency_LHV": "38-40%",
+      "use_case": "소형 BTM, distributed generation, CHP"
+    },
+    "Centaur_40": {
+      "unit_MW": 3.5,
+      "type": "Industrial GT (smaller)",
+      "use_case": "데이터센터 소형 빌딩, district energy"
+    },
+    "Centaur_50": {
+      "unit_MW": 4.6,
+      "type": "Industrial GT (medium-small)",
+      "use_case": "BTM, oil & gas, industrial co-gen"
+    },
+    "Taurus_60": {
+      "unit_MW": 5.7,
+      "type": "Industrial GT (medium)"
+    },
+    "Taurus_70": {
+      "unit_MW": 7.5,
+      "type": "Industrial GT (medium-large)"
+    },
+    "Mars_100": {
+      "unit_MW": 10.0,
+      "type": "Industrial GT (large)"
+    },
+    "Titan_130": {
+      "unit_MW": 15.0,
+      "type": "Industrial GT (heavy)"
+    },
+    "Titan_250": {
+      "unit_MW": 22.4,
+      "type": "Industrial GT (heaviest in Solar lineup)",
+      "use_case": "*Meta Socrates 검증* — 3대 사용",
+      "data_center_significance": "*Aeroderivative 대안* — GE LM2500(25 MW)과 동급. Solar는 Caterpillar 공급망 의존, GE Vernova보다 lead time 짧을 가능성 (정량 미공개)"
+    },
+    "PGM_130": {
+      "unit_MW": 13.0,
+      "type": "*Mobile/portable Solar GT* — 약식 trailer-mounted",
+      "use_case": "*Meta Socrates 검증* — 9대 사용. 빠른 배치 + temporary primary power",
+      "data_center_significance": "*핵심 발견*: Meta가 *9대 PGM 130 mobile turbine을 primary power로* 사용 — 단순 backup이 아닌 24x7 primary. 우리 도구의 시나리오 모델에 *'mobile turbine'* 옵션 별도 추가 필요. lead time 가장 짧음 (6-12개월 추정)."
+    },
+    "SMT_130": {
+      "unit_MW": 13.0,
+      "type": "*Mobile combustion turbine generator set*",
+      "use_case": "*Meta Socrates 검증* — 1대 space allocated for emergency/outage use"
+    }
+  },
+
+  "verified_data_center_deployments_2025": {
+    "Meta_Socrates_South_Ohio": {
+      "site": "New Albany Business Park, Ohio (Meta 740-acre 캠퍼스 내부)",
+      "total_MW": 200,
+      "Solar_Turbines_contribution_MW": 183,
+      "Solar_Turbines_unit_count": 12,
+      "Solar_breakdown": {
+        "Titan_250_x_3": 67,
+        "PGM_130_x_9": 117
+      },
+      "_role_in_facility": "Primary generation (gas)",
+      "_companion_OEMs": {
+        "Siemens_SGT400_x_3": 39,
+        "Caterpillar_3520_reciprocating_x_15": 30,
+        "Caterpillar_C15_diesel_x_8_emergency": 4
+      }
+    }
+  },
+
+  "competitive_positioning": {
+    "vs_GE_Vernova_aero": {
+      "size_comparison": "Solar Titan 250 (22 MW) ≈ GE LM2500 (25 MW); Solar Mars 100 (10 MW) < GE LM6000 (50 MW)",
+      "lead_time_relative": "Solar는 Caterpillar 공급망 통합 + 미국 San Diego 제조 → *US lead time 잠재적 단축* (정량 미공개). GE LM은 글로벌 supply, FY2024에 공급 제약 신호 (orders 44 > sales 27)",
+      "service_network": "Solar는 Caterpillar dealer 네트워크 (전세계 dealer ~150개) — 강점"
+    },
+    "vs_Siemens_aero": {
+      "comparable_models": "Solar Titan 250 ≈ Siemens SGT-A35 (33 MW); Solar PGM 130 ≈ Siemens SGT-A05 (5 MW)",
+      "Meta_Socrates_dual_use": "*Meta가 두 회사를 같은 사이트에 함께 사용* — 단순 경쟁이 아니라 vendor diversification 전략 일부"
+    },
+    "vs_Wartsila_reciprocating": {
+      "efficiency_disadvantage": "Solar industrial GT 38-40% LHV vs Wartsila reciprocating 45-48% LHV — *연료비에서 Wartsila 우위*",
+      "footprint_advantage": "Solar GT는 더 compact (no large engine hall, exhaust system 단순)",
+      "fast_start_comparable": "둘 다 5-15분 cold start 가능"
+    }
+  },
+
+  "structural_data_limitation": {
+    "headline": "Solar Turbines 단가·연간 deployment 통계는 *비공개*. Caterpillar 10-K Energy & Transportation 세그먼트 안에 묻혀 있음.",
+    "what_we_can_do": [
+      "EIA-860 prime mover 'GT' (combustion turbine) 데이터에서 Solar Turbines operator·plant 분리 가능 (Operator 필드에 'Solar Turbines' 또는 customer 직접 표시)",
+      "EIA Construction Cost CT $562/kW가 가장 가까운 권위 baseline — 단 EIA 평균 generator 61 MW는 Solar Titan 250 (22 MW)·PGM 130 (13 MW)보다 큼. 작은 단위는 *$/kW가 더 높을 가능성* (scale economies)",
+      "Public-record OPSB·CPUC project filings — Meta Socrates와 같은 시설 filing에서 OEM·수량 verified",
+      "Industry trade press (Power Engineering, Power Magazine, Data Center Dynamics) — 회색 영역이지만 *개별 사실 인용*은 합법적"
+    ],
+    "what_we_cannot_do": [
+      "Solar Turbines 연간 데이터센터 출하 MW 단일 권위 수치",
+      "단가 vs GE Vernova / Siemens / Mitsubishi 비교 — 모두 비공개"
+    ]
+  },
+
+  "open_questions_for_followup": [
+    "EIA-860 2024 prime mover 'GT' 추출 스크립트 — 향후 작업 (FC 스크립트 확장)",
+    "Caterpillar 10-K FY2024 Energy & Transportation 세그먼트 매출에서 Solar Turbines 비중 추정",
+    "Solar Turbines 데이터센터 거래 announcement 추적 (Meta Socrates 외 다른 hyperscaler 거래 — Microsoft, Amazon, Google)",
+    "PGM 130 'mobile turbine' lead time 정확 수치 — 데이터센터 fast deployment 전략 핵심",
+    "Vertiv-Caterpillar 협력 보도자료 직접 fetch — 통합 솔루션 단가 가시화 여부"
+  ]
+}

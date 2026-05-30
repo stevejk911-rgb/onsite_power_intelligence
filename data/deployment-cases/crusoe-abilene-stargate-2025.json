@@ -1,0 +1,129 @@
+{
+  "_meta": {
+    "id": "crusoe-abilene-stargate-2025",
+    "case_name": "Crusoe Abilene Stargate AI 데이터센터 (1.2 GW → 2.1 GW BTM gas)",
+    "fetchDate": "2026-05-29",
+    "fetchedBy": "Claude — WebSearch verified",
+    "primarySources": [
+      {
+        "type": "Data Center Frontier — 'Crusoe Adds 4.5 GW Natural Gas to Fuel AI'",
+        "url": "https://www.datacenterfrontier.com/hyperscale/article/55276169/crusoe-adds-45-gw-natural-gas-to-fuel-ai-expands-abilene-data-center-to-12-gw",
+        "redistributionRisk": "🟡"
+      },
+      {
+        "type": "Crusoe official newsroom",
+        "url": "https://www.crusoe.ai/resources/newsroom/crusoe-expands-ai-data-center-campus-in-abilene-to-1-2-gigawatts",
+        "redistributionRisk": "🟡"
+      },
+      {
+        "type": "Data Center Knowledge — Crusoe Microsoft 900 MW AI Factory",
+        "url": "https://www.datacenterknowledge.com/build-design/crusoe-expands-abilene-ai-campus-with-new-900mw-ai-factory-for-microsoft",
+        "redistributionRisk": "🟡"
+      },
+      {
+        "type": "Oracle Fact Sheet — Stargate Data Centers",
+        "url": "https://arrington.house.gov/uploadedfiles/final_oracle_oai_data_center_fact_sheet_092225b.pdf",
+        "publicDomain": true,
+        "redistributionRisk": "🟢 — US Congress 공개 자료"
+      }
+    ],
+    "confidence": "high — multiple verified sources",
+    "verified": true,
+    "verificationNote": "Crusoe·Oracle 공식 자료 + 산업 언론 cross-checked.",
+    "sourceCategory": "정부공공 (Congress) + 산업 언론 + 기업 자체",
+    "redistributionRisk_aggregate": "🟡"
+  },
+
+  "case_significance_for_our_tool": {
+    "why_this_case_matters": [
+      "*BTM gas turbine의 *가장 큰 데이터센터 사례** (Meta Socrates 200 MW vs Crusoe 1,000+ MW)",
+      "*Stargate $500B 프로젝트의 첫 사이트* — 우리 도구의 *upper bound 시장*",
+      "Grid + on-site gas + 외부 wind *혼합* — BTM 절대주의가 아닌 *현실적 hybrid*",
+      "Texas ERCOT — 우리 hot zone 매핑(DFW)이 *맞는 방향*임을 검증 (Texas BTM 우호)",
+      "*ABL/Microsoft·Meta·OpenAI* 동시 활동 — 데이터센터 BTM이 *다중 hyperscaler-shared 모델*로 진화"
+    ]
+  },
+
+  "facility_summary": {
+    "project_name": "Crusoe Abilene AI Data Center Campus (Stargate)",
+    "developer_operator": "Crusoe Energy Systems",
+    "anchor_tenants": [
+      {"name": "Oracle (operator)", "for": "OpenAI training/inference", "buildings": 8, "capacity_GW": 1.2},
+      {"name": "Microsoft (large-scale AI workloads)", "capacity_MW": 900, "status": "announced expansion"}
+    ],
+    "site_location": "Abilene, Texas (Lancium's Clean Campus)",
+    "ISO": "ERCOT",
+    "hot_zone_match": "DFW (130 mi east) 외곽 — verified DFW hot zone와 같은 ERCOT 시장 dynamics",
+    "phases": {
+      "phase_1_completed": {
+        "buildings": 2,
+        "status": "running training + inference on Nvidia GB200 Blackwell",
+        "first_building_sqft": 484960,
+        "first_building_construction_USD_M": 292,
+        "first_building_tenant_improvements_USD_M": 384,
+        "construction_period": "2024-09 → 2025-09 (12 months)",
+        "tenant_improvements_period": "→ 2025-12"
+      },
+      "phase_2_in_progress": {
+        "buildings_remaining": 6,
+        "completion": "mid-2026",
+        "total_sqft": 4000000,
+        "total_capacity_GW": 1.2
+      },
+      "phase_3_announced_expansion": {
+        "additional_capacity_MW": 900,
+        "for": "Microsoft",
+        "total_combined_capacity_GW": 2.1,
+        "status": "adjacent to existing development"
+      }
+    }
+  },
+
+  "power_configuration": {
+    "on_site_primary": {
+      "type": "Natural gas turbines (BTM)",
+      "capacity_MW_phase_1": "over 1,000",
+      "supplier": "*OEM 미공개* — Crusoe 자체 발표는 OEM 비공개. 1 GW급은 GE Vernova LM6000 또는 H-class 가능성. 후속 OPSB filing 또는 EIA-860 추출 필요.",
+      "fuel": "natural gas"
+    },
+    "external_supplement": {
+      "type": "Grid + local wind power",
+      "ERCOT_advantage": "Lancium's Clean Campus는 *renewable curtailment*에 위치 — wind 풍부 시 grid에서 받고 그렇지 않을 때 on-site gas로 보완"
+    },
+    "_significance_for_BTM": "*Pure BTM이 아닌 hybrid* — Meta Socrates의 'physically not connected'와 다른 패턴. ERCOT의 friendly interconnection이 *부분 grid 연결*을 가능케 함."
+  },
+
+  "stargate_project_context": {
+    "JV_announcement": "$500B JV (OpenAI + Oracle + SoftBank + Crusoe)",
+    "scale_signal": "*single largest data center buildout commitment in history* (자체 발표)",
+    "lifecycle_status": "Abilene = first site live; 5 추가 사이트 announced (OpenAI 발표 2025-09)",
+    "_implication_for_market": "*데이터센터 BTM 시장 규모를 prefactor change* — Stargate alone이 우리 도구의 1차 fuel cell + GT 추정 fleet의 *수배 규모*. 2026-2030 BTM 시장 폭발적 확장 신호."
+  },
+
+  "recent_dynamics_2025": {
+    "Oracle_OpenAI_600MW_cancellation": {
+      "date": "2025-Q4",
+      "what_happened": "OpenAI/Oracle이 600 MW 확장 취소",
+      "Crusoe_response": "다른 tenant 찾기 시작",
+      "Nvidia_deposit_USD_M": 150,
+      "Nvidia_strategy": "*$150M deposit으로 슬롯 확보 → Meta에 sublease 시도*. 목적: AMD Instinct 하드웨어가 그곳에 들어가는 것 방지 (자사 Nvidia GPU stronghold 유지)",
+      "_significance": "*데이터센터 capacity가 GPU vendor warfare의 무기가 됨*. 우리 도구 사용자 페르소나에 *GPU vendor strategic interests*가 추가 변수."
+    }
+  },
+
+  "lessons_for_our_tool": {
+    "lesson_1_BTM_hybrid_is_common": "Meta Socrates는 pure BTM, Crusoe는 *hybrid (BTM gas + grid wind)*. 우리 도구가 *순수 BTM vs hybrid* 시나리오 옵션을 분리해야 정확.",
+    "lesson_2_ERCOT_validated": "Crusoe·Texas 확장은 우리 DFW hot zone 매핑(ERCOT 우호)을 검증. ERCOT는 *데이터센터 BTM의 default 선택지 1순위* 후보.",
+    "lesson_3_1GW_scale_BTM_real": "200 MW BTM (Meta Socrates) → 1 GW BTM (Crusoe Phase 1) → 2.1 GW BTM (full Crusoe Abilene). *1 GW 단위 BTM이 실재*. 도구의 IT load slider 상한을 *1,500 MW까지* 확장 권장.",
+    "lesson_4_multi_tenant_BTM": "Crusoe는 *single developer가 multi-hyperscaler 캠퍼스*. Williams Companies도 Meta Socrates에서 같은 모델. *Developer-IPP가 hyperscaler에 BTM-as-a-service 제공* — 새 비즈니스 모델 카테고리.",
+    "lesson_5_construction_cost_validated": "Phase 1 첫 빌딩 $292M construction + $384M tenant improvements = $676M for 484,960 sqft + ~125 MW (1 GW / 8 buildings). 단위: ~$1,400-1,500/sqft가 *현재 hyperscaler 시설비*. 우리 도구는 발전소만 다루나, 사용자에게 *total project cost context* 제공 가능."
+  },
+
+  "open_questions_for_followup": [
+    "OEM 확인 — Crusoe 1 GW gas turbine 발주 (GE Vernova, Siemens, Solar Turbines, Mitsubishi 중 어느 것)",
+    "EIA-860 2024-2025에서 Crusoe Abilene 등록 generator 추출",
+    "Texas PUC filings — interconnection agreement (ERCOT)",
+    "Lancium's Clean Campus 부지 데이터 — co-locate 다른 데이터센터 dev 사례",
+    "Microsoft 900 MW 추가 거래 official announcement 직접 fetch"
+  ]
+}

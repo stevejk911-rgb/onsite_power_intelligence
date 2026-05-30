@@ -1,0 +1,100 @@
+{
+  "_meta": {
+    "id": "wartsila",
+    "vendor": "Wärtsilä Oyj Abp",
+    "fetchDate": "2026-05-29",
+    "fetchedBy": "Claude — Power Engineering 기사 직접 fetch + WebSearch",
+    "primarySources": [
+      {
+        "type": "Power Engineering article — 'Onsite gas turbines, reciprocating engines to power Meta data center'",
+        "url": "https://www.power-eng.com/onsite-power/onsite-gas-turbines-reciprocating-engines-to-power-meta-data-center/",
+        "publicationDate": "2025-06-11",
+        "fetched": "2026-05-29",
+        "redistributionRisk": "🟡 — 회색 영역. 개별 사실 인용 + 출처 링크는 OK, 본문 전재 금지"
+      },
+      {
+        "type": "Wartsila press release (Q2 2025 Ohio data center order)",
+        "url_pattern": "https://www.wartsila.com/media/news/",
+        "extractionStatus": "후속 직접 fetch 권장 — 단가 미공개"
+      },
+      {
+        "type": "Wartsila Annual Report / Q2 2025 Interim",
+        "url": "https://www.wartsila.com/investors",
+        "redistributionRisk": "🟢 (정부 공시 — Helsinki Stock Exchange WRT1V)"
+      }
+    ],
+    "confidence": "medium-high (개별 거래 사실 인용 가능, 단가 미공개)",
+    "verified": true,
+    "verificationNote": "Power Engineering 기사 직접 fetch 검증. Wartsila 자체 press release direct fetch은 후속 작업.",
+    "sourceCategory": "민간 산업 언론 + 기업 자체 발표",
+    "redistributionRisk_aggregate": "🟡",
+    "nextRefresh": "2026-08 (Wartsila Q2 2026 interim)"
+  },
+
+  "company": {
+    "name": "Wärtsilä Oyj Abp",
+    "ticker": "Helsinki:WRT1V",
+    "primary_product_for_BTM": "Gas reciprocating engine — modular, fast-start, multiple cylinder counts",
+    "product_lines_data_center_relevant": {
+      "18V50SG": {
+        "unit_MW": 18.8,
+        "configuration": "V18 cylinder, 50 cm bore, spark-ignited gas",
+        "use_case": "데이터센터 BTM 100-300 MW 부하에 6-16대 병렬",
+        "stated_advantages": ["short lead time", "low water use", "modular installation", "high efficiency (45-48% LHV)", "fast cold start <5 min"]
+      },
+      "31SG_series": {
+        "unit_MW": 4.5,
+        "configuration": "Smaller modular for distributed BTM, microgrid"
+      },
+      "34SG_series": {
+        "unit_MW": 11.0,
+        "configuration": "Medium modular"
+      }
+    },
+    "data_center_strategy": "Wartsila는 *공급망 단순화 + 빠른 인도*가 차별점. Aero GT(2027-2028 인도)·industrial frame(2028-2030 인도) vs Wartsila reciprocating(18-21개월) — *time-to-power 우위*."
+  },
+
+  "verified_data_center_transactions_2025": {
+    "Will_Power_OH_Williams_Companies_Meta_Ohio": {
+      "_status": "verified — Power Engineering 직접 인용",
+      "site": "Ohio data center campus (Meta 740-acre New Albany Business Park 인근)",
+      "customer_chain": "Wartsila → Williams Companies (Will-Power OH 자회사) → Sidecat LLC (Meta affiliate)",
+      "_note_this_is_NOT_the_Socrates_facility": "이건 Wartsila가 따로 공급하는 Ohio 데이터센터 거래 — Williams Companies가 *Socrates South*(200 MW Meta BTM)와 별도로 Wartsila 18V50SG 다수 단위를 다른 Ohio 사이트에 공급. Wartsila press release(Q2 2025)에 282 MW 단일 거래 명시.",
+      "equipment_units": 15,
+      "unit_type": "18V50SG",
+      "unit_MW_each": 18.8,
+      "total_MW": 282,
+      "booking_quarter": "Q2 2025",
+      "expected_delivery": "late 2026 - 2027",
+      "lead_time_estimate_months": "18-21",
+      "fuel": "natural gas (pipeline)",
+      "significance": "이 거래로 Wartsila 미국 누적 데이터센터 전달 capacity가 *6 GW*에 도달 (자체 공시)"
+    }
+  },
+
+  "competitive_positioning": {
+    "vs_aero_GT": {
+      "lead_time_advantage": "Wartsila 18-21개월 vs GE Vernova LM aero 24-36개월 (FY2024 backlog 가속화로) vs Solar Titan/PGM ~24-30개월",
+      "size_modularity": "단위 18.8 MW × N대 — 부하 변동 + redundancy ↑",
+      "efficiency_trade": "Reciprocating 45-48% LHV vs aero GT 38-44% LHV — 연료비 우위. CC 통합 시 aero GT가 우위 (50-58% LHV)"
+    },
+    "vs_industrial_frame_GT": {
+      "lead_time_advantage_dramatic": "Wartsila 18-21개월 vs H-class 36-48개월 (GE Vernova RPO $73.4B 누적)",
+      "size_fit": "Industrial frame 233-992 MW per unit은 데이터센터 단일 캠퍼스에 너무 큼; Wartsila 18.8 MW × 11대 = 207 MW로 정확 fit"
+    },
+    "vs_fuel_cell_Bloom": {
+      "lead_time_comparable": "Wartsila 18-21개월 vs Bloom 'less than 12 months' (가속 케이스, 10-K 인용)",
+      "scale_advantage_Wartsila": "단일 거래 282 MW vs Bloom 단일 거래 max ~100 MW (AEP initial order 100 MW로 시작)",
+      "land_footprint_disadvantage": "Wartsila reciprocating은 footprint 큼 (engine hall + exhaust + cooling)",
+      "noise_disadvantage": "Reciprocating engine은 noise 65-75 dBA @ 7m vs Bloom SOFC ~70 dBA — 유사하나 Wartsila는 enclosure 필수"
+    }
+  },
+
+  "open_questions_for_followup": [
+    "Wartsila Q2 2025 interim — 데이터센터 segment 매출 분리 공시 여부",
+    "Wartsila Annual Report 2024 — 'Energy' segment에서 reciprocating engine + 데이터센터 비중",
+    "18V50SG 단가 $/kW — 공시 안 됨. *EIA Construction Cost IC engine $1,354/kW가 가장 근사한 권위 데이터*. 단 EIA 데이터는 평균 generator 17 MW (Wartsila 1대 19 MW와 유사) → *direct relevant baseline*",
+    "Operating cost 비교 — Wartsila reciprocating vs aero GT 데이터센터 운영 PPA $/MWh",
+    "Bloom data center power report 2024-11 survey — 30% 시나리오 verification + 원본 PDF 추적"
+  ]
+}

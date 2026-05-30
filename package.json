@@ -1,0 +1,16 @@
+{
+  "name": "onsite-power-intelligence",
+  "version": "0.2.0",
+  "private": true,
+  "description": "Behind-the-meter power feasibility screening for AI data centers — hosted web app",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "adm-zip": "^0.5.17",
+    "xlsx": "^0.18.5"
+  }
+}

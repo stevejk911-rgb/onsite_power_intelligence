@@ -1,0 +1,151 @@
+{
+  "_meta": {
+    "id": "vistra-comanche-peak-2025",
+    "case_name": "Vistra + Unnamed Customer — Comanche Peak Nuclear Plant 20yr PPA (1,200 MW, Texas)",
+    "fetchDate": "2026-05-29",
+    "fetchedBy": "Claude — WebSearch verified 2026-05-29",
+    "primarySources": [
+      {
+        "type": "Vistra 8-K (2025-09) — PPA 발표 + Adjusted EBITDA 영향",
+        "url": "https://www.sec.gov/Archives/edgar/data/0001692819/000119312525221774/d43667d8k.htm",
+        "publicDomain": true,
+        "redistributionRisk": "🟢"
+      },
+      {
+        "type": "Vistra 8-K (2025-09) — exhibit 99.1",
+        "url": "https://www.sec.gov/Archives/edgar/data/0001692819/000119312525268033/d33941dex991.htm",
+        "publicDomain": true,
+        "redistributionRisk": "🟢"
+      },
+      {
+        "type": "Power Magazine — Vistra secures long-term nuclear PPA",
+        "url": "https://www.power-eng.com/nuclear/vistra-secures-long-term-nuclear-ppa-from-comanche-peak-nuclear-plant/",
+        "redistributionRisk": "🟡"
+      },
+      {
+        "type": "Utility Dive — Vistra announces Comanche deal + 860 MW gas plan",
+        "url": "https://www.utilitydive.com/news/vistra-corp-natural-gas-permian-basin-power-plant/761358/",
+        "redistributionRisk": "🟡"
+      },
+      {
+        "type": "PowerMag — Vistra in Talks to Expand Power for Data Centers (Nuclear + Gas)",
+        "url": "https://www.powermag.com/vistra-in-talks-to-expand-power-for-data-centers-through-nuclear-gas-options/",
+        "redistributionRisk": "🟡"
+      }
+    ],
+    "confidence": "high (재무·구조) / medium (customer 미공개, 데이터센터로 *추정*)",
+    "verified": true,
+    "verificationNote": "SEC 8-K + 산업 언론 cross-checked. *Customer는 공식적으로 미공개* (Vistra가 'large, investment grade company'로 표기). 데이터센터 거의 확실하나 *확정 안 됨* — 정직성 명시.",
+    "sourceCategory": "정부공공 (SEC) + 산업 언론",
+    "redistributionRisk_aggregate": "🟢 for SEC / 🟡 for press"
+  },
+
+  "case_significance_for_our_tool": {
+    "why_this_case_matters": [
+      "**Microsoft TMI 이후 *두 번째 GW급 nuclear-데이터센터 PPA***. 패턴 굳어지는 중.",
+      "**ERCOT (Texas)의 nuclear-데이터센터 거래 첫 사례** — 이전 두 nuclear deals (Talen, MS) 모두 PJM. Texas/ERCOT는 *energy-only 시장*이라 PPA 구조가 PJM과 다름.",
+      "*Customer 미공개*가 흥미로움 — *비밀유지가 데이터센터 거래의 표준화*. 우리 도구의 *데이터 한계 framing*에 추가 (8-K disclosure도 익명).",
+      "**1,200 MW 단일 PPA = Comanche Peak 전체 2.4 GW의 절반** — Vistra가 *대부분 nuclear 출력을 데이터센터에 할당*. 기존 TX retail customer에 영향 가능성.",
+      "**Vistra의 dual strategy**: Comanche Peak 1,200 MW nuclear + Permian Basin 860 MW gas — 데이터센터에 *nuclear + gas hybrid* offering. 우리 도구의 *시나리오 모델*에 정확히 match."
+    ]
+  },
+
+  "facility_summary": {
+    "facility_name": "Comanche Peak Nuclear Power Plant",
+    "location": "Glen Rose, Texas (Somervell County, ERCOT)",
+    "reactor_type": "2 × Westinghouse PWR",
+    "total_plant_capacity_GW": 2.4,
+    "PPA_capacity_MW": 1200,
+    "PPA_share_of_plant": 0.5,
+    "owner_operator": "Vistra Corp (NYSE:VST) — Luminant 자회사 운영",
+    "online_status": "2개 reactor 1990·1993부터 운영 중 — *새 건설 아닌 기존 plant*"
+  },
+
+  "PPA_structure": {
+    "buyer": "*Customer disclosed only as 'a large, investment grade company'*",
+    "buyer_likely_classification": "데이터센터 (Vistra가 별도 statements에서 데이터센터 customer pursuit 명시)",
+    "_customer_identification_warning": "Vistra SEC filings는 customer를 명시 안 함 — *공식적으로 unconfirmed*. 산업 추측에 의존.",
+    "seller": "Vistra Corp",
+    "announcement_date": "2025-09 (8-K filing)",
+    "term_years": 20,
+    "extension_option_years": 20,
+    "max_total_term_years": 40,
+    "structure": "Grid-connected, Front-of-the-Meter (FTM) PPA",
+    "carbon_status": "100% carbon-free (nuclear)",
+    "delivery_timeline": {
+      "start_quarter": "Q4 2027",
+      "full_volume_year": 2032,
+      "ramp_period_years": 5,
+      "_significance": "*5년 ramp* — 데이터센터 단계적 빌드 일치. Microsoft TMI 2028 online과 비슷 timing."
+    },
+    "vistra_financial_impact": {
+      "incremental_Adjusted_FCF_growth_pct_at_full_capacity": "8-10%",
+      "_basis": "Aug. 29, 2025 forward + FY2026 EBITDA Midpoint",
+      "_significance": "*PPA만으로 Vistra Adjusted FCF의 10% 추가* — 데이터센터 deal scale의 정량 신호. Vistra 전체 시총 ~$50B 대비 *enormous deal*."
+    }
+  },
+
+  "vistra_dual_strategy_nuclear_plus_gas": {
+    "nuclear_PPA": "1,200 MW Comanche Peak (이 케이스)",
+    "gas_addition": "860 MW Permian Basin natural gas plant — 별도 announcement (2026 발표)",
+    "_significance": "*Vistra는 데이터센터에 nuclear (baseload) + gas (flexibility) 동시 offering*. 우리 도구의 *시나리오 모델 (turbine + fuelcell + solar)*과 정확히 일치 — 다중 발전원 hybrid가 hyperscaler 표준.",
+    "_customer_segmentation": "데이터센터 + oil field electrification (Permian Basin shale 시추 powered by grid 대신 dedicated gas plant)"
+  },
+
+  "lessons_for_our_tool": {
+    "lesson_1_FTM_PPA_pattern_solidified": "*Nuclear-데이터센터 deals는 100% FTM*. Talen-AWS BTM 실패가 *법적 precedent*로 자리잡아 모든 후속 deals이 FTM. 우리 도구 framing 강화.",
+    "lesson_2_ERCOT_first_nuclear_PPA": "ERCOT (Texas)에서 nuclear-데이터센터 PPA 첫 사례. ERCOT의 *energy-only 시장*은 PJM의 *capacity market*과 다른 PPA 구조 — Vistra가 *retail electricity provider*로서 직접 데이터센터에 판매 가능.",
+    "lesson_3_customer_anonymity_standard": "*Customer 미공개가 표준*. Talen-AWS는 customer 명시, MS-TMI도 명시, Vistra는 *익명* — 향후 데이터센터 PPA의 *prevailing practice*. 우리 도구 데이터 자산 한계 명시.",
+    "lesson_4_existing_plant_reallocation": "*Comanche Peak 2.4 GW 중 1.2 GW (50%)를 데이터센터에 재할당*. 기존 plant의 *retail customer base*가 *commercial reallocation*되는 패턴. Texas PUC 검토 가능성.",
+    "lesson_5_8_10_pct_FCF_lift_signals_premium": "*Vistra Adjusted FCF 8-10% 증가는 deal premium pricing 신호*. 데이터센터 customer는 *retail 시장 단가보다 높은 가격* 지불 — *carbon-free + 24/7 firm* 의 premium. 우리 도구의 *PPA price* 추정에 적용 가능 시점에 활용."
+  },
+
+  "comparison_4_nuclear_data_center_deals_pattern_chart": {
+    "_purpose": "데이터센터 nuclear deals 정량 패턴",
+    "deals": [
+      {
+        "name": "Talen-AWS Susquehanna FAILED BTM",
+        "year": 2024,
+        "MW": 1920,
+        "term_yr": 17,
+        "USD_B": 18,
+        "structure": "BTM attempted → FTM",
+        "carbon": "100% nuclear",
+        "ISO": "PJM"
+      },
+      {
+        "name": "Microsoft-Constellation TMI/CCEC",
+        "year": 2024,
+        "MW": 835,
+        "term_yr": 20,
+        "USD_B": null,
+        "structure": "FTM (from start)",
+        "carbon": "100% nuclear",
+        "ISO": "PJM",
+        "_unique": "Retired plant restart"
+      },
+      {
+        "name": "Vistra Comanche Peak (이 케이스)",
+        "year": 2025,
+        "MW": 1200,
+        "term_yr": 20,
+        "USD_B": null,
+        "structure": "FTM",
+        "carbon": "100% nuclear",
+        "ISO": "ERCOT",
+        "_unique": "Existing plant reallocation, customer anonymous"
+      }
+    ],
+    "total_capacity_MW": 3955,
+    "total_carbon_free_GW": 3.96,
+    "_pattern_emerged": "*Talen-AWS BTM 실패 (2024-11) → 모든 후속 nuclear-데이터센터 deals이 FTM*. PJM·ERCOT 모두 동일 패턴. *Nuclear BTM은 dead market*."
+  },
+
+  "open_questions_for_followup": [
+    "Customer identity 추적 — Vistra Q3/Q4 2025 earnings 또는 customer 자체 announcement 가능성",
+    "Texas PUC 인가 — 기존 retail customer base reallocation에 대한 regulatory 검토",
+    "Comanche Peak Unit 1·2의 NRC license expiry — current 운영 연장 일정",
+    "Vistra 860 MW Permian Basin gas plant 진척 — 데이터센터·oil field 분할",
+    "ERCOT의 *energy-only* 시장에서 nuclear PPA가 retail customer 가격에 미치는 영향 (gas price index와 무관해 *headroom 매우 작음*)"
+  ]
+}

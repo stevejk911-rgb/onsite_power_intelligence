@@ -1,0 +1,1930 @@
+{
+  "_meta": {
+    "id": "eia860-2024-fuelcells",
+    "sourceURL": "https://www.eia.gov/electricity/data/eia860/",
+    "releaseDate": "2025-09-09",
+    "reportingYear": 2024,
+    "filter": {
+      "primeMover": "FC"
+    },
+    "fetchDate": "2026-05-28",
+    "sourceCategory": "정부공공",
+    "redistributionRisk": "🟢 — public domain",
+    "verificationNote": "Authoritative US fuel-cell installed-capacity dataset, Reporting Year 2024 (latest EIA release). Filter applied: Prime Mover code = FC."
+  },
+  "summary": {
+    "total_us_units": 186,
+    "total_us_nameplate_MW": 363.8,
+    "by_state_MW": {
+      "CA": 153.5,
+      "CT": 103.2,
+      "NY": 58,
+      "DE": 28.8,
+      "NJ": 12.6,
+      "MA": 7.5,
+      "GA": 0.2
+    },
+    "top_operators_MW": {
+      "Bloom Energy": 106.6,
+      "2016 ESA Project Company, LLC": 74.1,
+      "Diamond State Generation Partners, LLC": 27.5,
+      "Bridgeport Fuel Cell, LLC": 16.6,
+      "Derby Fuel Cell LLC": 14,
+      "Generate Colchester Fuel Cells, LLC": 10,
+      "United Illuminating Co": 8.4,
+      "Yaphank Fuel Cell Park, LLC": 8.4,
+      "Annadale Community Clean Energy Projects LLC": 7.8,
+      "Connecticut Mun Elec Engy Coop": 7.4,
+      "Groton Station Fuel Cell, LLC": 7.4,
+      "Bloom Energy 2009 PPA": 7.1,
+      "DG Fuel Cell, LLC": 6,
+      "City of Tulare Water Pollution Control": 5.8,
+      "Groton Fuel Cell 1 LLC": 5.6,
+      "South Energy Investments LLC": 5,
+      "Bronx Community Clean Energy Project LLC": 5,
+      "Apple, Inc": 4,
+      "TRS Fuel Cell, LLC": 3.7,
+      "UIL Distributed Resources, LLC": 3.4
+    },
+    "by_operating_year_MW": {
+      "2008": 1.2,
+      "2010": 1.1,
+      "2011": 1.1,
+      "2012": 14.2,
+      "2013": 39.8,
+      "2014": 4.6,
+      "2015": 11.2,
+      "2016": 25.9,
+      "2017": 43.6,
+      "2018": 46.9,
+      "2019": 45.9,
+      "2020": 45.1,
+      "2021": 29.5,
+      "2022": 34.2,
+      "2023": 5.5,
+      "2024": 14
+    }
+  },
+  "generators": [
+    {
+      "plantName": "Hartford Hospital Cogeneration",
+      "state": "CT",
+      "operator": "Cartier Energy, LLC",
+      "nameplateMW": 1.4,
+      "operatingYear": 2014,
+      "technology": "Other Natural Gas",
+      "location": "Hartford",
+      "status": "OP"
+    },
+    {
+      "plantName": "Caltech Central",
+      "state": "CA",
+      "operator": "Bloom Energy 2009 PPA",
+      "nameplateMW": 0.1,
+      "operatingYear": 2010,
+      "technology": "Other Natural Gas",
+      "location": "Los Angeles",
+      "status": "OP"
+    },
+    {
+      "plantName": "Caltech Central",
+      "state": "CA",
+      "operator": "Bloom Energy 2009 PPA",
+      "nameplateMW": 0.1,
+      "operatingYear": 2010,
+      "technology": "Other Natural Gas",
+      "location": "Los Angeles",
+      "status": "OP"
+    },
+    {
+      "plantName": "Caltech Central",
+      "state": "CA",
+      "operator": "Bloom Energy 2009 PPA",
+      "nameplateMW": 0.1,
+      "operatingYear": 2010,
+      "technology": "Other Natural Gas",
+      "location": "Los Angeles",
+      "status": "OP"
+    },
+    {
+      "plantName": "Caltech Central",
+      "state": "CA",
+      "operator": "Bloom Energy 2009 PPA",
+      "nameplateMW": 0.1,
+      "operatingYear": 2010,
+      "technology": "Other Natural Gas",
+      "location": "Los Angeles",
+      "status": "OP"
+    },
+    {
+      "plantName": "Caltech Central",
+      "state": "CA",
+      "operator": "Bloom Energy 2009 PPA",
+      "nameplateMW": 0.1,
+      "operatingYear": 2010,
+      "technology": "Other Natural Gas",
+      "location": "Los Angeles",
+      "status": "OP"
+    },
+    {
+      "plantName": "Caltech Central",
+      "state": "CA",
+      "operator": "Bloom Energy 2009 PPA",
+      "nameplateMW": 0.1,
+      "operatingYear": 2010,
+      "technology": "Other Natural Gas",
+      "location": "Los Angeles",
+      "status": "OP"
+    },
+    {
+      "plantName": "Caltech Central",
+      "state": "CA",
+      "operator": "Bloom Energy 2009 PPA",
+      "nameplateMW": 0.1,
+      "operatingYear": 2010,
+      "technology": "Other Natural Gas",
+      "location": "Los Angeles",
+      "status": "OP"
+    },
+    {
+      "plantName": "Caltech Central",
+      "state": "CA",
+      "operator": "Bloom Energy 2009 PPA",
+      "nameplateMW": 0.1,
+      "operatingYear": 2010,
+      "technology": "Other Natural Gas",
+      "location": "Los Angeles",
+      "status": "OP"
+    },
+    {
+      "plantName": "Caltech Central",
+      "state": "CA",
+      "operator": "Bloom Energy 2009 PPA",
+      "nameplateMW": 0.1,
+      "operatingYear": 2010,
+      "technology": "Other Natural Gas",
+      "location": "Los Angeles",
+      "status": "OP"
+    },
+    {
+      "plantName": "Caltech Central",
+      "state": "CA",
+      "operator": "Bloom Energy 2009 PPA",
+      "nameplateMW": 0.1,
+      "operatingYear": 2010,
+      "technology": "Other Natural Gas",
+      "location": "Los Angeles",
+      "status": "OP"
+    },
+    {
+      "plantName": "Caltech Central",
+      "state": "CA",
+      "operator": "Bloom Energy 2009 PPA",
+      "nameplateMW": 0.1,
+      "operatingYear": 2010,
+      "technology": "Other Natural Gas",
+      "location": "Los Angeles",
+      "status": "OP"
+    },
+    {
+      "plantName": "Franklin Templeton San Mateo",
+      "state": "CA",
+      "operator": "Bloom Energy",
+      "nameplateMW": 1.1,
+      "operatingYear": 2011,
+      "technology": "Other Natural Gas",
+      "location": "San Mateo",
+      "status": "OP"
+    },
+    {
+      "plantName": "Brookside Newark",
+      "state": "DE",
+      "operator": "Diamond State Generation Partners, LLC",
+      "nameplateMW": 2.6,
+      "operatingYear": 2012,
+      "technology": "Other Natural Gas",
+      "location": "New Castle",
+      "status": "OP"
+    },
+    {
+      "plantName": "Kaiser Downey",
+      "state": "CA",
+      "operator": "Bloom Energy 2009 PPA",
+      "nameplateMW": 0.2,
+      "operatingYear": 2012,
+      "technology": "Other Natural Gas",
+      "location": "Los Angeles",
+      "status": "OP"
+    },
+    {
+      "plantName": "Kaiser Downey",
+      "state": "CA",
+      "operator": "Bloom Energy 2009 PPA",
+      "nameplateMW": 0.2,
+      "operatingYear": 2012,
+      "technology": "Other Natural Gas",
+      "location": "Los Angeles",
+      "status": "OP"
+    },
+    {
+      "plantName": "Kaiser Downey",
+      "state": "CA",
+      "operator": "Bloom Energy 2009 PPA",
+      "nameplateMW": 0.2,
+      "operatingYear": 2012,
+      "technology": "Other Natural Gas",
+      "location": "Los Angeles",
+      "status": "OP"
+    },
+    {
+      "plantName": "Kaiser Downey",
+      "state": "CA",
+      "operator": "Bloom Energy 2009 PPA",
+      "nameplateMW": 0.2,
+      "operatingYear": 2012,
+      "technology": "Other Natural Gas",
+      "location": "Los Angeles",
+      "status": "OP"
+    },
+    {
+      "plantName": "Kaiser Downey",
+      "state": "CA",
+      "operator": "Bloom Energy 2009 PPA",
+      "nameplateMW": 0.2,
+      "operatingYear": 2012,
+      "technology": "Other Natural Gas",
+      "location": "Los Angeles",
+      "status": "OP"
+    },
+    {
+      "plantName": "Kaiser Ontario",
+      "state": "CA",
+      "operator": "Bloom Energy 2009 PPA",
+      "nameplateMW": 0.2,
+      "operatingYear": 2012,
+      "technology": "Other Natural Gas",
+      "location": "San Bernardino",
+      "status": "OP"
+    },
+    {
+      "plantName": "Kaiser Ontario",
+      "state": "CA",
+      "operator": "Bloom Energy 2009 PPA",
+      "nameplateMW": 0.2,
+      "operatingYear": 2012,
+      "technology": "Other Natural Gas",
+      "location": "San Bernardino",
+      "status": "OP"
+    },
+    {
+      "plantName": "Kaiser Ontario",
+      "state": "CA",
+      "operator": "Bloom Energy 2009 PPA",
+      "nameplateMW": 0.2,
+      "operatingYear": 2012,
+      "technology": "Other Natural Gas",
+      "location": "San Bernardino",
+      "status": "OP"
+    },
+    {
+      "plantName": "Kaiser Ontario",
+      "state": "CA",
+      "operator": "Bloom Energy 2009 PPA",
+      "nameplateMW": 0.2,
+      "operatingYear": 2012,
+      "technology": "Other Natural Gas",
+      "location": "San Bernardino",
+      "status": "OP"
+    },
+    {
+      "plantName": "Kaiser Ontario",
+      "state": "CA",
+      "operator": "Bloom Energy 2009 PPA",
+      "nameplateMW": 0.2,
+      "operatingYear": 2012,
+      "technology": "Other Natural Gas",
+      "location": "San Bernardino",
+      "status": "OP"
+    },
+    {
+      "plantName": "CCSU Fuel Cell Project",
+      "state": "CT",
+      "operator": "New Britain Renewable Energy, LLC",
+      "nameplateMW": 1.4,
+      "operatingYear": 2012,
+      "technology": "Other Natural Gas",
+      "location": "Hartford",
+      "status": "OP"
+    },
+    {
+      "plantName": "Roll Delano",
+      "state": "CA",
+      "operator": "Bloom Energy",
+      "nameplateMW": 1.2,
+      "operatingYear": 2012,
+      "technology": "Other Natural Gas",
+      "location": "Kern",
+      "status": "OP"
+    },
+    {
+      "plantName": "Xilinx San Jose",
+      "state": "CA",
+      "operator": "Bloom Energy",
+      "nameplateMW": 1,
+      "operatingYear": 2018,
+      "technology": "Other Natural Gas",
+      "location": "Santa Clara",
+      "status": "OP"
+    },
+    {
+      "plantName": "Life Technologies Carlsbad",
+      "state": "CA",
+      "operator": "Bloom Energy",
+      "nameplateMW": 1.1,
+      "operatingYear": 2012,
+      "technology": "Other Natural Gas",
+      "location": "San Diego",
+      "status": "OP"
+    },
+    {
+      "plantName": "Red Lion Energy Center",
+      "state": "DE",
+      "operator": "Diamond State Generation Partners, LLC",
+      "nameplateMW": 5.9,
+      "operatingYear": 2012,
+      "technology": "Other Natural Gas",
+      "location": "New Castle",
+      "status": "OP"
+    },
+    {
+      "plantName": "Red Lion Energy Center",
+      "state": "DE",
+      "operator": "Diamond State Generation Partners, LLC",
+      "nameplateMW": 5.3,
+      "operatingYear": 2013,
+      "technology": "Other Natural Gas",
+      "location": "New Castle",
+      "status": "OP"
+    },
+    {
+      "plantName": "Red Lion Energy Center",
+      "state": "DE",
+      "operator": "Diamond State Generation Partners, LLC",
+      "nameplateMW": 3.5,
+      "operatingYear": 2013,
+      "technology": "Other Natural Gas",
+      "location": "New Castle",
+      "status": "OP"
+    },
+    {
+      "plantName": "Red Lion Energy Center",
+      "state": "DE",
+      "operator": "Diamond State Generation Partners, LLC",
+      "nameplateMW": 3.6,
+      "operatingYear": 2013,
+      "technology": "Other Natural Gas",
+      "location": "New Castle",
+      "status": "OP"
+    },
+    {
+      "plantName": "Red Lion Energy Center",
+      "state": "DE",
+      "operator": "Diamond State Generation Partners, LLC",
+      "nameplateMW": 3.4,
+      "operatingYear": 2013,
+      "technology": "Other Natural Gas",
+      "location": "New Castle",
+      "status": "OP"
+    },
+    {
+      "plantName": "Red Lion Energy Center",
+      "state": "DE",
+      "operator": "Diamond State Generation Partners, LLC",
+      "nameplateMW": 3.2,
+      "operatingYear": 2013,
+      "technology": "Other Natural Gas",
+      "location": "New Castle",
+      "status": "OP"
+    },
+    {
+      "plantName": "Bridgeport Fuel Cell, LLC",
+      "state": "CT",
+      "operator": "Bridgeport Fuel Cell, LLC",
+      "nameplateMW": 16.6,
+      "operatingYear": 2013,
+      "technology": "Other Natural Gas",
+      "location": "Fairfield",
+      "status": "OP"
+    },
+    {
+      "plantName": "Santa Rita Jail Hybrid",
+      "state": "CA",
+      "operator": "County of Alameda GSA",
+      "nameplateMW": 1.4,
+      "operatingYear": 2017,
+      "technology": "Other Natural Gas",
+      "location": "Alameda",
+      "status": "OP"
+    },
+    {
+      "plantName": "Life Technologies - Pleasanton",
+      "state": "CA",
+      "operator": "Bloom Energy",
+      "nameplateMW": 1.1,
+      "operatingYear": 2013,
+      "technology": "Other Natural Gas",
+      "location": "Alameda",
+      "status": "OP"
+    },
+    {
+      "plantName": "Kellogg's - San Jose",
+      "state": "CA",
+      "operator": "Bloom Energy",
+      "nameplateMW": 1.1,
+      "operatingYear": 2013,
+      "technology": "Other Natural Gas",
+      "location": "Santa Clara",
+      "status": "OP"
+    },
+    {
+      "plantName": "City of Tulare Water Facility",
+      "state": "CA",
+      "operator": "City of Tulare Water Pollution Control",
+      "nameplateMW": 2.8,
+      "operatingYear": 2018,
+      "technology": "Other Natural Gas",
+      "location": "Tulare",
+      "status": "OP"
+    },
+    {
+      "plantName": "City of Tulare Water Facility",
+      "state": "CA",
+      "operator": "City of Tulare Water Pollution Control",
+      "nameplateMW": 3,
+      "operatingYear": 2019,
+      "technology": "Other Waste Biomass",
+      "location": "Tulare",
+      "status": "OP"
+    },
+    {
+      "plantName": "Apple Campus 2 Fuel Cell",
+      "state": "CA",
+      "operator": "Apple, Inc",
+      "nameplateMW": 4,
+      "operatingYear": 2017,
+      "technology": "Landfill Gas",
+      "location": "Santa Clara",
+      "status": "OP"
+    },
+    {
+      "plantName": "Subase Microgrid Project",
+      "state": "CT",
+      "operator": "Connecticut Mun Elec Engy Coop",
+      "nameplateMW": 3.7,
+      "operatingYear": 2022,
+      "technology": "Other Natural Gas",
+      "location": "New London",
+      "status": "OP"
+    },
+    {
+      "plantName": "Subase Microgrid Project",
+      "state": "CT",
+      "operator": "Connecticut Mun Elec Engy Coop",
+      "nameplateMW": 3.7,
+      "operatingYear": 2022,
+      "technology": "Other Natural Gas",
+      "location": "New London",
+      "status": "OP"
+    },
+    {
+      "plantName": "Maxim",
+      "state": "CA",
+      "operator": "Bloom Energy",
+      "nameplateMW": 1.1,
+      "operatingYear": 2014,
+      "technology": "Other Natural Gas",
+      "location": "Santa Clara",
+      "status": "OP"
+    },
+    {
+      "plantName": "Pixar - Emeryville",
+      "state": "CA",
+      "operator": "Bloom Energy",
+      "nameplateMW": 1.1,
+      "operatingYear": 2014,
+      "technology": "Other Natural Gas",
+      "location": "Alameda",
+      "status": "OP"
+    },
+    {
+      "plantName": "Riverside RWQCP Fuel Cell",
+      "state": "CA",
+      "operator": "Riverside Fuel Cell, LLC",
+      "nameplateMW": 1.4,
+      "operatingYear": 2016,
+      "technology": "Other Waste Biomass",
+      "location": "Riverside",
+      "status": "OP"
+    },
+    {
+      "plantName": "Pepperidge Farm Bloomfield",
+      "state": "CT",
+      "operator": "Pepperidge Farm, Inc.- Bloomfield",
+      "nameplateMW": 1.2,
+      "operatingYear": 2008,
+      "technology": "Other Natural Gas",
+      "location": "Hartford",
+      "status": "OP"
+    },
+    {
+      "plantName": "Pepperidge Farm Bloomfield",
+      "state": "CT",
+      "operator": "Pepperidge Farm, Inc.- Bloomfield",
+      "nameplateMW": 1.4,
+      "operatingYear": 2016,
+      "technology": "Other Natural Gas",
+      "location": "Hartford",
+      "status": "OP"
+    },
+    {
+      "plantName": "UI RCP New Haven Fuel Cell",
+      "state": "CT",
+      "operator": "United Illuminating Co",
+      "nameplateMW": 2.8,
+      "operatingYear": 2015,
+      "technology": "Other Natural Gas",
+      "location": "New Haven",
+      "status": "OP"
+    },
+    {
+      "plantName": "UI RCP Bridgeport Seaside",
+      "state": "CT",
+      "operator": "United Illuminating Co",
+      "nameplateMW": 2.8,
+      "operatingYear": 2015,
+      "technology": "Other Natural Gas",
+      "location": "Fairfield",
+      "status": "OP"
+    },
+    {
+      "plantName": "UDR Glastonbury Fuel Cell",
+      "state": "CT",
+      "operator": "UIL Distributed Resources, LLC",
+      "nameplateMW": 3.4,
+      "operatingYear": 2016,
+      "technology": "Other Natural Gas",
+      "location": "Hartford",
+      "status": "OP"
+    },
+    {
+      "plantName": "Equinix San Jose",
+      "state": "CA",
+      "operator": "Bloom Energy",
+      "nameplateMW": 1.1,
+      "operatingYear": 2015,
+      "technology": "Other Natural Gas",
+      "location": "Santa Clara",
+      "status": "OP"
+    },
+    {
+      "plantName": "Intel Santa Clara",
+      "state": "CA",
+      "operator": "Bloom Energy",
+      "nameplateMW": 1.1,
+      "operatingYear": 2015,
+      "technology": "Other Natural Gas",
+      "location": "Santa Clara",
+      "status": "OP"
+    },
+    {
+      "plantName": "Santa Rita Jail Fuel Cell",
+      "state": "CA",
+      "operator": "SRJFC, LLC",
+      "nameplateMW": 1.4,
+      "operatingYear": 2016,
+      "technology": "Other Natural Gas",
+      "location": "Alameda",
+      "status": "OP"
+    },
+    {
+      "plantName": "Pfizer Groton Fuel Cell",
+      "state": "CT",
+      "operator": "Groton Fuel Cell 1 LLC",
+      "nameplateMW": 2.8,
+      "operatingYear": 2016,
+      "technology": "Other Natural Gas",
+      "location": "New London",
+      "status": "OP"
+    },
+    {
+      "plantName": "Pfizer Groton Fuel Cell",
+      "state": "CT",
+      "operator": "Groton Fuel Cell 1 LLC",
+      "nameplateMW": 2.8,
+      "operatingYear": 2016,
+      "technology": "Other Natural Gas",
+      "location": "New London",
+      "status": "OP"
+    },
+    {
+      "plantName": "UI RCP Woodbridge FC",
+      "state": "CT",
+      "operator": "United Illuminating Co",
+      "nameplateMW": 2.8,
+      "operatingYear": 2016,
+      "technology": "Other Natural Gas",
+      "location": "New Haven",
+      "status": "OP"
+    },
+    {
+      "plantName": "TRS Fuel Cell",
+      "state": "CT",
+      "operator": "TRS Fuel Cell, LLC",
+      "nameplateMW": 3.7,
+      "operatingYear": 2019,
+      "technology": "Other Natural Gas",
+      "location": "Fairfield",
+      "status": "OS"
+    },
+    {
+      "plantName": "AT&T Holger",
+      "state": "CA",
+      "operator": "Bloom Energy",
+      "nameplateMW": 1.3,
+      "operatingYear": 2016,
+      "technology": "Other Natural Gas",
+      "location": "Santa Clara",
+      "status": "OP"
+    },
+    {
+      "plantName": "AT&T Anaheim",
+      "state": "CA",
+      "operator": "Bloom Energy",
+      "nameplateMW": 1.3,
+      "operatingYear": 2016,
+      "technology": "Other Natural Gas",
+      "location": "Orange",
+      "status": "OP"
+    },
+    {
+      "plantName": "Naval Sub Base New London Fuel Cell",
+      "state": "CT",
+      "operator": "Groton Station Fuel Cell, LLC",
+      "nameplateMW": 3.7,
+      "operatingYear": 2022,
+      "technology": "Other Natural Gas",
+      "location": "New London",
+      "status": "OP"
+    },
+    {
+      "plantName": "Naval Sub Base New London Fuel Cell",
+      "state": "CT",
+      "operator": "Groton Station Fuel Cell, LLC",
+      "nameplateMW": 3.7,
+      "operatingYear": 2022,
+      "technology": "Other Natural Gas",
+      "location": "New London",
+      "status": "OP"
+    },
+    {
+      "plantName": "Trinity College Fuel Cell",
+      "state": "CT",
+      "operator": "AEP Onsite Partners, LLC",
+      "nameplateMW": 1.4,
+      "operatingYear": 2018,
+      "technology": "Other Natural Gas",
+      "location": "Hartford",
+      "status": "OP"
+    },
+    {
+      "plantName": "IKEA New Haven Rooftop PV & Fuel Cell",
+      "state": "CT",
+      "operator": "IKEA Property Inc",
+      "nameplateMW": 0.3,
+      "operatingYear": 2016,
+      "technology": "Other Natural Gas",
+      "location": "New Haven",
+      "status": "OP"
+    },
+    {
+      "plantName": "Tulare BioMAT Fuel Cell",
+      "state": "CA",
+      "operator": "Central CA Fuel Cell 2, LLC",
+      "nameplateMW": 2.8,
+      "operatingYear": 2019,
+      "technology": "Other Natural Gas",
+      "location": "Tulare",
+      "status": "OP"
+    },
+    {
+      "plantName": "Digital Fairfield",
+      "state": "CT",
+      "operator": "Bloom Energy",
+      "nameplateMW": 2,
+      "operatingYear": 2018,
+      "technology": "Other Natural Gas",
+      "location": "Fairfield",
+      "status": "OP"
+    },
+    {
+      "plantName": "Regeneron Tarrytown",
+      "state": "NY",
+      "operator": "Bloom Energy",
+      "nameplateMW": 1.5,
+      "operatingYear": 2018,
+      "technology": "Other Natural Gas",
+      "location": "Westchester",
+      "status": "OP"
+    },
+    {
+      "plantName": "Ratkovich Alhambra",
+      "state": "CA",
+      "operator": "Bloom Energy",
+      "nameplateMW": 1,
+      "operatingYear": 2018,
+      "technology": "Other Natural Gas",
+      "location": "Los Angeles",
+      "status": "OP"
+    },
+    {
+      "plantName": "Micro Santa Clara",
+      "state": "CA",
+      "operator": "Bloom Energy",
+      "nameplateMW": 3,
+      "operatingYear": 2018,
+      "technology": "Other Natural Gas",
+      "location": "Santa Clara",
+      "status": "OP"
+    },
+    {
+      "plantName": "Disney Prospect",
+      "state": "CA",
+      "operator": "Bloom Energy",
+      "nameplateMW": 1,
+      "operatingYear": 2017,
+      "technology": "Other Natural Gas",
+      "location": "Los Angeles",
+      "status": "OP"
+    },
+    {
+      "plantName": "ATT Jericho",
+      "state": "NY",
+      "operator": "Bloom Energy",
+      "nameplateMW": 1,
+      "operatingYear": 2017,
+      "technology": "Other Natural Gas",
+      "location": "Suffolk",
+      "status": "OP"
+    },
+    {
+      "plantName": "ATT Kelvin",
+      "state": "CA",
+      "operator": "Bloom Energy",
+      "nameplateMW": 1,
+      "operatingYear": 2017,
+      "technology": "Other Natural Gas",
+      "location": "Orange",
+      "status": "OP"
+    },
+    {
+      "plantName": "ATT Van Nyus",
+      "state": "CA",
+      "operator": "Bloom Energy",
+      "nameplateMW": 1,
+      "operatingYear": 2017,
+      "technology": "Other Natural Gas",
+      "location": "Los Angeles",
+      "status": "OP"
+    },
+    {
+      "plantName": "FLEX Gibraltar",
+      "state": "CA",
+      "operator": "Bloom Energy",
+      "nameplateMW": 1.5,
+      "operatingYear": 2017,
+      "technology": "Other Natural Gas",
+      "location": "Santa Clara",
+      "status": "OP"
+    },
+    {
+      "plantName": "MER Queens",
+      "state": "NY",
+      "operator": "Bloom Energy",
+      "nameplateMW": 1.2,
+      "operatingYear": 2017,
+      "technology": "Other Natural Gas",
+      "location": "Queens",
+      "status": "OP"
+    },
+    {
+      "plantName": "Derby Fuel Cell",
+      "state": "CT",
+      "operator": "Derby Fuel Cell LLC",
+      "nameplateMW": 2.8,
+      "operatingYear": 2024,
+      "technology": "Other Natural Gas",
+      "location": "New Haven",
+      "status": "OP"
+    },
+    {
+      "plantName": "Derby Fuel Cell",
+      "state": "CT",
+      "operator": "Derby Fuel Cell LLC",
+      "nameplateMW": 2.8,
+      "operatingYear": 2024,
+      "technology": "Other Natural Gas",
+      "location": "New Haven",
+      "status": "OP"
+    },
+    {
+      "plantName": "Derby Fuel Cell",
+      "state": "CT",
+      "operator": "Derby Fuel Cell LLC",
+      "nameplateMW": 2.8,
+      "operatingYear": 2024,
+      "technology": "Other Natural Gas",
+      "location": "New Haven",
+      "status": "OP"
+    },
+    {
+      "plantName": "Derby Fuel Cell",
+      "state": "CT",
+      "operator": "Derby Fuel Cell LLC",
+      "nameplateMW": 2.8,
+      "operatingYear": 2024,
+      "technology": "Other Natural Gas",
+      "location": "New Haven",
+      "status": "OP"
+    },
+    {
+      "plantName": "Derby Fuel Cell",
+      "state": "CT",
+      "operator": "Derby Fuel Cell LLC",
+      "nameplateMW": 2.8,
+      "operatingYear": 2024,
+      "technology": "Other Natural Gas",
+      "location": "New Haven",
+      "status": "OP"
+    },
+    {
+      "plantName": "Equinix Caspian Dr. Fuel Cell",
+      "state": "CA",
+      "operator": "2016 ESA Project Company, LLC",
+      "nameplateMW": 2,
+      "operatingYear": 2017,
+      "technology": "Other Natural Gas",
+      "location": "Santa Clara",
+      "status": "OP"
+    },
+    {
+      "plantName": "Equinix Caspian Dr. Fuel Cell",
+      "state": "CA",
+      "operator": "2016 ESA Project Company, LLC",
+      "nameplateMW": 2.8,
+      "operatingYear": 2017,
+      "technology": "Other Natural Gas",
+      "location": "Santa Clara",
+      "status": "OP"
+    },
+    {
+      "plantName": "Mission College Blvd. Fuel Cell",
+      "state": "CA",
+      "operator": "2016 ESA Project Company, LLC",
+      "nameplateMW": 2.4,
+      "operatingYear": 2017,
+      "technology": "Other Natural Gas",
+      "location": "Santa Clara",
+      "status": "OP"
+    },
+    {
+      "plantName": "Mission College Blvd. Fuel Cell",
+      "state": "CA",
+      "operator": "2016 ESA Project Company, LLC",
+      "nameplateMW": 2.6,
+      "operatingYear": 2017,
+      "technology": "Other Natural Gas",
+      "location": "Santa Clara",
+      "status": "OP"
+    },
+    {
+      "plantName": "Kaiser East La Palma Ave. Fuel Cell",
+      "state": "CA",
+      "operator": "2016 ESA Project Company, LLC",
+      "nameplateMW": 2.2,
+      "operatingYear": 2017,
+      "technology": "Other Natural Gas",
+      "location": "Orange",
+      "status": "OP"
+    },
+    {
+      "plantName": "Kaiser Deer Valley Rd. Fuel Cell",
+      "state": "CA",
+      "operator": "2016 ESA Project Company, LLC",
+      "nameplateMW": 1.4,
+      "operatingYear": 2017,
+      "technology": "Other Natural Gas",
+      "location": "Contra Costa",
+      "status": "OP"
+    },
+    {
+      "plantName": "Kaiser Owens Dr. Fuel Cell",
+      "state": "CA",
+      "operator": "2016 ESA Project Company, LLC",
+      "nameplateMW": 1,
+      "operatingYear": 2017,
+      "technology": "Other Natural Gas",
+      "location": "Alameda",
+      "status": "OP"
+    },
+    {
+      "plantName": "Kaiser Napa Valley Corporate Dr Fuel Cel",
+      "state": "CA",
+      "operator": "2016 ESA Project Company, LLC",
+      "nameplateMW": 2.5,
+      "operatingYear": 2017,
+      "technology": "Other Natural Gas",
+      "location": "Napa",
+      "status": "OP"
+    },
+    {
+      "plantName": "Kaiser Napa Valley Corporate Dr Fuel Cel",
+      "state": "CA",
+      "operator": "2016 ESA Project Company, LLC",
+      "nameplateMW": 2.3,
+      "operatingYear": 2017,
+      "technology": "Other Natural Gas",
+      "location": "Napa",
+      "status": "OP"
+    },
+    {
+      "plantName": "Equinix Great Oaks Blvd. Fuel Cell",
+      "state": "CA",
+      "operator": "2016 ESA Project Company, LLC",
+      "nameplateMW": 2.4,
+      "operatingYear": 2017,
+      "technology": "Other Natural Gas",
+      "location": "Santa Clara",
+      "status": "OP"
+    },
+    {
+      "plantName": "Equinix Great Oaks Blvd. Fuel Cell",
+      "state": "CA",
+      "operator": "2016 ESA Project Company, LLC",
+      "nameplateMW": 2.1,
+      "operatingYear": 2017,
+      "technology": "Other Natural Gas",
+      "location": "Santa Clara",
+      "status": "OP"
+    },
+    {
+      "plantName": "Equinix Lundy Ave. Fuel Cell",
+      "state": "CA",
+      "operator": "2016 ESA Project Company, LLC",
+      "nameplateMW": 1.8,
+      "operatingYear": 2017,
+      "technology": "Other Natural Gas",
+      "location": "Santa Clara",
+      "status": "OP"
+    },
+    {
+      "plantName": "Equinix Lundy Ave. Fuel Cell",
+      "state": "CA",
+      "operator": "2016 ESA Project Company, LLC",
+      "nameplateMW": 2,
+      "operatingYear": 2017,
+      "technology": "Other Natural Gas",
+      "location": "Santa Clara",
+      "status": "OP"
+    },
+    {
+      "plantName": "Equinix Lundy Ave. Fuel Cell",
+      "state": "CA",
+      "operator": "2016 ESA Project Company, LLC",
+      "nameplateMW": 1.1,
+      "operatingYear": 2019,
+      "technology": "Other Natural Gas",
+      "location": "Santa Clara",
+      "status": "OP"
+    },
+    {
+      "plantName": "Equinix Douglas St. Fuel Cell",
+      "state": "CA",
+      "operator": "2016 ESA Project Company, LLC",
+      "nameplateMW": 1,
+      "operatingYear": 2017,
+      "technology": "Other Natural Gas",
+      "location": "Los Angeles",
+      "status": "OP"
+    },
+    {
+      "plantName": "Equinix Douglas St. Fuel Cell",
+      "state": "CA",
+      "operator": "2016 ESA Project Company, LLC",
+      "nameplateMW": 1,
+      "operatingYear": 2017,
+      "technology": "Other Natural Gas",
+      "location": "Los Angeles",
+      "status": "OP"
+    },
+    {
+      "plantName": "Equinix Maple Ave. Fuel Cell",
+      "state": "CA",
+      "operator": "2016 ESA Project Company, LLC",
+      "nameplateMW": 2,
+      "operatingYear": 2017,
+      "technology": "Other Natural Gas",
+      "location": "Los Angeles",
+      "status": "OP"
+    },
+    {
+      "plantName": "South Windsor Fuel Cell",
+      "state": "CT",
+      "operator": "South Energy Investments LLC",
+      "nameplateMW": 5,
+      "operatingYear": 2020,
+      "technology": "Other Natural Gas",
+      "location": "Hartford",
+      "status": "OP"
+    },
+    {
+      "plantName": "UB Fuel Cell",
+      "state": "CT",
+      "operator": "UB Fuel Cell",
+      "nameplateMW": 1.4,
+      "operatingYear": 2015,
+      "technology": "Other Natural Gas",
+      "location": "Fairfield",
+      "status": "OP"
+    },
+    {
+      "plantName": "Central CA Fuel Cell 1",
+      "state": "CA",
+      "operator": "Central CA Fuel Cell 1",
+      "nameplateMW": 2.8,
+      "operatingYear": 2018,
+      "technology": "Other Natural Gas",
+      "location": "Tulare",
+      "status": "OP"
+    },
+    {
+      "plantName": "Illumina Way SD",
+      "state": "CA",
+      "operator": "Bloom Energy",
+      "nameplateMW": 3.5,
+      "operatingYear": 2019,
+      "technology": "Other Natural Gas",
+      "location": "San Diego",
+      "status": "OP"
+    },
+    {
+      "plantName": "ATT North Watney",
+      "state": "CA",
+      "operator": "Bloom Energy",
+      "nameplateMW": 2,
+      "operatingYear": 2019,
+      "technology": "Other Natural Gas",
+      "location": "Solano",
+      "status": "OP"
+    },
+    {
+      "plantName": "ATT Ventura Blvd",
+      "state": "CA",
+      "operator": "Bloom Energy",
+      "nameplateMW": 1,
+      "operatingYear": 2019,
+      "technology": "Other Natural Gas",
+      "location": "Los Angeles",
+      "status": "OP"
+    },
+    {
+      "plantName": "One Patriot",
+      "state": "MA",
+      "operator": "Bloom Energy",
+      "nameplateMW": 2,
+      "operatingYear": 2019,
+      "technology": "Other Natural Gas",
+      "location": "Norfolk",
+      "status": "OP"
+    },
+    {
+      "plantName": "Tracy 210",
+      "state": "CA",
+      "operator": "Costco Wholesale",
+      "nameplateMW": 2.6,
+      "operatingYear": 2019,
+      "technology": "Other Natural Gas",
+      "location": "San Joaquin",
+      "status": "OP"
+    },
+    {
+      "plantName": "SDM000 Clarkson Fuel Cell",
+      "state": "NY",
+      "operator": "2016 ESA Project Company, LLC",
+      "nameplateMW": 1.8,
+      "operatingYear": 2018,
+      "technology": "Other Natural Gas",
+      "location": "Kings",
+      "status": "OP"
+    },
+    {
+      "plantName": "NHH003 Clarkson Fuel Cell",
+      "state": "NY",
+      "operator": "2016 ESA Project Company, LLC",
+      "nameplateMW": 1.1,
+      "operatingYear": 2018,
+      "technology": "Other Natural Gas",
+      "location": "Kings",
+      "status": "OP"
+    },
+    {
+      "plantName": "NHH004 Winthrop Fuel Cell",
+      "state": "NY",
+      "operator": "2016 ESA Project Company, LLC",
+      "nameplateMW": 1,
+      "operatingYear": 2018,
+      "technology": "Other Natural Gas",
+      "location": "Kings",
+      "status": "OP"
+    },
+    {
+      "plantName": "SWM Fuel Cell",
+      "state": "NY",
+      "operator": "Yaphank Fuel Cell Park, LLC",
+      "nameplateMW": 2.8,
+      "operatingYear": 2021,
+      "technology": "Other Natural Gas",
+      "location": "Suffolk",
+      "status": "OP"
+    },
+    {
+      "plantName": "SWM Fuel Cell",
+      "state": "NY",
+      "operator": "Yaphank Fuel Cell Park, LLC",
+      "nameplateMW": 2.8,
+      "operatingYear": 2021,
+      "technology": "Other Natural Gas",
+      "location": "Suffolk",
+      "status": "OP"
+    },
+    {
+      "plantName": "SWM Fuel Cell",
+      "state": "NY",
+      "operator": "Yaphank Fuel Cell Park, LLC",
+      "nameplateMW": 2.8,
+      "operatingYear": 2021,
+      "technology": "Other Natural Gas",
+      "location": "Suffolk",
+      "status": "OP"
+    },
+    {
+      "plantName": "AGT000 Stevens Creek Fuel Cell",
+      "state": "CA",
+      "operator": "2016 ESA Project Company, LLC",
+      "nameplateMW": 1.2,
+      "operatingYear": 2018,
+      "technology": "Other Natural Gas",
+      "location": "Santa Clara",
+      "status": "OP"
+    },
+    {
+      "plantName": "AGT000 Stevens Creek Fuel Cell",
+      "state": "CA",
+      "operator": "2016 ESA Project Company, LLC",
+      "nameplateMW": 1,
+      "operatingYear": 2018,
+      "technology": "Other Natural Gas",
+      "location": "Santa Clara",
+      "status": "OP"
+    },
+    {
+      "plantName": "AGT001 Centerville Fuel Cell",
+      "state": "DE",
+      "operator": "2016 ESA Project Company, LLC",
+      "nameplateMW": 1.3,
+      "operatingYear": 2019,
+      "technology": "Other Natural Gas",
+      "location": "New Castle",
+      "status": "OP"
+    },
+    {
+      "plantName": "CST001 McCarthy Fuel Cell",
+      "state": "CA",
+      "operator": "2016 ESA Project Company, LLC",
+      "nameplateMW": 0.9,
+      "operatingYear": 2019,
+      "technology": "Other Natural Gas",
+      "location": "Santa Clara",
+      "status": "OP"
+    },
+    {
+      "plantName": "CST001 McCarthy Fuel Cell",
+      "state": "CA",
+      "operator": "2016 ESA Project Company, LLC",
+      "nameplateMW": 0.3,
+      "operatingYear": 2019,
+      "technology": "Other Natural Gas",
+      "location": "Santa Clara",
+      "status": "OP"
+    },
+    {
+      "plantName": "EQX002 Secaucus Rd Fuel Cell",
+      "state": "NJ",
+      "operator": "2016 ESA Project Company, LLC",
+      "nameplateMW": 1.5,
+      "operatingYear": 2019,
+      "technology": "Other Natural Gas",
+      "location": "Hudson",
+      "status": "OP"
+    },
+    {
+      "plantName": "EQX003 Secaucus Rd Fuel Cell",
+      "state": "NJ",
+      "operator": "2016 ESA Project Company, LLC",
+      "nameplateMW": 2,
+      "operatingYear": 2018,
+      "technology": "Other Natural Gas",
+      "location": "Hudson",
+      "status": "OP"
+    },
+    {
+      "plantName": "EQX010 Great Oaks Fuel Cell",
+      "state": "CA",
+      "operator": "2016 ESA Project Company, LLC",
+      "nameplateMW": 1.2,
+      "operatingYear": 2019,
+      "technology": "Other Natural Gas",
+      "location": "Santa Clara",
+      "status": "OP"
+    },
+    {
+      "plantName": "EQX010 Great Oaks Fuel Cell",
+      "state": "CA",
+      "operator": "2016 ESA Project Company, LLC",
+      "nameplateMW": 1.2,
+      "operatingYear": 2019,
+      "technology": "Other Natural Gas",
+      "location": "Santa Clara",
+      "status": "OP"
+    },
+    {
+      "plantName": "EQX011 Duane Fuel Cell",
+      "state": "CA",
+      "operator": "2016 ESA Project Company, LLC",
+      "nameplateMW": 2,
+      "operatingYear": 2018,
+      "technology": "Other Natural Gas",
+      "location": "Santa Clara",
+      "status": "OP"
+    },
+    {
+      "plantName": "EQX011 Duane Fuel Cell",
+      "state": "CA",
+      "operator": "2016 ESA Project Company, LLC",
+      "nameplateMW": 1.4,
+      "operatingYear": 2018,
+      "technology": "Other Natural Gas",
+      "location": "Santa Clara",
+      "status": "OP"
+    },
+    {
+      "plantName": "EQX011 Duane Fuel Cell",
+      "state": "CA",
+      "operator": "2016 ESA Project Company, LLC",
+      "nameplateMW": 1.8,
+      "operatingYear": 2018,
+      "technology": "Other Natural Gas",
+      "location": "Santa Clara",
+      "status": "OP"
+    },
+    {
+      "plantName": "EQX012 Harz Fuel Cell",
+      "state": "NJ",
+      "operator": "2016 ESA Project Company, LLC",
+      "nameplateMW": 2.5,
+      "operatingYear": 2018,
+      "technology": "Other Natural Gas",
+      "location": "Hudson",
+      "status": "OP"
+    },
+    {
+      "plantName": "EQX015 Great Oaks Fuel Cell",
+      "state": "CA",
+      "operator": "2016 ESA Project Company, LLC",
+      "nameplateMW": 2,
+      "operatingYear": 2018,
+      "technology": "Other Natural Gas",
+      "location": "Santa Clara",
+      "status": "OP"
+    },
+    {
+      "plantName": "EQX015 Great Oaks Fuel Cell",
+      "state": "CA",
+      "operator": "2016 ESA Project Company, LLC",
+      "nameplateMW": 2,
+      "operatingYear": 2018,
+      "technology": "Other Natural Gas",
+      "location": "Santa Clara",
+      "status": "OP"
+    },
+    {
+      "plantName": "JSR000 N Mathilda Fuel Cell",
+      "state": "CA",
+      "operator": "2016 ESA Project Company, LLC",
+      "nameplateMW": 1.1,
+      "operatingYear": 2019,
+      "technology": "Other Natural Gas",
+      "location": "Santa Clara",
+      "status": "OP"
+    },
+    {
+      "plantName": "KSR028 Merced Fuel Cell",
+      "state": "CA",
+      "operator": "2016 ESA Project Company, LLC",
+      "nameplateMW": 2,
+      "operatingYear": 2018,
+      "technology": "Other Natural Gas",
+      "location": "Alameda",
+      "status": "OP"
+    },
+    {
+      "plantName": "IIV000 Mt Bethel Fuel Cell",
+      "state": "NJ",
+      "operator": "2016 ESA Project Company, LLC",
+      "nameplateMW": 1.3,
+      "operatingYear": 2019,
+      "technology": "Other Natural Gas",
+      "location": "Somerset",
+      "status": "OP"
+    },
+    {
+      "plantName": "IIV000 Mt Bethel Fuel Cell",
+      "state": "NJ",
+      "operator": "2016 ESA Project Company, LLC",
+      "nameplateMW": 1.3,
+      "operatingYear": 2019,
+      "technology": "Other Natural Gas",
+      "location": "Somerset",
+      "status": "OP"
+    },
+    {
+      "plantName": "GEN005 Antibody Fuel Cell",
+      "state": "CA",
+      "operator": "2016 ESA Project Company, LLC",
+      "nameplateMW": 2.5,
+      "operatingYear": 2019,
+      "technology": "Other Natural Gas",
+      "location": "San Diego",
+      "status": "OP"
+    },
+    {
+      "plantName": "SCU000 El Camino Real Fuel Cell",
+      "state": "CA",
+      "operator": "2016 ESA Project Company, LLC",
+      "nameplateMW": 1.5,
+      "operatingYear": 2018,
+      "technology": "Other Natural Gas",
+      "location": "Santa Clara",
+      "status": "OP"
+    },
+    {
+      "plantName": "KSR053 Cantara Fuel Cell",
+      "state": "CA",
+      "operator": "2016 ESA Project Company, LLC",
+      "nameplateMW": 1.6,
+      "operatingYear": 2018,
+      "technology": "Other Natural Gas",
+      "location": "Los Angeles",
+      "status": "OP"
+    },
+    {
+      "plantName": "TLR000 Hansen Fuel Cell",
+      "state": "CA",
+      "operator": "2016 ESA Project Company, LLC",
+      "nameplateMW": 1,
+      "operatingYear": 2018,
+      "technology": "Other Natural Gas",
+      "location": "Monterey",
+      "status": "OP"
+    },
+    {
+      "plantName": "TLR000 Hansen Fuel Cell",
+      "state": "CA",
+      "operator": "2016 ESA Project Company, LLC",
+      "nameplateMW": 1.5,
+      "operatingYear": 2019,
+      "technology": "Other Natural Gas",
+      "location": "Monterey",
+      "status": "OP"
+    },
+    {
+      "plantName": "TLR000 Hansen Fuel Cell",
+      "state": "CA",
+      "operator": "2016 ESA Project Company, LLC",
+      "nameplateMW": 0.5,
+      "operatingYear": 2019,
+      "technology": "Other Natural Gas",
+      "location": "Monterey",
+      "status": "OP"
+    },
+    {
+      "plantName": "Tech Square Microgrid",
+      "state": "GA",
+      "operator": "Georgia Power Co",
+      "nameplateMW": 0.2,
+      "operatingYear": 2020,
+      "technology": "Other Natural Gas",
+      "location": "Fulton",
+      "status": "OP"
+    },
+    {
+      "plantName": "Toyota Long Beach Trigen",
+      "state": "CA",
+      "operator": "Long Beach Trigen, LLC",
+      "nameplateMW": 2.8,
+      "operatingYear": 2023,
+      "technology": "Other Waste Biomass",
+      "location": "Los Angeles",
+      "status": "OP"
+    },
+    {
+      "plantName": "SB Water Reclamation Fuel Cell",
+      "state": "CA",
+      "operator": "San Bernardino Fuel Cell, LLC",
+      "nameplateMW": 1.4,
+      "operatingYear": 2021,
+      "technology": "Other Waste Biomass",
+      "location": "San Bernardino",
+      "status": "OP"
+    },
+    {
+      "plantName": "Bloom-Altice Fuel Cell",
+      "state": "NY",
+      "operator": "AEP Onsite Partners, LLC",
+      "nameplateMW": 2,
+      "operatingYear": 2020,
+      "technology": "Other Natural Gas",
+      "location": "Nassau",
+      "status": "OP"
+    },
+    {
+      "plantName": "Orbit Bloom Fuel Cell",
+      "state": "NY",
+      "operator": "DG Fuel Cell, LLC",
+      "nameplateMW": 6,
+      "operatingYear": 2020,
+      "technology": "Other Natural Gas",
+      "location": "Suffolk",
+      "status": "OP"
+    },
+    {
+      "plantName": "Stamford Health",
+      "state": "CT",
+      "operator": "Stamford Health Systems, Inc.",
+      "nameplateMW": 2,
+      "operatingYear": 2023,
+      "technology": "Other Natural Gas",
+      "location": "Fairfield",
+      "status": "OP"
+    },
+    {
+      "plantName": "Fuel Cell 3245 Yates Avenue",
+      "state": "NY",
+      "operator": "Bronx Community Clean Energy Project LLC",
+      "nameplateMW": 5,
+      "operatingYear": 2022,
+      "technology": "Other Natural Gas",
+      "location": "Bronx",
+      "status": "OP"
+    },
+    {
+      "plantName": "Fuel Cell 18A Sneden Avenue",
+      "state": "NY",
+      "operator": "Annadale Community Clean Energy Projects LLC",
+      "nameplateMW": 3.6,
+      "operatingYear": 2020,
+      "technology": "Other Natural Gas",
+      "location": "Richmond",
+      "status": "OP"
+    },
+    {
+      "plantName": "Fuel Cell 18B Sneden Avenue",
+      "state": "NY",
+      "operator": "Annadale Community Clean Energy Projects LLC",
+      "nameplateMW": 4.2,
+      "operatingYear": 2020,
+      "technology": "Other Natural Gas",
+      "location": "Richmond",
+      "status": "OP"
+    },
+    {
+      "plantName": "FDX010.0 FedEx Fuel Cell",
+      "state": "CT",
+      "operator": "2016 ESA Project Company, LLC",
+      "nameplateMW": 1,
+      "operatingYear": 2018,
+      "technology": "Other Natural Gas",
+      "location": "Middlesex",
+      "status": "OP"
+    },
+    {
+      "plantName": "University of San Diego",
+      "state": "CA",
+      "operator": "Bloom Energy 2009 PPA",
+      "nameplateMW": 1,
+      "operatingYear": 2016,
+      "technology": "Other Natural Gas",
+      "location": "San Diego",
+      "status": "OP"
+    },
+    {
+      "plantName": "CalTech - Pasadena (PPA)",
+      "state": "CA",
+      "operator": "Bloom Energy 2009 PPA",
+      "nameplateMW": 1,
+      "operatingYear": 2016,
+      "technology": "Other Natural Gas",
+      "location": "Los Angeles",
+      "status": "OP"
+    },
+    {
+      "plantName": "AT&T Middletown",
+      "state": "NJ",
+      "operator": "Bloom Energy 2009 PPA",
+      "nameplateMW": 2,
+      "operatingYear": 2015,
+      "technology": "Other Natural Gas",
+      "location": "Monmouth",
+      "status": "OP"
+    },
+    {
+      "plantName": "SCC - San Jose",
+      "state": "CA",
+      "operator": "Bloom Energy",
+      "nameplateMW": 1,
+      "operatingYear": 2014,
+      "technology": "Other Natural Gas",
+      "location": "Santa Clara",
+      "status": "OP"
+    },
+    {
+      "plantName": "Medtronic - New Haven 2",
+      "state": "CT",
+      "operator": "Bloom Energy",
+      "nameplateMW": 2.2,
+      "operatingYear": 2020,
+      "technology": "Other Natural Gas",
+      "location": "New Haven",
+      "status": "OP"
+    },
+    {
+      "plantName": "Medtronic - New Haven",
+      "state": "CT",
+      "operator": "Bloom Energy",
+      "nameplateMW": 2.3,
+      "operatingYear": 2020,
+      "technology": "Other Natural Gas",
+      "location": "New Haven",
+      "status": "OP"
+    },
+    {
+      "plantName": "Keysight - Santa Rosa",
+      "state": "CA",
+      "operator": "Bloom Energy",
+      "nameplateMW": 4.5,
+      "operatingYear": 2018,
+      "technology": "Other Natural Gas",
+      "location": "Sonoma",
+      "status": "OP"
+    },
+    {
+      "plantName": "DirecTV - Los Angeles",
+      "state": "CA",
+      "operator": "Bloom Energy",
+      "nameplateMW": 1,
+      "operatingYear": 2016,
+      "technology": "Other Natural Gas",
+      "location": "Los Angeles",
+      "status": "OP"
+    },
+    {
+      "plantName": "Certain Solar - Staten Island",
+      "state": "NY",
+      "operator": "Bloom Energy",
+      "nameplateMW": 2,
+      "operatingYear": 2020,
+      "technology": "Other Natural Gas",
+      "location": "Richmond",
+      "status": "OP"
+    },
+    {
+      "plantName": "Certain Solar - Staten Island",
+      "state": "NY",
+      "operator": "Bloom Energy",
+      "nameplateMW": 1.5,
+      "operatingYear": 2020,
+      "technology": "Other Natural Gas",
+      "location": "Richmond",
+      "status": "OP"
+    },
+    {
+      "plantName": "Certain Solar - Staten Island",
+      "state": "NY",
+      "operator": "Bloom Energy",
+      "nameplateMW": 2,
+      "operatingYear": 2020,
+      "technology": "Other Natural Gas",
+      "location": "Richmond",
+      "status": "OP"
+    },
+    {
+      "plantName": "Certain Solar - Staten Island",
+      "state": "NY",
+      "operator": "Bloom Energy",
+      "nameplateMW": 2,
+      "operatingYear": 2020,
+      "technology": "Other Natural Gas",
+      "location": "Richmond",
+      "status": "OP"
+    },
+    {
+      "plantName": "Beckton Dickenson - San Jose",
+      "state": "CA",
+      "operator": "Bloom Energy",
+      "nameplateMW": 1,
+      "operatingYear": 2016,
+      "technology": "Other Natural Gas",
+      "location": "Santa Clara",
+      "status": "OP"
+    },
+    {
+      "plantName": "AT&T - Redwood City",
+      "state": "CA",
+      "operator": "Bloom Energy",
+      "nameplateMW": 1,
+      "operatingYear": 2013,
+      "technology": "Other Natural Gas",
+      "location": "San Mateo",
+      "status": "OP"
+    },
+    {
+      "plantName": "AT&T - Gardena",
+      "state": "CA",
+      "operator": "Bloom Energy",
+      "nameplateMW": 1,
+      "operatingYear": 2013,
+      "technology": "Other Natural Gas",
+      "location": "Los Angeles",
+      "status": "OP"
+    },
+    {
+      "plantName": "AT&T - Hawthorne",
+      "state": "CA",
+      "operator": "Bloom Energy",
+      "nameplateMW": 1,
+      "operatingYear": 2016,
+      "technology": "Other Natural Gas",
+      "location": "Los Angeles",
+      "status": "OP"
+    },
+    {
+      "plantName": "AT&T - Hayward",
+      "state": "CA",
+      "operator": "Bloom Energy",
+      "nameplateMW": 1,
+      "operatingYear": 2016,
+      "technology": "Other Natural Gas",
+      "location": "Alameda",
+      "status": "OP"
+    },
+    {
+      "plantName": "Equinix - Billerica",
+      "state": "MA",
+      "operator": "Bloom Energy",
+      "nameplateMW": 1.9,
+      "operatingYear": 2021,
+      "technology": "Other Natural Gas",
+      "location": "Middlesex",
+      "status": "OP"
+    },
+    {
+      "plantName": "Enloe Medical - Chico",
+      "state": "CA",
+      "operator": "Bloom Energy",
+      "nameplateMW": 1.7,
+      "operatingYear": 2021,
+      "technology": "Other Natural Gas",
+      "location": "Butte",
+      "status": "OP"
+    },
+    {
+      "plantName": "Comcast - Universal City",
+      "state": "CA",
+      "operator": "Bloom Energy",
+      "nameplateMW": 1,
+      "operatingYear": 2021,
+      "technology": "Other Natural Gas",
+      "location": "Los Angeles",
+      "status": "OP"
+    },
+    {
+      "plantName": "Altice - Hicksville",
+      "state": "NY",
+      "operator": "Bloom Energy",
+      "nameplateMW": 2,
+      "operatingYear": 2021,
+      "technology": "Other Natural Gas",
+      "location": "Nassau",
+      "status": "OP"
+    },
+    {
+      "plantName": "Altice - Parsippany",
+      "state": "NJ",
+      "operator": "Bloom Energy",
+      "nameplateMW": 2,
+      "operatingYear": 2021,
+      "technology": "Other Natural Gas",
+      "location": "Morris",
+      "status": "OP"
+    },
+    {
+      "plantName": "AT&T - San Diego Trade Street",
+      "state": "CA",
+      "operator": "Bloom Energy",
+      "nameplateMW": 1,
+      "operatingYear": 2016,
+      "technology": "Other Natural Gas",
+      "location": "San Diego",
+      "status": "OP"
+    },
+    {
+      "plantName": "CalTech - Pasadena Wilson Ave",
+      "state": "CA",
+      "operator": "Bloom Energy",
+      "nameplateMW": 2.2,
+      "operatingYear": 2019,
+      "technology": "Other Natural Gas",
+      "location": "Los Angeles",
+      "status": "OP"
+    },
+    {
+      "plantName": "Generate Colchester Fuel Cells, LLC",
+      "state": "CT",
+      "operator": "Generate Colchester Fuel Cells, LLC",
+      "nameplateMW": 10,
+      "operatingYear": 2021,
+      "technology": "Other Natural Gas",
+      "location": "New London",
+      "status": "OP"
+    },
+    {
+      "plantName": "Kaiser - Harbor City",
+      "state": "CA",
+      "operator": "Bloom Energy",
+      "nameplateMW": 2.1,
+      "operatingYear": 2019,
+      "technology": "Other Natural Gas",
+      "location": "Los Angeles",
+      "status": "OP"
+    },
+    {
+      "plantName": "San Diego Community College",
+      "state": "CA",
+      "operator": "Bloom Energy",
+      "nameplateMW": 1,
+      "operatingYear": 2020,
+      "technology": "Other Natural Gas",
+      "location": "San Diego",
+      "status": "OP"
+    },
+    {
+      "plantName": "Life Technologies - Fremont",
+      "state": "CA",
+      "operator": "Bloom Energy",
+      "nameplateMW": 1.3,
+      "operatingYear": 2020,
+      "technology": "Other Natural Gas",
+      "location": "Alameda",
+      "status": "OP"
+    },
+    {
+      "plantName": "Kaiser - LA",
+      "state": "CA",
+      "operator": "Bloom Energy",
+      "nameplateMW": 4.5,
+      "operatingYear": 2020,
+      "technology": "Other Natural Gas",
+      "location": "Los Angeles",
+      "status": "OP"
+    },
+    {
+      "plantName": "Kaiser - Woodland Hills",
+      "state": "CA",
+      "operator": "Bloom Energy",
+      "nameplateMW": 3.1,
+      "operatingYear": 2019,
+      "technology": "Other Natural Gas",
+      "location": "Los Angeles",
+      "status": "OP"
+    },
+    {
+      "plantName": "Equinix - Elmsford",
+      "state": "NY",
+      "operator": "Bloom Energy",
+      "nameplateMW": 1.7,
+      "operatingYear": 2020,
+      "technology": "Other Natural Gas",
+      "location": "Westchester",
+      "status": "OP"
+    },
+    {
+      "plantName": "CoreSite - Somerville",
+      "state": "MA",
+      "operator": "Bloom Energy",
+      "nameplateMW": 3.6,
+      "operatingYear": 2020,
+      "technology": "Other Natural Gas",
+      "location": "Middlesex",
+      "status": "OP"
+    },
+    {
+      "plantName": "Connecticut College",
+      "state": "CT",
+      "operator": "Bloom Energy",
+      "nameplateMW": 1.2,
+      "operatingYear": 2019,
+      "technology": "Other Natural Gas",
+      "location": "New London",
+      "status": "OP"
+    },
+    {
+      "plantName": "Yale New Haven - New London",
+      "state": "CT",
+      "operator": "Bloom Energy",
+      "nameplateMW": 1.8,
+      "operatingYear": 2022,
+      "technology": "Other Natural Gas",
+      "location": "New London",
+      "status": "OP"
+    },
+    {
+      "plantName": "Anheuser Busch - Fairfield",
+      "state": "CA",
+      "operator": "Bloom Energy",
+      "nameplateMW": 2.6,
+      "operatingYear": 2022,
+      "technology": "Other Natural Gas",
+      "location": "Solano",
+      "status": "OP"
+    },
+    {
+      "plantName": "Apple Staten Island - Industrial Loop",
+      "state": "NY",
+      "operator": "Bloom Energy",
+      "nameplateMW": 5,
+      "operatingYear": 2022,
+      "technology": "Other Natural Gas",
+      "location": "Richmond",
+      "status": "OP"
+    },
+    {
+      "plantName": "Redlands Community Hospital",
+      "state": "CA",
+      "operator": "Bloom Energy",
+      "nameplateMW": 1.1,
+      "operatingYear": 2021,
+      "technology": "Other Natural Gas",
+      "location": "San Bernardino",
+      "status": "OP"
+    },
+    {
+      "plantName": "Taylor Farms - Schilling Place",
+      "state": "CA",
+      "operator": "Bloom Energy",
+      "nameplateMW": 1,
+      "operatingYear": 2019,
+      "technology": "Other Natural Gas",
+      "location": "Monterey",
+      "status": "OP"
+    },
+    {
+      "plantName": "Apple Staten Island - Winant Place",
+      "state": "NY",
+      "operator": "Bloom Energy",
+      "nameplateMW": 5,
+      "operatingYear": 2022,
+      "technology": "Other Natural Gas",
+      "location": "Richmond",
+      "status": "OP"
+    },
+    {
+      "plantName": "Stamford Health Tully Health Center",
+      "state": "CT",
+      "operator": "Stamford Health Tully Health Center",
+      "nameplateMW": 0.7,
+      "operatingYear": 2023,
+      "technology": "Other Natural Gas",
+      "location": "Fairfield",
+      "status": "OP"
+    }
+  ]
+}

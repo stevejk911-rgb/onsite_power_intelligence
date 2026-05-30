@@ -1,0 +1,133 @@
+{
+  "_meta": {
+    "id": "eia-construction-cost-2023-gas",
+    "fetchDate": "2026-05-28",
+    "fetchedBy": "Claude — direct fetch of EIA Construction Cost Data 2023 page",
+    "primarySources": [
+      {
+        "type": "EIA Construction Cost Data — Generators Installed in 2023",
+        "url": "https://www.eia.gov/electricity/generatorcosts/",
+        "xlsxURL": "https://www.eia.gov/electricity/generatorcosts/xls/generator_costs_2023.xlsx",
+        "releaseDate": "2025-07-28",
+        "directFetched": "2026-05-28",
+        "publicDomain": true,
+        "redistributionRisk": "🟢"
+      }
+    ],
+    "confidence": "high",
+    "verified": true,
+    "verificationNote": "EIA가 2023년 가스 발전기를 명시적으로 공시 — 연료전지(FC-003)와 결정적 차이. 시장에 GE Vernova, Siemens, Mitsubishi, Cat, Wartsila 등 다수 OEM이 있어 단일 회사 공시 노출 우려 없음. 따라서 이 데이터는 *권위 있는 단일 표 값*으로 사용 가능.",
+    "sourceCategory": "정부공공",
+    "redistributionRisk_aggregate": "🟢",
+    "nextRefresh": "2026-09 (EIA expects 2024 release in Sep 2026)"
+  },
+
+  "structural_finding_vs_fuelcell": {
+    "headline": "EIA가 가스 발전기 비용은 *명시적으로 공시*, 연료전지는 *공시 억제*.",
+    "implication": "도구의 데이터 신뢰도가 발전원별로 다름을 명시적으로 표시. 가스터빈 시나리오는 'EIA 권위 데이터 기반' / 연료전지 시나리오는 '합성 추정' 라벨.",
+    "why_different": "가스 발전기 시장은 GE Vernova·Siemens·Mitsubishi·Cat·Wartsila로 분산되어 있어 EIA 'avoid disclosure of individual company data' 트리거 안 됨. 연료전지는 Bloom 독점 구조라 트리거됨."
+  },
+
+  "year_2023_capacity_weighted_average_cost_per_kW": {
+    "_unit": "USD per kW (nameplate)",
+    "_definition": "Capacity-weighted average construction cost. Excludes government grants, tax benefits, incentives.",
+    "_inclusion": "Generators ≥1 MW nameplate capacity",
+
+    "by_prime_mover": {
+      "combustion_turbine_simple_cycle": {
+        "_code": "GT (EIA prime mover)",
+        "cost_per_kW": 562,
+        "total_capacity_MW_new_plants": 798,
+        "total_capacity_MW_existing": 1466,
+        "total_capacity_MW": 2264,
+        "number_of_generators_new": 13,
+        "number_of_generators_existing": 9,
+        "average_generator_size_MW_new": 61,
+        "average_generator_size_MW_existing": 163,
+        "total_construction_cost_billion_USD": 1.3,
+        "_interpretation": "Simple-cycle CT는 단가가 *가장 낮음* ($562/kW) — 빠른 spin-up, peaker 용도. 평균 generator size 61 MW는 데이터센터 BTM에 적합한 sizing. 단, 효율(heat rate)은 CC보다 30-40% 떨어짐 → 연료비 더 듦."
+      },
+      "combined_cycle_overall": {
+        "_components": "CT + ST 합산",
+        "cost_per_kW_blended": 898,
+        "total_capacity_MW_new": 1291,
+        "total_capacity_MW_existing": 2201,
+        "total_capacity_MW": 3492,
+        "number_of_plants_new": 2,
+        "number_of_plants_existing": 3,
+        "number_of_generators_new": 4,
+        "number_of_generators_existing": 8,
+        "average_plant_size_MW_new": 645,
+        "average_plant_size_MW_existing": 734,
+        "total_construction_cost_billion_USD": 4.4,
+        "_components_breakdown": {
+          "combustion_turbine_part_per_kW": 782,
+          "steam_turbine_part_per_kW": 1122
+        },
+        "_interpretation": "Combined cycle는 *평균 plant 645+ MW* — 데이터센터 단일 부지 BTM에는 *지나치게 큼*. 대신 hyperscale 캠퍼스(다수 GW급 부지)나 utility-scale BTM IPP 모델에 적합. simple cycle 대비 efficiency 50-60% vs 35-40% → 연료비 절감."
+      },
+      "internal_combustion_engine": {
+        "_code": "IC (EIA prime mover) — gas reciprocating",
+        "cost_per_kW": 1354,
+        "total_capacity_MW_new": 150,
+        "total_capacity_MW_existing": 9,
+        "total_capacity_MW": 159,
+        "number_of_plants_new": 9,
+        "number_of_plants_existing": 5,
+        "number_of_generators_new": 52,
+        "number_of_generators_existing": 7,
+        "average_generator_size_MW_new": 17,
+        "average_generator_size_MW_existing": 2,
+        "total_construction_cost_billion_USD": 0.2,
+        "_interpretation": "Gas reciprocating engine은 *$/kW는 비쌈* ($1,354/kW, CT의 2.4배)지만 *generator size 17 MW로 모듈러* — 데이터센터 100-200 MW 부하에 6-12대 병렬 설치로 정합. Wartsila, Cat (Solar/MaK), INNIO (Jenbacher) 주요 OEM. 빠른 lead time (9-15개월)이 BTM에서 결정적 강점."
+      }
+    },
+
+    "_2023_total_gas_generation_installed_MW": 5914,
+    "_2023_total_gas_construction_cost_billion_USD": 5.9
+  },
+
+  "by_top_states_2023": {
+    "_note": "주별 표는 가스만이 아니라 모든 신규 발전 합계. 가스 단독 주별은 XLSX 다운로드 시 가능.",
+    "Texas_all_sources_avg_per_kW": 1211,
+    "California_all_sources_avg_per_kW": 1636,
+    "Florida_all_sources_avg_per_kW": 1055,
+    "Alabama_all_sources_avg_per_kW": 981,
+    "Arizona_all_sources_avg_per_kW": 1377,
+    "_interpretation": "Alabama 평균 $981/kW가 가장 낮은데, 이는 2023년 Alabama 신규 설비의 비중에 가스 발전(특히 large CC plant)이 차지하는 경우 — Alabama 신규 CC plant 단일 건이 평균을 끌어내림."
+  },
+
+  "by_census_region_2023": {
+    "South_avg_all_per_kW": 1240,
+    "West_avg_all_per_kW": 1550,
+    "Midwest_avg_all_per_kW": 1632,
+    "Northeast_avg_all_per_kW": 2366,
+    "_interpretation": "South가 가스 발전 신규 비중이 가장 큼 (Texas + Florida + Alabama). Northeast가 가장 비싼 이유는 *가스 비중 적고 wind/solar 많은데 노조·토지비 높음*."
+  },
+
+  "limitations_and_followup": {
+    "data_excluded": [
+      "Distributed generation (<1 MW)",
+      "Site work, interconnection upgrades, soft costs — *공시된 $/kW는 EPC 본체 위주, 실제 turnkey 비용은 +20-40% 큼*",
+      "Government grants, tax benefits, incentives (ITC, PTC, IRA) — 이는 별도 모델링 필요"
+    ],
+    "what_we_can_say_with_confidence": [
+      "Simple-cycle gas combustion turbine 신규 설치 평균 $562/kW (2023 권위 baseline)",
+      "Combined cycle 신규 설치 평균 $898/kW",
+      "Gas reciprocating engine 신규 설치 평균 $1,354/kW",
+      "이는 *EPC 본체*; 실제 데이터센터 turnkey 비용은 여기에 +20-40% 더해야 함 (interconnection, civil, controls, BoP)"
+    ],
+    "what_we_cannot_say_yet": [
+      "데이터센터 BTM에 특화된 turnkey 가격 — 별도 IPP·utility 공시 필요",
+      "OEM별 $/kW 차이 (GE Vernova vs Siemens vs Mitsubishi) — 비공개",
+      "Aeroderivative GT (LM2500/LM6000)와 industrial frame GT (HA/7F) 사이의 $/kW 차이 — EIA는 prime mover 코드만 구분"
+    ]
+  },
+
+  "open_questions_for_followup": [
+    "XLSX 다운로드 + 주별·기술별 cross-table 추출 (스크립트화 가능)",
+    "NREL ATB 2024 Natural Gas 부문 직접 fetch — overnight capital cost($/kW) + fixed O&M + variable O&M + heat rate 권위 데이터",
+    "Aeroderivative vs heavy-duty industrial frame turbine 사이 $/kW 차이 (GE Vernova 분기 공시 또는 trade press triangulation)",
+    "데이터센터 BTM 특화 사례 단가 — Crusoe, ExxonMobil-PJM, Talen-AWS 거래 공시"
+  ]
+}
