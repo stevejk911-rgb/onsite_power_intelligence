@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Terms of Service | On-Site Power Intelligence</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;}
+  :root{
+    --ink:#1d1d1f; --ink-2:#3a3a3c; --muted:#6e6e73;
+    --line:#d2d2d7; --line-soft:#f5f5f7;
+    --bg:#fbfbfd; --panel:#ffffff; --tile:#f5f5f7;
+    --link:#0071e3; --link-hover:#0077ed;
+    --amber:#bf6500; --warn:#b45309; --bad:#b91c1c;
+  }
+  html,body{height:100%;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-size:15px;line-height:1.6;letter-spacing:-.003em;
+    -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;}
+  a{color:var(--link);text-decoration:none;}
+  a:hover{color:var(--link-hover);text-decoration:underline;}
+
+  /* Nav */
+  nav.top{position:sticky;top:0;z-index:60;background:rgba(255,255,255,0.78);
+    backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);
+    border-bottom:1px solid rgba(0,0,0,0.06);}
+  .nav-inner{max-width:760px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;
+    padding:0 24px;height:48px;}
+  nav.top .logo{font-size:14px;font-weight:500;color:var(--ink);}
+  nav.top .navlinks{display:flex;gap:28px;font-size:12px;color:var(--ink);}
+  nav.top .navlinks a{opacity:.85;color:var(--ink);text-decoration:none;}
+  nav.top .navlinks a:hover{opacity:1;color:var(--link);}
+
+  /* Layout */
+  .wrap{max-width:760px;margin:0 auto;padding:0 24px 64px;}
+  .pagehead{padding:56px 0 32px;}
+  .pagehead h1{font-size:36px;font-weight:600;letter-spacing:-.025em;line-height:1.1;margin:0 0 12px;}
+  .pagehead .updated{font-size:13px;color:var(--muted);}
+
+  /* Sections */
+  section.legal{background:var(--panel);border:1px solid var(--line);border-radius:18px;
+    padding:28px 32px;margin-bottom:16px;}
+  section.legal h2{font-size:17px;font-weight:600;letter-spacing:-.015em;
+    margin:0 0 12px;color:var(--ink);}
+  section.legal h2 .sec-num{font-size:12px;color:var(--muted);font-weight:600;
+    text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:4px;}
+  section.legal p{margin:0 0 12px;color:var(--ink-2);}
+  section.legal p:last-child{margin-bottom:0;}
+  section.legal ul{margin:8px 0 12px;padding-left:22px;color:var(--ink-2);}
+  section.legal li{margin:6px 0;line-height:1.55;}
+  section.legal strong{color:var(--ink);font-weight:600;}
+  section.legal .callout{background:#fef3c7;border-left:4px solid var(--amber);
+    border-radius:8px;padding:14px 18px;margin:14px 0;color:#78350f;}
+  section.legal .callout strong{color:#451a03;}
+  section.legal code{background:var(--tile);padding:2px 7px;border-radius:5px;
+    font-size:13px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;}
+
+  /* Footer */
+  footer{margin-top:32px;padding-top:24px;border-top:1px solid var(--line-soft);
+    color:var(--muted);font-size:12px;text-align:center;line-height:1.7;}
+  footer .links{margin-top:8px;}
+  footer .links a{margin:0 10px;}
+
+  @media(max-width:680px){
+    .pagehead h1{font-size:28px;}
+    section.legal{padding:22px 20px;}
+  }
+</style>
+</head>
+<body>
+
+<nav class="top">
+  <div class="nav-inner">
+    <a href="index.html" class="logo">On-Site Power Intelligence</a>
+    <div class="navlinks">
+      <a href="index.html">Home</a>
+      <a href="data-sources.html">Data</a>
+      <a href="app.html">Tool</a>
+    </div>
+  </div>
+</nav>
+
+<div class="wrap">
+
+  <header class="pagehead">
+    <h1>Terms of Service</h1>
+    <div class="updated">Last updated 2026-05-30</div>
+  </header>
+
+  <section class="legal">
+    <h2><span class="sec-num">1</span>What this tool is</h2>
+    <p>On-Site Power Intelligence ("the Tool") is a free, browser-based planning estimator for behind-the-meter (BTM) electricity feasibility at AI data center sites. It compares on-site generation scenarios (gas turbine, reciprocating engine, fuel cell, solar + battery, and verified hybrid and nuclear PPA reference cases) using public data from EIA, NREL, SEC EDGAR, GridLab, state PSC filings, and other government and industry sources.</p>
+  </section>
+
+  <section class="legal">
+    <h2><span class="sec-num">2</span>What this tool is NOT</h2>
+    <div class="callout">
+      <p><strong>This tool does not constitute investment, legal, or engineering advice.</strong> All outputs are planning-grade estimates intended for early-stage screening only.</p>
+    </div>
+    <ul>
+      <li><strong>Not an engineering study.</strong> Treat every number as ±40% accurate. Final design requires a licensed engineer.</li>
+      <li><strong>Not investment advice.</strong> Capex, lead time, and PPA figures are illustrative ranges, not commitments.</li>
+      <li><strong>Not legal advice.</strong> Permitting, zoning, and regulatory pathways must be verified with qualified counsel.</li>
+      <li><strong>Not a vendor quote.</strong> OEM pricing and delivery slots change weekly; verify directly with Wärtsilä, Bloom, GE Vernova, Solar Turbines, and others.</li>
+      <li><strong>Not a utility commitment.</strong> Grid queue waits are coarse ISO-level estimates; only the serving utility can provide a binding timeline.</li>
+    </ul>
+    <p>Before any commitment, verify every output with the serving utility, OEMs, EPC contractors, and qualified legal counsel.</p>
+  </section>
+
+  <section class="legal">
+    <h2><span class="sec-num">3</span>Acceptable use</h2>
+    <p>You may use the Tool for any lawful purpose, including commercial site screening, internal analysis, investment committee materials, and academic research. You may export results (PDF, screenshots) and incorporate them into your own documents.</p>
+    <p>You may <strong>not</strong>:</p>
+    <ul>
+      <li>Republish the Tool itself as your own without attribution.</li>
+      <li>Use the Tool to construct misleading claims about the safety, profitability, or feasibility of any specific project.</li>
+      <li>Attempt to disrupt, overload, or reverse-engineer the underlying server in violation of applicable law.</li>
+    </ul>
+  </section>
+
+  <section class="legal">
+    <h2><span class="sec-num">4</span>No warranty</h2>
+    <p>The Tool is provided <strong>"as is"</strong> and <strong>"as available"</strong>, without warranty of any kind, express or implied, including but not limited to warranties of merchantability, fitness for a particular purpose, or non-infringement. Data is drawn from third-party sources whose accuracy we cannot guarantee. We document known corrections publicly at <a href="data-sources.html">data-sources.html</a>, but undiscovered errors may remain.</p>
+  </section>
+
+  <section class="legal">
+    <h2><span class="sec-num">5</span>Limitation of liability</h2>
+    <p>To the maximum extent permitted by law, On-Site Power Intelligence, its authors, contributors, and operators shall not be liable for any direct, indirect, incidental, consequential, special, or exemplary damages arising from your use of the Tool, including but not limited to financial loss from siting decisions, engineering rework, regulatory penalties, or missed schedule windows.</p>
+    <p>You assume full responsibility for any decision made on the basis of Tool outputs.</p>
+  </section>
+
+  <section class="legal">
+    <h2><span class="sec-num">6</span>Intellectual property</h2>
+    <p>The Tool's source code and model are released for use under permissive open-source terms (no royalty, no attribution required for results you export).</p>
+    <p>The underlying data sources retain their original licenses:</p>
+    <ul>
+      <li><strong>US government data</strong> (EIA, NREL, SEC EDGAR, DOE, LBNL): public domain.</li>
+      <li><strong>OpenStreetMap / Nominatim / Overpass</strong>: ODbL license, attribution required (we comply in the Tool footer).</li>
+      <li><strong>SEC filings, state PSC dockets</strong>: public records, fair use citation.</li>
+      <li><strong>Industry reports</strong> (GridLab, Cushman &amp; Wakefield, etc.): facts and figures are cited with attribution and link; full text is not redistributed.</li>
+    </ul>
+  </section>
+
+  <section class="legal">
+    <h2><span class="sec-num">7</span>Changes</h2>
+    <p>We may update these Terms when the Tool's scope, data sources, or legal landscape changes. Material changes will be announced in <code>CHANGELOG.md</code> in the public repository. Continued use of the Tool after an update constitutes acceptance of the revised Terms.</p>
+  </section>
+
+  <section class="legal">
+    <h2><span class="sec-num">8</span>Governing law &amp; contact</h2>
+    <p>These Terms are governed by the laws of the United States and the State of California, without regard to conflict-of-law principles. Any dispute will be resolved in the state or federal courts of California.</p>
+    <p>Questions or concerns: open an issue at the project's public GitHub repository, or contact the maintainer through the email listed in the repository's README.</p>
+  </section>
+
+  <footer>
+    Built with rigor and honesty. v1 · 2026 · All features free.
+    <div class="links">
+      <a href="index.html">Home</a> ·
+      <a href="app.html">Tool</a> ·
+      <a href="data-sources.html">Data</a> ·
+      <a href="terms.html">Terms</a> ·
+      <a href="privacy.html">Privacy</a>
+    </div>
+  </footer>
+
+</div>
+
+</body>
+</html>

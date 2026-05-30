@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Privacy | On-Site Power Intelligence</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;}
+  :root{
+    --ink:#1d1d1f; --ink-2:#3a3a3c; --muted:#6e6e73;
+    --line:#d2d2d7; --line-soft:#f5f5f7;
+    --bg:#fbfbfd; --panel:#ffffff; --tile:#f5f5f7;
+    --link:#0071e3; --link-hover:#0077ed;
+    --good:#15803d;
+  }
+  html,body{height:100%;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-size:15px;line-height:1.6;letter-spacing:-.003em;
+    -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;}
+  a{color:var(--link);text-decoration:none;}
+  a:hover{color:var(--link-hover);text-decoration:underline;}
+
+  nav.top{position:sticky;top:0;z-index:60;background:rgba(255,255,255,0.78);
+    backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);
+    border-bottom:1px solid rgba(0,0,0,0.06);}
+  .nav-inner{max-width:760px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;
+    padding:0 24px;height:48px;}
+  nav.top .logo{font-size:14px;font-weight:500;color:var(--ink);}
+  nav.top .navlinks{display:flex;gap:28px;font-size:12px;color:var(--ink);}
+  nav.top .navlinks a{opacity:.85;color:var(--ink);text-decoration:none;}
+  nav.top .navlinks a:hover{opacity:1;color:var(--link);}
+
+  .wrap{max-width:760px;margin:0 auto;padding:0 24px 64px;}
+  .pagehead{padding:56px 0 32px;}
+  .pagehead h1{font-size:36px;font-weight:600;letter-spacing:-.025em;line-height:1.1;margin:0 0 12px;}
+  .pagehead .updated{font-size:13px;color:var(--muted);}
+
+  .summary{background:#d1fae5;border:1px solid #6ee7b7;border-radius:18px;
+    padding:24px 28px;margin-bottom:24px;}
+  .summary .label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;
+    color:#065f46;margin-bottom:8px;}
+  .summary h2{font-size:22px;font-weight:600;color:#064e3b;letter-spacing:-.018em;margin:0;}
+
+  section.legal{background:var(--panel);border:1px solid var(--line);border-radius:18px;
+    padding:28px 32px;margin-bottom:16px;}
+  section.legal h2{font-size:17px;font-weight:600;letter-spacing:-.015em;
+    margin:0 0 12px;color:var(--ink);}
+  section.legal h2 .sec-num{font-size:12px;color:var(--muted);font-weight:600;
+    text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:4px;}
+  section.legal p{margin:0 0 12px;color:var(--ink-2);}
+  section.legal p:last-child{margin-bottom:0;}
+  section.legal ul{margin:8px 0 12px;padding-left:22px;color:var(--ink-2);}
+  section.legal li{margin:6px 0;line-height:1.55;}
+  section.legal strong{color:var(--ink);font-weight:600;}
+  section.legal code{background:var(--tile);padding:2px 7px;border-radius:5px;
+    font-size:13px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;}
+
+  footer{margin-top:32px;padding-top:24px;border-top:1px solid var(--line-soft);
+    color:var(--muted);font-size:12px;text-align:center;line-height:1.7;}
+  footer .links{margin-top:8px;}
+  footer .links a{margin:0 10px;}
+
+  @media(max-width:680px){
+    .pagehead h1{font-size:28px;}
+    section.legal{padding:22px 20px;}
+  }
+</style>
+</head>
+<body>
+
+<nav class="top">
+  <div class="nav-inner">
+    <a href="index.html" class="logo">On-Site Power Intelligence</a>
+    <div class="navlinks">
+      <a href="index.html">Home</a>
+      <a href="data-sources.html">Data</a>
+      <a href="app.html">Tool</a>
+    </div>
+  </div>
+</nav>
+
+<div class="wrap">
+
+  <header class="pagehead">
+    <h1>Privacy</h1>
+    <div class="updated">Last updated 2026-05-30</div>
+  </header>
+
+  <div class="summary">
+    <div class="label">In one line</div>
+    <h2>We collect zero personal data. Your inputs live only in your browser.</h2>
+  </div>
+
+  <section class="legal">
+    <h2><span class="sec-num">1</span>What we collect</h2>
+    <p><strong>Nothing.</strong></p>
+    <p>We do not ask for your name, email, company, role, IP address, or any other identifier. There is no signup, no login, no account, no profile.</p>
+  </section>
+
+  <section class="legal">
+    <h2><span class="sec-num">2</span>What we do NOT collect</h2>
+    <ul>
+      <li>No analytics (no Google Analytics, no Mixpanel, no Plausible, no Segment, nothing).</li>
+      <li>No cookies. The Tool sets no cookies of any kind.</li>
+      <li>No tracking pixels, no fingerprinting, no session recording.</li>
+      <li>No usage logs tied to identity. Server access logs are kept by the hosting provider (Render) for standard operational and security purposes; they are not linked to any user identity by us.</li>
+      <li>No third-party advertising networks.</li>
+      <li>No marketing automation, no email lists, no newsletters that require opt-in.</li>
+    </ul>
+  </section>
+
+  <section class="legal">
+    <h2><span class="sec-num">3</span>Where your inputs go</h2>
+    <p>Site coordinates, IT load, target dates, available land, and any other values you enter are stored exclusively in <strong>your browser's <code>localStorage</code></strong>. They never leave your device and are not transmitted to our server.</p>
+    <p>This means:</p>
+    <ul>
+      <li>If you clear your browser data, your saved sites are erased.</li>
+      <li>If you switch devices, your saved sites do not follow.</li>
+      <li>If you uninstall your browser, your sites are gone.</li>
+      <li>We cannot see, recover, or share your sites because we never had them.</li>
+    </ul>
+  </section>
+
+  <section class="legal">
+    <h2><span class="sec-num">4</span>External API proxies</h2>
+    <p>When you set a site location, three external open-data APIs are queried through our server (so your browser never contacts them directly):</p>
+    <ul>
+      <li><strong>Nominatim</strong> (OpenStreetMap) for address ↔ coordinate lookup.</li>
+      <li><strong>Overpass API</strong> (OpenStreetMap) for nearby transmission, substation, power-plant, and pipeline data.</li>
+      <li><strong>NREL PVWatts</strong> for site-specific solar capacity factor.</li>
+    </ul>
+    <p>Our server forwards the latitude/longitude query, returns the result to your browser, and discards the request. We do not persist the query. The upstream services may log the request per their own policies; consult <a href="https://operations.osmfoundation.org/policies/nominatim/" target="_blank" rel="noopener">Nominatim's Usage Policy</a> and <a href="https://developer.nrel.gov/docs/api-key/" target="_blank" rel="noopener">NREL's API terms</a> for their handling.</p>
+  </section>
+
+  <section class="legal">
+    <h2><span class="sec-num">5</span>Map tiles</h2>
+    <p>The interactive map loads tiles directly from the OpenStreetMap tile servers in your browser. This is a standard browser HTTP request and reveals your IP address to those tile servers, per OSM's published practice. We do not proxy or modify these requests.</p>
+  </section>
+
+  <section class="legal">
+    <h2><span class="sec-num">6</span>Third-party sharing</h2>
+    <p>We do not share anything because we collect nothing. We have no business or affiliate relationships that involve transferring user data.</p>
+  </section>
+
+  <section class="legal">
+    <h2><span class="sec-num">7</span>Data subject rights</h2>
+    <p>If you are in a jurisdiction with data-protection rights (GDPR in the EU, CCPA in California, similar elsewhere): we have no personal data of yours to access, correct, port, or delete. Your <code>localStorage</code> is under your own control.</p>
+  </section>
+
+  <section class="legal">
+    <h2><span class="sec-num">8</span>Children</h2>
+    <p>The Tool is intended for adult professional use in data center development, infrastructure investment, and energy planning. It is not directed at children under 13.</p>
+  </section>
+
+  <section class="legal">
+    <h2><span class="sec-num">9</span>Changes</h2>
+    <p>If we ever introduce any data collection, this page will be updated with at least 30 days' prior notice in the public repository's <code>CHANGELOG.md</code> before the change takes effect. If the change would expand collection materially, we will require explicit consent.</p>
+  </section>
+
+  <section class="legal">
+    <h2><span class="sec-num">10</span>Contact</h2>
+    <p>Questions: open an issue at the project's public GitHub repository, or contact the maintainer through the email listed in the repository's README.</p>
+  </section>
+
+  <footer>
+    Built with rigor and honesty. v1 · 2026 · All features free.
+    <div class="links">
+      <a href="index.html">Home</a> ·
+      <a href="app.html">Tool</a> ·
+      <a href="data-sources.html">Data</a> ·
+      <a href="terms.html">Terms</a> ·
+      <a href="privacy.html">Privacy</a>
+    </div>
+  </footer>
+
+</div>
+
+</body>
+</html>
