@@ -239,7 +239,7 @@
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
 
-    /* ===== Hide all UI chrome (aggressive — every selector that might leak) ===== */
+    /* ===== Hide all UI chrome + tactical sections (aggressive) ===== */
     body > nav,
     nav.top, nav.top *,
     body > header,
@@ -247,11 +247,11 @@
     .sitebar, .sitebar *,
     .topgrid, .topgrid *,
     #map, #maptools, #maplegend, .leaflet-container, .leaflet-control-container,
-    .fppanel, .fppanel *,
-    .printbar, .printbtn, .printhint,
-    .floatPdf, .floatPdf *,
-    .floatBtnPrimary, .floatBtnSecondary,
-    details, details *,
+    .fppanel, .fppanel *, details.fppanel, details.fppanel summary,
+    .printbar, .printbar *, .printbtn, .printbtn-primary, .printbtn-secondary, .printhint,
+    .floatPdf, .floatPdf *, .floatBtnPrimary, .floatBtnSecondary,
+    details, details *, summary,
+    .nextsteps, .nextsteps *,    /* tactical week-1 contact list — out of formal PDF */
     body > div.wrap > footer, footer,
     button, .seg,
     #addrBtn, #coordBtn, .resetbtn, #closeCompareBtn,
@@ -419,43 +419,50 @@
     .mixseg { font-size: 7pt; }
     .mixlbl { font-size: 7.5pt; gap: 8px; }
 
-    /* ===== Nuclear PPA section ===== */
+    /* ===== Nuclear PPA section (compressed) ===== */
     .nuclear-ppa-section {
       background: #fffbeb !important;
       border: 1px solid #fde68a !important;
-      padding: 12px 14px !important;
-      margin: 0 0 12px !important;
+      padding: 10px 12px !important;
+      margin: 0 0 8px !important;
       border-radius: 6px !important;
       break-inside: avoid; page-break-inside: avoid;
     }
-    .nuclear-ppa-title { font-size: 11pt; margin: 0 0 4px; }
-    .nuclear-ppa-sub { font-size: 8pt; margin: 0 0 8px; line-height: 1.45; max-width: none; }
-    .nuclear-ppa-foot { font-size: 7.5pt; margin: 8px 0 0; padding-top: 6px; }
-    table.nuclear-ppa-table { font-size: 7.5pt; }
-    table.nuclear-ppa-table th, table.nuclear-ppa-table td { padding: 5px 7px; }
-    .nuclear-ppa-rec { font-size: 7.5pt; padding: 7px 10px; margin-top: 8px; }
+    .nuclear-ppa-title { font-size: 10pt; margin: 0 0 3px; }
+    .nuclear-ppa-sub { font-size: 7.5pt; margin: 0 0 6px; line-height: 1.35; max-width: none; }
+    .nuclear-ppa-foot { font-size: 7pt; margin: 6px 0 0; padding-top: 4px; }
+    table.nuclear-ppa-table { font-size: 7pt; }
+    table.nuclear-ppa-table th, table.nuclear-ppa-table td { padding: 3px 5px; }
+    table.nuclear-ppa-table th { font-size: 6.5pt !important; }
+    .nuclear-ppa-rec { font-size: 7pt; padding: 5px 8px; margin-top: 6px; }
 
-    /* ===== Side-by-side comparison ===== */
+    /* ===== Side-by-side comparison (tight) ===== */
     .tblpanel {
       background: #fff !important;
       border: 1px solid #d2d2d7 !important;
-      padding: 12px 14px !important;
-      margin: 0 0 10px !important;
+      padding: 10px 12px !important;
+      margin: 0 !important;
       border-radius: 6px !important;
       overflow: visible !important;
       break-inside: avoid; page-break-inside: avoid;
     }
+    .tblpanel .sec-title { font-size: 9pt !important; margin: 0 0 6px !important; }
     table.cmp {
       width: 100% !important;
-      font-size: 8pt !important;
+      font-size: 7.5pt !important;
       table-layout: auto;
     }
     table.cmp th, table.cmp td {
-      padding: 4px 5px !important;
+      padding: 3px 4px !important;
       white-space: nowrap;
       word-wrap: normal;
+      line-height: 1.3;
     }
-    table.cmp thead th { font-size: 6.5pt !important; }
+    table.cmp thead th { font-size: 6pt !important; padding: 4px 4px !important; }
+
+    /* Nuclear + Comparison should share a single page when possible */
+    .nuclear-ppa-section { page-break-before: avoid !important; }
+    .tblpanel { page-break-before: avoid !important; }
 
     /* ===== Print footer ===== */
     .printfooter {
@@ -767,8 +774,7 @@
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
-<script src="https://unpkg.com/docx@9.5.1/build/index.umd.js" defer></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js" defer></script>
+<!-- docx + FileSaver are lazy-loaded on first Word download click (see ensureDocxLoaded) -->
 <script>
 "use strict";
 
@@ -2869,20 +2875,67 @@ function renderCompareTable(){
    verdict + KPIs, next steps, scenarios table, nuclear PPA reference,
    and sources / disclaimer footer.
    ============================================================ */
+/* Inject one script and wait for it. Tries multiple CDNs. */
+function _injectScript(urls){
+  if(typeof urls === "string") urls = [urls];
+  return new Promise(function(resolve, reject){
+    var idx = 0;
+    function tryNext(){
+      if(idx >= urls.length){ reject(new Error("All CDNs failed: " + urls.join(", "))); return; }
+      var s = document.createElement("script");
+      s.src = urls[idx++];
+      s.async = false;
+      s.onload = function(){ resolve(s.src); };
+      s.onerror = function(){ console.warn("CDN failed:", s.src); tryNext(); };
+      document.head.appendChild(s);
+    }
+    tryNext();
+  });
+}
+
+/* Lazy-load docx + FileSaver if not yet loaded. Returns Promise<bool>. */
+async function ensureDocxLoaded(progressCb){
+  if(typeof docx !== "undefined" && typeof saveAs !== "undefined") return true;
+  try {
+    if(typeof docx === "undefined"){
+      progressCb && progressCb("Loading docx library…");
+      await _injectScript([
+        "https://cdn.jsdelivr.net/npm/docx@9.5.1/build/index.umd.js",
+        "https://unpkg.com/docx@9.5.1/build/index.umd.js",
+        "https://cdn.jsdelivr.net/npm/docx@9/build/index.umd.js"
+      ]);
+    }
+    if(typeof saveAs === "undefined"){
+      progressCb && progressCb("Loading FileSaver…");
+      await _injectScript([
+        "https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js",
+        "https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"
+      ]);
+    }
+    // Small delay so the script's IIFE definitely sets window.docx
+    await new Promise(function(r){ setTimeout(r, 200); });
+    return typeof docx !== "undefined" && typeof saveAs !== "undefined";
+  } catch(e){
+    console.error("ensureDocxLoaded failed:", e);
+    return false;
+  }
+}
+
 async function downloadWordReport(){
   var btn = document.getElementById("docxBtn");
   var resetBtn = function(){ if(btn){ btn.disabled = false; btn.textContent = "Download Word (.docx)"; } };
   if(btn){ btn.disabled = true; btn.textContent = "Loading library…"; }
 
-  // Poll-wait up to 12 seconds for docx + FileSaver to load from CDN
-  var start = Date.now();
-  while((typeof docx === "undefined" || typeof saveAs === "undefined") && Date.now() - start < 12000){
-    await new Promise(function(r){ setTimeout(r, 250); });
-    if(btn){ var s = Math.floor((Date.now()-start)/1000); btn.textContent = "Loading library… " + s + "s"; }
-  }
-  if(typeof docx === "undefined" || typeof saveAs === "undefined"){
-    alert("Document library failed to load. Check your internet connection and try again.\n\n" +
-      "If the problem persists, use 'Save as PDF' instead.");
+  var loaded = await ensureDocxLoaded(function(msg){
+    if(btn) btn.textContent = msg;
+  });
+  if(!loaded){
+    alert("Document library failed to load from CDN.\n\n" +
+      "Possible causes:\n" +
+      "  • Network blocks jsDelivr / unpkg / cdnjs\n" +
+      "  • Browser extension is blocking external scripts\n" +
+      "  • You're offline\n\n" +
+      "Workaround: use 'Save as PDF' instead.");
     resetBtn();
     return;
   }
