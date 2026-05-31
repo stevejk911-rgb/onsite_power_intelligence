@@ -2938,6 +2938,31 @@ async function downloadPdfReport(){
   }
 }
 
+/* Workaround for pdfMake/Roboto ligature bug — 'fi' and 'fl' character pairs
+   render as 'f' alone (the ligature glyph in the bundled vfs_fonts is empty).
+   Inserting a zero-width joiner between them disables the substitution. */
+function _fixLigatures(s){
+  if(typeof s !== "string") return s;
+  return s.replace(/fi/g, "f​i").replace(/fl/g, "f​l").replace(/★/g, "▶");
+}
+/* Recursively walk a pdfMake content tree and fix all text strings. */
+function _fixTextRecursive(node){
+  if(node == null) return node;
+  if(typeof node === "string") return _fixLigatures(node);
+  if(Array.isArray(node)) return node.map(_fixTextRecursive);
+  if(typeof node === "object"){
+    var copy = {};
+    for(var k in node){
+      if(k === "text" || k === "stack" || k === "columns" || k === "table" ||
+         k === "body" || k === "ul" || k === "ol")
+        copy[k] = _fixTextRecursive(node[k]);
+      else copy[k] = node[k];
+    }
+    return copy;
+  }
+  return node;
+}
+
 /* Build pdfMake docDefinition. Mirrors the structure of _buildWordDoc(D)
    so both formats produce the same content with the same visual hierarchy. */
 function _buildPdfDoc(D){
@@ -3090,6 +3115,24 @@ function _buildPdfDoc(D){
   content.push(p("Coarse ISO-level planning estimate. The grid-queue wait and gas tie-in distance have been auto-filled into the inputs. Replace them with real figures from the serving utility and pipeline operator before relying on the result.",
     { size: 8.5, color: MUTED, italics: true, margin: [0, 4, 0, 12] }));
 
+  // ===== Next Steps (matches Word output) =====
+  if(rec && rec.landFit){
+    content.push(h2Box("Next steps  ·  This week's contact list"));
+    var steps = _wordNextSteps(D, rec);
+    steps.forEach(function(s, i){
+      content.push({
+        text: [
+          { text: (i+1) + ".  ", bold: true, color: AMBER },
+          { text: s.title, bold: true, color: INK }
+        ],
+        fontSize: 10, margin: [0, 6, 0, 2]
+      });
+      content.push(p(s.body, { color: INK, margin: [0, 0, 0, 5] }));
+    });
+    content.push(p("These are the four numbers the tool cannot give you, and they move the recommendation more than anything else. The point of this section is to shrink your week-one contact list to exactly this.",
+      { size: 8.5, color: MUTED, italics: true, margin: [0, 6, 0, 12] }));
+  }
+
   // ===== Scenarios table (new page) =====
   content.push({ text: "", pageBreak: "before" });
   content.push(h2Box("Scenarios compared  ·  Same yardstick"));
@@ -3105,24 +3148,29 @@ function _buildPdfDoc(D){
     content.push(_pdfNuclearTable(D));
   }
 
-  // ===== Sources + disclaimer =====
-  content.push(h2Box("Sources and confidence"));
-  content.push(p("Built on 18+ verified sources: EIA-860, NREL ATB, SEC EDGAR (Bloom Energy, GE Vernova, Talen, Constellation, Vistra), GridLab / EFG / Halcyon IRP filings, Bloom 10-K Item 1 (direct quote), and 10 mapped data-center hot zones.",
-    { color: INK, margin: [0, 0, 0, 5] }));
-  content.push(p("Honest corrections (4): Talen-AWS (BTM → FTM after FERC rejection), BESS storage hours 12 → 6 (NREL Augustine & Blair 2021 cap), BESS split formula adopted (Cole · Ramasamy · Turan 2025), Fuel cell lead time 12 → 18 months (Bloom 10-K Item 1A baseline).",
-    { size: 8.5, color: MUTED, margin: [0, 0, 0, 5] }));
-  content.push(p("Full data dashboard: " + window.location.origin + "/data-sources.html",
-    { size: 8.5, color: MUTED, margin: [0, 0, 0, 14] }));
-  content.push({ canvas: [{ type: "line", x1: 0, y1: 0, x2: 515, y2: 0, lineWidth: 0.5, lineColor: LINE }] });
+  // ===== Sources + disclaimer (kept as one unbreakable stack) =====
   content.push({
-    text: [
-      { text: "This tool does not constitute investment, legal, or engineering advice. ", bold: true, color: INK },
-      { text: "All numbers are planning estimates (±40% accuracy assumed). Verify with utility, OEM, EPC, and qualified counsel before any commitment.", color: MUTED }
+    stack: [
+      h2Box("Sources and confidence"),
+      p("Built on 18+ verified sources: EIA-860, NREL ATB, SEC EDGAR (Bloom Energy, GE Vernova, Talen, Constellation, Vistra), GridLab / EFG / Halcyon IRP filings, Bloom 10-K Item 1 (direct quote), and 10 mapped data-center hot zones.",
+        { size: 8.5, color: INK, margin: [0, 0, 0, 4] }),
+      p("Honest corrections (4): Talen-AWS (BTM → FTM after FERC rejection), BESS storage hours 12 → 6 (NREL Augustine & Blair 2021 cap), BESS split formula adopted (Cole · Ramasamy · Turan 2025), Fuel cell lead time 12 → 18 months (Bloom 10-K Item 1A baseline).",
+        { size: 8, color: MUTED, margin: [0, 0, 0, 4] }),
+      p("Full data dashboard: " + window.location.origin + "/data-sources.html",
+        { size: 8, color: MUTED, margin: [0, 0, 0, 10] }),
+      { canvas: [{ type: "line", x1: 0, y1: 0, x2: 515, y2: 0, lineWidth: 0.5, lineColor: LINE }] },
+      {
+        text: [
+          { text: "This tool does not constitute investment, legal, or engineering advice. ", bold: true, color: INK },
+          { text: "All numbers are planning estimates (±40% accuracy assumed). Verify with utility, OEM, EPC, and qualified counsel before any commitment.", color: MUTED }
+        ],
+        fontSize: 7.5, margin: [0, 6, 0, 0]
+      }
     ],
-    fontSize: 8, margin: [0, 8, 0, 0]
+    unbreakable: true
   });
 
-  return {
+  var def = {
     pageSize: "A4",
     pageMargins: [40, 50, 40, 55],
     info: {
@@ -3153,6 +3201,9 @@ function _buildPdfDoc(D){
     },
     content: content
   };
+  // Apply ligature fix to every text node — pdfMake's bundled Roboto drops 'fi'/'fl'.
+  def.content = _fixTextRecursive(def.content);
+  return def;
 }
 
 function _pdfScenariosTable(D){
