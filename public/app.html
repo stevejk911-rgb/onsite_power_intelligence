@@ -667,9 +667,9 @@
       title="Download as Microsoft Word (.docx) — editable">
       Download Word (.docx)
     </button>
-    <button type="button" class="printbtn printbtn-secondary" onclick="window.print()"
-      title="Save as PDF via browser print dialog">
-      Save as PDF
+    <button type="button" class="printbtn printbtn-secondary" onclick="downloadPdfReport()" id="pdfBtn"
+      title="Download as PDF (same layout as Word)">
+      Download PDF
     </button>
     <span class="printhint">Word file is fully editable. Both formats: same data, same yardstick.</span>
   </div>
@@ -770,7 +770,7 @@
 <!-- Sticky floating PDF button (appears after scrolling past the printbar) -->
 <div class="floatPdf" id="floatPdf">
   <button type="button" class="floatBtnPrimary" onclick="downloadWordReport()" title="Download as Word">↓ Word</button>
-  <button type="button" class="floatBtnSecondary" onclick="window.print()" title="Save as PDF">PDF</button>
+  <button type="button" class="floatBtnSecondary" onclick="downloadPdfReport()" title="Download as PDF">↓ PDF</button>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
@@ -2875,6 +2875,405 @@ function renderCompareTable(){
    verdict + KPIs, next steps, scenarios table, nuclear PPA reference,
    and sources / disclaimer footer.
    ============================================================ */
+/* ============================================================
+   PDF EXPORT — pdfMake-based. Mirrors the Word document structure
+   so both formats render the same content with the same layout.
+   ============================================================ */
+async function ensurePdfMakeLoaded(progressCb){
+  if(typeof pdfMake !== "undefined" && pdfMake.vfs) return true;
+  try {
+    if(typeof pdfMake === "undefined"){
+      progressCb && progressCb("Loading PDF library…");
+      await _injectScript([
+        "https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.10/pdfmake.min.js",
+        "https://cdn.jsdelivr.net/npm/pdfmake@0.2.10/build/pdfmake.min.js",
+        "https://unpkg.com/pdfmake@0.2.10/build/pdfmake.min.js"
+      ]);
+    }
+    if(typeof pdfMake !== "undefined" && !pdfMake.vfs){
+      progressCb && progressCb("Loading fonts…");
+      await _injectScript([
+        "https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.10/vfs_fonts.js",
+        "https://cdn.jsdelivr.net/npm/pdfmake@0.2.10/build/vfs_fonts.js",
+        "https://unpkg.com/pdfmake@0.2.10/build/vfs_fonts.js"
+      ]);
+    }
+    await new Promise(function(r){ setTimeout(r, 150); });
+    return typeof pdfMake !== "undefined" && !!pdfMake.vfs;
+  } catch(e){
+    console.error("ensurePdfMakeLoaded failed:", e);
+    return false;
+  }
+}
+
+async function downloadPdfReport(){
+  var btn = document.getElementById("pdfBtn");
+  var resetBtn = function(){ if(btn){ btn.disabled = false; btn.textContent = "Download PDF"; } };
+  if(btn){ btn.disabled = true; btn.textContent = "Loading library…"; }
+
+  var loaded = await ensurePdfMakeLoaded(function(msg){
+    if(btn) btn.textContent = msg;
+  });
+  if(!loaded){
+    alert("PDF library failed to load from CDN.\n\n" +
+      "Workaround: use 'Download Word (.docx)' instead, or your browser's File > Print > Save as PDF.");
+    resetBtn();
+    return;
+  }
+
+  if(btn) btn.textContent = "Generating…";
+  try {
+    var D = compute();
+    var docDef = _buildPdfDoc(D);
+    var siteName = (currentSite && currentSite() && currentSite().name) || "site";
+    var slug = siteName.replace(/[^\w-]+/g, "-").toLowerCase();
+    var today = new Date().toISOString().slice(0,10);
+    pdfMake.createPdf(docDef).download("BTM-Feasibility-" + slug + "-" + today + ".pdf",
+      function(){ resetBtn(); },
+      { progressCallback: function(){} });
+  } catch(e){
+    console.error("PDF generation error:", e);
+    alert("Failed to generate PDF: " + (e && e.message ? e.message : e));
+    resetBtn();
+  }
+}
+
+/* Build pdfMake docDefinition. Mirrors the structure of _buildWordDoc(D)
+   so both formats produce the same content with the same visual hierarchy. */
+function _buildPdfDoc(D){
+  var INK = "#1d1d1f", MUTED = "#6e6e73", AMBER = "#bf6500",
+      BAD = "#b91c1c", GOOD = "#15803d", LINE = "#d2d2d7", TILE = "#f5f5f7";
+
+  var rec = D.rec;
+  var placeName = currentPlace || "Site at " +
+      (currentLat != null ? currentLat.toFixed(4) : "?") + ", " +
+      (currentLng != null ? currentLng.toFixed(4) : "?");
+  var regionLabel = (REGIONS[currentRegion] || {}).label || currentRegion || "—";
+  var zone = currentHotZone;
+  var today = new Date().toISOString().slice(0,10);
+  var prioLabel = ({speed:"Speed first", balanced:"Balanced", carbon:"Low carbon"})[D.prio] || D.prio;
+  var coordsStr = (currentLat != null && currentLng != null)
+    ? currentLat.toFixed(4) + ", " + currentLng.toFixed(4) : "";
+
+  // ---- Builders ----
+  function h2(text){
+    return {
+      text: text,
+      fontSize: 13, bold: true, color: INK,
+      margin: [0, 18, 0, 8],
+      decoration: undefined,
+      decorationStyle: undefined
+    };
+  }
+  function h2Box(text){
+    return {
+      text: text.toUpperCase(),
+      fontSize: 9, bold: true, color: INK,
+      characterSpacing: 1.5,
+      margin: [0, 18, 0, 6],
+      border: [false, false, false, true],
+      borderColor: [null, null, null, INK]
+    };
+  }
+  function eyebrow(text, color){
+    return {
+      text: text.toUpperCase(),
+      fontSize: 8, bold: true, color: color || MUTED,
+      characterSpacing: 1.5, margin: [0, 4, 0, 4]
+    };
+  }
+  function p(text, opts){
+    opts = opts || {};
+    return {
+      text: text,
+      fontSize: opts.size || 9.5,
+      color: opts.color || INK,
+      italics: !!opts.italics,
+      bold: !!opts.bold,
+      margin: opts.margin || [0, 0, 0, 5],
+      lineHeight: opts.lineHeight || 1.35
+    };
+  }
+  function metaLine(parts){
+    var spans = [];
+    parts.forEach(function(part, i){
+      if(i > 0) spans.push({ text: "  ·  ", color: MUTED });
+      spans.push({
+        text: part.text,
+        bold: !!part.bold,
+        color: part.color || (part.bold ? INK : MUTED)
+      });
+    });
+    return { text: spans, fontSize: 9, margin: [0, 0, 0, 4] };
+  }
+  function kpiCell(value, label){
+    return {
+      stack: [
+        { text: value, fontSize: 14, bold: true, color: "#ffffff", margin: [0, 0, 0, 3] },
+        { text: label.toUpperCase(), fontSize: 6.5, color: "#a1a1a6", characterSpacing: 1 }
+      ],
+      fillColor: INK,
+      margin: [8, 8, 8, 8]
+    };
+  }
+
+  // ---- Content ----
+  var content = [];
+
+  // Cover-style header (top of page 1)
+  content.push(eyebrow("BTM Feasibility Report", AMBER));
+  content.push({ text: placeName, fontSize: 22, bold: true, color: INK, margin: [0, 0, 0, 6] });
+  content.push(metaLine([
+    { text: regionLabel },
+    zone ? { text: zone.short + " hot zone", color: AMBER, bold: true } : null,
+    coordsStr ? { text: coordsStr } : null,
+    { text: D.itload + " MW IT load" },
+    { text: "Priority: " + prioLabel },
+    { text: "Issued " + today }
+  ].filter(Boolean)));
+  content.push({ canvas: [{ type: "line", x1: 0, y1: 0, x2: 515, y2: 0, lineWidth: 0.5, lineColor: LINE }], margin: [0, 8, 0, 0] });
+
+  // ===== Recommendation =====
+  content.push(h2Box("Recommendation"));
+  if(rec && rec.landFit){
+    var saved = Math.max(0, (D.gridwait || 0) - rec.leadTotal);
+    content.push(eyebrow("Fastest feasible path  ·  Priority: " + prioLabel));
+    content.push({
+      text: rec.t.name + " — first power in ~" + Math.round(rec.leadTotal) + " months",
+      fontSize: 16, bold: true, color: INK, margin: [0, 4, 0, 6]
+    });
+    if(saved > 0){
+      content.push(p("That is roughly " + Math.round(saved) + " months ahead of waiting out a " +
+        D.gridwait + "-month grid interconnection queue. Power is the schedule, and this is the faster path to it.",
+        { color: MUTED, margin: [0, 0, 0, 10] }));
+    }
+    // KPI strip
+    content.push({
+      table: {
+        widths: ["*", "*", "*", "*", "*"],
+        body: [[
+          kpiCell(Math.round(rec.leadTotal) + " mo", "Time to power"),
+          kpiCell(monthYear(rec.onlineDate), "Earliest online"),
+          kpiCell(fmtMoney(rec.capexM), "Est. capex"),
+          kpiCell(fmtAcres(rec.landAcres), "Land needed"),
+          kpiCell(fmtCO2(rec.annualCO2), "Operating CO₂")
+        ]]
+      },
+      layout: "noBorders"
+    });
+  } else {
+    content.push({
+      text: "No option fits within " + D.land + " acres at this site. Increase the available land, reduce the IT load, or phase the build.",
+      fontSize: 11, bold: true, color: BAD, margin: [0, 4, 0, 8]
+    });
+  }
+
+  // ===== Regional context =====
+  content.push(h2Box("Regional context"));
+  var R = REGIONS[currentRegion] || {};
+  content.push({
+    text: [
+      { text: placeName, bold: true, color: INK },
+      { text: "  ·  ", color: MUTED },
+      { text: R.label || "", color: INK }
+    ], fontSize: 10, margin: [0, 0, 0, 6]
+  });
+  if(zone){
+    content.push(p(zone.short + " hot zone: " + zone.note, { color: INK, margin: [0, 0, 0, 6] }));
+    content.push(p("Capex uplift " + zone.capexMul + "× applied. Grid wait " +
+      (zone.gridWaitMul > 1 ? "+" : "") + Math.round((zone.gridWaitMul-1)*100) +
+      "% vs " + R.iso + " baseline.", { size: 8.5, color: MUTED, margin: [0, 0, 0, 8] }));
+  }
+  if(R.note) content.push(p(R.note, { color: INK, margin: [0, 0, 0, 4] }));
+  if(R.gas)  content.push(p("Gas: " + R.gas, { color: INK, margin: [0, 0, 0, 4] }));
+  if(currentStateNote) content.push(p("Local note: " + currentStateNote, { color: INK, margin: [0, 0, 0, 8] }));
+  content.push(p("Coarse ISO-level planning estimate. The grid-queue wait and gas tie-in distance have been auto-filled into the inputs. Replace them with real figures from the serving utility and pipeline operator before relying on the result.",
+    { size: 8.5, color: MUTED, italics: true, margin: [0, 4, 0, 12] }));
+
+  // ===== Scenarios table (new page) =====
+  content.push({ text: "", pageBreak: "before" });
+  content.push(h2Box("Scenarios compared  ·  Same yardstick"));
+  content.push(p("Four single-tech baselines plus three hybrid configurations, normalized on the same speed/cost/land/carbon yardstick. The recommendation above is the top-ranked option that fits your land budget.",
+    { size: 8.5, color: MUTED, margin: [0, 0, 0, 10] }));
+  content.push(_pdfScenariosTable(D));
+
+  // ===== Nuclear PPA =====
+  if(typeof PRESET_NUCLEAR_PPAS !== "undefined" && PRESET_NUCLEAR_PPAS.length){
+    content.push(h2Box("Off-site nuclear PPA  ·  Reference"));
+    content.push(p("Outside the BTM scope of this tool. Included as the real competitor for 24/7 carbon-free firm + GW-scale loads. After the FERC 2024-11 Talen ruling, all nuclear-data-center deals are grid-connected FTM.",
+      { size: 8.5, color: MUTED, margin: [0, 0, 0, 8] }));
+    content.push(_pdfNuclearTable(D));
+  }
+
+  // ===== Sources + disclaimer =====
+  content.push(h2Box("Sources and confidence"));
+  content.push(p("Built on 18+ verified sources: EIA-860, NREL ATB, SEC EDGAR (Bloom Energy, GE Vernova, Talen, Constellation, Vistra), GridLab / EFG / Halcyon IRP filings, Bloom 10-K Item 1 (direct quote), and 10 mapped data-center hot zones.",
+    { color: INK, margin: [0, 0, 0, 5] }));
+  content.push(p("Honest corrections (4): Talen-AWS (BTM → FTM after FERC rejection), BESS storage hours 12 → 6 (NREL Augustine & Blair 2021 cap), BESS split formula adopted (Cole · Ramasamy · Turan 2025), Fuel cell lead time 12 → 18 months (Bloom 10-K Item 1A baseline).",
+    { size: 8.5, color: MUTED, margin: [0, 0, 0, 5] }));
+  content.push(p("Full data dashboard: " + window.location.origin + "/data-sources.html",
+    { size: 8.5, color: MUTED, margin: [0, 0, 0, 14] }));
+  content.push({ canvas: [{ type: "line", x1: 0, y1: 0, x2: 515, y2: 0, lineWidth: 0.5, lineColor: LINE }] });
+  content.push({
+    text: [
+      { text: "This tool does not constitute investment, legal, or engineering advice. ", bold: true, color: INK },
+      { text: "All numbers are planning estimates (±40% accuracy assumed). Verify with utility, OEM, EPC, and qualified counsel before any commitment.", color: MUTED }
+    ],
+    fontSize: 8, margin: [0, 8, 0, 0]
+  });
+
+  return {
+    pageSize: "A4",
+    pageMargins: [40, 50, 40, 55],
+    info: {
+      title: "BTM Feasibility Report — " + placeName,
+      author: "On-Site Power Intelligence",
+      subject: "Behind-the-meter feasibility report"
+    },
+    header: function(currentPage, pageCount){
+      if(currentPage === 1) return null;
+      return {
+        text: "BTM Feasibility Report  ·  " + placeName,
+        alignment: "right", color: MUTED, fontSize: 8,
+        margin: [40, 25, 40, 0]
+      };
+    },
+    footer: function(currentPage, pageCount){
+      return {
+        text: "On-Site Power Intelligence  ·  Page " + currentPage + " / " + pageCount,
+        alignment: "right", color: MUTED, fontSize: 8,
+        margin: [40, 20, 40, 0]
+      };
+    },
+    defaultStyle: {
+      font: "Roboto",
+      fontSize: 9.5,
+      color: INK,
+      lineHeight: 1.4
+    },
+    content: content
+  };
+}
+
+function _pdfScenariosTable(D){
+  var INK = "#1d1d1f", MUTED = "#6e6e73", AMBER = "#bf6500",
+      LINE = "#d2d2d7", TILE = "#f5f5f7", GOOD = "#15803d", BAD = "#b91c1c";
+  var rows = D.allRes || D.res || [];
+
+  var header = [
+    { text: "Technology", style: "th" },
+    { text: "Time", style: "th" },
+    { text: "Online", style: "th" },
+    { text: "Capex", style: "th", alignment: "right" },
+    { text: "Land", style: "th", alignment: "right" },
+    { text: "Fits", style: "th" },
+    { text: "CO₂ / yr", style: "th", alignment: "right" },
+    { text: "Score", style: "th", alignment: "right" }
+  ];
+
+  var body = [header];
+  rows.forEach(function(r){
+    var isTop = (r.rank === 1 && r.landFit && !r.hardNo);
+    body.push([
+      {
+        text: (isTop ? "★ " : "") + r.t.short + (r.isHybrid ? "  (hybrid)" : ""),
+        bold: isTop, color: isTop ? AMBER : INK, fontSize: 8.5
+      },
+      { text: Math.round(r.leadTotal) + " mo", fontSize: 8.5 },
+      { text: monthYear(r.onlineDate), fontSize: 8.5 },
+      { text: fmtMoney(r.capexM), fontSize: 8.5, alignment: "right" },
+      { text: fmtAcres(r.landAcres), fontSize: 8.5, alignment: "right" },
+      { text: r.landFit ? "Yes" : "No", bold: true,
+        color: r.landFit ? GOOD : BAD, fontSize: 8.5 },
+      { text: fmtCO2(r.annualCO2), fontSize: 8.5, alignment: "right" },
+      { text: Math.round(r.score) + " / 100", fontSize: 8.5, alignment: "right" }
+    ]);
+  });
+
+  return {
+    table: {
+      headerRows: 1,
+      widths: [110, 38, 50, 55, 65, 28, 55, 50],
+      body: body
+    },
+    layout: {
+      hLineWidth: function(i){ return i === 0 || i === 1 ? 0.8 : 0.3; },
+      vLineWidth: function(){ return 0; },
+      hLineColor: function(){ return LINE; },
+      fillColor: function(rowIndex){ return rowIndex === 0 ? TILE : null; },
+      paddingTop: function(){ return 5; },
+      paddingBottom: function(){ return 5; },
+      paddingLeft: function(){ return 6; },
+      paddingRight: function(){ return 6; }
+    },
+    margin: [0, 0, 0, 14]
+  };
+}
+
+function _pdfNuclearTable(D){
+  var INK = "#1d1d1f", MUTED = "#6e6e73", AMBER = "#bf6500",
+      LINE = "#d2d2d7", TILE_Y = "#fef3c7";
+  var rows = PRESET_NUCLEAR_PPAS || [];
+
+  var header = [
+    { text: "Deal", style: "th-y" },
+    { text: "Capacity", style: "th-y" },
+    { text: "Term", style: "th-y" },
+    { text: "Structure", style: "th-y" },
+    { text: "ISO · State", style: "th-y" },
+    { text: "Online", style: "th-y" },
+    { text: "Significance", style: "th-y" }
+  ];
+  var body = [header];
+  rows.forEach(function(p){
+    var dollar = p.USD_billion ? "$" + p.USD_billion + "B" : "Undisclosed";
+    var term = p.term_years + " yr" + (p.extension_years ? " + " + p.extension_years + " opt" : "");
+    var ramp = (p.full_ramp_year && p.online_year && p.full_ramp_year > p.online_year)
+      ? p.online_year + " → " + p.full_ramp_year : String(p.online_year);
+    body.push([
+      {
+        stack: [
+          { text: p.short, bold: true, fontSize: 8 },
+          { text: p.name, color: MUTED, fontSize: 7 }
+        ]
+      },
+      { stack: [
+          { text: p.capacity_MW.toLocaleString() + " MW", bold: true, fontSize: 8 },
+          { text: dollar, color: MUTED, fontSize: 7 }
+        ]
+      },
+      { text: term, fontSize: 7.5 },
+      { text: p.structure, fontSize: 7 },
+      { stack: [
+          { text: p.ISO, bold: true, fontSize: 7.5 },
+          { text: p.state, color: MUTED, fontSize: 7 }
+        ]
+      },
+      { text: ramp, fontSize: 7.5 },
+      { text: p.significance, fontSize: 7, color: INK }
+    ]);
+  });
+
+  return {
+    table: {
+      headerRows: 1,
+      widths: [62, 55, 38, 75, 55, 42, "*"],
+      body: body
+    },
+    layout: {
+      hLineWidth: function(i){ return i === 0 || i === 1 ? 0.8 : 0.3; },
+      vLineWidth: function(){ return 0; },
+      hLineColor: function(){ return "#fde68a"; },
+      fillColor: function(rowIndex){ return rowIndex === 0 ? TILE_Y : null; },
+      paddingTop: function(){ return 5; },
+      paddingBottom: function(){ return 5; },
+      paddingLeft: function(){ return 5; },
+      paddingRight: function(){ return 5; }
+    },
+    margin: [0, 0, 0, 12]
+  };
+}
+
 /* Inject one script and wait for it. Tries multiple CDNs. */
 function _injectScript(urls){
   if(typeof urls === "string") urls = [urls];
