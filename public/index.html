@@ -103,17 +103,20 @@
     margin-top:4px;
   }
 
-  /* Image placeholder, full bleed in hero zone */.hero-image{
+  /* Hero image */.hero-image{
     margin:64px auto 0;
     max-width:1024px;width:calc(100% - 44px);
     aspect-ratio:16/9;
     background:var(--placeholder);
     border-radius:24px;
+    overflow:hidden;
     display:flex;align-items:center;justify-content:center;
     color:var(--placeholder-text);
     font-size:13px;letter-spacing:.02em;
-  }.hero-image::before{
-    content:"[ Hero image, 16:9 ]";
+  }.hero-image img{
+    width:100%;height:100%;object-fit:cover;display:block;
+  }.hero-image:empty::before, .hero-image:not(:has(img))::before{
+    content:"[ Hero image — drop in public/images/hero.jpg ]";
   }
 
   /* ============ Section divider ============ */.sep{
@@ -143,12 +146,14 @@
     font-size:14px;font-weight:500;color:var(--muted);
     margin-bottom:8px;letter-spacing:.01em;
   }.tile h2{
-    font-size:clamp(28px, 3vw, 40px);
+    font-size:clamp(26px, 2.7vw, 34px);
     font-weight:600;
     letter-spacing:-.018em;
-    line-height:1.1;
+    line-height:1.15;
     color:var(--ink);
     margin-bottom:14px;
+    text-wrap:balance;
+    min-height:2.5em;
   }.tile p{
     font-size:17px;
     color:var(--ink-soft);
@@ -162,9 +167,12 @@
     background:var(--placeholder);
     margin:0 -32px;
     border-top:1px solid rgba(0,0,0,0.04);
+    overflow:hidden;
     display:flex;align-items:center;justify-content:center;
     color:var(--placeholder-text);
     font-size:12px;letter-spacing:.02em;
+  }.tile-image img{
+    width:100%;height:100%;object-fit:cover;display:block;
   }
 
   /* ============ Wide hero tile (problem) ============ */.wide-section{
@@ -196,9 +204,12 @@
     margin:48px -32px 0;
     aspect-ratio:21/9;
     background:var(--placeholder);
+    overflow:hidden;
     display:flex;align-items:center;justify-content:center;
     color:var(--placeholder-text);
     font-size:13px;letter-spacing:.02em;
+  }.wide-tile .wide-image img{
+    width:100%;height:100%;object-fit:cover;display:block;
   }
 
   /* ============ Built for (personas) ============ */.personas{
@@ -316,8 +327,10 @@
   </div>
   <div class="note">Free. No signup. 90 seconds.</div>
 
-  <!-- Hero image placeholder -->
-  <div class="hero-image"></div>
+  <!-- Hero image — large 16:9 above the fold -->
+  <div class="hero-image">
+    <img src="images/hero.jpg" alt="AI data center with on-site power infrastructure" loading="eager">
+  </div>
 </section>
 
 <!-- ========== TILES (3 features) ========== -->
@@ -329,7 +342,9 @@
       <h2>Ten data center hot zones.</h2>
       <p>NoVA, Columbus, DFW, Atlanta, Quincy WA. Coordinates auto-map to sub-region with local weather, LMP, and policy applied.</p>
       <a href="data-sources.html" class="link-cta tile-cta">Learn more <span class="arrow">›</span></a>
-      <div class="tile-image">[ Tile image, map / hot zones ]</div>
+      <div class="tile-image">
+        <img src="images/tile-coverage.jpg" alt="Map of US data-center hot zones" loading="lazy">
+      </div>
     </div>
 
     <div class="tile">
@@ -337,15 +352,19 @@
       <h2>Ten scenarios. One yardstick.</h2>
       <p>Four single-tech baselines, three hybrid configurations, and three verified nuclear PPAs, every option on the same page.</p>
       <a href="app.html" class="link-cta tile-cta">Try it <span class="arrow">›</span></a>
-      <div class="tile-image">[ Tile image, comparison view ]</div>
+      <div class="tile-image">
+        <img src="images/tile-matrix.jpg" alt="Side-by-side scenario comparison view" loading="lazy">
+      </div>
     </div>
 
     <div class="tile">
       <div class="tile-eyebrow">Deliverable</div>
-      <h2>One click. Board-ready PDF.</h2>
+      <h2>Board-ready PDF<br>in one click.</h2>
       <p>Committee deck, IC memo, CEO slide. Browser-native print. Assumptions, sources, and sensitivities included.</p>
       <a href="app.html" class="link-cta tile-cta">See an example <span class="arrow">›</span></a>
-      <div class="tile-image">[ Tile image, PDF mockup ]</div>
+      <div class="tile-image">
+        <img src="images/tile-deliverable.jpg" alt="Board-ready PDF report mockup" loading="lazy">
+      </div>
     </div>
 
   </div>
@@ -360,7 +379,9 @@
       PJM, MISO, and ERCOT interconnection queues average six to fifteen years.
       Behind-the-meter or PPA, compare them on the same yardstick, in five minutes.
     </p>
-    <div class="wide-image">[ Wide image, transmission lines / data center / BESS ]</div>
+    <div class="wide-image">
+      <img src="images/wide-bottleneck.jpg" alt="Transmission lines, data center, and BESS infrastructure" loading="lazy">
+    </div>
   </div>
 </section>
 
