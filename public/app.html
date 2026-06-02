@@ -64,7 +64,10 @@
     backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);
     border-bottom:1px solid rgba(0,0,0,0.06);}.nav-inner{max-width:1480px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;
     padding:0 24px;height:48px;}
-  nav.top .logo{font-size:14px;font-weight:500;color:var(--ink);letter-spacing:-.005em;}
+  nav.top .logo{display:inline-flex;align-items:center;gap:9px;font-size:14px;font-weight:600;color:var(--ink);letter-spacing:-.01em;text-decoration:none;}
+  nav.top .logo .logo-mark{width:22px;height:22px;border-radius:6px;background:var(--ink);display:inline-flex;align-items:center;justify-content:center;flex:0 0 22px;}
+  nav.top .logo .logo-mark svg{width:13px;height:13px;display:block;}
+  nav.top .logo:hover{opacity:.85;}
   nav.top .navlinks{display:flex;gap:28px;font-size:12px;color:var(--ink);}
   nav.top .navlinks a{opacity:.85;transition:opacity .2s;}
   nav.top .navlinks a:hover{opacity:1;color:var(--link);}
@@ -578,21 +581,34 @@
   @media(max-width:620px){.cards{grid-template-columns:1fr;}.pagehead h1{font-size:26px;}.nav-inner{padding:0 16px;}.wrap{padding:0 16px 24px;}.pagehead{padding:24px 16px 16px;}.verdict{padding:22px 20px;}.floatPdf{bottom:16px;right:16px;padding:11px 18px;}
   }
 
-  /* ===== added: left section rail (desktop >=1101px); mobile falls back to .jumpnav; hidden in print ===== */
+  /* ===== added: left section rail (desktop >=1101px) with per-item icons + open/close; mobile falls back to .jumpnav; hidden in print ===== */
   .railnav{display:none;}
+  .rail-open{display:none;}
   @media (min-width:1101px){
     .railnav{display:block;position:fixed;top:48px;left:0;width:204px;height:calc(100vh - 48px);
-      overflow-y:auto;box-sizing:border-box;padding:26px 16px;border-right:1px solid var(--line);background:var(--bg);z-index:40;}
-    .railnav .grp{font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted-2);margin:0 0 10px;}
-    .railnav .grp + .grp{margin-top:22px;}
-    .railnav a{display:block;color:var(--muted);font-size:13px;line-height:1;text-decoration:none;padding:8px 8px;border-radius:8px;}
+      overflow-y:auto;box-sizing:border-box;padding:14px 14px 22px;border-right:1px solid var(--line);background:var(--bg);z-index:40;}
+    .rail-head{display:flex;justify-content:flex-end;margin:0 0 6px;}
+    .rail-collapse{border:none;background:transparent;color:var(--muted-2);cursor:pointer;font-size:17px;line-height:1;padding:3px 6px;border-radius:6px;}
+    .rail-collapse:hover{background:var(--tile);color:var(--ink);}
+    .railnav .grp{font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted-2);margin:6px 6px 8px;}
+    .railnav .grp + .grp{margin-top:20px;}
+    .railnav a{display:flex;align-items:center;color:var(--muted);font-size:13px;line-height:1;text-decoration:none;padding:8px 8px;border-radius:8px;}
     .railnav a:hover{background:var(--tile);color:var(--ink);}
-    .railnav a .n{color:var(--muted-2);margin-right:8px;}
-    .railnav hr{border:none;border-top:1px solid var(--line);margin:18px 4px;}
+    .railnav a .ic{flex:0 0 18px;width:18px;height:18px;margin-right:10px;color:var(--muted-2);display:inline-flex;}
+    .railnav a .ic svg{width:18px;height:18px;display:block;}
+    .railnav a:hover .ic{color:var(--ink);}
+    .railnav a .n{color:var(--muted-2);margin-right:7px;}
+    .railnav hr{border:none;border-top:1px solid var(--line);margin:16px 6px;}
     .pagehead,.trustwrap,.wrap,footer{margin-left:204px;margin-right:auto;}
     .jumpnav{display:none;}
+    .rail-open{position:fixed;top:54px;left:12px;z-index:45;align-items:center;justify-content:center;
+      width:34px;height:34px;border:1px solid var(--line);border-radius:9px;background:var(--bg);color:var(--ink);cursor:pointer;font-size:16px;line-height:1;box-shadow:0 1px 3px rgba(0,0,0,0.06);}
+    .rail-open:hover{background:var(--tile);}
+    body.rail-closed .railnav{display:none;}
+    body.rail-closed .pagehead,body.rail-closed .trustwrap,body.rail-closed .wrap,body.rail-closed footer{margin-left:auto;margin-right:auto;}
+    body.rail-closed .rail-open{display:flex;}
   }
-  @media print{ .railnav,.railnav *{display:none !important;} }
+  @media print{ .railnav,.railnav *,.rail-open{display:none !important;} }
 </style>
 
 </head>
@@ -601,7 +617,7 @@
 <!-- ===== Sticky nav ===== -->
 <nav class="top">
   <div class="nav-inner">
-    <a href="index.html" class="logo">On-Site Power Intelligence</a>
+    <a href="index.html" class="logo"><span class="logo-mark"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8z"/></svg></span><span>On-Site Power Intelligence</span></a>
     <div class="navlinks">
       <a href="index.html">Home</a>
       <a href="data-sources.html">Data</a>
@@ -611,20 +627,31 @@
 </nav>
 
 <aside class="railnav" aria-label="Sections">
+  <div class="rail-head"><button class="rail-collapse" type="button" data-rail-collapse aria-label="Collapse menu">&#171;</button></div>
   <div class="grp">Project</div>
-  <a href="#sec-location"><span class="n">01</span>Location</a>
-  <a href="#sec-demand"><span class="n">02</span>Demand</a>
-  <a href="#sec-priorities"><span class="n">03</span>Priorities</a>
+  <a href="#sec-location"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg></span><span class="n">01</span>Location</a>
+  <a href="#sec-demand"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8Z"/></svg></span><span class="n">02</span>Demand</a>
+  <a href="#sec-priorities"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.6"/></svg></span><span class="n">03</span>Priorities</a>
   <hr>
   <div class="grp">Results</div>
-  <a href="#verdict">Verdict</a>
-  <a href="#cards">Scenario cards</a>
-  <a href="#fpDiagram">Land to scale</a>
-  <a href="#hybridSection">Hybrids</a>
-  <a href="#nuclearPPASection">Nuclear PPA</a>
-  <a href="#cmp">Compare sites</a>
-  <a href="#assumpBody">Assumptions</a>
+  <a href="#verdict"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8.4 12 2.5 2.5 4.7-4.9"/></svg></span>Verdict</a>
+  <a href="#cards"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg></span>Scenario cards</a>
+  <a href="#fpDiagram"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21.3 15.3a2.4 2.4 0 0 1 0 3.4l-2.6 2.6a2.4 2.4 0 0 1-3.4 0L2.7 8.7a2.4 2.4 0 0 1 0-3.4l2.6-2.6a2.4 2.4 0 0 1 3.4 0Z"/><path d="m14.5 12.5 2-2M11.5 9.5l2-2M8.5 6.5l2-2M17.5 15.5l2-2"/></svg></span>Land to scale</a>
+  <a href="#hybridSection"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z"/><path d="m6.1 9.5-3.5 1.6a1 1 0 0 0 0 1.8l8.6 3.9a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83L17.92 9.5"/></svg></span>Hybrids</a>
+  <a href="#nuclearPPASection"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="2"/></svg></span>Nuclear PPA</a>
+  <a href="#cmp"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/></svg></span>Compare sites</a>
+  <a href="#assumpBody"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M2 14h4M10 8h4M18 16h4"/></svg></span>Assumptions</a>
 </aside>
+<button class="rail-open" type="button" data-rail-open aria-label="Open menu">&#9776;</button>
+<script>
+(function(){var b=document.body,K="opi_rail_closed";
+try{if(localStorage.getItem(K)==="1")b.classList.add("rail-closed");}catch(e){}
+b.addEventListener("click",function(e){var t=e.target;
+var c=t.closest&&t.closest("[data-rail-collapse]");
+var o=t.closest&&t.closest("[data-rail-open]");
+if(c){b.classList.add("rail-closed");try{localStorage.setItem(K,"1");}catch(e){}}
+else if(o){b.classList.remove("rail-closed");try{localStorage.setItem(K,"0");}catch(e){}}});})();
+</script>
 
 <!-- ===== Page header ===== -->
 <header class="pagehead">
