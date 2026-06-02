@@ -42,6 +42,17 @@
     --turbine:#c2410c; --recip:#b45309; --fuelcell:#6d28d9; --solar:#15803d;
     --bad:#b91c1c; --warn:#b45309; --good:#15803d;
   }
+  /* ===== added: trust strip + section jump nav (additive, non-breaking) ===== */
+  .trustwrap{max-width:1480px;margin:0 auto;padding:14px 22px 0;}
+  .trustline{margin:0;font-size:12px;color:var(--muted-2);line-height:1.8;}
+  .trustline .ts-src{color:var(--muted);}
+  .trustline .ts-meta{display:block;margin-top:2px;}
+  .trustline a{color:var(--muted);text-decoration:none;}
+  .trustline a:hover{color:var(--ink);text-decoration:underline;}
+  .jumpnav{display:flex;flex-wrap:wrap;gap:6px;margin:12px auto 0;max-width:1480px;padding:0 22px;}
+  .jumpnav a{font-size:12px;color:var(--muted);background:var(--tile);border-radius:8px;padding:4px 10px;text-decoration:none;line-height:1;}
+  .jumpnav a:hover{color:var(--ink);background:var(--line-soft);}
+  @media print{ .trustwrap,.jumpnav{display:none !important;} }
   *{box-sizing:border-box}
   body{margin:0;background:var(--bg);color:var(--ink);
     font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue",Helvetica,Arial,sans-serif;
@@ -566,6 +577,22 @@
   }
   @media(max-width:620px){.cards{grid-template-columns:1fr;}.pagehead h1{font-size:26px;}.nav-inner{padding:0 16px;}.wrap{padding:0 16px 24px;}.pagehead{padding:24px 16px 16px;}.verdict{padding:22px 20px;}.floatPdf{bottom:16px;right:16px;padding:11px 18px;}
   }
+
+  /* ===== added: left section rail (desktop >=1101px); mobile falls back to .jumpnav; hidden in print ===== */
+  .railnav{display:none;}
+  @media (min-width:1101px){
+    .railnav{display:block;position:fixed;top:48px;left:0;width:204px;height:calc(100vh - 48px);
+      overflow-y:auto;box-sizing:border-box;padding:26px 16px;border-right:1px solid var(--line);background:var(--bg);z-index:40;}
+    .railnav .grp{font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted-2);margin:0 0 10px;}
+    .railnav .grp + .grp{margin-top:22px;}
+    .railnav a{display:block;color:var(--muted);font-size:13px;line-height:1;text-decoration:none;padding:8px 8px;border-radius:8px;}
+    .railnav a:hover{background:var(--tile);color:var(--ink);}
+    .railnav a .n{color:var(--muted-2);margin-right:8px;}
+    .railnav hr{border:none;border-top:1px solid var(--line);margin:18px 4px;}
+    .pagehead,.trustwrap,.wrap,footer{margin-left:204px;margin-right:auto;}
+    .jumpnav{display:none;}
+  }
+  @media print{ .railnav,.railnav *{display:none !important;} }
 </style>
 
 </head>
@@ -583,12 +610,35 @@
   </div>
 </nav>
 
+<aside class="railnav" aria-label="Sections">
+  <div class="grp">Project</div>
+  <a href="#sec-location"><span class="n">01</span>Location</a>
+  <a href="#sec-demand"><span class="n">02</span>Demand</a>
+  <a href="#sec-priorities"><span class="n">03</span>Priorities</a>
+  <hr>
+  <div class="grp">Results</div>
+  <a href="#verdict">Verdict</a>
+  <a href="#cards">Scenario cards</a>
+  <a href="#fpDiagram">Land to scale</a>
+  <a href="#hybridSection">Hybrids</a>
+  <a href="#nuclearPPASection">Nuclear PPA</a>
+  <a href="#cmp">Compare sites</a>
+  <a href="#assumpBody">Assumptions</a>
+</aside>
+
 <!-- ===== Page header ===== -->
 <header class="pagehead">
   <h1>Behind-the-meter feasibility</h1>
   <div class="tag">The bottleneck for AI data centers isn't generating electricity. It's the grid delivering it. Drop in a coordinate. The tool estimates the fastest path to <b>on-site power built next to the site</b>, and shows the land it takes, to scale.</div>
   <span class="pill">Planning estimates only, every number below is an editable assumption, not a vendor quote</span>
 </header>
+
+<div class="trustwrap">
+  <p class="trustline"><span class="ts-src">Built on EIA · NREL · SEC EDGAR · OpenStreetMap · state PSC</span><span class="ts-meta">No signup · <a href="data-sources.html">Corrections log</a> · <a href="data-sources.html">Methodology</a> · Screening estimate (±40%), not an engineering study</span></p>
+</div>
+<nav class="jumpnav" aria-label="Sections">
+  <a href="#sec-location">Location</a><a href="#sec-demand">Demand</a><a href="#sec-priorities">Priorities</a><a href="#verdict">Verdict</a><a href="#cards">Scenarios</a><a href="#hybridSection">Hybrids</a><a href="#nuclearPPASection">Nuclear PPA</a><a href="#cmp">Compare</a><a href="#assumpBody">Assumptions</a>
+</nav>
 
 <div class="wrap">
 
@@ -610,7 +660,7 @@
   <!-- 1. INPUTS + MAP -->
   <div class="topgrid">
     <div class="panel controls">
-      <div class="sec-title">1 · Site location</div>
+      <div class="sec-title" id="sec-location">1 · Site location</div>
       <div class="searchrow">
         <input type="text" id="addr" placeholder="Search an address or place…" />
         <button id="addrBtn" type="button">Find</button>
@@ -624,7 +674,7 @@
       <label class="fld" style="margin-top:14px"><span>Region / grid operator <small>auto-detected, editable</small></span>
         <select id="region"></select></label>
 
-      <div class="sec-title">2 · Demand &amp; schedule</div>
+      <div class="sec-title" id="sec-demand">2 · Demand &amp; schedule</div>
       <label class="fld"><span>Target IT load <small>(MW, critical load)</small></span>
         <input type="number" id="itload" value="120" min="1" step="5" /></label>
       <div class="row2">
@@ -640,7 +690,7 @@
           <input type="number" id="gridwait" value="60" min="0" step="6" /></label>
       </div>
 
-      <div class="sec-title">3 · What matters most</div>
+      <div class="sec-title" id="sec-priorities">3 · What matters most</div>
       <div class="seg" id="priority">
         <label><input type="radio" name="prio" value="speed" checked><span>Speed first</span></label>
         <label><input type="radio" name="prio" value="balanced"><span>Balanced</span></label>
@@ -687,11 +737,7 @@
       title="Download as Microsoft Word (.docx) — editable">
       Download Word (.docx)
     </button>
-    <button type="button" class="printbtn printbtn-secondary" onclick="downloadPdfReport()" id="pdfBtn"
-      title="Download as PDF (same layout as Word)">
-      Download PDF
-    </button>
-    <span class="printhint">Word file is fully editable. Both formats: same data, same yardstick.</span>
+    <span class="printhint">Word file is fully editable, IC-memo ready.</span>
   </div>
 
   <!-- 5. NEXT STEPS -->
@@ -764,9 +810,6 @@
         <div class="cv-sub">Click any row to open that site in the workbench.</div>
       </div>
       <div style="display:flex;gap:8px">
-        <button type="button" class="printbtn" onclick="window.print()" title="Save as PDF">
-          Save as PDF
-        </button>
         <button id="closeCompareBtn" class="sb-icon" type="button">← Back to workbench</button>
       </div>
     </div>
@@ -790,7 +833,6 @@
 <!-- Sticky floating PDF button (appears after scrolling past the printbar) -->
 <div class="floatPdf" id="floatPdf">
   <button type="button" class="floatBtnPrimary" onclick="downloadWordReport()" title="Download as Word">↓ Word</button>
-  <button type="button" class="floatBtnSecondary" onclick="downloadPdfReport()" title="Download as PDF">↓ PDF</button>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
