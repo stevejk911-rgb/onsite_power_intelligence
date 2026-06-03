@@ -4024,5 +4024,43 @@ function init(){
 }
 document.addEventListener("DOMContentLoaded",init);
 </script>
+<script>
+/* operator analytics - best-effort, never blocks the app */
+(function(){
+  try{
+    var SK="opi_sid", sid=null;
+    try{ sid=localStorage.getItem(SK); if(!sid){ sid=Date.now().toString(36)+Math.random().toString(36).slice(2,8); localStorage.setItem(SK,sid); } }catch(e){ sid=Date.now().toString(36)+Math.random().toString(36).slice(2,8); }
+    var qp=new URLSearchParams(location.search);
+    var utm=[qp.get("utm_source"),qp.get("utm_campaign"),qp.get("ref")].filter(Boolean).join("/")||"";
+    function track(type,name){
+      var payload=JSON.stringify({session:sid,type:type,name:name||"",path:location.pathname,referrer:document.referrer||"",utm:utm});
+      try{ if(navigator.sendBeacon){ navigator.sendBeacon("/api/track", new Blob([payload],{type:"application/json"})); return; } }catch(e){}
+      try{ fetch("/api/track",{method:"POST",headers:{"Content-Type":"application/json"},body:payload,keepalive:true}); }catch(e){}
+    }
+    track("pageview", location.pathname);
+    var seen={};
+    var secs=[["sec-location","Site location"],["sec-demand","Demand"],["sec-priorities","Priorities"],["sec-verdict","Verdict"],["sec-cards","Scenario cards"],["fpDiagram","Land to scale"],["hybridSection","Hybrids"],["nuclearPPASection","Nuclear PPA"],["cmp","Compare sites"],["assumpBody","Assumptions"]];
+    function obs(){
+      if(!("IntersectionObserver" in window)) return;
+      var io=new IntersectionObserver(function(es){es.forEach(function(en){ if(en.isIntersecting){ var id=en.target.id; if(!seen[id]){ seen[id]=1; var lbl=id; for(var i=0;i<secs.length;i++){ if(secs[i][0]===id){ lbl=secs[i][1]; break; } } track("section",lbl); } } });},{threshold:0.4});
+      secs.forEach(function(s){ var el=document.getElementById(s[0]); if(el) io.observe(el); });
+    }
+    function watchVerdict(){
+      var v=document.getElementById("verdict"); if(!v) return; var done=false;
+      var mo=new MutationObserver(function(){ if(!done && v.textContent && v.textContent.trim().length>0){ done=true; track("action","computed"); } });
+      mo.observe(v,{childList:true,subtree:true});
+    }
+    function start(){ obs(); watchVerdict(); }
+    if(document.readyState!=="loading") start(); else document.addEventListener("DOMContentLoaded",start);
+    document.addEventListener("click",function(e){
+      var t=e.target; if(!t||!t.closest) return;
+      if(t.closest("#addrBtn")||t.closest("#coordBtn")||t.closest("#presets")) track("action","coordinate_set");
+      else if(t.closest("#docxBtn")||t.closest(".floatBtnPrimary")) track("action","word_download");
+      else if(t.closest("#compareBtn")) track("action","compare_open");
+      else if(t.closest("#newSiteBtn")) track("action","new_site");
+    },true);
+  }catch(e){}
+})();
+</script>
 </body>
 </html>
