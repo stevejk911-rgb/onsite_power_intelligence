@@ -2,15 +2,17 @@
 /* =============================================================================
  * On-Site Power Intelligence — backend
  * -----------------------------------------------------------------------------
- * A zero-dependency Node server (Node 18+ required for built-in fetch).
- * It serves the frontend and proxies open-data APIs so the browser never calls
- * them directly. The proxy layer fixes CORS, sets a proper User-Agent, hides the
- * API key, and caches responses.
+ * Node 18+ (built-in fetch). Serves the frontend and proxies open-data APIs so
+ * the browser never calls them directly (CORS, User-Agent, hidden key, cache).
  *
  *   Run:   node server.js        then open  http://localhost:8080
  *
- * Each /api/* route is one open-data source. Add new sources by following the
- * same pattern: a cache key, an upstream fetch, a normalized return shape.
+ * Operator analytics: /api/track (ingest) + /api/admin/stats (read) persist to a
+ * Postgres database (e.g. Railway Postgres) via the `pg` driver. Configure with:
+ *   DATABASE_URL   (Postgres connection string, use the PUBLIC url from Railway)
+ *   ADMIN_KEY      (password to open /admin.html)
+ * If DATABASE_URL is unset, tracking silently no-ops and the site works unchanged.
+ * The events table is auto-created on first start.
  * ============================================================================= */
 const http = require("http");
 const fs   = require("fs");
@@ -29,6 +31,27 @@ const NREL_KEY = process.env.NREL_API_KEY || "DEMO_KEY"; // NREL's shared demo k
 const PUBLIC   = path.join(__dirname, "public");
 const UA       = "OnSitePowerIntelligence/0.2 (behind-the-meter planning tool)";
 
+/* ---- analytics config + Postgres pool ------------------------------------- */
+const DATABASE_URL = process.env.DATABASE_URL || "";
+const ADMIN_KEY    = process.env.ADMIN_KEY || "";
+let pool = null;
+if(DATABASE_URL){
+  try {
+    const { Pool } = require("pg");
+    pool = new Pool({ connectionString: DATABASE_URL, ssl: { rejectUnauthorized: false }, max: 4 });
+    pool.on("error", () => {}); // never crash the process on an idle client error
+    pool.query(
+      "CREATE TABLE IF NOT EXISTS events (" +
+      "  id bigserial PRIMARY KEY, ts timestamptz NOT NULL DEFAULT now()," +
+      "  session text, type text, name text, path text, referrer text, utm text, ua text);" +
+      "CREATE INDEX IF NOT EXISTS events_ts_idx ON events (ts DESC);"
+    ).then(() => console.log("Analytics: Postgres ready"))
+     .catch((e) => console.log("Analytics: table init failed — " + (e && e.message)));
+  } catch(e){
+    console.log("Analytics: 'pg' not installed — run npm install. " + (e && e.message));
+  }
+}
+
 /* ---- tiny in-memory cache (per-process, 1 hour) ---------------------------- */
 const cache = new Map(), TTL = 60 * 60 * 1000;
 const ckey  = (parts) => JSON.stringify(parts);
@@ -46,14 +69,70 @@ const round = (n, d) => {
   return Math.round(parseFloat(n) * f) / f;
 };
 
-/* ---- API routes ----------------------------------------------------------- *
- * Every handler takes URLSearchParams and returns a JSON-serializable object.
- * Throwing produces a graceful 502 with { error }. ------------------------- */
-const api = {
+/* ---- analytics helpers ---------------------------------------------------- */
+function readBody(req){
+  return new Promise((resolve) => {
+    let b = "";
+    req.on("data", (c) => { b += c; if(b.length > 1e5) req.destroy(); });
+    req.on("end",  () => resolve(b));
+    req.on("error",() => resolve(""));
+  });
+}
+async function dbInsert(row){
+  await pool.query(
+    "INSERT INTO events (session,type,name,path,referrer,utm,ua) VALUES ($1,$2,$3,$4,$5,$6,$7)",
+    [row.session, row.type, row.name, row.path, row.referrer, row.utm, row.ua]
+  );
+}
+async function adminStats(){
+  const since = new Date(Date.now() - 14 * 864e5).toISOString();
+  const res = await pool.query(
+    "SELECT ts, session, type, name, referrer, utm FROM events WHERE ts >= $1 ORDER BY ts DESC LIMIT 50000",
+    [since]
+  );
+  const rows = res.rows;
+  const now = Date.now();
+  const sset = new Set(), s24 = new Set(), s7 = new Set();
+  const day = {}, sectionS = {}, actionS = {}, sourceS = {}, sess = {};
+  rows.forEach((e) => {
+    const iso = (e.ts instanceof Date) ? e.ts.toISOString() : String(e.ts);
+    sset.add(e.session);
+    const t = new Date(iso).getTime();
+    if(now - t < 864e5)     s24.add(e.session);
+    if(now - t < 7 * 864e5) s7.add(e.session);
+    const d = iso.slice(0, 10);
+    (day[d] = day[d] || new Set()).add(e.session);
+    if(e.type === "section") (sectionS[e.name] = sectionS[e.name] || new Set()).add(e.session);
+    if(e.type === "action")  (actionS[e.name]  = actionS[e.name]  || new Set()).add(e.session);
+    let src = e.utm || "";
+    if(!src){ if(e.referrer){ try { src = new URL(e.referrer).hostname.replace(/^www\./, ""); } catch(_){ src = "other"; } } else src = "direct"; }
+    (sourceS[src] = sourceS[src] || new Set()).add(e.session);
+    const ss = sess[e.session] = sess[e.session] ||
+      { session: e.session, first: iso, last: iso, events: 0, referrer: e.referrer || "", utm: e.utm || "", last_action: "" };
+    ss.events++;
+    if(iso < ss.first) ss.first = iso;
+    if(iso > ss.last)  ss.last  = iso;
+    if(e.type === "action") ss.last_action = e.name;
+  });
+  const pv = rows.filter((e) => e.type === "pageview").length;
+  const by_day = [];
+  for(let i = 13; i >= 0; i--){ const d = new Date(now - i * 864e5).toISOString().slice(0, 10); by_day.push({ day: d, sessions: (day[d] ? day[d].size : 0) }); }
+  const rank = (obj) => Object.keys(obj).map((k) => ({ name: k, sessions: obj[k].size })).sort((a, b) => b.sessions - a.sessions);
+  const get  = (o, k) => (o[k] ? o[k].size : 0);
+  const recent = Object.keys(sess).map((k) => sess[k]).sort((a, b) => (a.last < b.last ? 1 : -1)).slice(0, 30);
+  return {
+    ok: true,
+    totals:  { sessions: sset.size, pageviews: pv, sessions_24h: s24.size, sessions_7d: s7.size },
+    by_day,  sections: rank(sectionS), sources: rank(sourceS),
+    actions: { coordinate_set: get(actionS, "coordinate_set"), computed: get(actionS, "computed"),
+               word_download: get(actionS, "word_download"), compare_open: get(actionS, "compare_open"),
+               new_site: get(actionS, "new_site") },
+    recent
+  };
+}
 
-  /* Geocoding & reverse-geocoding — OpenStreetMap Nominatim.
-   * ?q=<place>            -> forward search  (returns Nominatim array)
-   * ?lat=&lon=            -> reverse lookup  (returns Nominatim object)         */
+/* ---- API routes ----------------------------------------------------------- */
+const api = {
   "/api/geo": async (q) => {
     if(q.get("q")){
       const term = q.get("q");
@@ -71,16 +150,12 @@ const api = {
             + "&addressdetails=1&accept-language=en&zoom=8&lat=" + lat + "&lon=" + lon;
     return cacheSet(k, await getJSON(u, { headers: { "User-Agent": UA } }));
   },
-
-  /* Power infrastructure near a point — OpenStreetMap via the Overpass API.
-   * Returns the raw Overpass payload { elements:[...] }; the frontend parses it.
-   * Community-sourced: good for US transmission & substations, patchier for gas. */
   "/api/infra": async (q) => {
     const lat = round(q.get("lat"), 3), lon = round(q.get("lon"), 3);
     if(!isFinite(lat) || !isFinite(lon)) throw new Error("lat/lon required");
     const k = ckey(["infra", lat, lon]);
     const hit = cacheGet(k); if(hit) return hit;
-    const d  = 0.10;                                   // ~10 km box around the site
+    const d  = 0.10;
     const bb = (lat-d) + "," + (lon-d) + "," + (lat+d) + "," + (lon+d);
     const query = "[out:json][timeout:25];("
       + 'way["power"="line"](' + bb + ');'
@@ -96,9 +171,6 @@ const api = {
     });
     return cacheSet(k, data);
   },
-
-  /* Site-specific solar capacity factor — NREL PVWatts v8.
-   * Lets the model replace the generic 0.24 default with a real site value.    */
   "/api/solar": async (q) => {
     const lat = round(q.get("lat")), lon = round(q.get("lon"));
     if(!isFinite(lat) || !isFinite(lon)) throw new Error("lat/lon required");
@@ -138,6 +210,45 @@ http.createServer(async (req, res) => {
   if(url.pathname.indexOf("/api/") === 0){
     res.setHeader("Access-Control-Allow-Origin", "*");
     res.setHeader("Content-Type", "application/json; charset=utf-8");
+
+    /* analytics: ingest one event (best-effort; never breaks the site) */
+    if(url.pathname === "/api/track"){
+      if(req.method !== "POST"){ res.writeHead(405); res.end(JSON.stringify({ error:"POST only" })); return; }
+      try {
+        if(pool){
+          const body = await readBody(req);
+          let ev = {}; try { ev = JSON.parse(body || "{}"); } catch(_){}
+          const row = {
+            session:  String(ev.session  || "").slice(0, 64),
+            type:     String(ev.type     || "").slice(0, 24),
+            name:     String(ev.name     || "").slice(0, 120),
+            path:     String(ev.path     || "").slice(0, 200),
+            referrer: String(ev.referrer || "").slice(0, 300),
+            utm:      String(ev.utm      || "").slice(0, 160),
+            ua:       String(req.headers["user-agent"] || "").slice(0, 200)
+          };
+          if(row.session && row.type) await dbInsert(row);
+        }
+        res.writeHead(204); res.end();
+      } catch(e){ res.writeHead(204); res.end(); }
+      return;
+    }
+
+    /* analytics: aggregated stats for the operator dashboard (key-gated) */
+    if(url.pathname === "/api/admin/stats"){
+      if(!ADMIN_KEY || url.searchParams.get("key") !== ADMIN_KEY){
+        res.writeHead(401); res.end(JSON.stringify({ error:"unauthorized" })); return;
+      }
+      if(!pool){
+        res.writeHead(200); res.end(JSON.stringify({ ok:false, error:"Database not configured" })); return;
+      }
+      try {
+        const stats = await adminStats();
+        res.writeHead(200); res.end(JSON.stringify(stats));
+      } catch(e){ res.writeHead(502); res.end(JSON.stringify({ error: String((e && e.message) || e) })); }
+      return;
+    }
+
     const handler = api[url.pathname];
     if(!handler){ res.writeHead(404); res.end(JSON.stringify({ error:"unknown endpoint" })); return; }
     try {
@@ -151,7 +262,6 @@ http.createServer(async (req, res) => {
   serveStatic(req, res);
 }).listen(PORT, () => {
   console.log("On-Site Power Intelligence  ·  http://localhost:" + PORT);
-  console.log("NREL key: " + (process.env.NREL_API_KEY
-    ? "custom key set"
-    : "using shared DEMO_KEY (rate-limited — set NREL_API_KEY for real use)"));
+  console.log("NREL key: " + (process.env.NREL_API_KEY ? "custom key set" : "using shared DEMO_KEY"));
+  console.log("Analytics: " + (DATABASE_URL ? "DATABASE_URL set" : "OFF (set DATABASE_URL + ADMIN_KEY)"));
 });
