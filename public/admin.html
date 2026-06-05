@@ -1,188 +1,204 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta name="robots" content="noindex, nofollow" />
-<title>Operator · On-Site Power Intelligence</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>On-Site Power Intelligence — Admin</title>
 <style>
-  :root{ --ink:#1d1d1f; --muted:#6e6e73; --muted2:#86868b; --line:#e6e6ea; --bg:#fbfbfd;
-    --panel:#fff; --link:#0071e3; --good:#15803d; --tile:#f5f5f7;
-    --font:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",Arial,sans-serif; }
+  :root{
+    --ink:#0b1220;--body:#2b3340;--muted:#6b7480;--line:#e9ecf1;
+    --blue:#1657e0;--blue-soft:#eef3ff;
+    --green:#1f9d57;--green-bg:#e7f6ee;--amber:#e0891e;--amber-bg:#fdf1e0;--red:#d23b3b;--red-bg:#fbe7e7;--slate-bg:#eef0f3;
+  }
   *{box-sizing:border-box}
-  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased;}
-  .wrap{max-width:1080px;margin:0 auto;padding:28px 22px 60px;}
-  h1{font-size:20px;font-weight:600;margin:0;letter-spacing:-.015em;}
-  .sub{color:var(--muted);font-size:12px;margin-top:3px;}
-  .row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
-  button{font:inherit;color:#fff;background:var(--ink);border:none;border-radius:9px;padding:9px 16px;cursor:pointer;}
-  button.ghost{background:transparent;color:var(--ink);border:.5px solid var(--line);}
-  button:active{transform:scale(.99)}
-  input{font:inherit;border:.5px solid var(--line);border-radius:9px;padding:9px 12px;width:260px;background:#fff;}
-  .grid{display:grid;gap:14px;}
-  .kpis{grid-template-columns:repeat(4,1fr);margin:20px 0;}
-  .kpi{background:var(--tile);border-radius:12px;padding:14px 16px;}
-  .kpi .l{font-size:12px;color:var(--muted);}
-  .kpi .v{font-size:26px;font-weight:600;margin-top:4px;letter-spacing:-.02em;}
-  .card{background:var(--panel);border:.5px solid var(--line);border-radius:14px;padding:16px 18px;}
-  .card h2{font-size:13px;font-weight:600;margin:0 0 12px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;}
-  .two{grid-template-columns:1fr 1fr;}
-  .bar{display:flex;align-items:center;gap:10px;margin:7px 0;font-size:13px;}
-  .bar .nm{flex:0 0 130px;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-  .bar .track{flex:1;height:8px;background:var(--tile);border-radius:99px;overflow:hidden;}
-  .bar .fill{height:8px;background:var(--link);border-radius:99px;}
-  .bar .ct{flex:0 0 38px;text-align:right;color:var(--muted);font-variant-numeric:tabular-nums;}
-  .funnel{display:flex;gap:10px;flex-wrap:wrap;}
-  .step{flex:1;min-width:120px;background:var(--tile);border-radius:10px;padding:12px 14px;}
-  .step .l{font-size:12px;color:var(--muted);} .step .v{font-size:22px;font-weight:600;margin-top:2px;}
-  table{width:100%;border-collapse:collapse;font-size:12.5px;}
-  th,td{text-align:left;padding:7px 8px;border-bottom:.5px solid var(--line);white-space:nowrap;}
-  th{color:var(--muted);font-weight:500;font-size:11px;text-transform:uppercase;letter-spacing:.05em;}
-  td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;}
-  .muted{color:var(--muted);} .err{color:#b91c1c;font-size:13px;margin-top:10px;}
-  #login{max-width:360px;margin:12vh auto;text-align:center;}
-  #login .card{padding:26px 24px;}
-  .hide{display:none;}
-  canvas{max-height:220px;}
+  body{margin:0;background:#f7f8fa;color:var(--body);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;line-height:1.5}
+  a{color:inherit}
+
+  .top{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:10}
+  .top .in{max-width:1180px;margin:0 auto;padding:16px 24px;display:flex;align-items:center;justify-content:space-between}
+  .brand{font-size:12px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--blue)}
+  .brand span{color:var(--muted)}
+  .who{font-size:13px;color:var(--muted)}
+  .who b{color:var(--ink)}
+
+  .tabs{max-width:1180px;margin:0 auto;padding:0 24px;display:flex;gap:4px;border-bottom:1px solid var(--line);background:#fff}
+  .tab{appearance:none;background:none;border:0;padding:14px 14px;font-size:14px;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px}
+  .tab.on{color:var(--ink);border-bottom-color:var(--blue)}
+
+  .wrap{max-width:1180px;margin:0 auto;padding:26px 24px 60px}
+  .h{font-size:13px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin:0 0 14px}
+
+  /* KPIs */
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px}
+  .kpi{background:#fff;border:1px solid var(--line);border-radius:18px;padding:20px 22px}
+  .kpi .lab{font-size:12.5px;color:var(--muted);font-weight:600}
+  .kpi .n{font-size:32px;font-weight:700;color:var(--ink);letter-spacing:-.02em;margin-top:8px;line-height:1}
+  .kpi .d{font-size:12.5px;margin-top:8px;color:var(--green);font-weight:600}
+  .kpi .d.flat{color:var(--muted)}
+
+  .grid2{display:grid;grid-template-columns:1.3fr 1fr;gap:18px;margin-top:26px}
+  @media (max-width:880px){.grid2{grid-template-columns:1fr}}
+  .panel{background:#fff;border:1px solid var(--line);border-radius:18px;padding:6px 0 8px}
+  .panel .ph{display:flex;align-items:center;justify-content:space-between;padding:16px 20px 12px}
+  .panel .pt{font-size:15px;font-weight:700;color:var(--ink)}
+  .panel .pa{font-size:12.5px;color:var(--blue);font-weight:600;cursor:pointer}
+
+  table{width:100%;border-collapse:collapse}
+  th{text-align:left;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);padding:8px 20px;border-bottom:1px solid var(--line)}
+  td{font-size:13.5px;color:var(--ink);padding:13px 20px;border-bottom:1px solid #f1f3f6;vertical-align:middle}
+  tr:last-child td{border-bottom:0}
+  td.muted{color:var(--muted)}
+  .mono{font-variant-numeric:tabular-nums}
+
+  .pill{display:inline-block;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;white-space:nowrap}
+  .p-yes{background:var(--green-bg);color:var(--green)}
+  .p-con{background:var(--amber-bg);color:var(--amber)}
+  .p-no{background:var(--red-bg);color:var(--red)}
+  .p-sched{background:var(--slate-bg);color:var(--muted)}
+  .p-sent{background:var(--blue-soft);color:var(--blue)}
+  .p-open{background:var(--amber-bg);color:var(--amber)}
+  .p-rep{background:var(--green-bg);color:var(--green)}
+  .p-book{background:var(--green);color:#fff}
+
+  /* feedback */
+  .fb{padding:14px 20px;border-bottom:1px solid #f1f3f6}
+  .fb:last-child{border-bottom:0}
+  .fb .top2{display:flex;align-items:center;justify-content:space-between}
+  .fb .who2{font-size:13.5px;font-weight:600;color:var(--ink)}
+  .fb .who2 span{color:var(--muted);font-weight:500}
+  .fb .t{font-size:12px;color:var(--muted)}
+  .fb .msg{font-size:13.5px;color:var(--body);margin-top:6px;line-height:1.45}
+
+  .bars{padding:8px 20px 16px}
+  .barrow{display:flex;align-items:center;gap:12px;padding:7px 0}
+  .barrow .bl{width:88px;font-size:12.5px;color:var(--muted)}
+  .barrow .bt{flex:1;height:8px;background:#eef0f3;border-radius:6px;overflow:hidden}
+  .barrow .bf{height:100%;border-radius:6px}
+  .barrow .bn{width:34px;text-align:right;font-size:12.5px;font-weight:700;color:var(--ink)}
+
+  .hide{display:none}
+  .sec{margin-top:30px}
 </style>
 </head>
 <body>
-<div class="wrap">
-
-  <div id="login">
-    <div class="card">
-      <h1>Operator dashboard</h1>
-      <p class="sub" style="margin:6px 0 18px;">Enter the admin key to view analytics.</p>
-      <input id="key" type="password" placeholder="Admin key" autocomplete="off" />
-      <div style="margin-top:14px;"><button id="enter">Open dashboard</button></div>
-      <div id="loginErr" class="err"></div>
-    </div>
+  <div class="top"><div class="in">
+    <div class="brand">On-Site Power Intelligence <span>· Admin</span></div>
+    <div class="who">Signed in as <b>Steve</b> · Jun 6</div>
+  </div></div>
+  <div class="tabs">
+    <button class="tab on" onclick="go('overview',this)">Overview</button>
+    <button class="tab" onclick="go('sites',this)">Sites</button>
+    <button class="tab" onclick="go('feedback',this)">Feedback</button>
+    <button class="tab" onclick="go('outreach',this)">Outreach</button>
   </div>
 
-  <div id="dash" class="hide">
-    <div class="row" style="justify-content:space-between;">
-      <div>
-        <h1>On-Site Power Intelligence · Operator</h1>
-        <div class="sub" id="rangeNote">Last 14 days</div>
+  <div class="wrap">
+
+    <!-- OVERVIEW -->
+    <section id="overview">
+      <div class="kpis">
+        <div class="kpi"><div class="lab">Sites screened</div><div class="n">142</div><div class="d">+18 today</div></div>
+        <div class="kpi"><div class="lab">Powerable verdicts</div><div class="n">88%</div><div class="d flat">±40% screening-grade</div></div>
+        <div class="kpi"><div class="lab">Feedback in</div><div class="n">9</div><div class="d">+3 today</div></div>
+        <div class="kpi"><div class="lab">Outreach sent</div><div class="n">34 / 50</div><div class="d">6 opened</div></div>
+        <div class="kpi"><div class="lab">Interviews booked</div><div class="n">3</div><div class="d">2 this week</div></div>
       </div>
-      <div class="row">
-        <button class="ghost" id="refresh">Refresh</button>
-        <button class="ghost" id="logout">Log out</button>
+
+      <div class="grid2">
+        <div class="panel">
+          <div class="ph"><div class="pt">Recent site checks</div><div class="pa" onclick="go('sites',document.querySelectorAll('.tab')[1])">View all</div></div>
+          <table>
+            <tr><th>Location</th><th>Verdict</th><th>Fastest path</th><th>When</th></tr>
+            <tr><td>Loudoun County, VA <span class="muted mono">39.04, -77.49</span></td><td><span class="pill p-yes">Yes</span></td><td class="muted">Fuel cell · 12 mo</td><td class="muted">3m ago</td></tr>
+            <tr><td>Abilene, TX <span class="muted mono">32.45, -99.73</span></td><td><span class="pill p-yes">Yes</span></td><td class="muted">Gas turbine · 14 mo</td><td class="muted">26m ago</td></tr>
+            <tr><td>Maricopa County, AZ <span class="muted mono">33.30, -112.40</span></td><td><span class="pill p-con">Constrained</span></td><td class="muted">Gas + storage · 19 mo</td><td class="muted">1h ago</td></tr>
+            <tr><td>Meridian, MS <span class="muted mono">32.35, -88.88</span></td><td><span class="pill p-yes">Yes</span></td><td class="muted">Gas + solar · 16 mo</td><td class="muted">2h ago</td></tr>
+            <tr><td>Cheyenne, WY <span class="muted mono">41.14, -104.82</span></td><td><span class="pill p-no">No near-term</span></td><td class="muted">Grid-blocked · review</td><td class="muted">4h ago</td></tr>
+          </table>
+        </div>
+
+        <div class="panel">
+          <div class="ph"><div class="pt">Latest feedback</div><div class="pa" onclick="go('feedback',document.querySelectorAll('.tab')[2])">View all</div></div>
+          <div class="fb"><div class="top2"><div class="who2">Andrew Likens <span>· Crusoe</span></div><div class="t">2h ago</div></div><div class="msg">ERCOT West queue date reads optimistic. We're seeing 2032 for new interconnects out there.</div></div>
+          <div class="fb"><div class="top2"><div class="who2">Bo Bond <span>· Cushman</span></div><div class="t">5h ago</div></div><div class="msg">Pulled this up live with a client, they loved it. Can it batch 10 coordinates at once?</div></div>
+          <div class="fb"><div class="top2"><div class="who2">Anonymous <span>· Phoenix, AZ</span></div><div class="t">1d ago</div></div><div class="msg">Solar constraint feels harsh for AZ irradiance. Worth a second look.</div></div>
+        </div>
       </div>
-    </div>
+    </section>
 
-    <div id="dashErr" class="err"></div>
-
-    <div class="grid kpis">
-      <div class="kpi"><div class="l">Unique visitors</div><div class="v" id="k-sessions">–</div></div>
-      <div class="kpi"><div class="l">Pageviews</div><div class="v" id="k-pv">–</div></div>
-      <div class="kpi"><div class="l">Last 24 hours</div><div class="v" id="k-24">–</div></div>
-      <div class="kpi"><div class="l">Last 7 days</div><div class="v" id="k-7">–</div></div>
-    </div>
-
-    <div class="card" style="margin-bottom:14px;">
-      <h2>Visitors by day</h2>
-      <canvas id="chart"></canvas>
-    </div>
-
-    <div class="grid two" style="margin-bottom:14px;">
-      <div class="card">
-        <h2>Most-viewed sections</h2>
-        <div id="sections"></div>
+    <!-- SITES -->
+    <section id="sites" class="hide">
+      <p class="h">All site checks</p>
+      <div class="panel">
+        <table>
+          <tr><th>Location</th><th>Coordinate</th><th>Verdict</th><th>Fastest path</th><th>Feasible options</th><th>When</th></tr>
+          <tr><td>Loudoun County, VA</td><td class="muted mono">39.0438, -77.4874</td><td><span class="pill p-yes">Yes</span></td><td class="muted">Fuel cell · 12 mo</td><td class="muted">4 of 10</td><td class="muted">3m ago</td></tr>
+          <tr><td>Abilene, TX</td><td class="muted mono">32.4487, -99.7331</td><td><span class="pill p-yes">Yes</span></td><td class="muted">Gas turbine · 14 mo</td><td class="muted">4 of 10</td><td class="muted">26m ago</td></tr>
+          <tr><td>Maricopa County, AZ</td><td class="muted mono">33.3010, -112.4000</td><td><span class="pill p-con">Constrained</span></td><td class="muted">Gas + storage · 19 mo</td><td class="muted">2 of 10</td><td class="muted">1h ago</td></tr>
+          <tr><td>Meridian, MS</td><td class="muted mono">32.3513, -88.8779</td><td><span class="pill p-yes">Yes</span></td><td class="muted">Gas + solar · 16 mo</td><td class="muted">3 of 10</td><td class="muted">2h ago</td></tr>
+          <tr><td>Cheyenne, WY</td><td class="muted mono">41.1400, -104.8202</td><td><span class="pill p-no">No near-term</span></td><td class="muted">Grid-blocked</td><td class="muted">0 of 10</td><td class="muted">4h ago</td></tr>
+          <tr><td>New Albany, OH</td><td class="muted mono">40.0814, -82.8088</td><td><span class="pill p-yes">Yes</span></td><td class="muted">Gas + solar · 15 mo</td><td class="muted">4 of 10</td><td class="muted">5h ago</td></tr>
+          <tr><td>Shackelford County, TX</td><td class="muted mono">32.7460, -99.3520</td><td><span class="pill p-yes">Yes</span></td><td class="muted">Gas turbine · 13 mo</td><td class="muted">5 of 10</td><td class="muted">Yesterday</td></tr>
+          <tr><td>Lyon Township, MI</td><td class="muted mono">42.4690, -83.6480</td><td><span class="pill p-con">Constrained</span></td><td class="muted">Storage microgrid · 21 mo</td><td class="muted">2 of 10</td><td class="muted">Yesterday</td></tr>
+        </table>
       </div>
-      <div class="card">
-        <h2>Traffic sources</h2>
-        <div id="sources"></div>
-      </div>
-    </div>
+    </section>
 
-    <div class="card" style="margin-bottom:14px;">
-      <h2>Actions (visitors who did each)</h2>
-      <div class="funnel" id="funnel"></div>
-    </div>
-
-    <div class="card">
-      <h2>Recent sessions</h2>
-      <div style="overflow:auto;">
-        <table id="recent"><thead><tr>
-          <th>Session</th><th>First seen</th><th>Last seen</th><th class="num">Events</th><th>Source</th><th>Last action</th>
-        </tr></thead><tbody></tbody></table>
+    <!-- FEEDBACK -->
+    <section id="feedback" class="hide">
+      <p class="h">Feedback inbox <span style="color:var(--muted);font-weight:500;text-transform:none;letter-spacing:0">· from "This looks wrong?"</span></p>
+      <div class="panel">
+        <div class="fb"><div class="top2"><div class="who2">Andrew Likens <span>· Crusoe</span></div><div class="t">2h ago</div></div><div class="msg">ERCOT West queue date reads optimistic. We're seeing 2032 for new interconnects out there.</div></div>
+        <div class="fb"><div class="top2"><div class="who2">Bo Bond <span>· Cushman &amp; Wakefield</span></div><div class="t">5h ago</div></div><div class="msg">Pulled this up live with a client, they loved it. Can it batch 10 coordinates at once?</div></div>
+        <div class="fb"><div class="top2"><div class="who2">Anonymous <span>· Phoenix, AZ run</span></div><div class="t">1d ago</div></div><div class="msg">Solar constraint feels harsh for AZ irradiance. Worth a second look at the land-per-MW factor.</div></div>
+        <div class="fb"><div class="top2"><div class="who2">Judith Judson <span>· Vantage</span></div><div class="t">1d ago</div></div><div class="msg">Off-grid gas microgrid should rank higher for 1 GW+ loads. Otherwise this is exactly the screen we do by hand.</div></div>
+        <div class="fb"><div class="top2"><div class="who2">Anonymous <span>· Cheyenne, WY run</span></div><div class="t">2d ago</div></div><div class="msg">Marked grid-blocked but there's a 2028 upgrade in the WAPA plan. Might be worth flagging.</div></div>
       </div>
-    </div>
+    </section>
+
+    <!-- OUTREACH -->
+    <section id="outreach" class="hide">
+      <p class="h">Outreach pipeline · 50 contacts</p>
+      <div class="grid2">
+        <div class="panel" style="grid-column:1 / -1;padding-bottom:8px">
+          <div class="bars">
+            <div class="barrow"><div class="bl">Scheduled</div><div class="bt"><div class="bf" style="width:32%;background:#c4ccd6"></div></div><div class="bn">16</div></div>
+            <div class="barrow"><div class="bl">Sent</div><div class="bt"><div class="bf" style="width:36%;background:#1657e0"></div></div><div class="bn">18</div></div>
+            <div class="barrow"><div class="bl">Opened</div><div class="bt"><div class="bf" style="width:18%;background:#e0891e"></div></div><div class="bn">9</div></div>
+            <div class="barrow"><div class="bl">Replied</div><div class="bt"><div class="bf" style="width:12%;background:#1f9d57"></div></div><div class="bn">6</div></div>
+            <div class="barrow"><div class="bl">Booked</div><div class="bt"><div class="bf" style="width:6%;background:#0b1220"></div></div><div class="bn">3</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="panel sec" style="margin-top:18px">
+        <table>
+          <tr><th>Contact</th><th>Company</th><th>Segment</th><th>Status</th><th>Last touch</th></tr>
+          <tr><td>Cully Cavness</td><td>Crusoe</td><td class="muted">BTM developer</td><td><span class="pill p-book">Booked</span></td><td class="muted">Thu 7:45a</td></tr>
+          <tr><td>Bo Bond</td><td>Cushman &amp; Wakefield</td><td class="muted">Broker</td><td><span class="pill p-book">Booked</span></td><td class="muted">Thu 7:45a</td></tr>
+          <tr><td>Andrew Likens</td><td>Crusoe</td><td class="muted">BTM developer</td><td><span class="pill p-rep">Replied</span></td><td class="muted">2h ago</td></tr>
+          <tr><td>Asher Genoot</td><td>Hut 8</td><td class="muted">BTM developer</td><td><span class="pill p-open">Opened</span></td><td class="muted">5h ago</td></tr>
+          <tr><td>Brandon Oyer</td><td>AWS</td><td class="muted">Hyperscaler</td><td><span class="pill p-sent">Sent</span></td><td class="muted">Thu 7:45a</td></tr>
+          <tr><td>Judith Judson</td><td>Vantage</td><td class="muted">DC developer</td><td><span class="pill p-rep">Replied</span></td><td class="muted">1d ago</td></tr>
+          <tr><td>Andy Cvengros</td><td>JLL</td><td class="muted">Broker</td><td><span class="pill p-open">Opened</span></td><td class="muted">Yesterday</td></tr>
+          <tr><td>Sikander Rashid</td><td>Brookfield</td><td class="muted">PE infra</td><td><span class="pill p-sent">Sent</span></td><td class="muted">Thu 21:45</td></tr>
+          <tr><td>Mahesh Thiagarajan</td><td>Oracle</td><td class="muted">Hyperscaler</td><td><span class="pill p-sched">Scheduled</span></td><td class="muted">Tue 23:45</td></tr>
+          <tr><td>Chad Zamarin</td><td>Williams</td><td class="muted">BTM developer</td><td><span class="pill p-sched">Scheduled</span></td><td class="muted">Tue 21:45</td></tr>
+        </table>
+      </div>
+    </section>
+
   </div>
-
-</div>
 
 <script>
-(function(){
-  var KEY="opi_admin_key", chart=null;
-  var $=function(id){return document.getElementById(id);};
-  function fmt(n){ return (n==null?"–":Number(n).toLocaleString()); }
-  function timeAgo(iso){ if(!iso) return "–"; var d=new Date(iso); var s=(Date.now()-d.getTime())/1000;
-    if(s<60) return Math.floor(s)+"s ago"; if(s<3600) return Math.floor(s/60)+"m ago";
-    if(s<86400) return Math.floor(s/3600)+"h ago"; return d.toISOString().slice(5,16).replace("T"," "); }
-
-  function show(dash){ $("login").classList.toggle("hide",dash); $("dash").classList.toggle("hide",!dash); }
-
-  function bars(elId, items){
-    var el=$(elId); el.innerHTML="";
-    if(!items||!items.length){ el.innerHTML='<div class="muted" style="font-size:13px;">No data yet.</div>'; return; }
-    var max=Math.max.apply(null, items.map(function(x){return x.sessions;}))||1;
-    items.slice(0,8).forEach(function(x){
-      var w=Math.round(x.sessions/max*100);
-      var d=document.createElement("div"); d.className="bar";
-      d.innerHTML='<div class="nm" title="'+x.name+'">'+x.name+'</div><div class="track"><div class="fill" style="width:'+w+'%"></div></div><div class="ct">'+x.sessions+'</div>';
-      el.appendChild(d);
-    });
+  function go(id,btn){
+    ["overview","sites","feedback","outreach"].forEach(function(s){ document.getElementById(s).classList.add("hide"); });
+    document.getElementById(id).classList.remove("hide");
+    document.querySelectorAll(".tab").forEach(function(t){ t.classList.remove("on"); });
+    btn.classList.add("on");
+    window.scrollTo({top:0,behavior:"smooth"});
   }
-
-  function render(d){
-    $("k-sessions").textContent=fmt(d.totals.sessions);
-    $("k-pv").textContent=fmt(d.totals.pageviews);
-    $("k-24").textContent=fmt(d.totals.sessions_24h);
-    $("k-7").textContent=fmt(d.totals.sessions_7d);
-    bars("sections", d.sections);
-    bars("sources", d.sources);
-
-    var a=d.actions||{};
-    var steps=[["Entered coordinate",a.coordinate_set],["Got a verdict",a.computed],["Downloaded Word",a.word_download],["Compared sites",a.compare_open]];
-    $("funnel").innerHTML=steps.map(function(s){return '<div class="step"><div class="l">'+s[0]+'</div><div class="v">'+fmt(s[1]||0)+'</div></div>';}).join("");
-
-    var tb=$("recent").querySelector("tbody"); tb.innerHTML="";
-    (d.recent||[]).forEach(function(r){
-      var src=r.utm||(r.referrer? (function(){try{return new URL(r.referrer).hostname.replace(/^www\./,"");}catch(e){return "other";}})() : "direct");
-      var tr=document.createElement("tr");
-      tr.innerHTML='<td>'+(r.session||"").slice(0,10)+'</td><td>'+timeAgo(r.first)+'</td><td>'+timeAgo(r.last)+'</td><td class="num">'+fmt(r.events)+'</td><td>'+src+'</td><td>'+(r.last_action||"–")+'</td>';
-      tb.appendChild(tr);
-    });
-
-    var labels=d.by_day.map(function(x){return x.day.slice(5);});
-    var data=d.by_day.map(function(x){return x.sessions;});
-    if(chart) chart.destroy();
-    chart=new Chart($("chart"),{type:"bar",data:{labels:labels,datasets:[{data:data,backgroundColor:"#0071e3",borderRadius:5,maxBarThickness:26}]},
-      options:{plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{precision:0}},x:{grid:{display:false}}}}});
-  }
-
-  function load(){
-    var key=sessionStorage.getItem(KEY); if(!key){ show(false); return; }
-    $("dashErr").textContent="Loading…";
-    fetch("/api/admin/stats?key="+encodeURIComponent(key)).then(function(r){
-      if(r.status===401){ sessionStorage.removeItem(KEY); show(false); $("loginErr").textContent="Wrong key."; throw new Error("401"); }
-      return r.json();
-    }).then(function(d){
-      if(!d || d.ok===false){ $("dashErr").textContent=(d&&d.error)||"No data."; return; }
-      $("dashErr").textContent=""; render(d);
-    }).catch(function(e){ if(String(e.message)!=="401") $("dashErr").textContent="Error loading stats."; });
-  }
-
-  $("enter").onclick=function(){ var k=$("key").value.trim(); if(!k) return; sessionStorage.setItem(KEY,k); $("loginErr").textContent=""; show(true); load(); };
-  $("key").addEventListener("keydown",function(e){ if(e.key==="Enter") $("enter").click(); });
-  $("refresh").onclick=load;
-  $("logout").onclick=function(){ sessionStorage.removeItem(KEY); show(false); };
-
-  if(sessionStorage.getItem(KEY)){ show(true); load(); } else { show(false); }
-})();
 </script>
 </body>
 </html>

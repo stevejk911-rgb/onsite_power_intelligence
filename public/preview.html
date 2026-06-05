@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>On-Site Power Intelligence</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+  :root{
+    --ink:#0b1220;--body:#2b3340;--muted:#6b7480;--line:#e6e9ef;
+    --blue:#1657e0;--blue-soft:#eef3ff;
+    --green:#1f9d57;--amber:#e0891e;--red:#d23b3b;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%}
+  body{background:#fff;color:var(--body);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;line-height:1.5}
+  .wrap{width:99vw;margin:0 auto;padding:24px 0 12px}
+  .brand{font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--blue);text-align:center;margin-bottom:22px}
+
+  /* hero headline */
+  h1{margin:14px auto 20px;text-align:center;font-size:clamp(34px,6vw,64px);font-weight:800;color:var(--ink);line-height:1.05;letter-spacing:-.03em}
+  h1 .say{color:var(--blue)}
+
+  /* the one map */
+  .maphero{position:relative}
+  #map{height:clamp(420px,calc(100vh - 250px),920px);border-radius:18px;border:1px solid var(--line);overflow:hidden;z-index:0}
+  .maphelp{font-size:13px;color:var(--muted);text-align:center;margin:0 0 12px}
+  .vbridge{position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);background:#fff;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:32px 24px;text-align:center;z-index:650}
+  .rkick{font-size:12.5px;font-weight:600;letter-spacing:.03em;color:var(--muted)}
+  .rh-title{font-size:clamp(28px,3.8vw,46px);font-weight:700;color:var(--ink);letter-spacing:-.025em;margin:10px 0 0;line-height:1.08}
+  .rh-sub{font-size:16.5px;color:var(--muted);margin:12px 0 0}
+  .rh-sub b{color:var(--ink);font-weight:600}
+  .loadrow{display:flex;align-items:center;justify-content:center;gap:12px}
+  .spin{width:22px;height:22px;border:3px solid #d9e2f3;border-top-color:var(--blue);border-radius:50%;animation:sp .8s linear infinite}
+  @keyframes sp{to{transform:rotate(360deg)}}
+  .loadtxt{font-size:15px;color:var(--ink);font-weight:600}
+  .loadsrc{font-size:13px;color:var(--muted);margin-top:6px;min-height:18px}
+
+  /* controls */
+  .controls{position:absolute;top:20px;left:50%;transform:translateX(-50%);z-index:700;width:94%;max-width:560px;display:flex;gap:8px;background:#fff;border-radius:16px;padding:9px;box-shadow:0 20px 46px rgba(10,18,48,.24),0 4px 12px rgba(10,18,48,.10)}
+  .field{flex:1;border:1.5px solid transparent;border-radius:11px;padding:14px 15px;font-size:16px;color:var(--ink);outline:none;width:100%;background:#f3f5f8}
+  .field:focus{border-color:var(--blue);background:#fff}
+  .go{border:0;background:var(--blue);color:#fff;font-size:16px;font-weight:700;padding:0 26px;border-radius:11px;cursor:pointer;white-space:nowrap}
+  .go:hover{background:#1149c4}
+
+  /* results */
+  .rwrap{max-width:1120px;margin:0 auto;padding:38px 0 0}
+  .seclabel{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 16px}
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(244px,1fr));gap:14px}
+  .card2{background:#fff;border:1px solid #eef0f3;border-radius:20px;padding:22px 22px 20px;box-shadow:0 1px 2px rgba(16,24,40,.04),0 10px 26px rgba(16,24,40,.05);cursor:pointer;transition:box-shadow .2s,transform .2s}
+  .card2:hover{box-shadow:0 2px 4px rgba(16,24,40,.05),0 16px 34px rgba(16,24,40,.09);transform:translateY(-2px)}
+  .st{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;font-weight:600;color:var(--ink)}
+  .st .dot{width:8px;height:8px;border-radius:50%}
+  .st .dot.g{background:var(--green)} .st .dot.a{background:var(--amber)}
+  .card2 h3{font-size:18px;font-weight:700;color:var(--ink);margin:12px 0 16px;letter-spacing:-.01em}
+  .stat{font-size:30px;font-weight:700;color:var(--ink);letter-spacing:-.02em;line-height:1}
+  .stat small{display:block;font-size:12.5px;color:var(--muted);font-weight:500;margin-top:6px}
+  .spec{font-size:13.5px;color:var(--muted);margin-top:14px;line-height:1.45}
+  .more{font-size:12.5px;color:var(--blue);font-weight:600;margin-top:16px}
+  .detail{display:none;font-size:13.5px;color:var(--body);line-height:1.55;margin-top:16px;padding-top:16px;border-top:1px solid #f0f2f5}
+  .card2.open .detail{display:block}
+  .card2.open .more{color:var(--muted)}
+  .comboCta{text-align:center;margin:34px 0 0}
+  .cta{background:var(--ink);color:#fff;border:0;border-radius:14px;padding:17px 32px;font-size:16px;font-weight:600;cursor:pointer}
+  .cta:hover{background:#1b2333}
+  .combo{margin:18px auto 0;max-width:1120px;background:#0b1220;color:#fff;border-radius:24px;padding:34px 36px}
+  .combo-k{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#7f93c9;font-weight:700}
+  .combo-title{font-size:clamp(22px,2.6vw,30px);font-weight:700;margin:8px 0 0;letter-spacing:-.02em}
+  .combo-mix{display:flex;align-items:stretch;gap:8px;margin:24px 0 0;flex-wrap:wrap}
+  .mix{flex:1;min-width:172px;background:#141d35;border:1px solid #243154;border-radius:14px;padding:16px 16px}
+  .mix-n{font-size:15px;font-weight:700;color:#fff}
+  .mix-mw{font-size:23px;font-weight:700;color:#fff;margin-top:8px;letter-spacing:-.01em}
+  .mix-r{font-size:12.5px;color:#aab6d6;margin-top:6px}
+  .plus{display:flex;align-items:center;justify-content:center;font-size:24px;color:#5b6b95;font-weight:700;padding:0 2px}
+  .combo-sum{font-size:15.5px;color:#c7d0e6;margin:22px 0 0}
+  .combo-sum b{color:#fff;font-weight:700}
+  .combo-why{font-size:14.5px;color:#c7d0e6;margin:14px 0 0;line-height:1.6}
+  .tweakRow{text-align:center;margin:32px 0 0}
+  .nlink2{background:none;border:0;color:var(--blue);font-size:15px;font-weight:600;cursor:pointer}
+  .assume{max-width:520px;margin:14px auto 0}
+  .setrow{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid #eef0f4}
+  .setrow label{font-size:15px;color:var(--ink);font-weight:600}
+  .sel{border:1px solid #d4dae3;border-radius:8px;padding:9px 12px;font-size:14px;color:var(--ink);background:#fff}
+  .rerun{margin-top:16px;width:100%;background:var(--blue);color:#fff;border:0;border-radius:10px;padding:14px;font-weight:700;font-size:15px;cursor:pointer}
+  .rfoot{margin:48px auto 0;max-width:760px;text-align:center;border-top:1px solid #f0f2f5;padding-top:26px}
+  .finesrc{font-size:11.5px;color:#9aa3ad;line-height:1.55;margin:0}
+  .finesrc b{color:var(--muted)}
+  .nlink3{background:none;border:0;color:var(--muted);font-size:13px;cursor:pointer;margin-top:18px;text-decoration:underline}
+  .fbbox{max-width:520px;margin:12px auto 0}
+  .fbbox textarea{width:100%;border:1.5px solid #d4dae3;border-radius:11px;padding:12px;font-size:14px;min-height:74px;font-family:inherit;outline:none}
+  .fbsend{margin-top:8px;border:0;background:var(--blue);color:#fff;font-weight:700;font-size:14px;padding:11px 20px;border-radius:9px;cursor:pointer}
+  .restart{background:none;border:0;color:var(--muted);font-size:13px;cursor:pointer;margin-top:18px}
+  .hidden{display:none}
+  @media (max-width:560px){.controls{flex-direction:column}.go{padding:14px}.vbridge{padding:22px 16px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand">On-Site Power Intelligence</div>
+
+  <h1 id="hero">The fastest way to<br>power the <span class="say">LAND.</span></h1>
+
+  <div class="maphero">
+    <div class="controls" id="controls">
+      <input id="addr" class="field" placeholder="Enter a site address, or click the map" autocomplete="off">
+      <button class="go" onclick="run()">Run it</button>
+    </div>
+    <div id="map"></div>
+    <div id="vbridge" class="vbridge hidden">
+      <div id="bridgeLoad" class="hidden">
+        <div class="loadrow"><span class="spin"></span><span class="loadtxt">Reading public data</span></div>
+        <div class="loadsrc" id="loadsrc">EIA generation data</div>
+      </div>
+      <div id="bridgeVerdict">
+        <div class="rkick">Verdict · <span id="vmeta">screening-grade ±40%</span></div>
+        <h2 class="rh-title">Yes. This land can be powered.</h2>
+        <p class="rh-sub">The grid's at 2031. On-site, the fastest path is about <b>18 months</b>.</p>
+      </div>
+    </div>
+  </div>
+
+  <div id="results" class="hidden">
+    <div class="rwrap">
+      <div class="seclabel">Ways to power it</div>
+      <div class="cards">
+        <div class="card2" onclick="cardToggle(this)">
+          <span class="st"><span class="dot g"></span>Feasible</span>
+          <h3>Fuel cell</h3>
+          <div class="stat">~12<small>months to power</small></div>
+          <div class="spec">Up to 200 MW. Modular, fastest to energize.</div>
+          <div class="more">Details</div>
+          <div class="detail">Units truck to site and energize in stages, with no major civil works. Gas supply and a modest interconnection upgrade are the only gating items. The fastest route to first power, and easy to phase as load grows.</div>
+        </div>
+        <div class="card2" onclick="cardToggle(this)">
+          <span class="st"><span class="dot g"></span>Feasible</span>
+          <h3>Gas turbine</h3>
+          <div class="stat">~14<small>months to power</small></div>
+          <div class="spec">Up to 450 MW. Firm base load.</div>
+          <div class="more">Details</div>
+          <div class="detail">Aeroderivative or frame units sized to firm base load. The air permit is the long pole; equipment lead times have come back down. The workhorse path when you need hundreds of MW, firm and now.</div>
+        </div>
+        <div class="card2" onclick="cardToggle(this)">
+          <span class="st"><span class="dot g"></span>Feasible</span>
+          <h3>Gas + storage</h3>
+          <div class="stat">~15<small>months to power</small></div>
+          <div class="spec">Up to 450 MW. Firm plus flexible.</div>
+          <div class="more">Details</div>
+          <div class="detail">Turbines carry the base; batteries absorb ramps and ride through trips. The most resilient of the fast paths, with the strongest uptime story for AI load.</div>
+        </div>
+        <div class="card2" onclick="cardToggle(this)">
+          <span class="st"><span class="dot g"></span>Feasible</span>
+          <h3>Gas + solar</h3>
+          <div class="stat">~16<small>months to power</small></div>
+          <div class="spec">Up to 500 MW. Lowest carbon of the fast paths.</div>
+          <div class="more">Details</div>
+          <div class="detail">Daytime solar trims fuel burn and emissions while gas firms the rest. The lowest carbon option that still lands inside 18 months.</div>
+        </div>
+        <div class="card2" onclick="cardToggle(this)">
+          <span class="st"><span class="dot a"></span>Constrained</span>
+          <h3>Solar + BESS</h3>
+          <div class="stat">~22<small>months to power</small></div>
+          <div class="spec">~180 MW. Land-limited here.</div>
+          <div class="more">Details</div>
+          <div class="detail">Clean and quiet, but it needs five to seven times the land per MW. This parcel cannot host enough to carry the load, so it is viable only as a supplement.</div>
+        </div>
+        <div class="card2" onclick="cardToggle(this)">
+          <span class="st"><span class="dot a"></span>Constrained</span>
+          <h3>Nuclear PPA</h3>
+          <div class="stat">36+<small>months to power</small></div>
+          <div class="spec">Up to 300 MW. Verified offtake only.</div>
+          <div class="more">Details</div>
+          <div class="detail">The cleanest firm power, but only through a verified off-site agreement. Timelines run years, not months, so keep it on the roadmap, not the critical path.</div>
+        </div>
+      </div>
+
+      <div class="comboCta">
+        <button class="cta" onclick="toggle('combo')">See the best combination &rarr;</button>
+      </div>
+      <div id="combo" class="combo hidden">
+        <div class="combo-k">Recommended stack</div>
+        <div class="combo-title">Gas turbine + solar + 2-hour storage</div>
+        <div class="combo-mix">
+          <div class="mix"><div class="mix-n">Gas turbine</div><div class="mix-mw">300 MW</div><div class="mix-r">firm base load</div></div>
+          <div class="plus">+</div>
+          <div class="mix"><div class="mix-n">Solar</div><div class="mix-mw">120 MW</div><div class="mix-r">daytime, cuts fuel</div></div>
+          <div class="plus">+</div>
+          <div class="mix"><div class="mix-n">Storage, 2-hour</div><div class="mix-mw">60 MW</div><div class="mix-r">ramps and backup</div></div>
+        </div>
+        <p class="combo-sum"><b>~480 MW firm</b>, online in <b>~16 months</b>, about <b>15 years</b> ahead of the grid.</p>
+        <p class="combo-why">Turbines carry the base, solar trims fuel and emissions through the day, and storage covers ramps and outages. It clears the parcel, beats the 2031 queue by years, and lands the lowest blended cost of any path under 18 months.</p>
+      </div>
+
+      <div class="tweakRow">
+        <button class="nlink2" onclick="toggle('assume')">Tailor this to your project</button>
+      </div>
+      <div id="assume" class="assume hidden">
+        <div class="setrow"><label>Power you need</label>
+          <select class="sel"><option>250 MW</option><option>100 MW</option><option>500 MW</option><option>1 GW+</option></select></div>
+        <div class="setrow"><label>Need it online by</label>
+          <select class="sel"><option>18 months</option><option>12 months</option><option>24 months</option><option>36 months</option></select></div>
+        <div class="setrow"><label>Consider nuclear PPA</label>
+          <select class="sel"><option>Yes</option><option>No</option></select></div>
+        <button class="rerun" onclick="run()">Re-run for my project</button>
+      </div>
+
+      <div class="rfoot">
+        <p class="finesrc"><b>Ruled out:</b> solar-only, wind-only, grid interconnection (2031 queue), diesel. &nbsp;·&nbsp; <b>Sources:</b> EIA, NREL, interconnection queues, SEC EDGAR, OpenStreetMap, state PUC. Screening-grade, ±40%.</p>
+        <button class="nlink3" onclick="toggle('fbbox')">This looks wrong? Tell me where.</button>
+        <div id="fbbox" class="fbbox hidden">
+          <textarea id="fbtext" placeholder="e.g. the queue date is stale, or you'd never run gas here because..."></textarea>
+          <button class="fbsend" onclick="sendFb()">Send to Steve</button>
+        </div>
+        <div><button class="restart" onclick="reset()">Run another site</button></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  var lmap=null, marker=null, picked=null;
+  var sources=["EIA generation data","NREL solar and wind resource","interconnection queue","SEC EDGAR utility filings","OpenStreetMap parcel and land","state PUC tariff filings","scoring on-site options"];
+
+  function initMap(){
+    lmap = L.map("map").setView([39.0438,-77.4874],9);
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:"&copy; OpenStreetMap"}).addTo(lmap);
+    lmap.on("click", function(e){ setMarker(e.latlng.lat, e.latlng.lng); });
+  }
+  function setMarker(lat,lng){
+    if(marker){ marker.setLatLng([lat,lng]); } else { marker = L.marker([lat,lng]).addTo(lmap); }
+    picked = lat.toFixed(4)+", "+lng.toFixed(4);
+    document.getElementById("addr").value = picked;
+  }
+  function toggle(id){ document.getElementById(id).classList.toggle("hidden"); }
+  function cardToggle(el){ el.classList.toggle("open"); }
+
+  function run(){
+    var a = document.getElementById("addr");
+    var v = a.value.trim();
+    if(!v){ a.focus(); a.style.borderColor="#d23b3b"; setTimeout(function(){ a.style.borderColor=""; },1200); return; }
+    var center = picked ? picked.split(",").map(parseFloat) : [39.0438,-77.4874];
+    lmap.setView(center, 12);
+
+    document.getElementById("hero").classList.add("hidden");
+    document.getElementById("controls").classList.add("hidden");
+    document.getElementById("vmeta").textContent = v + " · screening-grade ±40%";
+    document.getElementById("vbridge").classList.remove("hidden");
+    document.getElementById("bridgeVerdict").classList.add("hidden");
+    document.getElementById("bridgeLoad").classList.remove("hidden");
+
+    var i=0; document.getElementById("loadsrc").textContent = sources[0];
+    var t=setInterval(function(){ i++; if(i<sources.length){ document.getElementById("loadsrc").textContent = sources[i]; } }, 320);
+    setTimeout(function(){
+      clearInterval(t);
+      document.getElementById("bridgeLoad").classList.add("hidden");
+      document.getElementById("bridgeVerdict").classList.remove("hidden");
+      document.getElementById("results").classList.remove("hidden");
+      lmap.invalidateSize();
+    }, 2300);
+  }
+
+  function sendFb(){ var txt=encodeURIComponent(document.getElementById("fbtext").value||""); window.location.href="mailto:stevejk911@gmail.com?subject=Where%20the%20verdict%20is%20wrong&body="+txt; }
+
+  function reset(){
+    picked=null; document.getElementById("addr").value="";
+    if(marker){ lmap.removeLayer(marker); marker=null; }
+    lmap.setView([39.0438,-77.4874],9);
+    document.getElementById("results").classList.add("hidden");
+    document.getElementById("vbridge").classList.add("hidden");
+    ["combo","assume","fbbox"].forEach(function(id){ document.getElementById(id).classList.add("hidden"); });
+    document.querySelectorAll(".card2.open").forEach(function(c){ c.classList.remove("open"); });
+    document.getElementById("hero").classList.remove("hidden");
+    document.getElementById("controls").classList.remove("hidden");
+    window.scrollTo({top:0,behavior:"smooth"});
+  }
+
+  initMap();
+  setTimeout(function(){ if(lmap){ lmap.invalidateSize(); } }, 150);
+  window.addEventListener("load", function(){ if(lmap){ lmap.invalidateSize(); } });
+</script>
+</body>
+</html>
