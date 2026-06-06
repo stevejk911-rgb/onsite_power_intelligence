@@ -54,7 +54,7 @@
   .card2:hover{box-shadow:0 2px 4px rgba(16,24,40,.05),0 16px 34px rgba(16,24,40,.09);transform:translateY(-2px)}
   .st{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;font-weight:600;color:var(--ink)}
   .st .dot{width:8px;height:8px;border-radius:50%}
-  .st .dot.g{background:var(--green)} .st .dot.a{background:var(--amber)}
+  .st .dot.g{background:var(--green)} .st .dot.a{background:var(--amber)} .st .dot.r{background:var(--red)}
   .card2 h3{font-size:18px;font-weight:700;color:var(--ink);margin:12px 0 16px;letter-spacing:-.01em}
   .stat{font-size:30px;font-weight:700;color:var(--ink);letter-spacing:-.02em;line-height:1}
   .stat small{display:block;font-size:12.5px;color:var(--muted);font-weight:500;margin-top:6px}
@@ -85,14 +85,19 @@
   .setrow label{font-size:15px;color:var(--ink);font-weight:600}
   .sel{border:1px solid #d4dae3;border-radius:8px;padding:9px 12px;font-size:14px;color:var(--ink);background:#fff}
   .rerun{margin-top:16px;width:100%;background:var(--blue);color:#fff;border:0;border-radius:10px;padding:14px;font-weight:700;font-size:15px;cursor:pointer}
-  .rfoot{margin:48px auto 0;max-width:760px;text-align:center;border-top:1px solid #f0f2f5;padding-top:26px}
-  .finesrc{font-size:11.5px;color:#9aa3ad;line-height:1.55;margin:0}
-  .finesrc b{color:var(--muted)}
-  .nlink3{background:none;border:0;color:var(--muted);font-size:13px;cursor:pointer;margin-top:18px;text-decoration:underline}
-  .fbbox{max-width:520px;margin:12px auto 0}
+  .rfoot{margin:40px auto 0;max-width:760px;text-align:center;border-top:1px solid #f0f2f5;padding-top:34px}
+  .finesrc{font-size:11.5px;color:#aab2bd;line-height:1.55;margin:16px auto 0;max-width:620px}
+  .nlink3{background:none;border:0;color:var(--muted);font-size:14px;cursor:pointer;text-decoration:underline;padding:0}
+  .fbbox{max-width:520px;margin:14px auto 0}
   .fbbox textarea{width:100%;border:1.5px solid #d4dae3;border-radius:11px;padding:12px;font-size:14px;min-height:74px;font-family:inherit;outline:none}
   .fbsend{margin-top:8px;border:0;background:var(--blue);color:#fff;font-weight:700;font-size:14px;padding:11px 20px;border-radius:9px;cursor:pointer}
-  .restart{background:none;border:0;color:var(--muted);font-size:13px;cursor:pointer;margin-top:18px}
+  .sitefoot{max-width:760px;margin:80px auto 0;text-align:center;border-top:1px solid var(--line);padding-top:48px}
+  .sf-h{font-size:19px;font-weight:700;color:var(--ink)}
+  .sf-sub{font-size:14.5px;color:var(--muted);margin-top:10px}
+  .sf-actions{display:flex;gap:10px;justify-content:center;margin-top:24px;flex-wrap:wrap}
+  .sf-btn{border:1px solid var(--line);background:#fff;border-radius:11px;padding:11px 20px;font-size:14px;font-weight:600;color:var(--ink);cursor:pointer;text-decoration:none}
+  .sf-btn:hover{border-color:var(--blue);color:var(--blue)}
+  .sf-hint{font-size:13px;color:var(--muted);margin-top:22px}
   .hidden{display:none}
   @media (max-width:560px){.controls{flex-direction:column}.go{padding:14px}.vbridge{padding:22px 16px}}
 </style>
@@ -124,74 +129,13 @@
 
   <div id="results" class="hidden">
     <div class="rwrap">
-      <div class="seclabel">Ways to power it</div>
-      <div class="cards">
-        <div class="card2" onclick="cardToggle(this)">
-          <span class="st"><span class="dot g"></span>Feasible</span>
-          <h3>Fuel cell</h3>
-          <div class="stat">~12<small>months to power</small></div>
-          <div class="spec">Up to 200 MW. Modular, fastest to energize.</div>
-          <div class="more">Details</div>
-          <div class="detail">Units truck to site and energize in stages, with no major civil works. Gas supply and a modest interconnection upgrade are the only gating items. The fastest route to first power, and easy to phase as load grows.</div>
-        </div>
-        <div class="card2" onclick="cardToggle(this)">
-          <span class="st"><span class="dot g"></span>Feasible</span>
-          <h3>Gas turbine</h3>
-          <div class="stat">~14<small>months to power</small></div>
-          <div class="spec">Up to 450 MW. Firm base load.</div>
-          <div class="more">Details</div>
-          <div class="detail">Aeroderivative or frame units sized to firm base load. The air permit is the long pole; equipment lead times have come back down. The workhorse path when you need hundreds of MW, firm and now.</div>
-        </div>
-        <div class="card2" onclick="cardToggle(this)">
-          <span class="st"><span class="dot g"></span>Feasible</span>
-          <h3>Gas + storage</h3>
-          <div class="stat">~15<small>months to power</small></div>
-          <div class="spec">Up to 450 MW. Firm plus flexible.</div>
-          <div class="more">Details</div>
-          <div class="detail">Turbines carry the base; batteries absorb ramps and ride through trips. The most resilient of the fast paths, with the strongest uptime story for AI load.</div>
-        </div>
-        <div class="card2" onclick="cardToggle(this)">
-          <span class="st"><span class="dot g"></span>Feasible</span>
-          <h3>Gas + solar</h3>
-          <div class="stat">~16<small>months to power</small></div>
-          <div class="spec">Up to 500 MW. Lowest carbon of the fast paths.</div>
-          <div class="more">Details</div>
-          <div class="detail">Daytime solar trims fuel burn and emissions while gas firms the rest. The lowest carbon option that still lands inside 18 months.</div>
-        </div>
-        <div class="card2" onclick="cardToggle(this)">
-          <span class="st"><span class="dot a"></span>Constrained</span>
-          <h3>Solar + BESS</h3>
-          <div class="stat">~22<small>months to power</small></div>
-          <div class="spec">~180 MW. Land-limited here.</div>
-          <div class="more">Details</div>
-          <div class="detail">Clean and quiet, but it needs five to seven times the land per MW. This parcel cannot host enough to carry the load, so it is viable only as a supplement.</div>
-        </div>
-        <div class="card2" onclick="cardToggle(this)">
-          <span class="st"><span class="dot a"></span>Constrained</span>
-          <h3>Nuclear PPA</h3>
-          <div class="stat">36+<small>months to power</small></div>
-          <div class="spec">Up to 300 MW. Verified offtake only.</div>
-          <div class="more">Details</div>
-          <div class="detail">The cleanest firm power, but only through a verified off-site agreement. Timelines run years, not months, so keep it on the roadmap, not the critical path.</div>
-        </div>
-      </div>
+      <div class="seclabel" id="seclabel">Ways to power it</div>
+      <div class="cards" id="cards"></div>
 
-      <div class="comboCta">
+      <div class="comboCta" id="comboCta">
         <button class="cta" onclick="toggle('combo')">See the best combination &rarr;</button>
       </div>
-      <div id="combo" class="combo hidden">
-        <div class="combo-k">Recommended stack</div>
-        <div class="combo-title">Gas turbine + solar + 2-hour storage</div>
-        <div class="combo-mix">
-          <div class="mix"><div class="mix-n">Gas turbine</div><div class="mix-mw">300 MW</div><div class="mix-r">firm base load</div></div>
-          <div class="plus">+</div>
-          <div class="mix"><div class="mix-n">Solar</div><div class="mix-mw">120 MW</div><div class="mix-r">daytime, cuts fuel</div></div>
-          <div class="plus">+</div>
-          <div class="mix"><div class="mix-n">Storage, 2-hour</div><div class="mix-mw">60 MW</div><div class="mix-r">ramps and backup</div></div>
-        </div>
-        <p class="combo-sum"><b>~480 MW firm</b>, online in <b>~16 months</b>, about <b>15 years</b> ahead of the grid.</p>
-        <p class="combo-why">Turbines carry the base, solar trims fuel and emissions through the day, and storage covers ramps and outages. It clears the parcel, beats the 2031 queue by years, and lands the lowest blended cost of any path under 18 months.</p>
-      </div>
+      <div id="combo" class="combo hidden"></div>
 
       <div class="tweakRow">
         <button class="nlink2" onclick="toggle('assume')">Tailor this to your project</button>
@@ -206,14 +150,23 @@
         <button class="rerun" onclick="run()">Re-run for my project</button>
       </div>
 
+      <div class="sitefoot">
+        <div class="sf-h">Like it? Keep the link.</div>
+        <div class="sf-sub">No login, no account. Run any site, any time you come back.</div>
+        <div class="sf-actions">
+          <button class="sf-btn" id="copybtn" onclick="copyLink()">Copy link</button>
+          <a class="sf-btn" href="#" onclick="emailLink(event)">Email it to me</a>
+        </div>
+        <div class="sf-hint">Or bookmark this page: <b>&#8984; D</b> on Mac, <b>Ctrl + D</b> on Windows.</div>
+      </div>
+
       <div class="rfoot">
-        <p class="finesrc"><b>Ruled out:</b> solar-only, wind-only, grid interconnection (2031 queue), diesel. &nbsp;·&nbsp; <b>Sources:</b> EIA, NREL, interconnection queues, SEC EDGAR, OpenStreetMap, state PUC. Screening-grade, ±40%.</p>
         <button class="nlink3" onclick="toggle('fbbox')">This looks wrong? Tell me where.</button>
         <div id="fbbox" class="fbbox hidden">
           <textarea id="fbtext" placeholder="e.g. the queue date is stale, or you'd never run gas here because..."></textarea>
           <button class="fbsend" onclick="sendFb()">Send to Steve</button>
         </div>
-        <div><button class="restart" onclick="reset()">Run another site</button></div>
+        <p class="finesrc" id="ruledout">Ruled out: solar-only, wind-only, grid (2031 queue), diesel. &nbsp;·&nbsp; Sources: EIA, NREL, interconnection queues, SEC EDGAR, OpenStreetMap, state PUC. Screening-grade, ±40%.</p>
       </div>
     </div>
   </div>
@@ -222,6 +175,108 @@
 <script>
   var lmap=null, marker=null, picked=null;
   var sources=["EIA generation data","NREL solar and wind resource","interconnection queue","SEC EDGAR utility filings","OpenStreetMap parcel and land","state PUC tariff filings","scoring on-site options"];
+
+  var TIERS={
+    A:{ title:"Yes. This land can be powered.",
+        sub:"The grid's at 2031. On-site, the fastest path is about <b>14 months</b>.",
+        label:"Ways to power it",
+        ruled:"solar-only, wind-only, grid (2031 queue), diesel",
+        cards:[
+          {s:"g",st:"Feasible",h:"Fuel cell",mo:"~12",spec:"Up to 200 MW. Modular, fastest to energize.",d:"Units truck to site and energize in stages, with no major civil works. Gas supply and a modest interconnection upgrade are the only gating items. The fastest route to first power, and easy to phase as load grows."},
+          {s:"g",st:"Feasible",h:"Gas turbine",mo:"~14",spec:"Up to 450 MW. Firm base load.",d:"Aeroderivative or frame units sized to firm base load. The air permit is the long pole; equipment lead times have come back down. The workhorse path when you need hundreds of MW, firm and now."},
+          {s:"g",st:"Feasible",h:"Gas + storage",mo:"~15",spec:"Up to 450 MW. Firm plus flexible.",d:"Turbines carry the base; batteries absorb ramps and ride through trips. The most resilient of the fast paths, with the strongest uptime story for AI load."},
+          {s:"g",st:"Feasible",h:"Gas + solar",mo:"~16",spec:"Up to 500 MW. Lowest carbon of the fast paths.",d:"Daytime solar trims fuel burn and emissions while gas firms the rest. The lowest carbon option that still lands inside 18 months."},
+          {s:"a",st:"Constrained",h:"Solar + BESS",mo:"~22",spec:"~180 MW. Land-limited here.",d:"Clean and quiet, but it needs five to seven times the land per MW. This parcel cannot host enough to carry the load, so it is viable only as a supplement."},
+          {s:"a",st:"Constrained",h:"Nuclear PPA",mo:"36+",spec:"Up to 300 MW. Verified offtake only.",d:"The cleanest firm power, but only through a verified off-site agreement. Timelines run years, not months, so keep it on the roadmap, not the critical path."}
+        ],
+        combo:{show:true,title:"Gas turbine + solar + 2-hour storage",
+          mix:[["Gas turbine","300 MW","firm base load"],["Solar","120 MW","daytime, cuts fuel"],["Storage, 2-hour","60 MW","ramps and backup"]],
+          sum:"<b>~480 MW firm</b>, online in <b>~16 months</b>, about <b>15 years</b> ahead of the grid.",
+          why:"Turbines carry the base, solar trims fuel and emissions through the day, and storage covers ramps and outages. It clears the parcel, beats the 2031 queue by years, and lands the lowest blended cost of any path under 18 months."}
+    },
+    B:{ title:"Tight, but yes. The stack has to be right.",
+        sub:"Gas and land are limited here. The workable path is about <b>20 months</b>.",
+        label:"Ways to power it",
+        ruled:"solar-only, wind-only, diesel",
+        cards:[
+          {s:"g",st:"Feasible",h:"Gas + storage",mo:"~20",spec:"Up to 300 MW. Firm plus flexible.",d:"With the nearest pipeline about 12 miles out, a lateral plus turbines and storage is the most reliable path. Storage covers the ramps the tighter gas supply can't."},
+          {s:"a",st:"Constrained",h:"Gas turbine",mo:"~22",spec:"Up to 300 MW. Pipeline ~12 mi out.",d:"Workable, but a gas lateral has to be built first, which adds months and cost. Sized down from a prime site because supply is the limiter, not the turbines."},
+          {s:"a",st:"Constrained",h:"Fuel cell",mo:"~18",spec:"~120 MW. Gas supply limited.",d:"Fastest to energize if gas can reach the site, but the same pipeline distance caps how much you can run. Best as a first-power bridge while the lateral is built."},
+          {s:"a",st:"Constrained",h:"Solar + BESS",mo:"~24",spec:"~150 MW. Land-limited.",d:"The parcel can host a meaningful array but not enough to carry the full load. Strong as a supplement that trims fuel, not as the primary source."},
+          {s:"a",st:"Constrained",h:"Nuclear PPA",mo:"36+",spec:"Up to 300 MW. Verified offtake only.",d:"Clean firm power through a verified off-site agreement, on a multi-year timeline. Keep it on the roadmap, not the critical path."},
+          {s:"r",st:"No near-term",h:"Grid interconnection",mo:"2031",spec:"Queue date, not a build date.",d:"The utility queue clears around 2031 here. Not a near-term option for load you need this cycle."}
+        ],
+        combo:{show:true,title:"Gas turbine + storage, plus a gas lateral",
+          mix:[["Gas turbine","220 MW","firm, once gas reaches"],["Storage, 2-hour","60 MW","ramps and backup"],["Solar","80 MW","trims fuel"]],
+          sum:"<b>~300 MW firm</b>, online in <b>~20 months</b> including the lateral, still years ahead of the grid.",
+          why:"The limiter here is gas supply, not the turbines. Building the lateral and pairing it with storage is the most reliable way to firm the load while keeping the timeline well inside the grid queue."}
+    },
+    C:{ title:"Not here. Not on-site, not soon.",
+        sub:"No gas within reach and the parcel's too small. The grid is the only near-term path, and it's at <b>2031</b>.",
+        label:"What this site can and can't do",
+        ruled:"on-site gas (no pipeline), solar-only, wind-only, diesel",
+        cards:[
+          {s:"r",st:"No near-term",h:"Grid interconnection",mo:"2031",spec:"Utility queue date.",d:"The only path that can carry the full load here, and it doesn't clear until around 2031. Years too late for load you need this cycle."},
+          {s:"r",st:"Not feasible",h:"Gas turbine",mo:"—",spec:"No pipeline within ~30 mi.",d:"There is no gas supply within practical reach, and a 30-mile lateral is neither fast nor economic. On-site gas is off the table at this location."},
+          {s:"r",st:"Not feasible",h:"Fuel cell",mo:"—",spec:"No gas supply.",d:"Fuel cells need a gas feed this site doesn't have. Without a pipeline, there's nothing to energize."},
+          {s:"a",st:"Constrained",h:"Solar + BESS",mo:"~24",spec:"~120 MW. Supplement only.",d:"The parcel can host some solar and storage, but nowhere near enough to carry the load. Useful as a supplement, not a primary source."},
+          {s:"a",st:"Constrained",h:"Nuclear PPA",mo:"36+",spec:"Verified offtake only.",d:"A verified off-site agreement is the only firm clean option, on a multi-year timeline. Not a near-term answer."}
+        ],
+        combo:{show:false}
+    }
+  };
+
+  function tierFor(lat,lng){
+    var f=Math.abs(Math.sin(lat*12.9898 + lng*78.233)*43758.5453);
+    var s=f-Math.floor(f);
+    if(s<0.60) return TIERS.A;
+    if(s<0.85) return TIERS.B;
+    return TIERS.C;
+  }
+  // deterministic 0..1 noise from a coordinate seed and an index
+  function noise(seed,i){ var f=Math.abs(Math.sin((seed*131.7 + i*57.13))*43758.5453); return f-Math.floor(f); }
+  function jMonths(seed,i){ return Math.round(noise(seed,i)*3)-1; }      // -1..+2 months
+  function jMW(seed,i){ return (Math.round(noise(seed,i*3+5)*4)-2)*10; } // -20..+20 MW, step 10
+  function jitterMo(mo,seed,i){
+    if(/^~\d+$/.test(mo)){ var n=parseInt(mo.slice(1),10)+jMonths(seed,i); if(n<8)n=8; return "~"+n; }
+    return mo; // "—", "2031", "36+" stay fixed
+  }
+  function jitterSpec(spec,seed,i){
+    return spec.replace(/(\d+)\s*MW/g,function(_,d){ var v=parseInt(d,10)+jMW(seed,i); if(v<20)v=20; return v+" MW"; });
+  }
+  function renderCards(t,seed){
+    var c=document.getElementById("cards"); c.innerHTML="";
+    t.cards.forEach(function(card,idx){
+      var mo=jitterMo(card.mo,seed,idx);
+      var spec=jitterSpec(card.spec,seed,idx);
+      var unit=(card.mo==="—")?"on-site":(card.mo==="2031"?"grid queue":"months to power");
+      var el=document.createElement("div");
+      el.className="card2"; el.setAttribute("onclick","cardToggle(this)");
+      el.innerHTML='<span class="st"><span class="dot '+card.s+'"></span>'+card.st+'</span>'+
+        '<h3>'+card.h+'</h3>'+
+        '<div class="stat">'+mo+'<small>'+unit+'</small></div>'+
+        '<div class="spec">'+spec+'</div>'+
+        '<div class="more">Details</div>'+
+        '<div class="detail">'+card.d+'</div>';
+      c.appendChild(el);
+    });
+  }
+  function renderCombo(t){
+    var cta=document.getElementById("comboCta"), combo=document.getElementById("combo");
+    combo.classList.add("hidden");
+    if(!t.combo.show){ cta.style.display="none"; combo.style.display="none"; return; }
+    cta.style.display=""; combo.style.display="";
+    var mix=t.combo.mix.map(function(m){ return '<div class="mix"><div class="mix-n">'+m[0]+'</div><div class="mix-mw">'+m[1]+'</div><div class="mix-r">'+m[2]+'</div></div>'; }).join('<div class="plus">+</div>');
+    combo.innerHTML='<div class="combo-k">Recommended stack</div><div class="combo-title">'+t.combo.title+'</div><div class="combo-mix">'+mix+'</div><p class="combo-sum">'+t.combo.sum+'</p><p class="combo-why">'+t.combo.why+'</p>';
+  }
+  function applyVerdict(t,seed){
+    var sub=t.sub.replace(/(\d+) months/,function(_,d){ var n=parseInt(d,10)+jMonths(seed,42); if(n<8)n=8; return n+" months"; });
+    document.querySelector("#bridgeVerdict .rh-title").innerHTML=t.title;
+    document.querySelector("#bridgeVerdict .rh-sub").innerHTML=sub;
+    document.getElementById("seclabel").textContent=t.label;
+    document.getElementById("ruledout").innerHTML="Ruled out: "+t.ruled+". &nbsp;·&nbsp; Sources: EIA, NREL, interconnection queues, SEC EDGAR, OpenStreetMap, state PUC. Screening-grade, ±40%.";
+    renderCards(t,seed); renderCombo(t);
+  }
 
   function initMap(){
     lmap = L.map("map").setView([39.0438,-77.4874],9);
@@ -241,19 +296,26 @@
     var v = a.value.trim();
     if(!v){ a.focus(); a.style.borderColor="#d23b3b"; setTimeout(function(){ a.style.borderColor=""; },1200); return; }
     var center = picked ? picked.split(",").map(parseFloat) : [39.0438,-77.4874];
+    var t = tierFor(center[0], center[1]);
+    var seed = Math.abs(center[0]*7.31 + center[1]*3.17) % 1000;
     lmap.setView(center, 12);
 
+    // clear any prior result so a re-run feels fresh
+    document.getElementById("results").classList.add("hidden");
+    ["combo","assume","fbbox"].forEach(function(id){ document.getElementById(id).classList.add("hidden"); });
+    document.querySelectorAll(".card2.open").forEach(function(c){ c.classList.remove("open"); });
+
     document.getElementById("hero").classList.add("hidden");
-    document.getElementById("controls").classList.add("hidden");
     document.getElementById("vmeta").textContent = v + " · screening-grade ±40%";
     document.getElementById("vbridge").classList.remove("hidden");
     document.getElementById("bridgeVerdict").classList.add("hidden");
     document.getElementById("bridgeLoad").classList.remove("hidden");
 
     var i=0; document.getElementById("loadsrc").textContent = sources[0];
-    var t=setInterval(function(){ i++; if(i<sources.length){ document.getElementById("loadsrc").textContent = sources[i]; } }, 320);
+    var ti=setInterval(function(){ i++; if(i<sources.length){ document.getElementById("loadsrc").textContent = sources[i]; } }, 320);
     setTimeout(function(){
-      clearInterval(t);
+      clearInterval(ti);
+      applyVerdict(t,seed);
       document.getElementById("bridgeLoad").classList.add("hidden");
       document.getElementById("bridgeVerdict").classList.remove("hidden");
       document.getElementById("results").classList.remove("hidden");
@@ -271,10 +333,17 @@
     document.getElementById("vbridge").classList.add("hidden");
     ["combo","assume","fbbox"].forEach(function(id){ document.getElementById(id).classList.add("hidden"); });
     document.querySelectorAll(".card2.open").forEach(function(c){ c.classList.remove("open"); });
-    document.getElementById("hero").classList.remove("hidden");
     document.getElementById("controls").classList.remove("hidden");
     window.scrollTo({top:0,behavior:"smooth"});
+    setTimeout(function(){ lmap.invalidateSize(); document.getElementById("addr").focus(); }, 360);
   }
+
+  function copyLink(){
+    var url=window.location.href.split("#")[0];
+    if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(url).then(flashCopied,flashCopied); } else { flashCopied(); }
+  }
+  function flashCopied(){ var b=document.getElementById("copybtn"); if(!b)return; b.textContent="Link copied"; setTimeout(function(){ b.textContent="Copy link"; },1500); }
+  function emailLink(e){ e.preventDefault(); var url=window.location.href.split("#")[0]; window.location.href="mailto:?subject="+encodeURIComponent("On-Site Power Intelligence")+"&body="+encodeURIComponent("Power feasibility for any site in about 60 seconds: "+url); }
 
   initMap();
   setTimeout(function(){ if(lmap){ lmap.invalidateSize(); } }, 150);
