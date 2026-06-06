@@ -53,7 +53,11 @@ if(DATABASE_URL){
       "CREATE TABLE IF NOT EXISTS feedback (" +
       "  id bigserial PRIMARY KEY, ts timestamptz NOT NULL DEFAULT now()," +
       "  text text, lat double precision, lng double precision, tier text, verdict text, ua text);" +
-      "CREATE INDEX IF NOT EXISTS feedback_ts_idx ON feedback (ts DESC);"
+      "CREATE INDEX IF NOT EXISTS feedback_ts_idx ON feedback (ts DESC);" +
+      "CREATE TABLE IF NOT EXISTS sitechecks (" +
+      "  id bigserial PRIMARY KEY, ts timestamptz NOT NULL DEFAULT now()," +
+      "  lat double precision, lng double precision, verdict text, cat text, fastest text, feasible int, ua text);" +
+      "CREATE INDEX IF NOT EXISTS sitechecks_ts_idx ON sitechecks (ts DESC);"
     ).then(() => console.log("Analytics: Postgres ready"))
      .catch((e) => console.log("Analytics: table init failed — " + (e && e.message)));
   } catch(e){
@@ -61,8 +65,10 @@ if(DATABASE_URL){
   }
 }
 
-/* in-memory feedback fallback when there is no database (resets on restart) */
+/* in-memory fallback when there is no database (resets on restart) */
 const memFeedback = [];
+const memSitechecks = [];
+let memSeq = 1;
 
 /* ---- tiny in-memory cache (per-process, 1 hour) ---------------------------- */
 const cache = new Map(), TTL = 60 * 60 * 1000;
@@ -269,11 +275,58 @@ http.createServer(async (req, res) => {
             [row.text, row.lat, row.lng, row.tier, row.verdict, row.ua]
           );
         } else {
+          row.id = "m" + (memSeq++);
           memFeedback.unshift(row);
           if(memFeedback.length > 500) memFeedback.pop();
         }
         res.writeHead(200); res.end(JSON.stringify({ ok:true }));
       } catch(e){ res.writeHead(200); res.end(JSON.stringify({ ok:true })); }
+      return;
+    }
+
+    /* sitecheck: log one screening run (public, best-effort) */
+    if(url.pathname === "/api/sitecheck"){
+      if(req.method !== "POST"){ res.writeHead(405); res.end(JSON.stringify({ error:"POST only" })); return; }
+      try {
+        const body = await readBody(req);
+        let ev = {}; try { ev = JSON.parse(body || "{}"); } catch(_){}
+        const row = {
+          lat: (typeof ev.lat === "number" && isFinite(ev.lat)) ? ev.lat : null,
+          lng: (typeof ev.lng === "number" && isFinite(ev.lng)) ? ev.lng : null,
+          verdict: String(ev.verdict || "").slice(0, 200),
+          cat: String(ev.cat || "").slice(0, 40),
+          fastest: String(ev.fastest || "").slice(0, 120),
+          feasible: (typeof ev.feasible === "number" && isFinite(ev.feasible)) ? Math.round(ev.feasible) : null,
+          ua: String(req.headers["user-agent"] || "").slice(0, 200),
+          ts: new Date().toISOString()
+        };
+        if(pool){
+          await pool.query(
+            "INSERT INTO sitechecks (lat,lng,verdict,cat,fastest,feasible,ua) VALUES ($1,$2,$3,$4,$5,$6,$7)",
+            [row.lat, row.lng, row.verdict, row.cat, row.fastest, row.feasible, row.ua]
+          );
+        } else {
+          memSitechecks.unshift(row);
+          if(memSitechecks.length > 1000) memSitechecks.pop();
+        }
+        res.writeHead(200); res.end(JSON.stringify({ ok:true }));
+      } catch(e){ res.writeHead(200); res.end(JSON.stringify({ ok:true })); }
+      return;
+    }
+
+    /* sitecheck: operator reads recent screening runs (key-gated when ADMIN_KEY is set) */
+    if(url.pathname === "/api/admin/sitechecks"){
+      if(ADMIN_KEY && url.searchParams.get("key") !== ADMIN_KEY){
+        res.writeHead(401); res.end(JSON.stringify({ error:"unauthorized" })); return;
+      }
+      try {
+        if(pool){
+          const r = await pool.query("SELECT ts,lat,lng,verdict,cat,fastest,feasible FROM sitechecks ORDER BY ts DESC LIMIT 500");
+          res.writeHead(200); res.end(JSON.stringify({ ok:true, items: r.rows }));
+        } else {
+          res.writeHead(200); res.end(JSON.stringify({ ok:true, items: memSitechecks, note:"in-memory (no DATABASE_URL) — resets on restart" }));
+        }
+      } catch(e){ res.writeHead(502); res.end(JSON.stringify({ error: String((e && e.message) || e) })); }
       return;
     }
 
@@ -284,11 +337,32 @@ http.createServer(async (req, res) => {
       }
       try {
         if(pool){
-          const r = await pool.query("SELECT ts,text,lat,lng,tier,verdict FROM feedback ORDER BY ts DESC LIMIT 500");
+          const r = await pool.query("SELECT id,ts,text,lat,lng,tier,verdict FROM feedback ORDER BY ts DESC LIMIT 500");
           res.writeHead(200); res.end(JSON.stringify({ ok:true, items: r.rows }));
         } else {
           res.writeHead(200); res.end(JSON.stringify({ ok:true, items: memFeedback, note:"in-memory (no DATABASE_URL) — resets on restart" }));
         }
+      } catch(e){ res.writeHead(502); res.end(JSON.stringify({ error: String((e && e.message) || e) })); }
+      return;
+    }
+
+    /* feedback: operator deletes one note (key-gated) */
+    if(url.pathname === "/api/admin/feedback/delete"){
+      if(req.method !== "POST"){ res.writeHead(405); res.end(JSON.stringify({ error:"POST only" })); return; }
+      if(ADMIN_KEY && url.searchParams.get("key") !== ADMIN_KEY){
+        res.writeHead(401); res.end(JSON.stringify({ error:"unauthorized" })); return;
+      }
+      try {
+        const body = await readBody(req);
+        let ev = {}; try { ev = JSON.parse(body || "{}"); } catch(_){}
+        const id = ev.id;
+        if(id === undefined || id === null || id === ""){ res.writeHead(400); res.end(JSON.stringify({ error:"id required" })); return; }
+        if(pool){
+          await pool.query("DELETE FROM feedback WHERE id = $1", [id]);
+        } else {
+          for(let i = memFeedback.length - 1; i >= 0; i--){ if(String(memFeedback[i].id) === String(id)) memFeedback.splice(i, 1); }
+        }
+        res.writeHead(200); res.end(JSON.stringify({ ok:true }));
       } catch(e){ res.writeHead(502); res.end(JSON.stringify({ error: String((e && e.message) || e) })); }
       return;
     }
