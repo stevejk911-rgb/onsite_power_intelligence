@@ -317,11 +317,24 @@
     setTimeout(function(){
       clearInterval(ti);
       applyVerdict(t,seed);
+      logSiteCheck(t,seed,center);
       document.getElementById("bridgeLoad").classList.add("hidden");
       document.getElementById("bridgeVerdict").classList.remove("hidden");
       document.getElementById("results").classList.remove("hidden");
       lmap.invalidateSize();
     }, 2300);
+  }
+
+  function logSiteCheck(t,seed,center){
+    try{
+      var feas=t.cards.filter(function(c){ return c.s==="g"; });
+      var fastest;
+      if(feas.length){ var idx=t.cards.indexOf(feas[0]); var mo=jitterMo(feas[0].mo,seed,idx).replace("~",""); fastest=feas[0].h+" · "+mo+" mo"; }
+      else { fastest="Grid-blocked"; }
+      var cat=(t===TIERS.A)?"Yes":((t===TIERS.B)?"Constrained":"No near-term");
+      fetch("/api/sitecheck",{method:"POST",headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({ lat:center[0], lng:center[1], verdict:t.title, cat:cat, fastest:fastest, feasible:feas.length })}).catch(function(){});
+    }catch(e){}
   }
 
   function sendFb(){
