@@ -70,6 +70,8 @@
   .fb .who2 span{color:var(--muted);font-weight:500}
   .fb .t{font-size:12px;color:var(--muted)}
   .fb .msg{font-size:13.5px;color:var(--body);margin-top:6px;line-height:1.45}
+  .fb .ctx{font-size:11.5px;color:var(--muted);margin-top:5px}
+  .empty{padding:22px 20px;font-size:13.5px;color:var(--muted);line-height:1.5}
 
   .bars{padding:8px 20px 16px}
   .barrow{display:flex;align-items:center;gap:12px;padding:7px 0}
@@ -83,113 +85,107 @@
 </style>
 </head>
 <body>
-  <div class="top"><div class="in">
-    <div class="brand">On-Site Power Intelligence <span>· Admin</span></div>
-    <div class="who">Signed in as <b>Steve</b> · Jun 6</div>
-  </div></div>
-  <div class="tabs">
-    <button class="tab on" onclick="go('overview',this)">Overview</button>
-    <button class="tab" onclick="go('sites',this)">Sites</button>
-    <button class="tab" onclick="go('feedback',this)">Feedback</button>
-    <button class="tab" onclick="go('outreach',this)">Outreach</button>
+<div class="top"><div class="in">
+  <div class="brand">On-Site Power Intelligence <span>· Admin</span></div>
+  <div class="who">Signed in as <b>Steve</b> · Jun 6</div>
+</div></div>
+<div class="tabs">
+  <button class="tab on" onclick="go('overview',this)">Overview</button>
+  <button class="tab" onclick="go('sites',this)">Sites</button>
+  <button class="tab" onclick="go('feedback',this)">Feedback</button>
+  <button class="tab" onclick="go('outreach',this)">Outreach</button>
+</div>
+
+<div class="wrap">
+
+<!-- OVERVIEW -->
+<section id="overview">
+  <div class="kpis">
+    <div class="kpi"><div class="lab">Sites screened</div><div class="n">142</div><div class="d">+18 today</div></div>
+    <div class="kpi"><div class="lab">Powerable verdicts</div><div class="n">88%</div><div class="d flat">±40% screening-grade</div></div>
+    <div class="kpi"><div class="lab">Feedback in</div><div class="n" id="kpiFb">—</div><div class="d flat">live from the site</div></div>
+    <div class="kpi"><div class="lab">Outreach sent</div><div class="n">34 / 50</div><div class="d">6 opened</div></div>
+    <div class="kpi"><div class="lab">Interviews booked</div><div class="n">3</div><div class="d">2 this week</div></div>
   </div>
 
-  <div class="wrap">
+  <div class="grid2">
+    <div class="panel">
+      <div class="ph"><div class="pt">Recent site checks</div><div class="pa" onclick="go('sites',document.querySelectorAll('.tab')[1])">View all</div></div>
+      <table>
+        <tr><th>Location</th><th>Verdict</th><th>Fastest path</th><th>When</th></tr>
+        <tr><td>Loudoun County, VA <span class="muted mono">39.04, -77.49</span></td><td><span class="pill p-yes">Yes</span></td><td class="muted">Fuel cell · 12 mo</td><td class="muted">3m ago</td></tr>
+        <tr><td>Abilene, TX <span class="muted mono">32.45, -99.73</span></td><td><span class="pill p-yes">Yes</span></td><td class="muted">Gas turbine · 14 mo</td><td class="muted">26m ago</td></tr>
+        <tr><td>Maricopa County, AZ <span class="muted mono">33.30, -112.40</span></td><td><span class="pill p-con">Constrained</span></td><td class="muted">Gas + storage · 19 mo</td><td class="muted">1h ago</td></tr>
+        <tr><td>Meridian, MS <span class="muted mono">32.35, -88.88</span></td><td><span class="pill p-yes">Yes</span></td><td class="muted">Gas + solar · 16 mo</td><td class="muted">2h ago</td></tr>
+        <tr><td>Cheyenne, WY <span class="muted mono">41.14, -104.82</span></td><td><span class="pill p-no">No near-term</span></td><td class="muted">Grid-blocked · review</td><td class="muted">4h ago</td></tr>
+      </table>
+    </div>
 
-    <!-- OVERVIEW -->
-    <section id="overview">
-      <div class="kpis">
-        <div class="kpi"><div class="lab">Sites screened</div><div class="n">142</div><div class="d">+18 today</div></div>
-        <div class="kpi"><div class="lab">Powerable verdicts</div><div class="n">88%</div><div class="d flat">±40% screening-grade</div></div>
-        <div class="kpi"><div class="lab">Feedback in</div><div class="n">9</div><div class="d">+3 today</div></div>
-        <div class="kpi"><div class="lab">Outreach sent</div><div class="n">34 / 50</div><div class="d">6 opened</div></div>
-        <div class="kpi"><div class="lab">Interviews booked</div><div class="n">3</div><div class="d">2 this week</div></div>
-      </div>
-
-      <div class="grid2">
-        <div class="panel">
-          <div class="ph"><div class="pt">Recent site checks</div><div class="pa" onclick="go('sites',document.querySelectorAll('.tab')[1])">View all</div></div>
-          <table>
-            <tr><th>Location</th><th>Verdict</th><th>Fastest path</th><th>When</th></tr>
-            <tr><td>Loudoun County, VA <span class="muted mono">39.04, -77.49</span></td><td><span class="pill p-yes">Yes</span></td><td class="muted">Fuel cell · 12 mo</td><td class="muted">3m ago</td></tr>
-            <tr><td>Abilene, TX <span class="muted mono">32.45, -99.73</span></td><td><span class="pill p-yes">Yes</span></td><td class="muted">Gas turbine · 14 mo</td><td class="muted">26m ago</td></tr>
-            <tr><td>Maricopa County, AZ <span class="muted mono">33.30, -112.40</span></td><td><span class="pill p-con">Constrained</span></td><td class="muted">Gas + storage · 19 mo</td><td class="muted">1h ago</td></tr>
-            <tr><td>Meridian, MS <span class="muted mono">32.35, -88.88</span></td><td><span class="pill p-yes">Yes</span></td><td class="muted">Gas + solar · 16 mo</td><td class="muted">2h ago</td></tr>
-            <tr><td>Cheyenne, WY <span class="muted mono">41.14, -104.82</span></td><td><span class="pill p-no">No near-term</span></td><td class="muted">Grid-blocked · review</td><td class="muted">4h ago</td></tr>
-          </table>
-        </div>
-
-        <div class="panel">
-          <div class="ph"><div class="pt">Latest feedback</div><div class="pa" onclick="go('feedback',document.querySelectorAll('.tab')[2])">View all</div></div>
-          <div class="fb"><div class="top2"><div class="who2">Andrew Likens <span>· Crusoe</span></div><div class="t">2h ago</div></div><div class="msg">ERCOT West queue date reads optimistic. We're seeing 2032 for new interconnects out there.</div></div>
-          <div class="fb"><div class="top2"><div class="who2">Bo Bond <span>· Cushman</span></div><div class="t">5h ago</div></div><div class="msg">Pulled this up live with a client, they loved it. Can it batch 10 coordinates at once?</div></div>
-          <div class="fb"><div class="top2"><div class="who2">Anonymous <span>· Phoenix, AZ</span></div><div class="t">1d ago</div></div><div class="msg">Solar constraint feels harsh for AZ irradiance. Worth a second look.</div></div>
-        </div>
-      </div>
-    </section>
-
-    <!-- SITES -->
-    <section id="sites" class="hide">
-      <p class="h">All site checks</p>
-      <div class="panel">
-        <table>
-          <tr><th>Location</th><th>Coordinate</th><th>Verdict</th><th>Fastest path</th><th>Feasible options</th><th>When</th></tr>
-          <tr><td>Loudoun County, VA</td><td class="muted mono">39.0438, -77.4874</td><td><span class="pill p-yes">Yes</span></td><td class="muted">Fuel cell · 12 mo</td><td class="muted">4 of 10</td><td class="muted">3m ago</td></tr>
-          <tr><td>Abilene, TX</td><td class="muted mono">32.4487, -99.7331</td><td><span class="pill p-yes">Yes</span></td><td class="muted">Gas turbine · 14 mo</td><td class="muted">4 of 10</td><td class="muted">26m ago</td></tr>
-          <tr><td>Maricopa County, AZ</td><td class="muted mono">33.3010, -112.4000</td><td><span class="pill p-con">Constrained</span></td><td class="muted">Gas + storage · 19 mo</td><td class="muted">2 of 10</td><td class="muted">1h ago</td></tr>
-          <tr><td>Meridian, MS</td><td class="muted mono">32.3513, -88.8779</td><td><span class="pill p-yes">Yes</span></td><td class="muted">Gas + solar · 16 mo</td><td class="muted">3 of 10</td><td class="muted">2h ago</td></tr>
-          <tr><td>Cheyenne, WY</td><td class="muted mono">41.1400, -104.8202</td><td><span class="pill p-no">No near-term</span></td><td class="muted">Grid-blocked</td><td class="muted">0 of 10</td><td class="muted">4h ago</td></tr>
-          <tr><td>New Albany, OH</td><td class="muted mono">40.0814, -82.8088</td><td><span class="pill p-yes">Yes</span></td><td class="muted">Gas + solar · 15 mo</td><td class="muted">4 of 10</td><td class="muted">5h ago</td></tr>
-          <tr><td>Shackelford County, TX</td><td class="muted mono">32.7460, -99.3520</td><td><span class="pill p-yes">Yes</span></td><td class="muted">Gas turbine · 13 mo</td><td class="muted">5 of 10</td><td class="muted">Yesterday</td></tr>
-          <tr><td>Lyon Township, MI</td><td class="muted mono">42.4690, -83.6480</td><td><span class="pill p-con">Constrained</span></td><td class="muted">Storage microgrid · 21 mo</td><td class="muted">2 of 10</td><td class="muted">Yesterday</td></tr>
-        </table>
-      </div>
-    </section>
-
-    <!-- FEEDBACK -->
-    <section id="feedback" class="hide">
-      <p class="h">Feedback inbox <span style="color:var(--muted);font-weight:500;text-transform:none;letter-spacing:0">· from "This looks wrong?"</span></p>
-      <div class="panel">
-        <div class="fb"><div class="top2"><div class="who2">Andrew Likens <span>· Crusoe</span></div><div class="t">2h ago</div></div><div class="msg">ERCOT West queue date reads optimistic. We're seeing 2032 for new interconnects out there.</div></div>
-        <div class="fb"><div class="top2"><div class="who2">Bo Bond <span>· Cushman &amp; Wakefield</span></div><div class="t">5h ago</div></div><div class="msg">Pulled this up live with a client, they loved it. Can it batch 10 coordinates at once?</div></div>
-        <div class="fb"><div class="top2"><div class="who2">Anonymous <span>· Phoenix, AZ run</span></div><div class="t">1d ago</div></div><div class="msg">Solar constraint feels harsh for AZ irradiance. Worth a second look at the land-per-MW factor.</div></div>
-        <div class="fb"><div class="top2"><div class="who2">Judith Judson <span>· Vantage</span></div><div class="t">1d ago</div></div><div class="msg">Off-grid gas microgrid should rank higher for 1 GW+ loads. Otherwise this is exactly the screen we do by hand.</div></div>
-        <div class="fb"><div class="top2"><div class="who2">Anonymous <span>· Cheyenne, WY run</span></div><div class="t">2d ago</div></div><div class="msg">Marked grid-blocked but there's a 2028 upgrade in the WAPA plan. Might be worth flagging.</div></div>
-      </div>
-    </section>
-
-    <!-- OUTREACH -->
-    <section id="outreach" class="hide">
-      <p class="h">Outreach pipeline · 50 contacts</p>
-      <div class="grid2">
-        <div class="panel" style="grid-column:1 / -1;padding-bottom:8px">
-          <div class="bars">
-            <div class="barrow"><div class="bl">Scheduled</div><div class="bt"><div class="bf" style="width:32%;background:#c4ccd6"></div></div><div class="bn">16</div></div>
-            <div class="barrow"><div class="bl">Sent</div><div class="bt"><div class="bf" style="width:36%;background:#1657e0"></div></div><div class="bn">18</div></div>
-            <div class="barrow"><div class="bl">Opened</div><div class="bt"><div class="bf" style="width:18%;background:#e0891e"></div></div><div class="bn">9</div></div>
-            <div class="barrow"><div class="bl">Replied</div><div class="bt"><div class="bf" style="width:12%;background:#1f9d57"></div></div><div class="bn">6</div></div>
-            <div class="barrow"><div class="bl">Booked</div><div class="bt"><div class="bf" style="width:6%;background:#0b1220"></div></div><div class="bn">3</div></div>
-          </div>
-        </div>
-      </div>
-      <div class="panel sec" style="margin-top:18px">
-        <table>
-          <tr><th>Contact</th><th>Company</th><th>Segment</th><th>Status</th><th>Last touch</th></tr>
-          <tr><td>Cully Cavness</td><td>Crusoe</td><td class="muted">BTM developer</td><td><span class="pill p-book">Booked</span></td><td class="muted">Thu 7:45a</td></tr>
-          <tr><td>Bo Bond</td><td>Cushman &amp; Wakefield</td><td class="muted">Broker</td><td><span class="pill p-book">Booked</span></td><td class="muted">Thu 7:45a</td></tr>
-          <tr><td>Andrew Likens</td><td>Crusoe</td><td class="muted">BTM developer</td><td><span class="pill p-rep">Replied</span></td><td class="muted">2h ago</td></tr>
-          <tr><td>Asher Genoot</td><td>Hut 8</td><td class="muted">BTM developer</td><td><span class="pill p-open">Opened</span></td><td class="muted">5h ago</td></tr>
-          <tr><td>Brandon Oyer</td><td>AWS</td><td class="muted">Hyperscaler</td><td><span class="pill p-sent">Sent</span></td><td class="muted">Thu 7:45a</td></tr>
-          <tr><td>Judith Judson</td><td>Vantage</td><td class="muted">DC developer</td><td><span class="pill p-rep">Replied</span></td><td class="muted">1d ago</td></tr>
-          <tr><td>Andy Cvengros</td><td>JLL</td><td class="muted">Broker</td><td><span class="pill p-open">Opened</span></td><td class="muted">Yesterday</td></tr>
-          <tr><td>Sikander Rashid</td><td>Brookfield</td><td class="muted">PE infra</td><td><span class="pill p-sent">Sent</span></td><td class="muted">Thu 21:45</td></tr>
-          <tr><td>Mahesh Thiagarajan</td><td>Oracle</td><td class="muted">Hyperscaler</td><td><span class="pill p-sched">Scheduled</span></td><td class="muted">Tue 23:45</td></tr>
-          <tr><td>Chad Zamarin</td><td>Williams</td><td class="muted">BTM developer</td><td><span class="pill p-sched">Scheduled</span></td><td class="muted">Tue 21:45</td></tr>
-        </table>
-      </div>
-    </section>
-
+    <div class="panel">
+      <div class="ph"><div class="pt">Latest feedback</div><div class="pa" onclick="go('feedback',document.querySelectorAll('.tab')[2])">View all</div></div>
+      <div id="fbLatest"><div class="empty">Loading…</div></div>
+    </div>
   </div>
+</section>
+
+<!-- SITES -->
+<section id="sites" class="hide">
+  <p class="h">All site checks</p>
+  <div class="panel">
+    <table>
+      <tr><th>Location</th><th>Coordinate</th><th>Verdict</th><th>Fastest path</th><th>Feasible options</th><th>When</th></tr>
+      <tr><td>Loudoun County, VA</td><td class="muted mono">39.0438, -77.4874</td><td><span class="pill p-yes">Yes</span></td><td class="muted">Fuel cell · 12 mo</td><td class="muted">4 of 10</td><td class="muted">3m ago</td></tr>
+      <tr><td>Abilene, TX</td><td class="muted mono">32.4487, -99.7331</td><td><span class="pill p-yes">Yes</span></td><td class="muted">Gas turbine · 14 mo</td><td class="muted">4 of 10</td><td class="muted">26m ago</td></tr>
+      <tr><td>Maricopa County, AZ</td><td class="muted mono">33.3010, -112.4000</td><td><span class="pill p-con">Constrained</span></td><td class="muted">Gas + storage · 19 mo</td><td class="muted">2 of 10</td><td class="muted">1h ago</td></tr>
+      <tr><td>Meridian, MS</td><td class="muted mono">32.3513, -88.8779</td><td><span class="pill p-yes">Yes</span></td><td class="muted">Gas + solar · 16 mo</td><td class="muted">3 of 10</td><td class="muted">2h ago</td></tr>
+      <tr><td>Cheyenne, WY</td><td class="muted mono">41.1400, -104.8202</td><td><span class="pill p-no">No near-term</span></td><td class="muted">Grid-blocked</td><td class="muted">0 of 10</td><td class="muted">4h ago</td></tr>
+      <tr><td>New Albany, OH</td><td class="muted mono">40.0814, -82.8088</td><td><span class="pill p-yes">Yes</span></td><td class="muted">Gas + solar · 15 mo</td><td class="muted">4 of 10</td><td class="muted">5h ago</td></tr>
+      <tr><td>Shackelford County, TX</td><td class="muted mono">32.7460, -99.3520</td><td><span class="pill p-yes">Yes</span></td><td class="muted">Gas turbine · 13 mo</td><td class="muted">5 of 10</td><td class="muted">Yesterday</td></tr>
+      <tr><td>Lyon Township, MI</td><td class="muted mono">42.4690, -83.6480</td><td><span class="pill p-con">Constrained</span></td><td class="muted">Storage microgrid · 21 mo</td><td class="muted">2 of 10</td><td class="muted">Yesterday</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- FEEDBACK -->
+<section id="feedback" class="hide">
+  <p class="h">Feedback inbox <span style="color:var(--muted);font-weight:500;text-transform:none;letter-spacing:0">· one-line notes left on the site</span></p>
+  <div class="panel">
+    <div id="fbList"><div class="empty">Loading…</div></div>
+  </div>
+</section>
+
+<!-- OUTREACH -->
+<section id="outreach" class="hide">
+  <p class="h">Outreach pipeline · 50 contacts</p>
+  <div class="grid2">
+    <div class="panel" style="grid-column:1 / -1;padding-bottom:8px">
+      <div class="bars">
+        <div class="barrow"><div class="bl">Scheduled</div><div class="bt"><div class="bf" style="width:32%;background:#c4ccd6"></div></div><div class="bn">16</div></div>
+        <div class="barrow"><div class="bl">Sent</div><div class="bt"><div class="bf" style="width:36%;background:#1657e0"></div></div><div class="bn">18</div></div>
+        <div class="barrow"><div class="bl">Opened</div><div class="bt"><div class="bf" style="width:18%;background:#e0891e"></div></div><div class="bn">9</div></div>
+        <div class="barrow"><div class="bl">Replied</div><div class="bt"><div class="bf" style="width:12%;background:#1f9d57"></div></div><div class="bn">6</div></div>
+        <div class="barrow"><div class="bl">Booked</div><div class="bt"><div class="bf" style="width:6%;background:#0b1220"></div></div><div class="bn">3</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="panel sec" style="margin-top:18px">
+    <table>
+      <tr><th>Contact</th><th>Company</th><th>Segment</th><th>Status</th><th>Last touch</th></tr>
+      <tr><td>Cully Cavness</td><td>Crusoe</td><td class="muted">BTM developer</td><td><span class="pill p-book">Booked</span></td><td class="muted">Thu 7:45a</td></tr>
+      <tr><td>Bo Bond</td><td>Cushman &amp; Wakefield</td><td class="muted">Broker</td><td><span class="pill p-book">Booked</span></td><td class="muted">Thu 7:45a</td></tr>
+      <tr><td>Andrew Likens</td><td>Crusoe</td><td class="muted">BTM developer</td><td><span class="pill p-rep">Replied</span></td><td class="muted">2h ago</td></tr>
+      <tr><td>Asher Genoot</td><td>Hut 8</td><td class="muted">BTM developer</td><td><span class="pill p-open">Opened</span></td><td class="muted">5h ago</td></tr>
+      <tr><td>Brandon Oyer</td><td>AWS</td><td class="muted">Hyperscaler</td><td><span class="pill p-sent">Sent</span></td><td class="muted">Thu 7:45a</td></tr>
+      <tr><td>Judith Judson</td><td>Vantage</td><td class="muted">DC developer</td><td><span class="pill p-rep">Replied</span></td><td class="muted">1d ago</td></tr>
+      <tr><td>Andy Cvengros</td><td>JLL</td><td class="muted">Broker</td><td><span class="pill p-open">Opened</span></td><td class="muted">Yesterday</td></tr>
+      <tr><td>Sikander Rashid</td><td>Brookfield</td><td class="muted">PE infra</td><td><span class="pill p-sent">Sent</span></td><td class="muted">Thu 21:45</td></tr>
+      <tr><td>Mahesh Thiagarajan</td><td>Oracle</td><td class="muted">Hyperscaler</td><td><span class="pill p-sched">Scheduled</span></td><td class="muted">Tue 23:45</td></tr>
+      <tr><td>Chad Zamarin</td><td>Williams</td><td class="muted">BTM developer</td><td><span class="pill p-sched">Scheduled</span></td><td class="muted">Tue 21:45</td></tr>
+    </table>
+  </div>
+</section>
+
+</div>
 
 <script>
   function go(id,btn){
@@ -199,6 +195,52 @@
     btn.classList.add("on");
     window.scrollTo({top:0,behavior:"smooth"});
   }
+
+  function esc(s){ return String(s||"").replace(/[&<>"]/g,function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]; }); }
+  function rel(ts){
+    var t=new Date(ts).getTime(); if(!isFinite(t)) return "";
+    var s=Math.max(0,(Date.now()-t)/1000);
+    if(s<60) return "just now";
+    if(s<3600) return Math.floor(s/60)+"m ago";
+    if(s<86400) return Math.floor(s/3600)+"h ago";
+    if(s<604800) return Math.floor(s/86400)+"d ago";
+    return new Date(ts).toLocaleDateString();
+  }
+  function fbItemHTML(it){
+    var loc=(typeof it.lat==="number" && typeof it.lng==="number") ? (it.lat.toFixed(2)+", "+it.lng.toFixed(2)) : "site";
+    return '<div class="fb"><div class="top2">'
+      + '<div class="who2">Visitor <span>· '+esc(loc)+'</span></div>'
+      + '<div class="t">'+rel(it.ts)+'</div></div>'
+      + '<div class="msg">'+esc(it.text)+'</div>'
+      + (it.verdict?('<div class="ctx">on: '+esc(it.verdict)+'</div>'):'')
+      + '</div>';
+  }
+  function loadFeedback(){
+    var key=new URLSearchParams(location.search).get("key")||"";
+    fetch("/api/admin/feedback"+(key?("?key="+encodeURIComponent(key)):""))
+      .then(function(r){ if(r.status===401) throw new Error("locked"); return r.json(); })
+      .then(function(d){
+        var items=(d&&d.items)||[];
+        var kpi=document.getElementById("kpiFb"); if(kpi) kpi.textContent=String(items.length);
+        var list=document.getElementById("fbList");
+        var latest=document.getElementById("fbLatest");
+        if(!items.length){
+          var empty='<div class="empty">No feedback yet. One-line notes left on the site land here.</div>';
+          list.innerHTML=empty; latest.innerHTML=empty; return;
+        }
+        list.innerHTML=items.map(fbItemHTML).join("");
+        latest.innerHTML=items.slice(0,3).map(fbItemHTML).join("");
+      })
+      .catch(function(e){
+        var msg=(e&&e.message==="locked")
+          ? '<div class="empty">Locked. Open this page as <span class="mono">admin.html?key=YOUR_ADMIN_KEY</span> to view feedback.</div>'
+          : '<div class="empty">Could not load feedback right now.</div>';
+        document.getElementById("fbList").innerHTML=msg;
+        document.getElementById("fbLatest").innerHTML=msg;
+        var kpi=document.getElementById("kpiFb"); if(kpi) kpi.textContent="—";
+      });
+  }
+  loadFeedback();
 </script>
 </body>
 </html>
