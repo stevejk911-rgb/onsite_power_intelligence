@@ -7,7 +7,8 @@
 <style>
   :root{
     --ink:#0b1220;--body:#2b3340;--muted:#6b7480;--line:#e9ecf1;
-    --blue:#1657e0;--blue-soft:#eef3ff;--green:#1f9d57;
+    --blue:#1657e0;--blue-soft:#eef3ff;
+    --green:#1f9d57;--green-bg:#e7f6ee;--amber:#e0891e;--amber-bg:#fdf1e0;--red:#d23b3b;--red-bg:#fbe7e7;
   }
   *{box-sizing:border-box}
   body{margin:0;background:#f7f8fa;color:var(--body);
@@ -15,32 +16,60 @@
     -webkit-font-smoothing:antialiased;line-height:1.5}
 
   .top{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:10}
-  .top .in{max-width:840px;margin:0 auto;padding:16px 24px;display:flex;align-items:center;justify-content:space-between}
+  .top .in{max-width:1100px;margin:0 auto;padding:16px 24px;display:flex;align-items:center;justify-content:space-between}
   .brand{font-size:12px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--blue)}
   .brand span{color:var(--muted)}
   .who{font-size:13px;color:var(--muted);display:flex;align-items:center;gap:14px}
   .who b{color:var(--ink)}
   .lock{font-size:12.5px;color:var(--blue);font-weight:600;cursor:pointer;background:none;border:0;padding:0}
 
-  .wrap{max-width:840px;margin:0 auto;padding:30px 24px 70px}
-  .head{display:flex;align-items:flex-end;justify-content:space-between;margin:0 0 18px}
-  .h{font-size:13px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin:0}
+  .tabs{max-width:1100px;margin:0 auto;padding:0 24px;display:flex;gap:4px;border-bottom:1px solid var(--line);background:#fff}
+  .tab{appearance:none;background:none;border:0;padding:14px 14px;font-size:14px;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px}
+  .tab.on{color:var(--ink);border-bottom-color:var(--blue)}
+
+  .wrap{max-width:1100px;margin:0 auto;padding:26px 24px 70px}
+  .h{font-size:13px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin:0 0 14px}
   .h span{color:var(--muted);font-weight:500;text-transform:none;letter-spacing:0}
-  .count{font-size:13px;color:var(--muted)}
-  .count b{color:var(--ink);font-size:15px}
 
-  .panel{background:#fff;border:1px solid var(--line);border-radius:18px;padding:4px 0 4px}
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px}
+  .kpi{background:#fff;border:1px solid var(--line);border-radius:18px;padding:20px 22px}
+  .kpi .lab{font-size:12.5px;color:var(--muted);font-weight:600}
+  .kpi .n{font-size:32px;font-weight:700;color:var(--ink);letter-spacing:-.02em;margin-top:8px;line-height:1}
+  .kpi .d{font-size:12.5px;margin-top:8px;color:var(--muted);font-weight:600}
 
-  .fb{padding:16px 22px;border-bottom:1px solid #f1f3f6}
+  .grid2{display:grid;grid-template-columns:1.25fr 1fr;gap:18px;margin-top:26px}
+  @media (max-width:880px){.grid2{grid-template-columns:1fr}}
+  .panel{background:#fff;border:1px solid var(--line);border-radius:18px;padding:6px 0 8px}
+  .panel .ph{display:flex;align-items:center;justify-content:space-between;padding:16px 20px 12px}
+  .panel .pt{font-size:15px;font-weight:700;color:var(--ink)}
+  .panel .pa{font-size:12.5px;color:var(--blue);font-weight:600;cursor:pointer}
+
+  table{width:100%;border-collapse:collapse}
+  th{text-align:left;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);padding:8px 20px;border-bottom:1px solid var(--line)}
+  td{font-size:13.5px;color:var(--ink);padding:13px 20px;border-bottom:1px solid #f1f3f6;vertical-align:middle}
+  tr:last-child td{border-bottom:0}
+  td.muted{color:var(--muted)}
+  .mono{font-variant-numeric:tabular-nums}
+
+  .pill{display:inline-block;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;white-space:nowrap}
+  .p-yes{background:var(--green-bg);color:var(--green)}
+  .p-con{background:var(--amber-bg);color:var(--amber)}
+  .p-no{background:var(--red-bg);color:var(--red)}
+
+  .fb{padding:14px 20px;border-bottom:1px solid #f1f3f6}
   .fb:last-child{border-bottom:0}
   .fb .top2{display:flex;align-items:center;justify-content:space-between}
   .fb .who2{font-size:13.5px;font-weight:600;color:var(--ink)}
   .fb .who2 span{color:var(--muted);font-weight:500}
-  .fb .t{font-size:12px;color:var(--muted)}
-  .fb .msg{font-size:14.5px;color:var(--ink);margin-top:7px;line-height:1.5}
+  .fb .t{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:10px}
+  .fbdel{background:none;border:0;color:var(--muted);font-size:12px;cursor:pointer;padding:0;text-decoration:underline}
+  .fbdel:hover{color:var(--red)}
+  .fb .msg{font-size:14px;color:var(--ink);margin-top:6px;line-height:1.45}
   .fb .ctx{font-size:11.5px;color:var(--muted);margin-top:6px}
-  .empty{padding:30px 22px;font-size:14px;color:var(--muted);line-height:1.55;text-align:center}
-  .mono{font-variant-numeric:tabular-nums}
+  .empty{padding:26px 20px;font-size:13.5px;color:var(--muted);line-height:1.55;text-align:center}
+
+  .hide{display:none}
+  .sec{margin-top:18px}
 </style>
 </head>
 <body>
@@ -48,15 +77,48 @@
   <div class="brand">On-Site Power Intelligence <span>· Admin</span></div>
   <div class="who"><span>Signed in as <b>Steve</b></span><button class="lock" id="relock" onclick="changeKey()" style="display:none">Change key</button></div>
 </div></div>
+<div class="tabs">
+  <button class="tab on" onclick="go('overview',this)">Overview</button>
+  <button class="tab" onclick="go('sites',this)">Sites</button>
+  <button class="tab" onclick="go('feedback',this)">Feedback</button>
+  <button class="tab" onclick="go('outreach',this)">Outreach</button>
+</div>
 
 <div class="wrap">
-  <div class="head">
-    <p class="h">Feedback inbox <span>· one-line notes left on the site</span></p>
-    <div class="count"><b id="kpiFb">—</b> total</div>
+
+<section id="overview">
+  <div class="kpis">
+    <div class="kpi"><div class="lab">Sites screened</div><div class="n" id="kSites">—</div><div class="d" id="kSitesD">live from the site</div></div>
+    <div class="kpi"><div class="lab">Powerable on-site</div><div class="n" id="kPow">—</div><div class="d">tiers Yes + tight</div></div>
+    <div class="kpi"><div class="lab">Feedback in</div><div class="n" id="kFb">—</div><div class="d">one-line notes</div></div>
   </div>
-  <div class="panel">
-    <div id="fbList"><div class="empty">Loading…</div></div>
+  <div class="grid2">
+    <div class="panel">
+      <div class="ph"><div class="pt">Recent site checks</div><div class="pa" onclick="go('sites',document.querySelectorAll('.tab')[1])">View all</div></div>
+      <div id="recentSites"><div class="empty">Loading…</div></div>
+    </div>
+    <div class="panel">
+      <div class="ph"><div class="pt">Latest feedback</div><div class="pa" onclick="go('feedback',document.querySelectorAll('.tab')[2])">View all</div></div>
+      <div id="recentFb"><div class="empty">Loading…</div></div>
+    </div>
   </div>
+</section>
+
+<section id="sites" class="hide">
+  <p class="h">All site checks <span>· every run logged from the site</span></p>
+  <div class="panel"><div id="sitesTable"><div class="empty">Loading…</div></div></div>
+</section>
+
+<section id="feedback" class="hide">
+  <p class="h">Feedback inbox <span>· one-line notes left on the site</span></p>
+  <div class="panel"><div id="fbList"><div class="empty">Loading…</div></div></div>
+</section>
+
+<section id="outreach" class="hide">
+  <p class="h">Outreach pipeline</p>
+  <div class="panel"><div class="empty">Outreach data isn't connected yet. Hook up Apollo (sequences) or Gmail to track sent / opened / replied / booked here.</div></div>
+</section>
+
 </div>
 
 <script>
@@ -69,9 +131,14 @@
     if(fromUrl){ saveKey(fromUrl); history.replaceState(null,"",location.pathname); return fromUrl; }
     return storedKey();
   }
-  function changeKey(){
-    var k=prompt("Enter admin key");
-    if(k){ saveKey(k); loadFeedback(k); }
+  function changeKey(){ var k=prompt("Enter admin key"); if(k){ saveKey(k); loadAll(k); } }
+
+  function go(id,btn){
+    ["overview","sites","feedback","outreach"].forEach(function(s){ document.getElementById(s).classList.add("hide"); });
+    document.getElementById(id).classList.remove("hide");
+    document.querySelectorAll(".tab").forEach(function(t){ t.classList.remove("on"); });
+    btn.classList.add("on");
+    window.scrollTo({top:0,behavior:"smooth"});
   }
 
   function esc(s){ return String(s||"").replace(/[&<>"]/g,function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]; }); }
@@ -84,42 +151,96 @@
     if(s<604800) return Math.floor(s/86400)+"d ago";
     return new Date(ts).toLocaleDateString();
   }
-  function fbItemHTML(it){
-    var loc=(typeof it.lat==="number" && typeof it.lng==="number") ? (it.lat.toFixed(2)+", "+it.lng.toFixed(2)) : "site";
+  function coord(it){ return (typeof it.lat==="number"&&typeof it.lng==="number") ? (it.lat.toFixed(3)+", "+it.lng.toFixed(3)) : "—"; }
+  function pill(cat){
+    if(cat==="Yes") return '<span class="pill p-yes">Yes</span>';
+    if(cat==="No near-term") return '<span class="pill p-no">No near-term</span>';
+    return '<span class="pill p-con">Constrained</span>';
+  }
+
+  function renderSites(items){
+    document.getElementById("kSites").textContent=String(items.length);
+    var pow=items.filter(function(i){ return i.cat && i.cat!=="No near-term"; }).length;
+    document.getElementById("kPow").textContent=items.length? (Math.round(100*pow/items.length)+"%") : "—";
+    var recent=document.getElementById("recentSites");
+    if(!items.length){ recent.innerHTML='<div class="empty">No runs yet. Each screening on the site shows up here.</div>'; }
+    else {
+      var rows=items.slice(0,6).map(function(i){
+        return '<tr><td class="mono">'+esc(coord(i))+'</td><td>'+pill(i.cat)+'</td><td class="muted">'+esc(i.fastest||"")+'</td><td class="muted">'+rel(i.ts)+'</td></tr>';
+      }).join("");
+      recent.innerHTML='<table><tr><th>Coordinate</th><th>Verdict</th><th>Fastest path</th><th>When</th></tr>'+rows+'</table>';
+    }
+    var full=document.getElementById("sitesTable");
+    if(!items.length){ full.innerHTML='<div class="empty">No site checks logged yet.</div>'; }
+    else {
+      var rows2=items.map(function(i){
+        return '<tr><td class="mono">'+esc(coord(i))+'</td><td>'+pill(i.cat)+'</td><td class="muted">'+esc(i.fastest||"")+'</td><td class="muted">'+(typeof i.feasible==="number"?(i.feasible+" of 6"):"—")+'</td><td class="muted">'+rel(i.ts)+'</td></tr>';
+      }).join("");
+      full.innerHTML='<table><tr><th>Coordinate</th><th>Verdict</th><th>Fastest path</th><th>Feasible</th><th>When</th></tr>'+rows2+'</table>';
+    }
+  }
+
+  var FB_ITEMS=[], CURKEY="";
+  function fbItemHTML(it,idx){
+    var loc=(typeof it.lat==="number"&&typeof it.lng==="number") ? (it.lat.toFixed(2)+", "+it.lng.toFixed(2)) : "site";
     return '<div class="fb"><div class="top2">'
       + '<div class="who2">Visitor <span>· '+esc(loc)+'</span></div>'
-      + '<div class="t">'+rel(it.ts)+'</div></div>'
+      + '<div class="t">'+rel(it.ts)+'<button class="fbdel" onclick="deleteFb('+idx+')">Delete</button></div></div>'
       + '<div class="msg">'+esc(it.text)+'</div>'
       + (it.verdict?('<div class="ctx">on: '+esc(it.verdict)+'</div>'):'')
       + '</div>';
   }
-  function render(items){
-    document.getElementById("relock").style.display="";
-    var kpi=document.getElementById("kpiFb"); if(kpi) kpi.textContent=String(items.length);
+  function renderFeedback(items){
+    FB_ITEMS=items;
+    document.getElementById("kFb").textContent=String(items.length);
+    var latest=document.getElementById("recentFb");
     var list=document.getElementById("fbList");
     if(!items.length){
-      list.innerHTML='<div class="empty">No feedback yet. One-line notes left on the site land here.</div>';
-      return;
+      var e='<div class="empty">No feedback yet. One-line notes left on the site land here.</div>';
+      latest.innerHTML=e; list.innerHTML=e; return;
     }
+    latest.innerHTML=items.slice(0,4).map(fbItemHTML).join("");
     list.innerHTML=items.map(fbItemHTML).join("");
   }
-  function loadFeedback(key){
-    fetch("/api/admin/feedback"+(key?("?key="+encodeURIComponent(key)):""))
-      .then(function(r){ if(r.status===401) throw new Error("locked"); return r.json(); })
-      .then(function(d){ render((d&&d.items)||[]); })
+  function deleteFb(idx){
+    var it=FB_ITEMS[idx]; if(!it) return;
+    if(!confirm("Delete this feedback?")) return;
+    fetch("/api/admin/feedback/delete"+(CURKEY?("?key="+encodeURIComponent(CURKEY)):""),
+      {method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({ id:it.id })})
+      .then(function(r){ if(!r.ok) throw new Error("del"); return r.json(); })
+      .then(function(){ loadAll(CURKEY); })
+      .catch(function(){ alert("Could not delete that note."); });
+  }
+
+  function api(path,key){
+    return fetch(path+(key?("?key="+encodeURIComponent(key)):""))
+      .then(function(r){ if(r.status===401) throw new Error("locked"); return r.json(); });
+  }
+  function lockedUI(){
+    var m='<div class="empty">Locked. Reload and enter the admin key, or open as <span class="mono">admin.html?key=YOUR_ADMIN_KEY</span>.</div>';
+    ["recentSites","recentFb","sitesTable","fbList"].forEach(function(id){ document.getElementById(id).innerHTML=m; });
+    ["kSites","kPow","kFb"].forEach(function(id){ document.getElementById(id).textContent="—"; });
+  }
+  function loadAll(key){
+    CURKEY=key||"";
+    Promise.all([ api("/api/admin/sitechecks",key), api("/api/admin/feedback",key) ])
+      .then(function(res){
+        document.getElementById("relock").style.display="";
+        renderSites((res[0]&&res[0].items)||[]);
+        renderFeedback((res[1]&&res[1].items)||[]);
+      })
       .catch(function(e){
         if(e&&e.message==="locked"){
           clearKey();
           var k=prompt("This admin page is locked. Enter the admin key:");
-          if(k){ saveKey(k); loadFeedback(k); return; }
-          document.getElementById("fbList").innerHTML='<div class="empty">Locked. Reload and enter the admin key, or open as <span class="mono">admin.html?key=YOUR_ADMIN_KEY</span>.</div>';
-          document.getElementById("kpiFb").textContent="—";
+          if(k){ saveKey(k); loadAll(k); return; }
+          lockedUI();
         } else {
-          document.getElementById("fbList").innerHTML='<div class="empty">Could not load feedback right now.</div>';
+          ["recentSites","recentFb","sitesTable","fbList"].forEach(function(id){ document.getElementById(id).innerHTML='<div class="empty">Could not load right now.</div>'; });
         }
       });
   }
-  loadFeedback(initialKey());
+  loadAll(initialKey());
 </script>
 </body>
 </html>
