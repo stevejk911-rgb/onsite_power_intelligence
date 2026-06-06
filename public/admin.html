@@ -28,24 +28,32 @@
   .tab.on{color:var(--ink);border-bottom-color:var(--blue)}
 
   .wrap{max-width:1100px;margin:0 auto;padding:26px 24px 70px}
-  .h{font-size:13px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin:0 0 14px}
-  .h span{color:var(--muted);font-weight:500;text-transform:none;letter-spacing:0}
+  .htitle{font-size:18px;font-weight:700;color:var(--ink);margin:0 0 4px}
+  .intro{font-size:13.5px;color:var(--muted);margin:0 0 18px;line-height:1.5;max-width:680px}
 
-  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px}
-  .kpi{background:#fff;border:1px solid var(--line);border-radius:18px;padding:20px 22px}
-  .kpi .lab{font-size:12.5px;color:var(--muted);font-weight:600}
-  .kpi .n{font-size:32px;font-weight:700;color:var(--ink);letter-spacing:-.02em;margin-top:8px;line-height:1}
-  .kpi .d{font-size:12.5px;margin-top:8px;color:var(--muted);font-weight:600}
+  /* verdict legend */
+  .legend{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 22px}
+  .lg{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:9px 13px;font-size:12.5px;color:var(--muted)}
+  .lg b{color:var(--ink);font-weight:600}
+  .dot{width:9px;height:9px;border-radius:50%;flex:none}
+  .dot.g{background:var(--green)} .dot.a{background:var(--amber)} .dot.r{background:var(--red)}
+
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px}
+  .kpi{background:#fff;border:1px solid var(--line);border-radius:18px;padding:18px 20px}
+  .kpi .lab{font-size:13px;color:var(--ink);font-weight:700}
+  .kpi .n{font-size:34px;font-weight:700;color:var(--ink);letter-spacing:-.02em;margin-top:6px;line-height:1}
+  .kpi .d{font-size:12.5px;margin-top:8px;color:var(--muted);line-height:1.45}
 
   .grid2{display:grid;grid-template-columns:1.25fr 1fr;gap:18px;margin-top:26px}
   @media (max-width:880px){.grid2{grid-template-columns:1fr}}
   .panel{background:#fff;border:1px solid var(--line);border-radius:18px;padding:6px 0 8px}
-  .panel .ph{display:flex;align-items:center;justify-content:space-between;padding:16px 20px 12px}
-  .panel .pt{font-size:15px;font-weight:700;color:var(--ink)}
+  .panel .ph{padding:16px 20px 4px}
+  .panel .pt{font-size:15px;font-weight:700;color:var(--ink);display:flex;align-items:center;justify-content:space-between}
   .panel .pa{font-size:12.5px;color:var(--blue);font-weight:600;cursor:pointer}
+  .panel .pd{font-size:12px;color:var(--muted);margin-top:3px}
 
   table{width:100%;border-collapse:collapse}
-  th{text-align:left;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);padding:8px 20px;border-bottom:1px solid var(--line)}
+  th{text-align:left;font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);padding:10px 20px 8px;border-bottom:1px solid var(--line)}
   td{font-size:13.5px;color:var(--ink);padding:13px 20px;border-bottom:1px solid #f1f3f6;vertical-align:middle}
   tr:last-child td{border-bottom:0}
   td.muted{color:var(--muted)}
@@ -59,17 +67,16 @@
   .fb{padding:14px 20px;border-bottom:1px solid #f1f3f6}
   .fb:last-child{border-bottom:0}
   .fb .top2{display:flex;align-items:center;justify-content:space-between}
-  .fb .who2{font-size:13.5px;font-weight:600;color:var(--ink)}
-  .fb .who2 span{color:var(--muted);font-weight:500}
+  .fb .who2{font-size:13px;color:var(--muted)}
+  .fb .who2 b{color:var(--ink);font-weight:600}
   .fb .t{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:10px}
   .fbdel{background:none;border:0;color:var(--muted);font-size:12px;cursor:pointer;padding:0;text-decoration:underline}
   .fbdel:hover{color:var(--red)}
-  .fb .msg{font-size:14px;color:var(--ink);margin-top:6px;line-height:1.45}
+  .fb .msg{font-size:14.5px;color:var(--ink);margin-top:7px;line-height:1.5}
   .fb .ctx{font-size:11.5px;color:var(--muted);margin-top:6px}
   .empty{padding:26px 20px;font-size:13.5px;color:var(--muted);line-height:1.55;text-align:center}
 
   .hide{display:none}
-  .sec{margin-top:18px}
 </style>
 </head>
 <body>
@@ -79,7 +86,7 @@
 </div></div>
 <div class="tabs">
   <button class="tab on" onclick="go('overview',this)">Overview</button>
-  <button class="tab" onclick="go('sites',this)">Sites</button>
+  <button class="tab" onclick="go('sites',this)">Site checks</button>
   <button class="tab" onclick="go('feedback',this)">Feedback</button>
   <button class="tab" onclick="go('outreach',this)">Outreach</button>
 </div>
@@ -87,36 +94,53 @@
 <div class="wrap">
 
 <section id="overview">
+  <div class="htitle">What's happening on the site</div>
+  <p class="intro">Every time someone enters a location and presses “Run it,” the result is logged below. This is live — refresh to see new activity.</p>
   <div class="kpis">
-    <div class="kpi"><div class="lab">Sites screened</div><div class="n" id="kSites">—</div><div class="d" id="kSitesD">live from the site</div></div>
-    <div class="kpi"><div class="lab">Powerable on-site</div><div class="n" id="kPow">—</div><div class="d">tiers Yes + tight</div></div>
-    <div class="kpi"><div class="lab">Feedback in</div><div class="n" id="kFb">—</div><div class="d">one-line notes</div></div>
+    <div class="kpi"><div class="lab">Power checks run</div><div class="n" id="kSites">—</div><div class="d">How many times a visitor checked a location</div></div>
+    <div class="kpi"><div class="lab">Can be powered on-site</div><div class="n" id="kPow">—</div><div class="d">Share of checks where on-site power works (verdict Yes or Tight) — the rest are grid-blocked</div></div>
+    <div class="kpi"><div class="lab">Feedback received</div><div class="n" id="kFb">—</div><div class="d">One-line notes visitors left on a result</div></div>
   </div>
+
+  <div class="legend" style="margin-top:22px">
+    <div class="lg"><span class="dot g"></span><b>Yes</b> — can be powered on-site, fast</div>
+    <div class="lg"><span class="dot a"></span><b>Tight</b> — workable, but gas or land is limited</div>
+    <div class="lg"><span class="dot r"></span><b>No near-term</b> — only the grid, years out</div>
+  </div>
+
   <div class="grid2">
     <div class="panel">
-      <div class="ph"><div class="pt">Recent site checks</div><div class="pa" onclick="go('sites',document.querySelectorAll('.tab')[1])">View all</div></div>
+      <div class="ph"><div class="pt">Latest locations checked <span class="pa" onclick="go('sites',document.querySelectorAll('.tab')[1])">See all</span></div><div class="pd">The most recent sites visitors ran through the tool.</div></div>
       <div id="recentSites"><div class="empty">Loading…</div></div>
     </div>
     <div class="panel">
-      <div class="ph"><div class="pt">Latest feedback</div><div class="pa" onclick="go('feedback',document.querySelectorAll('.tab')[2])">View all</div></div>
+      <div class="ph"><div class="pt">Latest feedback <span class="pa" onclick="go('feedback',document.querySelectorAll('.tab')[2])">See all</span></div><div class="pd">Notes visitors typed in the feedback box.</div></div>
       <div id="recentFb"><div class="empty">Loading…</div></div>
     </div>
   </div>
 </section>
 
 <section id="sites" class="hide">
-  <p class="h">All site checks <span>· every run logged from the site</span></p>
+  <div class="htitle">Site checks</div>
+  <p class="intro">One row per location a visitor checked. <b>Verdict</b> is whether it can be powered on-site, <b>Fastest path</b> is the quickest way to power it, and <b>Options that work</b> is how many of the 6 power methods came back feasible.</p>
+  <div class="legend">
+    <div class="lg"><span class="dot g"></span><b>Yes</b> — on-site, fast</div>
+    <div class="lg"><span class="dot a"></span><b>Tight</b> — workable but limited</div>
+    <div class="lg"><span class="dot r"></span><b>No near-term</b> — grid-blocked</div>
+  </div>
   <div class="panel"><div id="sitesTable"><div class="empty">Loading…</div></div></div>
 </section>
 
 <section id="feedback" class="hide">
-  <p class="h">Feedback inbox <span>· one-line notes left on the site</span></p>
+  <div class="htitle">Feedback</div>
+  <p class="intro">One-line notes visitors leave from the result page. The coordinate next to each note is the exact map point they were looking at when they wrote it. Use <b>Delete</b> to remove spam or test notes.</p>
   <div class="panel"><div id="fbList"><div class="empty">Loading…</div></div></div>
 </section>
 
 <section id="outreach" class="hide">
-  <p class="h">Outreach pipeline</p>
-  <div class="panel"><div class="empty">Outreach data isn't connected yet. Hook up Apollo (sequences) or Gmail to track sent / opened / replied / booked here.</div></div>
+  <div class="htitle">Outreach</div>
+  <p class="intro">This will show your email outreach (sent / opened / replied / booked) once it's connected.</p>
+  <div class="panel"><div class="empty">Not connected yet. Hook up Apollo (sequences) or Gmail to track outreach here.</div></div>
 </section>
 
 </div>
@@ -155,7 +179,7 @@
   function pill(cat){
     if(cat==="Yes") return '<span class="pill p-yes">Yes</span>';
     if(cat==="No near-term") return '<span class="pill p-no">No near-term</span>';
-    return '<span class="pill p-con">Constrained</span>';
+    return '<span class="pill p-con">Tight</span>';
   }
 
   function renderSites(items){
@@ -163,12 +187,12 @@
     var pow=items.filter(function(i){ return i.cat && i.cat!=="No near-term"; }).length;
     document.getElementById("kPow").textContent=items.length? (Math.round(100*pow/items.length)+"%") : "—";
     var recent=document.getElementById("recentSites");
-    if(!items.length){ recent.innerHTML='<div class="empty">No runs yet. Each screening on the site shows up here.</div>'; }
+    if(!items.length){ recent.innerHTML='<div class="empty">No checks yet. As soon as someone runs a location on the site, it appears here.</div>'; }
     else {
       var rows=items.slice(0,6).map(function(i){
         return '<tr><td class="mono">'+esc(coord(i))+'</td><td>'+pill(i.cat)+'</td><td class="muted">'+esc(i.fastest||"")+'</td><td class="muted">'+rel(i.ts)+'</td></tr>';
       }).join("");
-      recent.innerHTML='<table><tr><th>Coordinate</th><th>Verdict</th><th>Fastest path</th><th>When</th></tr>'+rows+'</table>';
+      recent.innerHTML='<table><tr><th>Location (lat, lng)</th><th>Verdict</th><th>Fastest power path</th><th>Checked</th></tr>'+rows+'</table>';
     }
     var full=document.getElementById("sitesTable");
     if(!items.length){ full.innerHTML='<div class="empty">No site checks logged yet.</div>'; }
@@ -176,18 +200,18 @@
       var rows2=items.map(function(i){
         return '<tr><td class="mono">'+esc(coord(i))+'</td><td>'+pill(i.cat)+'</td><td class="muted">'+esc(i.fastest||"")+'</td><td class="muted">'+(typeof i.feasible==="number"?(i.feasible+" of 6"):"—")+'</td><td class="muted">'+rel(i.ts)+'</td></tr>';
       }).join("");
-      full.innerHTML='<table><tr><th>Coordinate</th><th>Verdict</th><th>Fastest path</th><th>Feasible</th><th>When</th></tr>'+rows2+'</table>';
+      full.innerHTML='<table><tr><th>Location (lat, lng)</th><th>Verdict</th><th>Fastest power path</th><th>Options that work</th><th>Checked</th></tr>'+rows2+'</table>';
     }
   }
 
   var FB_ITEMS=[], CURKEY="";
   function fbItemHTML(it,idx){
-    var loc=(typeof it.lat==="number"&&typeof it.lng==="number") ? (it.lat.toFixed(2)+", "+it.lng.toFixed(2)) : "site";
+    var loc=(typeof it.lat==="number"&&typeof it.lng==="number") ? (it.lat.toFixed(2)+", "+it.lng.toFixed(2)) : "no location";
     return '<div class="fb"><div class="top2">'
-      + '<div class="who2">Visitor <span>· '+esc(loc)+'</span></div>'
+      + '<div class="who2">A visitor, looking at <b>'+esc(loc)+'</b></div>'
       + '<div class="t">'+rel(it.ts)+'<button class="fbdel" onclick="deleteFb('+idx+')">Delete</button></div></div>'
-      + '<div class="msg">'+esc(it.text)+'</div>'
-      + (it.verdict?('<div class="ctx">on: '+esc(it.verdict)+'</div>'):'')
+      + '<div class="msg">“'+esc(it.text)+'”</div>'
+      + (it.verdict?('<div class="ctx">verdict shown: '+esc(it.verdict)+'</div>'):'')
       + '</div>';
   }
   function renderFeedback(items){
@@ -196,7 +220,7 @@
     var latest=document.getElementById("recentFb");
     var list=document.getElementById("fbList");
     if(!items.length){
-      var e='<div class="empty">No feedback yet. One-line notes left on the site land here.</div>';
+      var e='<div class="empty">No feedback yet. One-line notes visitors leave on a result will land here.</div>';
       latest.innerHTML=e; list.innerHTML=e; return;
     }
     latest.innerHTML=items.slice(0,4).map(fbItemHTML).join("");
