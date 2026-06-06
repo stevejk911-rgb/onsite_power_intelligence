@@ -7,193 +7,71 @@
 <style>
   :root{
     --ink:#0b1220;--body:#2b3340;--muted:#6b7480;--line:#e9ecf1;
-    --blue:#1657e0;--blue-soft:#eef3ff;
-    --green:#1f9d57;--green-bg:#e7f6ee;--amber:#e0891e;--amber-bg:#fdf1e0;--red:#d23b3b;--red-bg:#fbe7e7;--slate-bg:#eef0f3;
+    --blue:#1657e0;--blue-soft:#eef3ff;--green:#1f9d57;
   }
   *{box-sizing:border-box}
   body{margin:0;background:#f7f8fa;color:var(--body);
     font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
     -webkit-font-smoothing:antialiased;line-height:1.5}
-  a{color:inherit}
 
   .top{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:10}
-  .top .in{max-width:1180px;margin:0 auto;padding:16px 24px;display:flex;align-items:center;justify-content:space-between}
+  .top .in{max-width:840px;margin:0 auto;padding:16px 24px;display:flex;align-items:center;justify-content:space-between}
   .brand{font-size:12px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--blue)}
   .brand span{color:var(--muted)}
-  .who{font-size:13px;color:var(--muted)}
+  .who{font-size:13px;color:var(--muted);display:flex;align-items:center;gap:14px}
   .who b{color:var(--ink)}
+  .lock{font-size:12.5px;color:var(--blue);font-weight:600;cursor:pointer;background:none;border:0;padding:0}
 
-  .tabs{max-width:1180px;margin:0 auto;padding:0 24px;display:flex;gap:4px;border-bottom:1px solid var(--line);background:#fff}
-  .tab{appearance:none;background:none;border:0;padding:14px 14px;font-size:14px;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px}
-  .tab.on{color:var(--ink);border-bottom-color:var(--blue)}
+  .wrap{max-width:840px;margin:0 auto;padding:30px 24px 70px}
+  .head{display:flex;align-items:flex-end;justify-content:space-between;margin:0 0 18px}
+  .h{font-size:13px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin:0}
+  .h span{color:var(--muted);font-weight:500;text-transform:none;letter-spacing:0}
+  .count{font-size:13px;color:var(--muted)}
+  .count b{color:var(--ink);font-size:15px}
 
-  .wrap{max-width:1180px;margin:0 auto;padding:26px 24px 60px}
-  .h{font-size:13px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin:0 0 14px}
+  .panel{background:#fff;border:1px solid var(--line);border-radius:18px;padding:4px 0 4px}
 
-  /* KPIs */
-  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px}
-  .kpi{background:#fff;border:1px solid var(--line);border-radius:18px;padding:20px 22px}
-  .kpi .lab{font-size:12.5px;color:var(--muted);font-weight:600}
-  .kpi .n{font-size:32px;font-weight:700;color:var(--ink);letter-spacing:-.02em;margin-top:8px;line-height:1}
-  .kpi .d{font-size:12.5px;margin-top:8px;color:var(--green);font-weight:600}
-  .kpi .d.flat{color:var(--muted)}
-
-  .grid2{display:grid;grid-template-columns:1.3fr 1fr;gap:18px;margin-top:26px}
-  @media (max-width:880px){.grid2{grid-template-columns:1fr}}
-  .panel{background:#fff;border:1px solid var(--line);border-radius:18px;padding:6px 0 8px}
-  .panel .ph{display:flex;align-items:center;justify-content:space-between;padding:16px 20px 12px}
-  .panel .pt{font-size:15px;font-weight:700;color:var(--ink)}
-  .panel .pa{font-size:12.5px;color:var(--blue);font-weight:600;cursor:pointer}
-
-  table{width:100%;border-collapse:collapse}
-  th{text-align:left;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);padding:8px 20px;border-bottom:1px solid var(--line)}
-  td{font-size:13.5px;color:var(--ink);padding:13px 20px;border-bottom:1px solid #f1f3f6;vertical-align:middle}
-  tr:last-child td{border-bottom:0}
-  td.muted{color:var(--muted)}
-  .mono{font-variant-numeric:tabular-nums}
-
-  .pill{display:inline-block;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;white-space:nowrap}
-  .p-yes{background:var(--green-bg);color:var(--green)}
-  .p-con{background:var(--amber-bg);color:var(--amber)}
-  .p-no{background:var(--red-bg);color:var(--red)}
-  .p-sched{background:var(--slate-bg);color:var(--muted)}
-  .p-sent{background:var(--blue-soft);color:var(--blue)}
-  .p-open{background:var(--amber-bg);color:var(--amber)}
-  .p-rep{background:var(--green-bg);color:var(--green)}
-  .p-book{background:var(--green);color:#fff}
-
-  /* feedback */
-  .fb{padding:14px 20px;border-bottom:1px solid #f1f3f6}
+  .fb{padding:16px 22px;border-bottom:1px solid #f1f3f6}
   .fb:last-child{border-bottom:0}
   .fb .top2{display:flex;align-items:center;justify-content:space-between}
   .fb .who2{font-size:13.5px;font-weight:600;color:var(--ink)}
   .fb .who2 span{color:var(--muted);font-weight:500}
   .fb .t{font-size:12px;color:var(--muted)}
-  .fb .msg{font-size:13.5px;color:var(--body);margin-top:6px;line-height:1.45}
-  .fb .ctx{font-size:11.5px;color:var(--muted);margin-top:5px}
-  .empty{padding:22px 20px;font-size:13.5px;color:var(--muted);line-height:1.5}
-
-  .bars{padding:8px 20px 16px}
-  .barrow{display:flex;align-items:center;gap:12px;padding:7px 0}
-  .barrow .bl{width:88px;font-size:12.5px;color:var(--muted)}
-  .barrow .bt{flex:1;height:8px;background:#eef0f3;border-radius:6px;overflow:hidden}
-  .barrow .bf{height:100%;border-radius:6px}
-  .barrow .bn{width:34px;text-align:right;font-size:12.5px;font-weight:700;color:var(--ink)}
-
-  .hide{display:none}
-  .sec{margin-top:30px}
+  .fb .msg{font-size:14.5px;color:var(--ink);margin-top:7px;line-height:1.5}
+  .fb .ctx{font-size:11.5px;color:var(--muted);margin-top:6px}
+  .empty{padding:30px 22px;font-size:14px;color:var(--muted);line-height:1.55;text-align:center}
+  .mono{font-variant-numeric:tabular-nums}
 </style>
 </head>
 <body>
 <div class="top"><div class="in">
   <div class="brand">On-Site Power Intelligence <span>· Admin</span></div>
-  <div class="who">Signed in as <b>Steve</b> · Jun 6</div>
+  <div class="who"><span>Signed in as <b>Steve</b></span><button class="lock" id="relock" onclick="changeKey()" style="display:none">Change key</button></div>
 </div></div>
-<div class="tabs">
-  <button class="tab on" onclick="go('overview',this)">Overview</button>
-  <button class="tab" onclick="go('sites',this)">Sites</button>
-  <button class="tab" onclick="go('feedback',this)">Feedback</button>
-  <button class="tab" onclick="go('outreach',this)">Outreach</button>
-</div>
 
 <div class="wrap">
-
-<!-- OVERVIEW -->
-<section id="overview">
-  <div class="kpis">
-    <div class="kpi"><div class="lab">Sites screened</div><div class="n">142</div><div class="d">+18 today</div></div>
-    <div class="kpi"><div class="lab">Powerable verdicts</div><div class="n">88%</div><div class="d flat">±40% screening-grade</div></div>
-    <div class="kpi"><div class="lab">Feedback in</div><div class="n" id="kpiFb">—</div><div class="d flat">live from the site</div></div>
-    <div class="kpi"><div class="lab">Outreach sent</div><div class="n">34 / 50</div><div class="d">6 opened</div></div>
-    <div class="kpi"><div class="lab">Interviews booked</div><div class="n">3</div><div class="d">2 this week</div></div>
+  <div class="head">
+    <p class="h">Feedback inbox <span>· one-line notes left on the site</span></p>
+    <div class="count"><b id="kpiFb">—</b> total</div>
   </div>
-
-  <div class="grid2">
-    <div class="panel">
-      <div class="ph"><div class="pt">Recent site checks</div><div class="pa" onclick="go('sites',document.querySelectorAll('.tab')[1])">View all</div></div>
-      <table>
-        <tr><th>Location</th><th>Verdict</th><th>Fastest path</th><th>When</th></tr>
-        <tr><td>Loudoun County, VA <span class="muted mono">39.04, -77.49</span></td><td><span class="pill p-yes">Yes</span></td><td class="muted">Fuel cell · 12 mo</td><td class="muted">3m ago</td></tr>
-        <tr><td>Abilene, TX <span class="muted mono">32.45, -99.73</span></td><td><span class="pill p-yes">Yes</span></td><td class="muted">Gas turbine · 14 mo</td><td class="muted">26m ago</td></tr>
-        <tr><td>Maricopa County, AZ <span class="muted mono">33.30, -112.40</span></td><td><span class="pill p-con">Constrained</span></td><td class="muted">Gas + storage · 19 mo</td><td class="muted">1h ago</td></tr>
-        <tr><td>Meridian, MS <span class="muted mono">32.35, -88.88</span></td><td><span class="pill p-yes">Yes</span></td><td class="muted">Gas + solar · 16 mo</td><td class="muted">2h ago</td></tr>
-        <tr><td>Cheyenne, WY <span class="muted mono">41.14, -104.82</span></td><td><span class="pill p-no">No near-term</span></td><td class="muted">Grid-blocked · review</td><td class="muted">4h ago</td></tr>
-      </table>
-    </div>
-
-    <div class="panel">
-      <div class="ph"><div class="pt">Latest feedback</div><div class="pa" onclick="go('feedback',document.querySelectorAll('.tab')[2])">View all</div></div>
-      <div id="fbLatest"><div class="empty">Loading…</div></div>
-    </div>
-  </div>
-</section>
-
-<!-- SITES -->
-<section id="sites" class="hide">
-  <p class="h">All site checks</p>
-  <div class="panel">
-    <table>
-      <tr><th>Location</th><th>Coordinate</th><th>Verdict</th><th>Fastest path</th><th>Feasible options</th><th>When</th></tr>
-      <tr><td>Loudoun County, VA</td><td class="muted mono">39.0438, -77.4874</td><td><span class="pill p-yes">Yes</span></td><td class="muted">Fuel cell · 12 mo</td><td class="muted">4 of 10</td><td class="muted">3m ago</td></tr>
-      <tr><td>Abilene, TX</td><td class="muted mono">32.4487, -99.7331</td><td><span class="pill p-yes">Yes</span></td><td class="muted">Gas turbine · 14 mo</td><td class="muted">4 of 10</td><td class="muted">26m ago</td></tr>
-      <tr><td>Maricopa County, AZ</td><td class="muted mono">33.3010, -112.4000</td><td><span class="pill p-con">Constrained</span></td><td class="muted">Gas + storage · 19 mo</td><td class="muted">2 of 10</td><td class="muted">1h ago</td></tr>
-      <tr><td>Meridian, MS</td><td class="muted mono">32.3513, -88.8779</td><td><span class="pill p-yes">Yes</span></td><td class="muted">Gas + solar · 16 mo</td><td class="muted">3 of 10</td><td class="muted">2h ago</td></tr>
-      <tr><td>Cheyenne, WY</td><td class="muted mono">41.1400, -104.8202</td><td><span class="pill p-no">No near-term</span></td><td class="muted">Grid-blocked</td><td class="muted">0 of 10</td><td class="muted">4h ago</td></tr>
-      <tr><td>New Albany, OH</td><td class="muted mono">40.0814, -82.8088</td><td><span class="pill p-yes">Yes</span></td><td class="muted">Gas + solar · 15 mo</td><td class="muted">4 of 10</td><td class="muted">5h ago</td></tr>
-      <tr><td>Shackelford County, TX</td><td class="muted mono">32.7460, -99.3520</td><td><span class="pill p-yes">Yes</span></td><td class="muted">Gas turbine · 13 mo</td><td class="muted">5 of 10</td><td class="muted">Yesterday</td></tr>
-      <tr><td>Lyon Township, MI</td><td class="muted mono">42.4690, -83.6480</td><td><span class="pill p-con">Constrained</span></td><td class="muted">Storage microgrid · 21 mo</td><td class="muted">2 of 10</td><td class="muted">Yesterday</td></tr>
-    </table>
-  </div>
-</section>
-
-<!-- FEEDBACK -->
-<section id="feedback" class="hide">
-  <p class="h">Feedback inbox <span style="color:var(--muted);font-weight:500;text-transform:none;letter-spacing:0">· one-line notes left on the site</span></p>
   <div class="panel">
     <div id="fbList"><div class="empty">Loading…</div></div>
   </div>
-</section>
-
-<!-- OUTREACH -->
-<section id="outreach" class="hide">
-  <p class="h">Outreach pipeline · 50 contacts</p>
-  <div class="grid2">
-    <div class="panel" style="grid-column:1 / -1;padding-bottom:8px">
-      <div class="bars">
-        <div class="barrow"><div class="bl">Scheduled</div><div class="bt"><div class="bf" style="width:32%;background:#c4ccd6"></div></div><div class="bn">16</div></div>
-        <div class="barrow"><div class="bl">Sent</div><div class="bt"><div class="bf" style="width:36%;background:#1657e0"></div></div><div class="bn">18</div></div>
-        <div class="barrow"><div class="bl">Opened</div><div class="bt"><div class="bf" style="width:18%;background:#e0891e"></div></div><div class="bn">9</div></div>
-        <div class="barrow"><div class="bl">Replied</div><div class="bt"><div class="bf" style="width:12%;background:#1f9d57"></div></div><div class="bn">6</div></div>
-        <div class="barrow"><div class="bl">Booked</div><div class="bt"><div class="bf" style="width:6%;background:#0b1220"></div></div><div class="bn">3</div></div>
-      </div>
-    </div>
-  </div>
-  <div class="panel sec" style="margin-top:18px">
-    <table>
-      <tr><th>Contact</th><th>Company</th><th>Segment</th><th>Status</th><th>Last touch</th></tr>
-      <tr><td>Cully Cavness</td><td>Crusoe</td><td class="muted">BTM developer</td><td><span class="pill p-book">Booked</span></td><td class="muted">Thu 7:45a</td></tr>
-      <tr><td>Bo Bond</td><td>Cushman &amp; Wakefield</td><td class="muted">Broker</td><td><span class="pill p-book">Booked</span></td><td class="muted">Thu 7:45a</td></tr>
-      <tr><td>Andrew Likens</td><td>Crusoe</td><td class="muted">BTM developer</td><td><span class="pill p-rep">Replied</span></td><td class="muted">2h ago</td></tr>
-      <tr><td>Asher Genoot</td><td>Hut 8</td><td class="muted">BTM developer</td><td><span class="pill p-open">Opened</span></td><td class="muted">5h ago</td></tr>
-      <tr><td>Brandon Oyer</td><td>AWS</td><td class="muted">Hyperscaler</td><td><span class="pill p-sent">Sent</span></td><td class="muted">Thu 7:45a</td></tr>
-      <tr><td>Judith Judson</td><td>Vantage</td><td class="muted">DC developer</td><td><span class="pill p-rep">Replied</span></td><td class="muted">1d ago</td></tr>
-      <tr><td>Andy Cvengros</td><td>JLL</td><td class="muted">Broker</td><td><span class="pill p-open">Opened</span></td><td class="muted">Yesterday</td></tr>
-      <tr><td>Sikander Rashid</td><td>Brookfield</td><td class="muted">PE infra</td><td><span class="pill p-sent">Sent</span></td><td class="muted">Thu 21:45</td></tr>
-      <tr><td>Mahesh Thiagarajan</td><td>Oracle</td><td class="muted">Hyperscaler</td><td><span class="pill p-sched">Scheduled</span></td><td class="muted">Tue 23:45</td></tr>
-      <tr><td>Chad Zamarin</td><td>Williams</td><td class="muted">BTM developer</td><td><span class="pill p-sched">Scheduled</span></td><td class="muted">Tue 21:45</td></tr>
-    </table>
-  </div>
-</section>
-
 </div>
 
 <script>
-  function go(id,btn){
-    ["overview","sites","feedback","outreach"].forEach(function(s){ document.getElementById(s).classList.add("hide"); });
-    document.getElementById(id).classList.remove("hide");
-    document.querySelectorAll(".tab").forEach(function(t){ t.classList.remove("on"); });
-    btn.classList.add("on");
-    window.scrollTo({top:0,behavior:"smooth"});
+  var KEYNAME="opi_admin_key";
+  function storedKey(){ try{ return localStorage.getItem(KEYNAME)||""; }catch(e){ return ""; } }
+  function saveKey(k){ try{ localStorage.setItem(KEYNAME,k); }catch(e){} }
+  function clearKey(){ try{ localStorage.removeItem(KEYNAME); }catch(e){} }
+  function initialKey(){
+    var fromUrl=new URLSearchParams(location.search).get("key");
+    if(fromUrl){ saveKey(fromUrl); history.replaceState(null,"",location.pathname); return fromUrl; }
+    return storedKey();
+  }
+  function changeKey(){
+    var k=prompt("Enter admin key");
+    if(k){ saveKey(k); loadFeedback(k); }
   }
 
   function esc(s){ return String(s||"").replace(/[&<>"]/g,function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]; }); }
@@ -215,32 +93,33 @@
       + (it.verdict?('<div class="ctx">on: '+esc(it.verdict)+'</div>'):'')
       + '</div>';
   }
-  function loadFeedback(){
-    var key=new URLSearchParams(location.search).get("key")||"";
+  function render(items){
+    document.getElementById("relock").style.display="";
+    var kpi=document.getElementById("kpiFb"); if(kpi) kpi.textContent=String(items.length);
+    var list=document.getElementById("fbList");
+    if(!items.length){
+      list.innerHTML='<div class="empty">No feedback yet. One-line notes left on the site land here.</div>';
+      return;
+    }
+    list.innerHTML=items.map(fbItemHTML).join("");
+  }
+  function loadFeedback(key){
     fetch("/api/admin/feedback"+(key?("?key="+encodeURIComponent(key)):""))
       .then(function(r){ if(r.status===401) throw new Error("locked"); return r.json(); })
-      .then(function(d){
-        var items=(d&&d.items)||[];
-        var kpi=document.getElementById("kpiFb"); if(kpi) kpi.textContent=String(items.length);
-        var list=document.getElementById("fbList");
-        var latest=document.getElementById("fbLatest");
-        if(!items.length){
-          var empty='<div class="empty">No feedback yet. One-line notes left on the site land here.</div>';
-          list.innerHTML=empty; latest.innerHTML=empty; return;
-        }
-        list.innerHTML=items.map(fbItemHTML).join("");
-        latest.innerHTML=items.slice(0,3).map(fbItemHTML).join("");
-      })
+      .then(function(d){ render((d&&d.items)||[]); })
       .catch(function(e){
-        var msg=(e&&e.message==="locked")
-          ? '<div class="empty">Locked. Open this page as <span class="mono">admin.html?key=YOUR_ADMIN_KEY</span> to view feedback.</div>'
-          : '<div class="empty">Could not load feedback right now.</div>';
-        document.getElementById("fbList").innerHTML=msg;
-        document.getElementById("fbLatest").innerHTML=msg;
-        var kpi=document.getElementById("kpiFb"); if(kpi) kpi.textContent="—";
+        if(e&&e.message==="locked"){
+          clearKey();
+          var k=prompt("This admin page is locked. Enter the admin key:");
+          if(k){ saveKey(k); loadFeedback(k); return; }
+          document.getElementById("fbList").innerHTML='<div class="empty">Locked. Reload and enter the admin key, or open as <span class="mono">admin.html?key=YOUR_ADMIN_KEY</span>.</div>';
+          document.getElementById("kpiFb").textContent="—";
+        } else {
+          document.getElementById("fbList").innerHTML='<div class="empty">Could not load feedback right now.</div>';
+        }
       });
   }
-  loadFeedback();
+  loadFeedback(initialKey());
 </script>
 </body>
 </html>
