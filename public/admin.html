@@ -23,7 +23,7 @@
   .who b{color:var(--ink)}
   .lock{font-size:12.5px;color:var(--blue);font-weight:600;cursor:pointer;background:none;border:0;padding:0}
 
-  .tabs{max-width:1100px;margin:0 auto;padding:0 24px;display:flex;gap:4px;border-bottom:1px solid var(--line);background:#fff}
+  .tabs{max-width:1100px;margin:0 auto;padding:0 24px;display:flex;gap:4px;border-bottom:1px solid var(--line);background:#fff;flex-wrap:wrap}
   .tab{appearance:none;background:none;border:0;padding:14px 14px;font-size:14px;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px}
   .tab.on{color:var(--ink);border-bottom-color:var(--blue)}
 
@@ -31,14 +31,13 @@
   .htitle{font-size:18px;font-weight:700;color:var(--ink);margin:0 0 4px}
   .intro{font-size:13.5px;color:var(--muted);margin:0 0 18px;line-height:1.5;max-width:680px}
 
-  /* verdict legend */
   .legend{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 22px}
   .lg{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:9px 13px;font-size:12.5px;color:var(--muted)}
   .lg b{color:var(--ink);font-weight:600}
   .dot{width:9px;height:9px;border-radius:50%;flex:none}
   .dot.g{background:var(--green)} .dot.a{background:var(--amber)} .dot.r{background:var(--red)}
 
-  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px}
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px}
   .kpi{background:#fff;border:1px solid var(--line);border-radius:18px;padding:18px 20px}
   .kpi .lab{font-size:13px;color:var(--ink);font-weight:700}
   .kpi .n{font-size:34px;font-weight:700;color:var(--ink);letter-spacing:-.02em;margin-top:6px;line-height:1}
@@ -64,6 +63,19 @@
   .p-con{background:var(--amber-bg);color:var(--amber)}
   .p-no{background:var(--red-bg);color:var(--red)}
 
+  /* funnel + bars */
+  .funnel{padding:8px 20px 16px}
+  .fstep{display:grid;grid-template-columns:170px 1fr 96px;align-items:center;gap:12px;padding:8px 0}
+  .fstep .fl{font-size:13.5px;color:var(--ink);font-weight:600}
+  .fbar{height:22px;background:var(--blue-soft);border-radius:6px;overflow:hidden}
+  .fbar i{display:block;height:100%;background:var(--blue);border-radius:6px}
+  .fstep .fv{font-size:13px;color:var(--muted);text-align:right}
+  .fstep .fv b{color:var(--ink)}
+  .daybars{display:flex;align-items:flex-end;gap:5px;height:90px;padding:14px 20px 8px}
+  .daybars .db{flex:1;background:var(--blue);border-radius:3px 3px 0 0;min-height:2px;opacity:.85}
+  .daylabels{display:flex;gap:5px;padding:0 20px 14px}
+  .daylabels span{flex:1;font-size:9.5px;color:var(--muted);text-align:center;overflow:hidden;white-space:nowrap}
+
   .fb{padding:14px 20px;border-bottom:1px solid #f1f3f6}
   .fb:last-child{border-bottom:0}
   .fb .top2{display:flex;align-items:center;justify-content:space-between}
@@ -86,6 +98,7 @@
 </div></div>
 <div class="tabs">
   <button class="tab on" onclick="go('overview',this)">Overview</button>
+  <button class="tab" onclick="go('traffic',this)">Traffic</button>
   <button class="tab" onclick="go('sites',this)">Site checks</button>
   <button class="tab" onclick="go('feedback',this)">Feedback</button>
   <button class="tab" onclick="go('outreach',this)">Outreach</button>
@@ -95,38 +108,45 @@
 
 <section id="overview">
   <div class="htitle">What's happening on the site</div>
-  <p class="intro">Every time someone enters a location and presses “Run it,” the result is logged below. This is live — refresh to see new activity.</p>
+  <p class="intro">Every time someone screens a location, the result is logged below. This is live — refresh to see new activity.</p>
   <div class="kpis">
-    <div class="kpi"><div class="lab">Power checks run</div><div class="n" id="kSites">—</div><div class="d">How many times a visitor checked a location</div></div>
-    <div class="kpi"><div class="lab">Can be powered on-site</div><div class="n" id="kPow">—</div><div class="d">Share of checks where on-site power works (verdict Yes or Tight) — the rest are grid-blocked</div></div>
+    <div class="kpi"><div class="lab">Sites screened</div><div class="n" id="kSites">—</div><div class="d">How many times a visitor screened a location</div></div>
+    <div class="kpi"><div class="lab">Can be powered on-site</div><div class="n" id="kPow">—</div><div class="d">Share of screens that came back Advance or Caution — the rest are grid-blocked (Kill)</div></div>
+    <div class="kpi"><div class="lab">Visitors (14d)</div><div class="n" id="kSess">—</div><div class="d">Unique sessions across the site in the last 14 days</div></div>
     <div class="kpi"><div class="lab">Feedback received</div><div class="n" id="kFb">—</div><div class="d">One-line notes visitors left on a result</div></div>
   </div>
 
   <div class="legend" style="margin-top:22px">
-    <div class="lg"><span class="dot g"></span><b>Yes</b> — can be powered on-site, fast</div>
-    <div class="lg"><span class="dot a"></span><b>Tight</b> — workable, but gas or land is limited</div>
-    <div class="lg"><span class="dot r"></span><b>No near-term</b> — only the grid, years out</div>
+    <div class="lg"><span class="dot g"></span><b>Advance</b> — on-site power works, worth a feasibility study</div>
+    <div class="lg"><span class="dot a"></span><b>Caution</b> — borderline; tighten scope or timeline</div>
+    <div class="lg"><span class="dot r"></span><b>Kill</b> — no near-term path; grid only, years out</div>
   </div>
 
   <div class="grid2">
     <div class="panel">
-      <div class="ph"><div class="pt">Latest locations checked <span class="pa" onclick="go('sites',document.querySelectorAll('.tab')[1])">See all</span></div><div class="pd">The most recent sites visitors ran through the tool.</div></div>
+      <div class="ph"><div class="pt">Latest locations screened <span class="pa" onclick="go('sites',document.querySelectorAll('.tab')[2])">See all</span></div><div class="pd">The most recent sites visitors ran through the tool.</div></div>
       <div id="recentSites"><div class="empty">Loading…</div></div>
     </div>
     <div class="panel">
-      <div class="ph"><div class="pt">Latest feedback <span class="pa" onclick="go('feedback',document.querySelectorAll('.tab')[2])">See all</span></div><div class="pd">Notes visitors typed in the feedback box.</div></div>
+      <div class="ph"><div class="pt">Latest feedback <span class="pa" onclick="go('feedback',document.querySelectorAll('.tab')[3])">See all</span></div><div class="pd">Notes visitors typed in the feedback box.</div></div>
       <div id="recentFb"><div class="empty">Loading…</div></div>
     </div>
   </div>
 </section>
 
+<section id="traffic" class="hide">
+  <div class="htitle">Traffic &amp; funnel</div>
+  <p class="intro">Where visitors come from and how far they get. <b>Channel</b> reads your UTM tags (LinkedIn / cold email / community); the <b>funnel</b> tracks the journey from landing to screening to sharing/printing — the actions that signal real intent.</p>
+  <div id="statsBody"><div class="empty">Loading…</div></div>
+</section>
+
 <section id="sites" class="hide">
   <div class="htitle">Site checks</div>
-  <p class="intro">One row per location a visitor checked. <b>Verdict</b> is whether it can be powered on-site, <b>Fastest path</b> is the quickest way to power it, and <b>Options that work</b> is how many of the 6 power methods came back feasible.</p>
+  <p class="intro">One row per location a visitor screened. <b>Verdict</b> is the ADVANCE / CAUTION / KILL call, <b>Fastest path</b> is the quickest viable on-site option, and <b>Options that meet</b> is how many of the scored pathways cleared your yardstick.</p>
   <div class="legend">
-    <div class="lg"><span class="dot g"></span><b>Yes</b> — on-site, fast</div>
-    <div class="lg"><span class="dot a"></span><b>Tight</b> — workable but limited</div>
-    <div class="lg"><span class="dot r"></span><b>No near-term</b> — grid-blocked</div>
+    <div class="lg"><span class="dot g"></span><b>Advance</b></div>
+    <div class="lg"><span class="dot a"></span><b>Caution</b></div>
+    <div class="lg"><span class="dot r"></span><b>Kill</b></div>
   </div>
   <div class="panel"><div id="sitesTable"><div class="empty">Loading…</div></div></div>
 </section>
@@ -158,7 +178,7 @@
   function changeKey(){ var k=prompt("Enter admin key"); if(k){ saveKey(k); loadAll(k); } }
 
   function go(id,btn){
-    ["overview","sites","feedback","outreach"].forEach(function(s){ document.getElementById(s).classList.add("hide"); });
+    ["overview","traffic","sites","feedback","outreach"].forEach(function(s){ document.getElementById(s).classList.add("hide"); });
     document.getElementById(id).classList.remove("hide");
     document.querySelectorAll(".tab").forEach(function(t){ t.classList.remove("on"); });
     btn.classList.add("on");
@@ -177,33 +197,95 @@
   }
   function coord(it){ return (typeof it.lat==="number"&&typeof it.lng==="number") ? (it.lat.toFixed(3)+", "+it.lng.toFixed(3)) : "—"; }
   function pill(cat){
-    if(cat==="Yes") return '<span class="pill p-yes">Yes</span>';
-    if(cat==="No near-term") return '<span class="pill p-no">No near-term</span>';
-    return '<span class="pill p-con">Tight</span>';
+    if(cat==="Yes") return '<span class="pill p-yes">Advance</span>';
+    if(cat==="No near-term") return '<span class="pill p-no">Kill</span>';
+    return '<span class="pill p-con">Caution</span>';
   }
 
+  /* ---------- site checks ---------- */
   function renderSites(items){
     document.getElementById("kSites").textContent=String(items.length);
     var pow=items.filter(function(i){ return i.cat && i.cat!=="No near-term"; }).length;
     document.getElementById("kPow").textContent=items.length? (Math.round(100*pow/items.length)+"%") : "—";
     var recent=document.getElementById("recentSites");
-    if(!items.length){ recent.innerHTML='<div class="empty">No checks yet. As soon as someone runs a location on the site, it appears here.</div>'; }
+    if(!items.length){ recent.innerHTML='<div class="empty">No screens yet. As soon as someone runs a location on the site, it appears here.</div>'; }
     else {
       var rows=items.slice(0,6).map(function(i){
         return '<tr><td class="mono">'+esc(coord(i))+'</td><td>'+pill(i.cat)+'</td><td class="muted">'+esc(i.fastest||"")+'</td><td class="muted">'+rel(i.ts)+'</td></tr>';
       }).join("");
-      recent.innerHTML='<table><tr><th>Location (lat, lng)</th><th>Verdict</th><th>Fastest power path</th><th>Checked</th></tr>'+rows+'</table>';
+      recent.innerHTML='<table><tr><th>Location (lat, lng)</th><th>Verdict</th><th>Fastest power path</th><th>Screened</th></tr>'+rows+'</table>';
     }
     var full=document.getElementById("sitesTable");
     if(!items.length){ full.innerHTML='<div class="empty">No site checks logged yet.</div>'; }
     else {
       var rows2=items.map(function(i){
-        return '<tr><td class="mono">'+esc(coord(i))+'</td><td>'+pill(i.cat)+'</td><td class="muted">'+esc(i.fastest||"")+'</td><td class="muted">'+(typeof i.feasible==="number"?(i.feasible+" of 6"):"—")+'</td><td class="muted">'+rel(i.ts)+'</td></tr>';
+        return '<tr><td class="mono">'+esc(coord(i))+'</td><td>'+pill(i.cat)+'</td><td class="muted">'+esc(i.fastest||"")+'</td><td class="muted">'+(typeof i.feasible==="number"?(i.feasible+" meet"):"—")+'</td><td class="muted">'+rel(i.ts)+'</td></tr>';
       }).join("");
-      full.innerHTML='<table><tr><th>Location (lat, lng)</th><th>Verdict</th><th>Fastest power path</th><th>Options that work</th><th>Checked</th></tr>'+rows2+'</table>';
+      full.innerHTML='<table><tr><th>Location (lat, lng)</th><th>Verdict</th><th>Fastest power path</th><th>Options that meet</th><th>Screened</th></tr>'+rows2+'</table>';
     }
   }
 
+  /* ---------- traffic / funnel ---------- */
+  var CHANNEL_LABEL={ "linkedin/social":"LinkedIn", "coldemail/email":"Cold email", "community/post":"Community", "direct":"Direct" };
+  function chLabel(name){ return CHANNEL_LABEL[name] || name; }
+  function renderStats(stats){
+    var el=document.getElementById("statsBody");
+    if(!stats || stats.ok===false){
+      document.getElementById("kSess").textContent="—";
+      el.innerHTML='<div class="panel"><div class="empty">Analytics are off. Set <span class="mono">DATABASE_URL</span> (Postgres) and <span class="mono">ADMIN_KEY</span> on the server to start collecting pageviews, channels, and the funnel. Site checks and feedback above work without it.</div></div>';
+      return;
+    }
+    var t=stats.totals||{};
+    document.getElementById("kSess").textContent=(typeof t.sessions==="number")?String(t.sessions):"—";
+    function find(arr,name){ var f=(arr||[]).filter(function(x){return x.name===name;})[0]; return f?f.sessions:0; }
+    var a=stats.actions||{};
+    var landing=find(stats.pages,"landing"), tool=find(stats.pages,"tool");
+    var steps=[
+      ["Landing views", landing],
+      ["Tool opened", tool],
+      ["Site located", a.coordinate_set||0],
+      ["Screened (verdict)", a.computed||0],
+      ["Shared link", a.copy_link||0],
+      ["Printed PDF", a.word_download||0]
+    ];
+    var max=Math.max(1, landing, tool, a.computed||0);
+    var funnel=steps.map(function(s){
+      var w=Math.round(100*s[1]/max);
+      var pct=landing? Math.round(100*s[1]/Math.max(1,landing)) : 0;
+      return '<div class="fstep"><div class="fl">'+s[0]+'</div><div class="fbar"><i style="width:'+w+'%"></i></div><div class="fv"><b>'+s[1]+'</b> · '+pct+'%</div></div>';
+    }).join("");
+
+    var sources=(stats.sources||[]).slice(0,12).map(function(s){
+      return '<tr><td>'+esc(chLabel(s.name))+'</td><td class="mono">'+s.sessions+'</td></tr>';
+    }).join("") || '<tr><td class="muted" colspan="2">No channel data yet.</td></tr>';
+
+    var actions=(stats.actions_all||[]).slice(0,12).map(function(s){
+      return '<tr><td>'+esc(s.name)+'</td><td class="mono">'+s.sessions+'</td></tr>';
+    }).join("") || '<tr><td class="muted" colspan="2">No actions yet.</td></tr>';
+
+    var byday=stats.by_day||[];
+    var dmax=Math.max(1, Math.max.apply(null, byday.map(function(d){return d.sessions;}).concat([0])));
+    var bars=byday.map(function(d){ return '<div class="db" title="'+d.day+': '+d.sessions+'" style="height:'+Math.round(100*d.sessions/dmax)+'%"></div>'; }).join("");
+    var labels=byday.map(function(d,i){ return '<span>'+(i%2===0?d.day.slice(5):'')+'</span>'; }).join("");
+
+    el.innerHTML=
+      '<div class="kpis" style="margin-bottom:6px">'+
+        '<div class="kpi"><div class="lab">Visitors (14d)</div><div class="n">'+(t.sessions||0)+'</div><div class="d">Unique sessions</div></div>'+
+        '<div class="kpi"><div class="lab">Page views</div><div class="n">'+(t.pageviews||0)+'</div><div class="d">Across all pages</div></div>'+
+        '<div class="kpi"><div class="lab">Last 24h</div><div class="n">'+(t.sessions_24h||0)+'</div><div class="d">Sessions today</div></div>'+
+        '<div class="kpi"><div class="lab">Last 7d</div><div class="n">'+(t.sessions_7d||0)+'</div><div class="d">Sessions this week</div></div>'+
+      '</div>'+
+      '<div class="grid2">'+
+        '<div class="panel"><div class="ph"><div class="pt">Funnel</div><div class="pd">Share is relative to landing views. "Screened" and "Shared" are the intent signals.</div></div><div class="funnel">'+funnel+'</div></div>'+
+        '<div class="panel"><div class="ph"><div class="pt">Channels</div><div class="pd">From UTM tags on your outreach links.</div></div><table><tr><th>Channel / source</th><th>Sessions</th></tr>'+sources+'</table></div>'+
+      '</div>'+
+      '<div class="grid2">'+
+        '<div class="panel"><div class="ph"><div class="pt">Sessions / day (14d)</div></div><div class="daybars">'+bars+'</div><div class="daylabels">'+labels+'</div></div>'+
+        '<div class="panel"><div class="ph"><div class="pt">All actions</div><div class="pd">Every tracked click, incl. computed &amp; copy_link.</div></div><table><tr><th>Action</th><th>Sessions</th></tr>'+actions+'</table></div>'+
+      '</div>';
+  }
+
+  /* ---------- feedback ---------- */
   var FB_ITEMS=[], CURKEY="";
   function fbItemHTML(it,idx){
     var loc=(typeof it.lat==="number"&&typeof it.lng==="number") ? (it.lat.toFixed(2)+", "+it.lng.toFixed(2)) : "no location";
@@ -211,7 +293,7 @@
       + '<div class="who2">A visitor, looking at <b>'+esc(loc)+'</b></div>'
       + '<div class="t">'+rel(it.ts)+'<button class="fbdel" onclick="deleteFb('+idx+')">Delete</button></div></div>'
       + '<div class="msg">“'+esc(it.text)+'”</div>'
-      + (it.verdict?('<div class="ctx">verdict shown: '+esc(it.verdict)+'</div>'):'')
+      + (it.verdict?('<div class="ctx">context: '+esc(it.verdict)+'</div>'):'')
       + '</div>';
   }
   function renderFeedback(items){
@@ -236,22 +318,24 @@
       .catch(function(){ alert("Could not delete that note."); });
   }
 
+  /* ---------- load ---------- */
   function api(path,key){
     return fetch(path+(key?("?key="+encodeURIComponent(key)):""))
       .then(function(r){ if(r.status===401) throw new Error("locked"); return r.json(); });
   }
   function lockedUI(){
     var m='<div class="empty">Locked. Reload and enter the admin key, or open as <span class="mono">admin.html?key=YOUR_ADMIN_KEY</span>.</div>';
-    ["recentSites","recentFb","sitesTable","fbList"].forEach(function(id){ document.getElementById(id).innerHTML=m; });
-    ["kSites","kPow","kFb"].forEach(function(id){ document.getElementById(id).textContent="—"; });
+    ["recentSites","recentFb","sitesTable","fbList","statsBody"].forEach(function(id){ document.getElementById(id).innerHTML=m; });
+    ["kSites","kPow","kFb","kSess"].forEach(function(id){ document.getElementById(id).textContent="—"; });
   }
   function loadAll(key){
     CURKEY=key||"";
-    Promise.all([ api("/api/admin/sitechecks",key), api("/api/admin/feedback",key) ])
+    Promise.all([ api("/api/admin/sitechecks",key), api("/api/admin/feedback",key), api("/api/admin/stats",key).catch(function(){return {ok:false};}) ])
       .then(function(res){
         document.getElementById("relock").style.display="";
         renderSites((res[0]&&res[0].items)||[]);
         renderFeedback((res[1]&&res[1].items)||[]);
+        renderStats(res[2]);
       })
       .catch(function(e){
         if(e&&e.message==="locked"){
@@ -260,7 +344,7 @@
           if(k){ saveKey(k); loadAll(k); return; }
           lockedUI();
         } else {
-          ["recentSites","recentFb","sitesTable","fbList"].forEach(function(id){ document.getElementById(id).innerHTML='<div class="empty">Could not load right now.</div>'; });
+          ["recentSites","recentFb","sitesTable","fbList","statsBody"].forEach(function(id){ document.getElementById(id).innerHTML='<div class="empty">Could not load right now.</div>'; });
         }
       });
   }

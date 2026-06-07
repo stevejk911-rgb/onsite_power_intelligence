@@ -1,445 +1,103 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Data | On-Site Power Intelligence</title>
-<meta name="description" content="The data behind the tool: 18+ verified sources, 10 hot zones, 5 deployment cases, 4 documented honesty corrections. EIA, NREL ATB, SEC EDGAR, GridLab, and more.">
-
-<!-- Open Graph -->
-<meta property="og:type" content="website">
-<meta property="og:site_name" content="On-Site Power Intelligence">
-<meta property="og:title" content="The data behind the BTM feasibility tool">
-<meta property="og:description" content="18+ verified sources, 5 deployment cases, 4 documented corrections. Every external source, its origin, vintage, method, and confidence, tracked line-by-line.">
-<meta property="og:url" content="https://onsite-power-intelligence.onrender.com/data-sources.html">
-<meta property="og:image" content="https://onsite-power-intelligence.onrender.com/images/hero.jpg">
-<meta property="og:image:width" content="2000">
-<meta property="og:image:height" content="1125">
-<meta property="og:locale" content="en_US">
-
-<!-- Twitter Card -->
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Data — On-Site Power Intelligence">
-<meta name="twitter:description" content="18+ verified sources, 5 deployment cases, 4 documented honesty corrections.">
-<meta name="twitter:image" content="https://onsite-power-intelligence.onrender.com/images/hero.jpg">
-
-<link rel="canonical" href="https://onsite-power-intelligence.onrender.com/data-sources.html">
-<style>
-  *{box-sizing:border-box;margin:0;padding:0;}
-  :root{
-    --ink:#1d1d1f;
-    --ink-2:#3a3a3c;
-    --muted:#6e6e73;
-    --line:#d2d2d7;
-    --line-soft:#f5f5f7;
-    --bg:#fbfbfd;
-    --panel:#ffffff;
-    --tile:#f5f5f7;
-    --link:#0071e3;
-    --link-hover:#0077ed;
-    --amber:#bf6500;
-    --good:#15803d;
-    --warn:#b45309;
-    --bad:#b91c1c;
-  }
-  html,body{height:100%;background:var(--bg);color:var(--ink);
-    font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue",Helvetica,Arial,sans-serif;
-    font-size:14px;line-height:1.5;letter-spacing:-.003em;
-    -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;}
-  a{color:var(--link);text-decoration:none;}
-  a:hover{color:var(--link-hover);text-decoration:underline;}
-
-  /* ===== Sticky nav ===== */
-  nav.top{position:sticky;top:0;z-index:60;background:rgba(255,255,255,0.78);
-    backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);
-    border-bottom:1px solid rgba(0,0,0,0.06);}.nav-inner{max-width:1180px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;
-    padding:0 24px;height:48px;}
-  nav.top .logo{font-size:14px;font-weight:500;color:var(--ink);letter-spacing:-.005em;}
-  nav.top .navlinks{display:flex;gap:28px;font-size:12px;color:var(--ink);}
-  nav.top .navlinks a{opacity:.85;transition:opacity .2s;color:var(--ink);text-decoration:none;}
-  nav.top .navlinks a:hover{opacity:1;color:var(--link);}
-  nav.top .navlinks a.current{opacity:1;font-weight:500;}
-
-  /* ===== Layout ===== */.wrap{max-width:1180px;margin:0 auto;padding:0 24px 48px;}
-
-  /* ===== Page header ===== */.pagehead{padding:48px 0 32px;}.pagehead h1{font-size:36px;font-weight:600;letter-spacing:-.025em;line-height:1.1;margin:0 0 10px;}.pagehead .tag{font-size:16px;color:var(--muted);max-width:780px;line-height:1.55;}
-
-  /* ===== Stat strip ===== */.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:0;
-    background:var(--panel);border:1px solid var(--line);border-radius:18px;
-    padding:24px;margin-bottom:24px;}.stat{padding:0 20px;border-right:1px solid var(--line-soft);}.stat:last-child{border-right:0;}.stat .n{font-size:32px;font-weight:600;letter-spacing:-.022em;line-height:1;color:var(--ink);}.stat .l{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;
-    font-weight:500;margin-top:8px;}
-
-  /* ===== Findings panel ===== */.findings{background:#fef3c7;border:1px solid #fde68a;border-radius:18px;
-    padding:24px 28px;margin-bottom:24px;}.findings h2{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;
-    color:#78350f;margin:0 0 14px;}.findings ul{margin:0;padding-left:20px;list-style:disc;color:#78350f;}.findings li{margin:8px 0;line-height:1.6;font-size:13.5px;}.findings b{color:#451a03;font-weight:600;}
-
-  /* ===== Section ===== */
-  section{background:var(--panel);border:1px solid var(--line);border-radius:18px;
-    padding:24px 28px;margin-bottom:18px;}
-  section .sec-num{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;
-    font-weight:600;margin-bottom:6px;}
-  section h2{margin:0 0 4px;font-size:22px;font-weight:600;letter-spacing:-.018em;}
-  section .sub{color:var(--muted);font-size:13px;margin-bottom:18px;}
-
-  /* ===== Table ===== */
-  table.src{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:6px;}
-  table.src th,table.src td{text-align:left;padding:10px 12px;
-    border-bottom:1px solid var(--line-soft);vertical-align:top;}
-  table.src th{font-size:10px;text-transform:uppercase;letter-spacing:.06em;
-    color:var(--muted);font-weight:600;background:var(--tile);}
-  table.src tr:last-child td{border-bottom:none;}
-  table.src .id{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;
-    color:var(--muted);white-space:nowrap;}
-  table.src .name{font-weight:600;color:var(--ink);}
-  table.src .name small{font-weight:400;color:var(--muted);font-size:11px;display:block;margin-top:3px;}
-  table.src .tags{white-space:nowrap;}
-  table.src tr:hover{background:rgba(0,0,0,0.015);}
-
-  /* ===== Tags ===== */.tag{display:inline-block;font-size:10px;padding:2px 8px;border-radius:999px;
-    margin-right:4px;font-weight:500;letter-spacing:.02em;}.tag.green{background:#d1fae5;color:#065f46;}.tag.yellow{background:#fef3c7;color:#92400e;}.tag.red{background:#fee2e2;color:#991b1b;}.tag.high{background:#d1fae5;color:#065f46;}.tag.medium{background:#fef3c7;color:#92400e;}.tag.partial{background:#fef3c7;color:#92400e;}.tag.low{background:#fee2e2;color:#991b1b;}.tag.verified{background:#dbeafe;color:#1e40af;}
-
-  /* ===== Deployment cards ===== */.dgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px;}.dcard{background:var(--tile);border-radius:12px;padding:16px 18px;font-size:13px;}.dcard .id{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:10.5px;
-    color:var(--muted);margin-bottom:4px;}.dcard .nm{font-weight:600;margin-bottom:8px;line-height:1.35;font-size:14px;}.dcard .meta{color:var(--ink-2);font-size:12px;line-height:1.55;}.dcard .meta b{color:var(--ink);font-weight:600;}
-
-  /* ===== Footer ===== */
-  footer{margin-top:32px;padding-top:24px;border-top:1px solid var(--line-soft);
-    color:var(--muted);font-size:12px;text-align:center;line-height:1.6;}
-  footer code{background:var(--tile);padding:2px 7px;border-radius:5px;font-size:11px;}
-
-  /* ===== Responsive ===== */
-  @media(max-width:880px){.stats{grid-template-columns:repeat(2,1fr);gap:24px 0;padding:20px;}.stat{padding:0 16px;border-right:0;}.stat .n{font-size:26px;}.pagehead h1{font-size:28px;}
-    section{padding:20px 18px;}
-    table.src{font-size:11.5px;}
-    table.src th,table.src td{padding:8px 9px;}
-  }
-</style>
+<title>Data &amp; method — On-Site Power Intelligence</title>
+<meta name="description" content="What the screening verdict is built on: live NREL + OpenStreetMap pulls, regional queue data, the method, the accuracy band (±40%), and our honest-corrections log.">
+<link rel="canonical" href="https://onsitespower.com/data-sources.html">
+<link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-<!-- ===== Sticky nav ===== -->
-<nav class="top">
-  <div class="nav-inner">
-    <a href="index.html" class="logo">On-Site Power Intelligence</a>
-    <div class="navlinks">
-      <a href="index.html">Home</a>
-      <a href="data-sources.html" class="current">Data</a>
-      <a href="app.html">Tool</a>
+<nav class="nav">
+  <div class="wrap">
+    <a class="brand" href="index.html"><span class="dot"></span><span>On-Site Power <small>Intelligence</small></span></a>
+    <div class="nav-links">
+      <a class="navlink" href="index.html">Home</a>
+      <a class="btn btn-dark btn-sm" href="app.html">Screen a site <span class="arr">→</span></a>
     </div>
   </div>
 </nav>
 
-<div class="wrap">
+<div class="doc">
+  <div class="eyebrow">Data &amp; Method</div>
+  <h1>What the verdict is built on.</h1>
+  <p class="lead muted">A screening tool is only worth the data behind it. Here is exactly what we pull live per coordinate, what is regional, how the call is made, and where it's reliable.</p>
 
-  <!-- ===== Page header ===== -->
-  <header class="pagehead">
-    <h1>The data behind the tool</h1>
-    <div class="tag">Every external source, its origin, vintage, method, and confidence, is tracked line-by-line.
-      Each item was directly fetched from SEC filings, government data, or industry press. License pre-screening
-      and redistribution-risk grades applied throughout.</div>
-  </header>
+  <div class="callout"><b>Screening-grade, ±40%.</b> Every number is a planning estimate meant to <i>triage</i> sites — to decide which parcels deserve a paid feasibility study and which to kill. It is not engineering, and it does not replace your utility, OEM, EPC, or counsel.</div>
 
-  <!-- ===== Stat strip ===== -->
-  <div class="stats">
-    <div class="stat"><div class="n">18+</div><div class="l">Verified sources</div></div>
-    <div class="stat"><div class="n">5</div><div class="l">Deployment cases</div></div>
-    <div class="stat"><div class="n">10</div><div class="l">Data-center hot zones</div></div>
-    <div class="stat"><div class="n">2</div><div class="l">EIA-860 extraction scripts</div></div>
-    <div class="stat"><div class="n">5</div><div class="l">Structural findings</div></div>
-  </div>
+  <h2>What's live, per coordinate</h2>
+  <p>When you screen a site, three pulls run against public APIs for that exact point — no canned answers:</p>
+  <table class="src-table">
+    <thead><tr><th>Signal</th><th>Live source</th><th>How it drives the verdict</th></tr></thead>
+    <tbody>
+      <tr><td class="k">Solar capacity factor</td><td>NREL PVWatts v8</td><td>Sizes and firms the solar / solar-+-BESS pathways for that latitude.</td></tr>
+      <tr><td class="k">Gas pipeline distance</td><td>OpenStreetMap / Overpass</td><td>Nearest gas main. On-site (&le;5 mi) → fast gas; 5–18 mi → lateral + months; none in range → gas paths ruled out.</td></tr>
+      <tr><td class="k">Substation / plant distance</td><td>OpenStreetMap / Overpass</td><td>Grid-edge and brownfield proximity for interconnect and repower potential.</td></tr>
+      <tr><td class="k">Place &amp; state</td><td>Nominatim (OSM)</td><td>Maps the coordinate to its ISO/market for queue and PPA context.</td></tr>
+    </tbody>
+  </table>
 
-  <!-- ===== Findings ===== -->
-  <div class="findings">
-    <h2>Five structural findings</h2>
-    <ul>
-      <li><b>EIA suppresses fuel-cell capex</b>, Bloom Energy's single-vendor market structure. EIA Construction Cost Data states: "to avoid disclosure of individual company data." → The tool's fuel-cell capex is labeled as a synthetic estimate, ±30%. (FC-003)</li>
-      <li><b>NREL ATB doesn't track aero gas turbines</b>, its focus is utility-scale. Data-center BTM's sweet spot, aeroderivative (LM2500/LM6000, Solar Titan), is a blind spot. → We trace these via the OEMs directly (GT-001, GT-004/005).</li>
-      <li><b>NREL ATB and EIA AEO under-state gas CC capex by 26-52%</b>, the GridLab/EFG/Halcyon Sep 2025 report proves this against actual IRP/CPCN filings. Official authoritative data lags the market. (GT-006)</li>
-      <li><b>NREL caps BESS modeling at 10 hours</b>, explicit in Augustine & Blair 2021 SFS. The tool's previous 12-hour default sat outside the modeled domain → corrected to 6 hours. (SOLAR-003)</li>
-      <li><b>NREL Cole 2023 → 2025 update revised BESS down 30%</b>, baseline $482/kWh → $334/kWh. NREL itself acknowledged the 2023 estimate was too high. → Introduced the split formula; Solar+BESS corrected by 15%. (SOLAR-004)</li>
-    </ul>
-  </div>
+  <h2>What's regional (not yet per-coordinate)</h2>
+  <p>Two inputs are sourced regionally and clearly labeled as estimates in every result. These are the next data layers to make per-coordinate.</p>
+  <table class="src-table">
+    <thead><tr><th>Input</th><th>Source</th></tr></thead>
+    <tbody>
+      <tr><td class="k">Interconnection-queue year</td><td>LBNL "Queued Up", ISO/RTO public queues (PJM, MISO, ERCOT, CAISO)</td></tr>
+      <tr><td class="k">Nuclear-PPA depth</td><td>SEC EDGAR filings — Constellation, Vistra, Talen</td></tr>
+      <tr><td class="k">Tech lead time / cost</td><td>NREL ATB, Lazard LCOE, GE Vernova / Wärtsilä disclosures</td></tr>
+    </tbody>
+  </table>
 
-  <!-- ===== Section 1: Fuel cells ===== -->
-  <section>
-    <div class="sec-num">No. 01 · Generation source</div>
-    <h2>Fuel cells</h2>
-    <div class="sub">Bloom Energy SOFC + US fleet + the explicit capex limit</div>
-    <table class="src">
-      <thead><tr><th style="width:7%">ID</th><th style="width:35%">Source</th><th style="width:13%">Type</th><th style="width:9%">Redistribution</th><th style="width:9%">Confidence</th><th>Key data</th></tr></thead>
-      <tbody>
-        <tr>
-          <td class="id">FC-001</td>
-          <td class="name">Bloom Energy company data FY2024 + FY2025
-            <small>SEC 10-K + Q3 2025 supplemental, direct fetch (Round 3 verified)</small></td>
-          <td>Government (SEC) + Company</td>
-          <td class="tags"><span class="tag green">Gov</span><span class="tag yellow">Co</span></td>
-          <td><span class="tag high">High</span></td>
-          <td>FY2024 revenue $1,473.9M (+10.5%) · FY2025 Q3 $519M (+57.1%) · customer concentration 43%/13%/12% · service backlog $14B · 800 VDC NVIDIA Rubin-compatible</td>
-        </tr>
-        <tr>
-          <td class="id">FC-002</td>
-          <td class="name">US fuel-cell fleet (EIA-860 2016 baseline + 2024 authoritative)
-            <small>EIA-860 2024 ZIP direct download + Prime Mover='FC' filter</small></td>
-          <td>Government</td>
-          <td class="tags"><span class="tag green">Gov</span></td>
-          <td><span class="tag high">High</span></td>
-          <td>2016: 137 MW (56 units) · <b>2024: 363.8 MW (186 units, 2.65× in 8 years)</b> · CA 42% + CT 28% + NY 16% = 86.5% · Bloom Energy 106.6 MW (29%), the largest operator</td>
-        </tr>
-        <tr>
-          <td class="id">FC-003</td>
-          <td class="name">Fuel-cell capex references (structural finding)
-            <small>NREL ATB and EIA Construction Cost direct fetch, verified that they don't track this</small></td>
-          <td>Government (suppressed) + Company</td>
-          <td class="tags"><span class="tag green">Gov</span></td>
-          <td><span class="tag medium">Medium</span></td>
-          <td>NREL ATB: doesn't track SOFC · EIA: suppressed due to Bloom monopoly · Tool default $3,800/kW is a synthetic estimate, ±30%</td>
-        </tr>
-      </tbody>
-    </table>
-  </section>
+  <h2>Hot-zone LOAD layer (curated)</h2>
+  <p>LBNL covers <i>generation</i> queues — a proxy. For the markets where our users actually build, we add a curated <b>large-LOAD</b> connect timeline: the real wait for new data-center load, hand-built from utility / ISO / PUC disclosures and refreshed as they change. Where a coordinate falls in a covered county, the grid timing uses this load estimate (labeled with the utility) instead of the generation proxy.</p>
+  <table class="src-table">
+    <thead><tr><th>Market</th><th>Utility / ISO · what drives the wait</th></tr></thead>
+    <tbody>
+      <tr><td class="k">Northern Virginia</td><td>Dominion — most congested DC market; queue cited up to ~15 yr</td></tr>
+      <tr><td class="k">Dallas–Fort Worth</td><td>ERCOT / Oncor — SB6 (2025) large-load study + post-2025 curtailment</td></tr>
+      <tr><td class="k">Columbus, OH</td><td>AEP Ohio — 2023 moratorium lifted; 2025 data-center tariff + study</td></tr>
+      <tr><td class="k">Atlanta</td><td>Georgia Power — &gt;100MW tariff, 15-yr contract + PSC review</td></tr>
+      <tr><td class="k">Chicago</td><td>ComEd / PJM — ~8-yr app→COD; ~160-wk transformer lead</td></tr>
+      <tr><td class="k">Quincy, WA</td><td>Grant County PUD — load caps until transmission expansion (7–10 yr)</td></tr>
+      <tr><td class="k">Phoenix</td><td>APS / SRP — subscription model; new gen 2031–33; water-constrained</td></tr>
+    </tbody>
+  </table>
+  <p class="muted" style="font-size:13px">Curated, screening-grade, as of 2026. Outside these counties, grid timing falls back to the LBNL/ISO generation-queue proxy.</p>
 
-  <!-- ===== Section 2: Gas turbines ===== -->
-  <section>
-    <div class="sec-num">No. 02 · Generation source</div>
-    <h2>Gas turbines (simple cycle)</h2>
-    <div class="sub">NREL ATB + GridLab measured + OEM disclosures + EIA-860 fleet</div>
-    <table class="src">
-      <thead><tr><th style="width:7%">ID</th><th style="width:35%">Source</th><th style="width:13%">Type</th><th style="width:9%">Redistribution</th><th style="width:9%">Confidence</th><th>Key data</th></tr></thead>
-      <tbody>
-        <tr>
-          <td class="id">GT-001</td>
-          <td class="name">NREL ATB 2024, Fossil Energy Technologies
-            <small><a href="https://atb.nrel.gov/electricity/2024/fossil_energy_technologies" target="_blank" rel="noopener">PDF</a></small></td>
-          <td>Government</td>
-          <td class="tags"><span class="tag green">Gov</span></td>
-          <td><span class="tag partial">Partial</span></td>
-          <td>F-class CT 233 MW · H-class 1×1 CC 649 MW · <b>blind spot: aero GT</b></td>
-        </tr>
-        <tr>
-          <td class="id">GT-002</td>
-          <td class="name">EIA Construction Cost Data 2023, gas generators
-            <small><a href="https://www.eia.gov/electricity/generatorcosts/" target="_blank" rel="noopener">EIA</a></small></td>
-          <td>Government</td>
-          <td class="tags"><span class="tag green">Gov</span></td>
-          <td><span class="tag high">High</span></td>
-          <td>Simple CT $562/kW · CC $898/kW · IC engine $1,354/kW · multi-OEM market, EIA discloses normally</td>
-        </tr>
-        <tr>
-          <td class="id">GT-003</td>
-          <td class="name">GE Vernova FY2024, Power segment
-            <small>Q4/FY2024 press release direct fetch + 10-K WebSearch</small></td>
-          <td>Government (SEC) + Company</td>
-          <td class="tags"><span class="tag green">Gov</span><span class="tag yellow">Co</span></td>
-          <td><span class="tag high">High</span></td>
-          <td>Power revenue $18.1B (+7% org) · orders $21.8B (+28%) · aero orders 44 / sales 27 = <b>supply-constrained</b> · RPO $73.4B · Q4 24 heavy-duty units</td>
-        </tr>
-        <tr>
-          <td class="id">GT-004</td>
-          <td class="name">Solar Turbines (Caterpillar subsidiary)
-            <small><a href="https://www.solarturbines.com/en_US/solutions/applications/data-centers.html" target="_blank" rel="noopener">Solar Turbines</a></small></td>
-          <td>Company + Industry press</td>
-          <td class="tags"><span class="tag yellow">Co</span></td>
-          <td><span class="tag high">High</span></td>
-          <td>Mercury/Centaur/Mars/Titan lineup · Meta Socrates verified (Titan 250 × 3 + PGM 130 mobile × 9 = 12 units, 73% of mix)</td>
-        </tr>
-        <tr>
-          <td class="id">GT-005</td>
-          <td class="name">Wärtsilä, gas reciprocating
-            <small><a href="https://www.power-eng.com/onsite-power/onsite-gas-turbines-reciprocating-engines-to-power-meta-data-center/" target="_blank" rel="noopener">Power Engineering</a></small></td>
-          <td>Government (Helsinki) + Industry press</td>
-          <td class="tags"><span class="tag green">Gov</span><span class="tag yellow">Co</span></td>
-          <td><span class="tag high">High</span></td>
-          <td>Ohio 282 MW deal (Q2 2025 booking → 2026-2027 delivery, <b>18-21 mo lead time</b>) · US cumulative 6 GW · lead time on par with Bloom, scale advantage</td>
-        </tr>
-        <tr>
-          <td class="id">GT-006</td>
-          <td class="name">GridLab/EFG/Halcyon Sep 2025, IRP/CPCN measured capex
-            <small><a href="https://gridlab.org/wp-content/uploads/2025/09/GridLab_Gas-Turbine-Costs-Report-1.pdf" target="_blank" rel="noopener">PDF</a></small></td>
-          <td>Government (state PSC filings cited)</td>
-          <td class="tags"><span class="tag green">Gov</span></td>
-          <td><span class="tag high">High</span></td>
-          <td>Measured simple cycle CT $728-1,969/kW (median $1,500) · CC $1,300-2,256/kW (median $2,155) · <b>NREL ATB and EIA AEO under-state by 26-52%</b> · verified GE Vernova $25M reservation fee</td>
-        </tr>
-        <tr>
-          <td class="id">GT-007</td>
-          <td class="name">EIA-860 2024, US GT fleet
-            <small>scripts/fetch-eia860-gas-turbines.js</small></td>
-          <td>Government</td>
-          <td class="tags"><span class="tag green">Gov</span></td>
-          <td><span class="tag high">High</span></td>
-          <td><b>158.6 GW</b> (2,333 units, gas only) · <b>Aero &lt;50 MW: 21.5 GW (13.6%)</b> · Mid-frame 53.7% · Top operators all utilities (TVA, Duke, FPL)</td>
-        </tr>
-        <tr>
-          <td class="id">GT-008</td>
-          <td class="name">EIA-860 2024, US IC fleet (gas only)
-            <small>scripts/fetch-eia860-gas-turbines.js</small></td>
-          <td>Government</td>
-          <td class="tags"><span class="tag green">Gov</span></td>
-          <td><span class="tag high">High</span></td>
-          <td><b>7.9 GW</b> (3,074 units, 3,330 diesel excluded) · <b>Wärtsilä-class 15-25 MW: 2.0 GW (25.6%)</b> · TX #1 (14.8%) · <b>2024 new BOL 457 MW = 2.7× the 2021-23 average</b>, data-center acceleration</td>
-        </tr>
-      </tbody>
-    </table>
-  </section>
+  <h2>The method, in one paragraph</h2>
+  <p>You give a coordinate, a firm-power need, and a timeline. We pull the live signals above, then score ten power pathways — four single-tech baselines, three hybrids, three nuclear PPAs — on the same yardstick: time-to-power, firm capacity, and rough cost. A pathway "meets" if it arrives on time at ≥90% firm capacity. If at least one does, the site is <b>ADVANCE</b>; a near-miss is <b>CAUTION</b>; none is <b>KILL</b>.</p>
 
-  <!-- ===== Section 3: Solar + BESS ===== -->
-  <section>
-    <div class="sec-num">No. 03 · Generation source</div>
-    <h2>Solar PV + Battery (BESS)</h2>
-    <div class="sub">NREL ATB (4 reports) + decisive corrections (12 hr → 6 hr, split formula)</div>
-    <table class="src">
-      <thead><tr><th style="width:7%">ID</th><th style="width:35%">Source</th><th style="width:13%">Type</th><th style="width:9%">Redistribution</th><th style="width:9%">Confidence</th><th>Key data</th></tr></thead>
-      <tbody>
-        <tr>
-          <td class="id">SOLAR-001</td>
-          <td class="name">NREL ATB 2024, Utility-Scale PV
-            <small><a href="https://atb.nrel.gov/electricity/2024/utility-scale_pv" target="_blank" rel="noopener">NREL ATB</a></small></td>
-          <td>Government</td>
-          <td class="tags"><span class="tag green">Gov</span></td>
-          <td><span class="tag high">High</span></td>
-          <td>2023 base $1.56/WAC · 2035 Moderate $0.90/WAC · CF 21-34% (10 GHI classes) · 100 MWdc tracking, ILR 1.34 bifacial</td>
-        </tr>
-        <tr>
-          <td class="id">SOLAR-002</td>
-          <td class="name">NREL Cole &amp; Karmakar 2023 BESS, <i>superseded</i>
-            <small><a href="https://www.nrel.gov/docs/fy23osti/85332.pdf" target="_blank" rel="noopener">PDF</a></small></td>
-          <td>Government</td>
-          <td class="tags"><span class="tag green">Gov</span></td>
-          <td><span class="tag partial">Partial (superseded)</span></td>
-          <td>2030 mid $326/kWh (2022$) · revised down 30% by SOLAR-004</td>
-        </tr>
-        <tr>
-          <td class="id">SOLAR-003</td>
-          <td class="name">NREL Augustine &amp; Blair 2021 Storage Futures Study
-            <small><a href="https://www.nrel.gov/docs/fy21osti/78694.pdf" target="_blank" rel="noopener">PDF</a></small></td>
-          <td>Government</td>
-          <td class="tags"><span class="tag green">Gov</span></td>
-          <td><span class="tag partial">Partial</span></td>
-          <td>Officially endorsed: Total = Energy × Duration + Power · <b>Critical finding: BESS modeling capped at 10 hr</b> · The tool's previous 12-hr default was outside the modeled domain</td>
-        </tr>
-        <tr>
-          <td class="id">SOLAR-004</td>
-          <td class="name">NREL Cole·Ramasamy·Turan 2025 BESS update, decisive correction
-            <small><a href="https://www.nrel.gov/docs/fy25osti/93281.pdf" target="_blank" rel="noopener">PDF</a></small></td>
-          <td>Government</td>
-          <td class="tags"><span class="tag green">Gov</span></td>
-          <td><span class="tag high">High</span></td>
-          <td><b>Energy $241/kWh + Power $372/kW split formula</b> (y=240.8x+379.16, R²=0.9999) · 2024 baseline revised down 30% ($482 → $334) · Tool's Solar+BESS overstatement corrected by 15%</td>
-        </tr>
-      </tbody>
-    </table>
-  </section>
+  <h2>What this is good at — and what it isn't</h2>
+  <p><b>Good at:</b> killing obviously-infeasible parcels fast, ranking candidate sites on a common yardstick, and giving you a defensible first-pass story before you spend on engineering.</p>
+  <p><b>Not good at:</b> bankable numbers, exact interconnection study outcomes, site-specific permitting and water rights, or final OEM pricing. Anything past the screen needs a real feasibility study.</p>
 
-  <!-- ===== Section 4: Hot zones ===== -->
-  <section>
-    <div class="sec-num">No. 04 · Geography</div>
-    <h2>Data-center hot-zone mapping (sub-region overlay)</h2>
-    <div class="sub">Verified sub-region uplift layered on top of ISO/RTO mapping, covers 80%+ of US data-center capacity</div>
-    <table class="src">
-      <thead><tr><th style="width:7%">ID</th><th style="width:30%">Hot zone</th><th style="width:18%">ISO / Utility</th><th style="width:18%">Uplift</th><th>Notes</th></tr></thead>
-      <tbody>
-        <tr><td class="id">R1-1</td><td class="name">NoVA (Loudoun / Fairfax / PWC)</td><td>PJM / Dominion</td><td>wait ×1.6, gas +4 mi, capex ×1.10</td><td>World #1 market; 4,000 MW demand vs. 2,100 serveable</td></tr>
-        <tr><td class="id">R1-2</td><td class="name">Columbus OH (Franklin / Licking)</td><td>PJM / AEP Ohio</td><td>wait ×1.1, gas −2 mi, capex ×1.0</td><td>Most BTM-friendly; Marcellus gas access</td></tr>
-        <tr><td class="id">R1-3</td><td class="name">Silicon Valley (Santa Clara / SJ)</td><td>CAISO / SVP+PG&amp;E</td><td>wait ×1.3, capex ×1.25</td><td>Gas turbine and reciprocating <b>hardNo</b> (CA rules)</td></tr>
-        <tr><td class="id">R1-4</td><td class="name">DFW (Dallas / Tarrant / Collin)</td><td>ERCOT / Oncor</td><td>wait ×0.7, gas −2 mi, capex ×0.95</td><td>Highly BTM-friendly; ERCOT energy-only</td></tr>
-        <tr><td class="id">R1-5</td><td class="name">Phoenix (Maricopa)</td><td>WALC / APS+SRP</td><td>wait ×1.0, gas +2 mi, capex ×1.05</td><td>The one hot zone where Solar+BESS is attractive</td></tr>
-        <tr><td class="id">R2-1</td><td class="name">Atlanta South (Fulton · Douglas · Coweta)</td><td>SOCO / Georgia Power</td><td>wait ×1.4, gas −2 mi, capex ×0.95</td><td>US #2 market; GA IT load 11.6× in 4 years</td></tr>
-        <tr><td class="id">R2-2</td><td class="name">Reno-Tahoe (Storey / TRIC)</td><td>WECC / NV Energy</td><td>wait ×1.1, gas +2 mi, capex ×1.0</td><td>#5 emerging market; Switch Citadel 7.2M sqft</td></tr>
-        <tr><td class="id">R2-3</td><td class="name">Hillsboro OR (Silicon Forest)</td><td>WECC / PGE+BPA</td><td>wait ×0.8, gas +5 mi, capex ×1.10</td><td>0.2% vacancy, the lowest in the US; BPA hydro</td></tr>
-        <tr><td class="id">R2-4</td><td class="name">Chicago (ComEd PJM + Ameren MISO)</td><td>PJM/MISO split</td><td>wait ×1.5, capex ×1.05</td><td>ComEd 28 GW backlog (7× NoVA)</td></tr>
-        <tr><td class="id">R2-5</td><td class="name">Quincy WA (Grant County PUD)</td><td>WECC / BPA</td><td>wait ×1.3, gas +8 mi, capex ×0.85</td><td>The one place BTM isn't needed; hydro at 3¢/kWh; gas <b>hardNo</b></td></tr>
-      </tbody>
-    </table>
-  </section>
+  <h2>Honest corrections</h2>
+  <p>We log every material correction publicly. Accuracy is the product; the track record of being right is the moat.</p>
+  <table class="src-table">
+    <thead><tr><th>Date</th><th>Correction</th></tr></thead>
+    <tbody>
+      <tr><td class="k">2026-Q2</td><td>Moved the verdict from a regional bucket to live per-coordinate pulls (NREL solar + OSM gas/substation distance).</td></tr>
+      <tr><td class="k">2026-Q2</td><td>Mapped every U.S. state to its ISO/RTO for queue and nuclear-PPA depth — any coordinate now resolves to a real market instead of a generic default.</td></tr>
+      <tr><td class="k">2026-Q2</td><td>Added a curated large-LOAD connect layer for 7 hot zones (NoVA, DFW, Columbus, Atlanta, Chicago, Quincy WA, Phoenix); grid timing there reflects real data-center load waits, not the generation proxy.</td></tr>
+      <tr><td class="k">2026-Q2</td><td>Gas pathways now ruled out automatically when no pipeline is found within ~7 mi of the coordinate.</td></tr>
+      <tr><td class="k">2026-Q2</td><td>Raised simple-cycle gas turbine lead time to ~28 months to reflect OEM backlog.</td></tr>
+      <tr><td class="k">2026-Q2</td><td>Marked solar-only / solar+BESS as non-firm by default; they cannot meet a 24/7 data-center load alone.</td></tr>
+    </tbody>
+  </table>
 
-  <!-- ===== Section 5: Deployment cases ===== -->
-  <section>
-    <div class="sec-num">No. 05 · Real-world evidence</div>
-    <h2>Verified deployment cases</h2>
-    <div class="sub">Actual data-center BTM and PPA deals, the empirical basis for this tool's framing</div>
-    <div class="dgrid">
-      <div class="dcard">
-        <div class="id">DEPLOY-001</div>
-        <div class="nm">Meta Socrates South (Ohio BTM)</div>
-        <div class="meta"><b>200 MW × 2 sites</b> · Williams Companies (Will-Power OH) build &amp; operate for Sidecat (Meta affiliate) · 17 months to completion · 4-OEM mix (Solar Titan 250 × 3 + PGM 130 × 9 + Siemens SGT400 × 3 + Cat 3520 × 15) · <b>physically not connected to grid</b> · OPSB-approved Jun 2025.</div>
-      </div>
-      <div class="dcard">
-        <div class="id">DEPLOY-002</div>
-        <div class="nm">Crusoe Abilene Stargate (Texas BTM)</div>
-        <div class="meta"><b>1.2 → 2.1 GW</b> · Lancium's Clean Campus · Stargate $500B JV first site · Oracle/OpenAI + Microsoft added 900 MW · &gt;1 GW gas turbine BTM + grid + wind hybrid · ERCOT verified.</div>
-      </div>
-      <div class="dcard">
-        <div class="id">DEPLOY-003</div>
-        <div class="nm">Microsoft + Constellation TMI/CCEC (PA nuclear)</div>
-        <div class="meta"><b>835 MW</b> 20-yr PPA · announced Sep 2024 · Three Mile Island Unit 1 restart (retired 2019) · 2028 online · NRC license extended through 2054 · <b>grid-connected FTM from the start</b> (no BTM attempt) · 3,400 jobs + $3B in state revenue.</div>
-      </div>
-      <div class="dcard">
-        <div class="id">DEPLOY-004</div>
-        <div class="nm">Vistra Comanche Peak (TX nuclear)</div>
-        <div class="meta"><b>1,200 MW</b> 20yr + 20-opt PPA · Q4 2027 → 2032 ramp · <b>customer undisclosed</b> ("large investment-grade") · first ERCOT nuclear-data-center PPA · 50% of Comanche Peak's 2.4 GW reallocated · Vistra Adjusted FCF lifted 8-10%.</div>
-      </div>
-      <div class="dcard">
-        <div class="id">DEPLOY-005</div>
-        <div class="nm">Talen-AWS Susquehanna (BTM failed)</div>
-        <div class="meta"><b>The decisive BTM-failure case</b> · Mar 2024 $650M Cumulus acquisition (attempted 960 MW BTM) · <b>FERC rejection Nov 2024</b> (AEP + Exelon opposed, citing $140M/yr cost shift) · Jun 2025 restructured to FTM PPA · $18B, 17 yrs, 1.92 GW grid-connected.</div>
-      </div>
-    </div>
-    <p style="margin-top:18px;color:var(--muted);font-size:12.5px;line-height:1.65">
-      <b>Pattern:</b> All three nuclear deals (DEPLOY-003, 004, 005) are grid-connected FTM. BTM nuclear is effectively foreclosed after the Talen rejection. Gas BTM (DEPLOY-001, 002) is the hyperscaler standard model.
-    </p>
-  </section>
-
-  <!-- ===== Section 6: Scripts ===== -->
-  <section>
-    <div class="sec-num">No. 06 · Reproducibility</div>
-    <h2>EIA-860 extraction scripts</h2>
-    <div class="sub">Run on your own machine: US government ZIP download → Prime Mover filter → gas-fuel filter → authoritative fleet data</div>
-    <table class="src">
-      <thead><tr><th style="width:30%">Script</th><th style="width:35%">Purpose</th><th style="width:25%">Output</th><th>Status</th></tr></thead>
-      <tbody>
-        <tr>
-          <td class="id">scripts/fetch-eia860-fuelcells.js</td>
-          <td>EIA-860 2024 ZIP → Prime Mover 'FC' filter → US fuel-cell fleet</td>
-          <td>data/fuelcells/eia860-2024-fuelcells.json</td>
-          <td><span class="tag verified">User-verified</span></td>
-        </tr>
-        <tr>
-          <td class="id">scripts/fetch-eia860-gas-turbines.js</td>
-          <td>Prime Mover GT + IC combined, with gas-fuel filter (diesel excluded)</td>
-          <td>data/gasturbines/eia860-2024-gas-turbines.json + eia860-2024-reciprocating.json</td>
-          <td><span class="tag verified">User-verified</span></td>
-        </tr>
-      </tbody>
-    </table>
-  </section>
-
-  <!-- ===== Section 7: Redistribution ===== -->
-  <section>
-    <div class="sec-num">No. 07 · Legal pre-screen</div>
-    <h2>Redistribution classification</h2>
-    <div class="sub">22 sources across the data-center vertical, pre-screened for legal risk</div>
-    <p style="margin:0;font-size:13px;line-height:1.7">
-      <span class="tag green">Government / Public</span> 9 sources: EIA, NREL, SEC EDGAR, state PSC filings, redistribution OK.<br>
-      <span class="tag yellow">Gray zone</span> 8 sources: industry press (DCD, Power Engineering, Utility Dive), company self-published, fact citation OK, full-text reproduction not.<br>
-      <span class="tag red">Held</span> 5 sources: S&amp;P Global, BNEF, Wood Mackenzie, EPRI, LandGate, unused pending license negotiation.
-    </p>
-    <p style="margin-top:12px;font-size:12px;color:var(--muted)">
-      Full classification and the 10-question lawyer queue → <code>data-source-review-fuelcells.md</code>
-    </p>
-  </section>
-
-  <footer>
-    <div style="margin-bottom:10px;color:var(--ink-2)"><b>This tool does not constitute investment, legal, or engineering advice.</b> All numbers are planning estimates (±40% accuracy assumed). Verify with utility, OEM, EPC, and qualified counsel before any commitment.</div>
-    This dashboard visualizes the line-by-line tracking in <code>data/provenance.md</code>.
-    Last updated 2026-05-30.
-    <div style="margin-top:10px">
-      <a href="index.html">Home</a> &nbsp;·&nbsp;
-      <a href="app.html">Tool</a> &nbsp;·&nbsp;
-      <a href="terms.html">Terms</a> &nbsp;·&nbsp;
-      <a href="privacy.html">Privacy</a>
-    </div>
-  </footer>
+  <p style="margin-top:34px"><a class="btn btn-primary" href="app.html">Screen a site <span class="arr">→</span></a></p>
 </div>
 
+<footer>
+  <div class="wrap" style="flex-direction:column">
+    <div style="display:flex;justify-content:space-between;width:100%;flex-wrap:wrap;gap:16px">
+      <a class="brand" href="index.html" style="color:#fff"><span class="dot"></span><span>On-Site Power <small>Intelligence</small></span></a>
+      <div class="foot-links"><a href="index.html">Home</a><a href="app.html">Tool</a></div>
+    </div>
+    <p class="disclaimer">Not investment, legal, or engineering advice. Live pulls plus regional estimates; all numbers are planning estimates (±40%). Verify with utility, OEM, EPC, and qualified counsel before any commitment. v1 · 2026 · onsitespower.com</p>
+  </div>
+</footer>
 </body>
 </html>

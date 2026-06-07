@@ -1,472 +1,161 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>On-Site Power Intelligence | Pre-screen 80% of BTM sites in 60 seconds</title>
-<meta name="description" content="Stop spending $50k and six weeks on candidate sites that turn out infeasible. Drop a coordinate, get the behind-the-meter verdict in 60 seconds, on the same yardstick.">
-
-<!-- Open Graph / LinkedIn / iMessage -->
+<title>On-Site Power Intelligence | Pre-screen behind-the-meter sites in 60 seconds</title>
+<meta name="description" content="Kill the dead sites before the EPC invoice. Drop a coordinate, get a live behind-the-meter ADVANCE / KILL verdict across 10 power options in 60 seconds. Built for data-center site developers. Free, no signup.">
+<link rel="canonical" href="https://onsitespower.com/">
 <meta property="og:type" content="website">
-<meta property="og:site_name" content="On-Site Power Intelligence">
-<meta property="og:title" content="Pre-screen 80% of BTM sites. Pay for engineering on the rest.">
-<meta property="og:description" content="Behind-the-meter feasibility for AI data centers. Drop a coordinate, get the verdict in 60 seconds — same yardstick across 10 scenarios. Free, no signup.">
-<meta property="og:url" content="https://onsite-power-intelligence.onrender.com/">
-<meta property="og:image" content="https://onsite-power-intelligence.onrender.com/images/hero.jpg">
-<meta property="og:image:width" content="2000">
-<meta property="og:image:height" content="1125">
-<meta property="og:image:alt" content="AI data center with on-site power infrastructure">
-<meta property="og:locale" content="en_US">
-
-<!-- Twitter Card -->
+<meta property="og:url" content="https://onsitespower.com/">
+<meta property="og:title" content="Kill the dead sites before the EPC invoice.">
+<meta property="og:description" content="Behind-the-meter pre-screen for AI data-center sites. Live NREL + OSM data, ADVANCE / KILL verdict in 60 seconds. Free, no signup.">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Pre-screen 80% of BTM sites. Pay for engineering on the rest.">
-<meta name="twitter:description" content="Behind-the-meter feasibility for AI data centers. 60-second verdict. Free, no signup.">
-<meta name="twitter:image" content="https://onsite-power-intelligence.onrender.com/images/hero.jpg">
-
-<link rel="canonical" href="https://onsite-power-intelligence.onrender.com/">
-<style>
-  *{box-sizing:border-box;margin:0;padding:0;}
-  :root{
-    --ink:#1d1d1f;
-    --ink-soft:#424245;
-    --muted:#6e6e73;
-    --line:#d2d2d7;
-    --line-soft:#f5f5f7;
-    --bg:#ffffff;
-    --bg-soft:#fbfbfd;
-    --bg-tile:#f5f5f7;
-    --link:#0071e3;
-    --link-hover:#0077ed;
-    --placeholder:#e8e8ed;
-    --placeholder-text:#a1a1a6;
-  }
-  html,body{
-    height:100%;
-    background:var(--bg);
-    color:var(--ink);
-    font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue",Helvetica,Arial,sans-serif;
-    line-height:1.47;
-    -webkit-font-smoothing:antialiased;
-    -moz-osx-font-smoothing:grayscale;
-    letter-spacing:-.003em;
-  }
-  a{color:inherit;text-decoration:none;}
-
-  /* ============ NAV ============ */
-  nav.top{
-    position:sticky;top:0;z-index:50;
-    background:rgba(255,255,255,0.72);
-    backdrop-filter:saturate(180%) blur(20px);
-    -webkit-backdrop-filter:saturate(180%) blur(20px);
-    border-bottom:1px solid rgba(0,0,0,0.06);
-  }.nav-inner{
-    max-width:1024px;margin:0 auto;
-    display:flex;justify-content:space-between;align-items:center;
-    padding:0 22px;height:48px;
-  }
-  nav.top .logo{
-    font-size:14px;font-weight:500;letter-spacing:-.005em;color:var(--ink);
-  }
-  nav.top .navlinks{
-    display:flex;gap:28px;
-    font-size:12px;font-weight:400;color:var(--ink);
-  }
-  nav.top .navlinks a{opacity:.88;transition:opacity .2s;}
-  nav.top .navlinks a:hover{opacity:1;}
-
-  /* ============ Reusable link CTA ============ */.link-cta{
-    display:inline-flex;align-items:center;gap:4px;
-    color:var(--link);
-    font-size:17px;font-weight:400;
-    transition:color .2s;
-  }.link-cta:hover{color:var(--link-hover);text-decoration:underline;}.link-cta .arrow{
-    font-size:18px;display:inline-block;
-    transition:transform .2s;
-  }.link-cta:hover .arrow{transform:translateX(2px);}.btn-cta{
-    display:inline-flex;align-items:center;justify-content:center;
-    background:var(--link);color:#fff;
-    font-size:17px;font-weight:400;
-    padding:12px 22px;border-radius:980px;
-    transition:background .2s;
-    min-width:160px;
-  }.btn-cta:hover{background:var(--link-hover);}
-
-  /* ============ HERO ============ */.hero{
-    padding:88px 22px 22px;
-    text-align:center;
-    background:var(--bg);
-  }.hero .eyebrow{
-    font-size:14px;font-weight:400;color:var(--muted);
-    margin-bottom:8px;
-  }.hero h1{
-    font-size:clamp(34px, 5vw, 58px);
-    font-weight:600;
-    letter-spacing:-.022em;
-    line-height:1.1;
-    color:var(--ink);
-    max-width:760px;margin:0 auto 26px;
-    text-wrap:balance;
-  }.hero .sub{
-    font-size:clamp(16px, 1.35vw, 19px);
-    font-weight:400;
-    color:var(--ink-soft);
-    letter-spacing:-.008em;
-    line-height:1.5;
-    max-width:640px;margin:0 auto 6px;
-    text-wrap:balance;
-  }.hero .sub-2{margin-bottom:32px;}.hero .ctas{
-    display:flex;justify-content:center;align-items:center;
-    gap:32px;flex-wrap:wrap;
-    margin-bottom:14px;
-  }.hero .note{
-    font-size:13px;color:var(--muted);
-    margin-top:4px;
-  }
-
-  /* Hero image */.hero-image{
-    margin:64px auto 0;
-    max-width:1024px;width:calc(100% - 44px);
-    aspect-ratio:16/9;
-    background:var(--placeholder);
-    border-radius:24px;
-    overflow:hidden;
-    display:flex;align-items:center;justify-content:center;
-    color:var(--placeholder-text);
-    font-size:13px;letter-spacing:.02em;
-  }.hero-image img{
-    width:100%;height:100%;object-fit:cover;display:block;
-  }.hero-image:empty::before, .hero-image:not(:has(img))::before{
-    content:"[ Hero image — drop in public/images/hero.jpg ]";
-  }
-
-  /* ============ Section divider ============ */.sep{
-    background:var(--bg);
-    padding:0 22px;
-  }.sep-inner{
-    max-width:1024px;margin:0 auto;
-    border-top:1px solid var(--line-soft);
-    height:0;
-  }
-
-  /* ============ Tile section (3 features) ============ */.tiles-section{
-    padding:22px 22px;
-    background:var(--bg);
-  }.tiles-grid{
-    max-width:1024px;margin:0 auto;
-    display:grid;grid-template-columns:repeat(3,1fr);gap:12px;
-  }.tile{
-    background:var(--bg-tile);
-    border-radius:24px;
-    padding:44px 32px 0;
-    min-height:520px;
-    display:flex;flex-direction:column;
-    text-align:center;
-    overflow:hidden;
-  }.tile .tile-eyebrow{
-    font-size:14px;font-weight:500;color:var(--muted);
-    margin-bottom:8px;letter-spacing:.01em;
-  }.tile h2{
-    font-size:clamp(26px, 2.7vw, 34px);
-    font-weight:600;
-    letter-spacing:-.018em;
-    line-height:1.15;
-    color:var(--ink);
-    margin-bottom:14px;
-    text-wrap:balance;
-    min-height:2.5em;
-  }.tile p{
-    font-size:17px;
-    color:var(--ink-soft);
-    line-height:1.4;
-    letter-spacing:-.01em;
-    margin-bottom:22px;
-    max-width:380px;
-    margin-left:auto;margin-right:auto;
-  }.tile .tile-cta{margin-bottom:32px;}.tile-image{
-    flex:1;min-height:200px;
-    background:var(--placeholder);
-    margin:0 -32px;
-    border-top:1px solid rgba(0,0,0,0.04);
-    overflow:hidden;
-    display:flex;align-items:center;justify-content:center;
-    color:var(--placeholder-text);
-    font-size:12px;letter-spacing:.02em;
-  }.tile-image img{
-    width:100%;height:100%;object-fit:cover;display:block;
-  }
-
-  /* ============ Wide hero tile (problem) ============ */.wide-section{
-    padding:12px 22px;
-    background:var(--bg);
-  }.wide-tile{
-    max-width:1024px;margin:0 auto;
-    background:var(--bg-tile);
-    border-radius:24px;
-    padding:80px 32px 0;
-    text-align:center;
-    overflow:hidden;
-  }.wide-tile .tile-eyebrow{
-    font-size:17px;font-weight:500;color:var(--muted);
-    margin-bottom:8px;letter-spacing:.01em;
-  }.wide-tile h2{
-    font-size:clamp(36px, 4.5vw, 56px);
-    font-weight:600;
-    letter-spacing:-.022em;
-    line-height:1.08;
-    color:var(--ink);
-    max-width:780px;margin:0 auto 16px;
-  }.wide-tile p{
-    font-size:clamp(17px, 1.4vw, 21px);
-    color:var(--ink-soft);
-    line-height:1.4;letter-spacing:-.012em;
-    max-width:600px;margin:0 auto 28px;
-  }.wide-tile .wide-image{
-    margin:48px -32px 0;
-    aspect-ratio:21/9;
-    background:var(--placeholder);
-    overflow:hidden;
-    display:flex;align-items:center;justify-content:center;
-    color:var(--placeholder-text);
-    font-size:13px;letter-spacing:.02em;
-  }.wide-tile .wide-image img{
-    width:100%;height:100%;object-fit:cover;display:block;
-  }
-
-  /* ============ Built for (personas) ============ */.personas{
-    padding:80px 22px 22px;
-    background:var(--bg);
-    text-align:center;
-  }.personas .label{
-    font-size:14px;font-weight:500;color:var(--muted);
-    text-transform:uppercase;letter-spacing:.08em;
-    margin-bottom:16px;
-  }.personas h2{
-    font-size:clamp(32px, 4vw, 48px);
-    font-weight:600;
-    letter-spacing:-.022em;line-height:1.08;
-    margin-bottom:64px;
-    max-width:760px;margin-left:auto;margin-right:auto;
-  }.personas-grid{
-    max-width:1024px;margin:0 auto;
-    display:grid;grid-template-columns:repeat(3,1fr);gap:48px;
-    text-align:left;
-  }.persona{
-    border-top:1px solid var(--line);
-    padding-top:20px;
-  }.persona .num{
-    font-size:13px;color:var(--muted);
-    margin-bottom:14px;
-    letter-spacing:.02em;
-  }.persona h3{
-    font-size:22px;font-weight:600;
-    letter-spacing:-.012em;line-height:1.2;
-    margin-bottom:10px;
-    color:var(--ink);
-  }.persona p{
-    font-size:15px;color:var(--ink-soft);
-    line-height:1.5;letter-spacing:-.005em;
-  }
-
-  /* ============ Trust strip ============ */.trust{
-    padding:88px 22px;
-    background:var(--bg);
-    text-align:center;
-  }.trust .label{
-    font-size:14px;font-weight:500;color:var(--muted);
-    text-transform:uppercase;letter-spacing:.08em;
-    margin-bottom:32px;
-  }.trust .nums{
-    max-width:880px;margin:0 auto 40px;
-    display:grid;grid-template-columns:repeat(4,1fr);gap:24px;
-  }.trust .n{
-    font-size:clamp(36px, 4vw, 48px);
-    font-weight:600;letter-spacing:-.022em;
-    color:var(--ink);line-height:1;
-    margin-bottom:8px;
-  }.trust .l{
-    font-size:13px;color:var(--muted);
-    letter-spacing:.01em;
-  }.trust .sources{
-    font-size:14px;color:var(--muted);
-    letter-spacing:.01em;
-    max-width:720px;margin:0 auto;
-    line-height:1.7;
-  }
-
-  /* ============ Final CTA ============ */.final{
-    padding:80px 22px 96px;
-    background:var(--bg);
-    text-align:center;
-  }.final h2{
-    font-size:clamp(32px, 4vw, 48px);
-    font-weight:600;
-    letter-spacing:-.022em;line-height:1.08;
-    margin-bottom:24px;
-  }
-
-  /* ============ Footer ============ */
-  footer.foot{
-    background:var(--bg-tile);
-    color:var(--muted);
-    padding:22px 22px;
-    border-top:1px solid var(--line);
-  }.foot-inner{
-    max-width:1024px;margin:0 auto;
-    display:flex;justify-content:space-between;align-items:center;
-    gap:16px;flex-wrap:wrap;
-    font-size:12px;
-  }.foot-links{display:flex;gap:24px;}.foot-links a:hover{color:var(--ink);}
-
-  /* ============ Mobile ============ */
-  @media (max-width: 880px){.tiles-grid{grid-template-columns:1fr;}.tile{min-height:auto;padding:40px 28px 0;}.tile-image{min-height:240px;}.personas-grid{grid-template-columns:1fr;gap:32px;}.trust .nums{grid-template-columns:repeat(2,1fr);gap:32px 16px;}.hero{padding:64px 22px 16px;}.hero .ctas{gap:20px;}.wide-tile{padding:56px 24px 0;}.wide-tile .wide-image{margin:36px -24px 0;}.personas{padding:64px 22px 16px;}.trust,.final{padding:64px 22px;}
-  }
-</style>
+<link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-<!-- ========== NAV ========== -->
-<nav class="top">
-  <div class="nav-inner">
-    <a href="index.html" class="logo">On-Site Power Intelligence</a>
-    <div class="navlinks">
-      <a href="data-sources.html">Data</a>
-      <a href="app.html">Tool</a>
+<nav class="nav">
+  <div class="wrap">
+    <a class="brand" href="index.html"><span class="dot"></span><span>On-Site Power <small>Intelligence</small></span></a>
+    <div class="nav-links">
+      <a class="navlink" href="data-sources.html">Data</a>
+      <a class="navlink" href="app.html">Tool</a>
+      <a class="btn btn-dark btn-sm" href="app.html" onclick="track('action','cta_nav')">Screen a site <span class="arr">→</span></a>
     </div>
   </div>
 </nav>
 
-<!-- ========== HERO ========== -->
-<section class="hero">
-  <div class="eyebrow">AI Data Center · Behind-the-Meter Pre-screen</div>
-  <h1>Pre-screen 80% of sites.<br>Pay for engineering on the rest.</h1>
-  <p class="sub">Stop spending $50k and six weeks on sites that turn out infeasible.</p>
-  <p class="sub sub-2">Drop a coordinate. Get the BTM verdict in 60 seconds.</p>
-  <div class="ctas">
-    <a href="app.html" class="btn-cta">Launch the tool</a>
-    <a href="data-sources.html" class="link-cta">See the data <span class="arrow">›</span></a>
-  </div>
-  <div class="note">Free. No signup. 90 seconds.</div>
+<header class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <div class="eyebrow">AI Data Center · Behind-the-Meter Pre-screen</div>
+      <h1>Kill the dead sites before the EPC invoice.</h1>
+      <p class="lead">Every infeasible parcel that reaches an EPC costs you ~$50k and six weeks. Drop a coordinate and get a <b>live</b> behind-the-meter <b>ADVANCE / KILL</b> verdict — real solar, gas, and grid data, 10 options on one yardstick — in 60 seconds.</p>
+      <div class="hero-cta">
+        <a class="btn btn-primary btn-lg" href="app.html" onclick="track('action','cta_hero')">Screen a site <span class="arr">→</span></a>
+        <a class="btn btn-ghost btn-lg" href="data-sources.html">See the data</a>
+      </div>
+      <div class="hero-note">Free · No signup · Live NREL + OSM data · Screening-grade ±40%</div>
+    </div>
 
-  <!-- Hero image — large 16:9 above the fold -->
-  <div class="hero-image">
-    <img src="images/hero.jpg" alt="AI data center with on-site power infrastructure" loading="eager">
+    <div class="schematic" aria-hidden="true">
+      <div class="scr-top">
+        <span class="lbl">Verdict · live screening</span>
+        <span class="pill adv">ADVANCE</span>
+      </div>
+      <div class="scr-verdict">Worth a feasibility study.<br><b>On-site fastest path ≈ 16 mo.</b></div>
+      <div class="scr-row"><span>Grid interconnection</span><span class="v no">~2031 ✗</span></div>
+      <div class="scr-row"><span>Gas pipeline (OSM)</span><span class="v ok">1.8 mi ✓</span></div>
+      <div class="scr-row"><span>Solar CF (NREL)</span><span class="v warn">19% ▲</span></div>
+      <div class="scr-row"><span>Gas recip + BESS</span><span class="v ok">16 mo ✓</span></div>
+      <div class="scr-row"><span>Firm capacity met</span><span class="v ok">250 MW ✓</span></div>
+    </div>
+  </div>
+</header>
+
+<hr class="divider">
+
+<section class="band">
+  <div class="wrap">
+    <div class="eyebrow">The bottleneck</div>
+    <h2 style="max-width:18ch;margin:14px 0 18px">The grid won't wait. AI data centers can't either.</h2>
+    <p class="lead" style="max-width:60ch">PJM, MISO, and ERCOT interconnection queues now run <span class="big-num">6–15 years</span>. ~2,300 GW sits stuck in U.S. queues — more than the country's entire installed capacity. Behind-the-meter or PPA is the only path that meets an AI timeline. The problem: there's no fast, common yardstick to compare the options. That's this.</p>
   </div>
 </section>
 
-<!-- ========== TILES (3 features) ========== -->
-<section class="tiles-section">
-  <div class="tiles-grid">
-
-    <div class="tile">
-      <div class="tile-eyebrow">Coverage</div>
-      <h2>Ten data center hot zones.</h2>
-      <p>NoVA, Columbus, DFW, Atlanta, Quincy WA. Coordinates auto-map to sub-region with local weather, LMP, and policy applied.</p>
-      <a href="data-sources.html" class="link-cta tile-cta">Learn more <span class="arrow">›</span></a>
-      <div class="tile-image">
-        <img src="images/tile-coverage.jpg" alt="Map of US data-center hot zones" loading="lazy">
+<section>
+  <div class="wrap">
+    <div class="eyebrow center">What it does</div>
+    <h2 class="center" style="margin:14px 0 46px">The first five minutes of a power decision.</h2>
+    <div class="grid cols-3">
+      <div class="card">
+        <div class="num">01 / SCREEN</div>
+        <h3>Coordinate → live verdict</h3>
+        <p>Click the map or drop an address. We pull real solar capacity factor (NREL), the nearest gas pipeline and substation (OpenStreetMap), and regional queue timing — then return an ADVANCE / CAUTION / KILL call against your timeline.</p>
+        <a class="more" href="app.html">Try it →</a>
+      </div>
+      <div class="card">
+        <div class="num">02 / COMPARE</div>
+        <h3>Ten scenarios, one yardstick</h3>
+        <p>Four single-tech baselines, three hybrids, and verified nuclear PPAs — every option scored on time-to-power, firm capacity, and cost on the same page. No more apples-to-oranges debates.</p>
+        <a class="more" href="app.html">See the matrix →</a>
+      </div>
+      <div class="card">
+        <div class="num">03 / DEFEND</div>
+        <h3>Board-ready in one click</h3>
+        <p>Committee deck, IC memo, CEO slide. Browser-native print with assumptions, live sources, and sensitivities included — so your "advance" call survives the room.</p>
+        <a class="more" href="app.html">See an example →</a>
       </div>
     </div>
+  </div>
+</section>
 
-    <div class="tile">
-      <div class="tile-eyebrow">Decision matrix</div>
-      <h2>Ten scenarios. One yardstick.</h2>
-      <p>Four single-tech baselines, three hybrid configurations, and three verified nuclear PPAs, every option on the same page.</p>
-      <a href="app.html" class="link-cta tile-cta">Try it <span class="arrow">›</span></a>
-      <div class="tile-image">
-        <img src="images/tile-matrix.jpg" alt="Side-by-side scenario comparison view" loading="lazy">
+<hr class="divider">
+
+<section class="section-sm">
+  <div class="wrap">
+    <div class="eyebrow">Coverage</div>
+    <h2 style="margin:12px 0 26px">Any U.S. coordinate. Built on live public data.</h2>
+    <div class="stats">
+      <div class="stat"><div class="big">Any</div><div class="cap">U.S. coordinate</div></div>
+      <div class="stat"><div class="big">10</div><div class="cap">Power scenarios / site</div></div>
+      <div class="stat"><div class="big">Live</div><div class="cap">NREL + OSM pulls</div></div>
+      <div class="stat"><div class="big">±40%</div><div class="cap">Screening-grade, stated</div></div>
+    </div>
+    <p class="sources-line">Live: NREL PVWatts (solar) · OpenStreetMap / Overpass (gas pipelines, substations, plants) · Nominatim (geocoding)<br>
+    Regional: LBNL queues · EIA · SEC EDGAR (Constellation / Vistra / Talen) · state PUC</p>
+  </div>
+</section>
+
+<hr class="divider">
+
+<section>
+  <div class="wrap">
+    <div class="eyebrow">Built for</div>
+    <h2 style="margin:12px 0 26px">One job. Done in five minutes.</h2>
+    <div class="persona">
+      <div class="tag">Site Developer · Origination</div>
+      <h3>The person who decides which parcel gets the $50k feasibility study.</h3>
+      <p>You screen 5–20 candidate sites a month for a data-center or powered-land developer. Your one decision: which parcels are worth advancing to a paid EPC feasibility study — and which to kill now. This tool validates the power story <i>before</i> you call the EPC.</p>
+      <div class="qjob">
+        <span><b>5–20</b> sites screened / month</span>
+        <span><b>$50k · 6 wks</b> saved per killed site</span>
+        <span><b>60 sec</b> to an ADVANCE / KILL call</span>
       </div>
     </div>
+  </div>
+</section>
 
-    <div class="tile">
-      <div class="tile-eyebrow">Deliverable</div>
-      <h2>Board-ready PDF<br>in one click.</h2>
-      <p>Committee deck, IC memo, CEO slide. Browser-native print. Assumptions, sources, and sensitivities included.</p>
-      <a href="app.html" class="link-cta tile-cta">See an example <span class="arrow">›</span></a>
-      <div class="tile-image">
-        <img src="images/tile-deliverable.jpg" alt="Board-ready PDF report mockup" loading="lazy">
+<section class="band center">
+  <div class="wrap">
+    <h2 style="margin-bottom:14px">Start with one coordinate.</h2>
+    <p class="lead" style="max-width:48ch;margin:0 auto 28px">Screen your next site before it costs you a feasibility study.</p>
+    <a class="btn btn-primary btn-lg" href="app.html" onclick="track('action','cta_footer')">Screen a site <span class="arr">→</span></a>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap" style="flex-direction:column">
+    <div style="display:flex;justify-content:space-between;width:100%;flex-wrap:wrap;gap:16px">
+      <a class="brand" href="index.html" style="color:#fff"><span class="dot"></span><span>On-Site Power <small>Intelligence</small></span></a>
+      <div class="foot-links">
+        <a href="app.html">Tool</a>
+        <a href="data-sources.html">Data</a>
       </div>
     </div>
-
-  </div>
-</section>
-
-<!-- ========== WIDE TILE (problem) ========== -->
-<section class="wide-section">
-  <div class="wide-tile">
-    <div class="tile-eyebrow">The bottleneck</div>
-    <h2>The grid won&rsquo;t wait.<br>AI data centers can&rsquo;t either.</h2>
-    <p>
-      PJM, MISO, and ERCOT interconnection queues average six to fifteen years.
-      Behind-the-meter or PPA, compare them on the same yardstick, in five minutes.
-    </p>
-    <div class="wide-image">
-      <img src="images/wide-bottleneck.jpg" alt="Transmission lines, data center, and BESS infrastructure" loading="lazy">
-    </div>
-  </div>
-</section>
-
-<!-- ========== PERSONAS ========== -->
-<section class="personas">
-  <div class="label">Built for</div>
-  <h2>The first five minutes of a power decision.</h2>
-  <div class="personas-grid">
-    <div class="persona">
-      <div class="num">01 / Site Selection</div>
-      <h3>Site Developer</h3>
-      <p>Validate that the power story holds before calling the EPC. Triage three to five candidate parcels for BTM feasibility.</p>
-    </div>
-    <div class="persona">
-      <div class="num">02 / Hyperscaler Infrastructure</div>
-      <h3>Infrastructure Director</h3>
-      <p>Board- and CEO-ready slides comparing three to ten sites on the same yardstick, strategy meetings, not debates.</p>
-    </div>
-    <div class="persona">
-      <div class="num">03 / Infrastructure PE</div>
-      <h3>Investment Director</h3>
-      <p>Pressure-test the sponsor&rsquo;s BTM thesis. IC memo backup with verified sources, named assumptions, and correction history.</p>
-    </div>
-  </div>
-</section>
-
-<!-- ========== TRUST ========== -->
-<section class="trust">
-  <div class="label">Built on verified public data</div>
-  <div class="nums">
-    <div><div class="n">18+</div><div class="l">Verified sources</div></div>
-    <div><div class="n">10</div><div class="l">Hot zones</div></div>
-    <div><div class="n">5</div><div class="l">Deployment cases</div></div>
-    <div><div class="n">4</div><div class="l">Honest corrections</div></div>
-  </div>
-  <p class="sources">
-    EIA · NREL ATB · SEC EDGAR · GridLab · Bloom Energy 10-K · GE Vernova · Wärtsilä · Constellation · Vistra · Talen · LBNL · DOE
-  </p>
-</section>
-
-<!-- ========== FINAL CTA ========== -->
-<section class="final">
-  <h2>Start with one coordinate.</h2>
-  <div class="ctas" style="display:flex;justify-content:center;gap:32px;flex-wrap:wrap;">
-    <a href="app.html" class="btn-cta">Launch the tool</a>
-    <a href="data-sources.html" class="link-cta">See the data <span class="arrow">›</span></a>
-  </div>
-</section>
-
-<!-- ========== FOOTER ========== -->
-<footer class="foot">
-  <div class="foot-inner">
-    <div>Built with rigor and honesty. v1 · 2026 · All features free.</div>
-    <div class="foot-links">
-      <a href="app.html">Tool</a>
-      <a href="data-sources.html">Data</a>
-      <a href="terms.html">Terms</a>
-      <a href="privacy.html">Privacy</a>
-    </div>
-  </div>
-  <div class="foot-disclaim" style="max-width:880px;margin:18px auto 0;padding:0 22px;font-size:11.5px;color:var(--muted);text-align:center;line-height:1.6;">
-    This tool does not constitute investment, legal, or engineering advice. All numbers are planning estimates (±40% accuracy assumed). Verify with utility, OEM, EPC, and qualified counsel before any commitment.
+    <p class="disclaimer">Not investment, legal, or engineering advice. All numbers are planning estimates (±40% accuracy assumed). Verify with utility, OEM, EPC, and qualified counsel before any commitment. v1 · 2026 · onsitespower.com</p>
   </div>
 </footer>
 
+<script>
+/* lightweight analytics → /api/track (no-ops if backend has no DATABASE_URL) */
+(function(){
+  function sid(){ try{ var k='osp_sid', v=localStorage.getItem(k); if(!v){ v=Math.random().toString(36).slice(2)+Date.now().toString(36); localStorage.setItem(k,v);} return v; }catch(e){ return 'anon'; } }
+  var utm=''; try{ var p=new URLSearchParams(location.search); utm=p.get('utm_source')?(p.get('utm_source')+'/'+(p.get('utm_medium')||'')):''; }catch(e){}
+  window.track=function(type,name){ try{ fetch('/api/track',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({session:sid(),type:type,name:name,path:location.pathname,referrer:document.referrer,utm:utm})}).catch(function(){}); }catch(e){} };
+  track('pageview','landing');
+})();
+</script>
 </body>
 </html>
