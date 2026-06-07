@@ -294,8 +294,8 @@ tr.win .scen::after{content:" ◀ fastest viable";font-family:var(--mono);font-s
 /* ===========================================================
    APP — map + live-data tool additions
    =========================================================== */
-.maphero{position:relative;margin-top:8px}
-#map{height:clamp(380px,56vh,720px);border-radius:var(--radius);border:1px solid var(--line);overflow:hidden;z-index:0}
+.maphero{position:relative;margin-top:8px;width:98vw;max-width:98vw;margin-left:calc(50% - 49vw)}
+#map{height:clamp(460px,78vh,1100px);border-radius:var(--radius);border:1px solid var(--line);overflow:hidden;z-index:0}
 .map-controls{position:absolute;top:16px;left:50%;transform:translateX(-50%);z-index:700;width:94%;max-width:560px;display:flex;gap:8px;background:#fff;border-radius:10px;padding:8px;box-shadow:0 18px 44px rgba(10,18,48,.22),0 4px 12px rgba(10,18,48,.10)}
 .map-controls input{flex:1;border:1.5px solid transparent;border-radius:7px;padding:13px 14px;font-size:15px;color:var(--ink);outline:none;background:#f3f5f8;font-family:var(--sans)}
 .map-controls input:focus{border-color:var(--accent);background:#fff}
