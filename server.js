@@ -102,16 +102,10 @@ async function dbInsert(row){
     [row.session, row.type, row.name, row.path, row.referrer, row.utm, row.ua]
   );
 }
-async function adminStats(){
-  const since = new Date(Date.now() - 14 * 864e5).toISOString();
-  const res = await pool.query(
-    "SELECT ts, session, type, name, referrer, utm FROM events WHERE ts >= $1 ORDER BY ts DESC LIMIT 50000",
-    [since]
-  );
-  const rows = res.rows;
+function aggregate(rows){
   const now = Date.now();
   const sset = new Set(), s24 = new Set(), s7 = new Set();
-  const day = {}, sectionS = {}, actionS = {}, sourceS = {}, sess = {};
+  const day = {}, sectionS = {}, actionS = {}, sourceS = {}, sess = {}, pageS = {};
   rows.forEach((e) => {
     const iso = (e.ts instanceof Date) ? e.ts.toISOString() : String(e.ts);
     sset.add(e.session);
@@ -120,6 +114,7 @@ async function adminStats(){
     if(now - t < 7 * 864e5) s7.add(e.session);
     const d = iso.slice(0, 10);
     (day[d] = day[d] || new Set()).add(e.session);
+    if(e.type === "pageview") (pageS[e.name] = pageS[e.name] || new Set()).add(e.session);
     if(e.type === "section") (sectionS[e.name] = sectionS[e.name] || new Set()).add(e.session);
     if(e.type === "action") (actionS[e.name] = actionS[e.name] || new Set()).add(e.session);
     let src = e.utm || "";
@@ -141,12 +136,21 @@ async function adminStats(){
   return {
     ok: true,
     totals: { sessions: sset.size, pageviews: pv, sessions_24h: s24.size, sessions_7d: s7.size },
-    by_day, sections: rank(sectionS), sources: rank(sourceS),
+    by_day, sections: rank(sectionS), sources: rank(sourceS), pages: rank(pageS),
     actions: { coordinate_set: get(actionS, "coordinate_set"), computed: get(actionS, "computed"),
-      word_download: get(actionS, "word_download"), compare_open: get(actionS, "compare_open"),
-      new_site: get(actionS, "new_site") },
+      word_download: get(actionS, "word_download"), copy_link: get(actionS, "copy_link"),
+      compare_open: get(actionS, "compare_open"), new_site: get(actionS, "new_site") },
+    actions_all: rank(actionS),
     recent
   };
+}
+async function adminStats(){
+  const since = new Date(Date.now() - 14 * 864e5).toISOString();
+  const res = await pool.query(
+    "SELECT ts, session, type, name, referrer, utm FROM events WHERE ts >= $1 ORDER BY ts DESC LIMIT 50000",
+    [since]
+  );
+  return aggregate(res.rows);
 }
 
 /* ---- API routes ----------------------------------------------------------- */
