@@ -153,7 +153,10 @@
 (function(){
   function sid(){ try{ var k='osp_sid', v=localStorage.getItem(k); if(!v){ v=Math.random().toString(36).slice(2)+Date.now().toString(36); localStorage.setItem(k,v);} return v; }catch(e){ return 'anon'; } }
   var utm=''; try{ var p=new URLSearchParams(location.search); utm=p.get('utm_source')?(p.get('utm_source')+'/'+(p.get('utm_medium')||'')):''; }catch(e){}
-  window.track=function(type,name){ try{ fetch('/api/track',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({session:sid(),type:type,name:name,path:location.pathname,referrer:document.referrer,utm:utm})}).catch(function(){}); }catch(e){} };
+  /* operator mode: open with ?ops=1 once to tag THIS browser's traffic as internal (?ops=0 clears it) */
+  var ops=false; try{ var op=new URLSearchParams(location.search); if(op.get('ops')==='1'){localStorage.setItem('osp_ops','1');} else if(op.get('ops')==='0'){localStorage.removeItem('osp_ops');} ops=localStorage.getItem('osp_ops')==='1'; }catch(e){}
+  window.OSP_INTERNAL=ops;
+  window.track=function(type,name){ try{ fetch('/api/track',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({session:sid(),type:type,name:name,path:location.pathname,referrer:document.referrer,utm:utm,internal:ops?1:0})}).catch(function(){}); }catch(e){} };
   track('pageview','landing');
 })();
 </script>

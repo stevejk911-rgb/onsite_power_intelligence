@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>On-Site Power Intelligence — Admin</title>
+<title>On-Site Power Intelligence — 관리자</title>
 <style>
   :root{
     --ink:#0b1220;--body:#2b3340;--muted:#6b7480;--line:#e9ecf1;
@@ -89,78 +89,91 @@
   .empty{padding:26px 20px;font-size:13.5px;color:var(--muted);line-height:1.55;text-align:center}
 
   .hide{display:none}
+  .scbtn{border:1px solid #d9d9d6;background:#fff;color:#333;border-radius:8px;padding:6px 12px;font-size:13px;cursor:pointer}
+  .scbtn.on{background:#111;color:#fff;border-color:#111}
 </style>
 </head>
 <body>
 <div class="top"><div class="in">
-  <div class="brand">On-Site Power Intelligence <span>· Admin</span></div>
-  <div class="who"><span>Signed in as <b>Steve</b></span><button class="lock" id="relock" onclick="changeKey()" style="display:none">Change key</button></div>
+  <div class="brand">On-Site Power Intelligence <span>· 관리자</span></div>
+  <div class="who"><span>관리자: <b>Steve</b></span><button class="lock" id="relock" onclick="changeKey()" style="display:none">키 변경</button></div>
 </div></div>
 <div class="tabs">
-  <button class="tab on" onclick="go('overview',this)">Overview</button>
-  <button class="tab" onclick="go('traffic',this)">Traffic</button>
-  <button class="tab" onclick="go('sites',this)">Site checks</button>
-  <button class="tab" onclick="go('feedback',this)">Feedback</button>
-  <button class="tab" onclick="go('outreach',this)">Outreach</button>
+  <button class="tab on" onclick="go('overview',this)">개요</button>
+  <button class="tab" onclick="go('traffic',this)">유입 · 퍼널</button>
+  <button class="tab" onclick="go('sites',this)">사이트 점검</button>
+  <button class="tab" onclick="go('feedback',this)">피드백</button>
+  <button class="tab" onclick="go('outreach',this)">아웃리치</button>
 </div>
 
 <div class="wrap">
 
+<div id="datactl" style="display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;background:#fff;border:1px solid #e6e6e3;border-radius:12px;padding:10px 14px;margin:16px 0 4px">
+  <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+    <span style="font-size:13px;color:#555;font-weight:700">데이터 보기</span>
+    <button id="sc-external" onclick="setScope('external')" class="scbtn">실제 방문자</button>
+    <button id="sc-internal" onclick="setScope('internal')" class="scbtn">내 방문(테스트)</button>
+    <button id="sc-all" onclick="setScope('all')" class="scbtn">전체</button>
+    <span id="scopeCounts" style="font-size:12px;color:#888;margin-left:6px"></span>
+  </div>
+  <button id="resetBtn" onclick="resetData()" style="border:1px solid #e0b4b4;color:#b42318;background:#fff;border-radius:8px;padding:7px 13px;font-size:13px;font-weight:600;cursor:pointer">데이터 초기화…</button>
+</div>
+
 <section id="overview">
-  <div class="htitle">What's happening on the site</div>
-  <p class="intro">Every time someone screens a location, the result is logged below. This is live — refresh to see new activity.</p>
+  <div class="htitle">사이트에서 일어나는 일</div>
+  <p class="intro">누군가 위치를 점검할 때마다 결과가 아래에 기록됩니다. 실시간이에요 — 새로고침하면 최신 활동이 보입니다.</p>
   <div class="kpis">
-    <div class="kpi"><div class="lab">Sites screened</div><div class="n" id="kSites">—</div><div class="d">How many times a visitor screened a location</div></div>
-    <div class="kpi"><div class="lab">Can be powered on-site</div><div class="n" id="kPow">—</div><div class="d">Share of screens that came back Advance or Caution — the rest are grid-blocked (Kill)</div></div>
-    <div class="kpi"><div class="lab">Visitors (14d)</div><div class="n" id="kSess">—</div><div class="d">Unique sessions across the site in the last 14 days</div></div>
-    <div class="kpi"><div class="lab">Feedback received</div><div class="n" id="kFb">—</div><div class="d">One-line notes visitors left on a result</div></div>
+    <div class="kpi"><div class="lab">사이트 점검 수</div><div class="n" id="kSites">—</div><div class="d">방문자가 위치를 점검한 총 횟수</div></div>
+    <div class="kpi"><div class="lab">온사이트 가능 비율</div><div class="n" id="kPow">—</div><div class="d">진행 또는 주의로 나온 비율 — 나머지는 그리드만 가능(제외)</div></div>
+    <div class="kpi"><div class="lab">방문자 (14일)</div><div class="n" id="kSess">—</div><div class="d">최근 14일간 사이트 순 방문(세션)</div></div>
+    <div class="kpi"><div class="lab">받은 피드백</div><div class="n" id="kFb">—</div><div class="d">방문자가 결과 화면에 남긴 한 줄 메모</div></div>
   </div>
 
   <div class="legend" style="margin-top:22px">
-    <div class="lg"><span class="dot g"></span><b>Advance</b> — on-site power works, worth a feasibility study</div>
-    <div class="lg"><span class="dot a"></span><b>Caution</b> — borderline; tighten scope or timeline</div>
-    <div class="lg"><span class="dot r"></span><b>Kill</b> — no near-term path; grid only, years out</div>
+    <div class="lg"><span class="dot g"></span><b>진행</b> — 온사이트 전력 가능, 타당성 검토할 만함</div>
+    <div class="lg"><span class="dot a"></span><b>주의</b> — 경계선; 규모나 일정 조정 필요</div>
+    <div class="lg"><span class="dot r"></span><b>제외</b> — 단기 경로 없음; 그리드만, 수년 후</div>
   </div>
 
   <div class="grid2">
     <div class="panel">
-      <div class="ph"><div class="pt">Latest locations screened <span class="pa" onclick="go('sites',document.querySelectorAll('.tab')[2])">See all</span></div><div class="pd">The most recent sites visitors ran through the tool.</div></div>
-      <div id="recentSites"><div class="empty">Loading…</div></div>
+      <div class="ph"><div class="pt">최근 점검한 위치 <span class="pa" onclick="go('sites',document.querySelectorAll('.tab')[2])">전체 보기</span></div><div class="pd">방문자가 가장 최근 툴로 점검한 사이트.</div></div>
+      <div id="recentSites"><div class="empty">불러오는 중…</div></div>
     </div>
     <div class="panel">
-      <div class="ph"><div class="pt">Latest feedback <span class="pa" onclick="go('feedback',document.querySelectorAll('.tab')[3])">See all</span></div><div class="pd">Notes visitors typed in the feedback box.</div></div>
-      <div id="recentFb"><div class="empty">Loading…</div></div>
+      <div class="ph"><div class="pt">최근 피드백 <span class="pa" onclick="go('feedback',document.querySelectorAll('.tab')[3])">전체 보기</span></div><div class="pd">방문자가 피드백 칸에 입력한 메모.</div></div>
+      <div id="recentFb"><div class="empty">불러오는 중…</div></div>
     </div>
   </div>
 </section>
 
 <section id="traffic" class="hide">
-  <div class="htitle">Traffic &amp; funnel</div>
-  <p class="intro">Where visitors come from and how far they get. <b>Channel</b> reads your UTM tags (LinkedIn / cold email / community); the <b>funnel</b> tracks the journey from landing to screening to sharing/printing — the actions that signal real intent.</p>
-  <div id="statsBody"><div class="empty">Loading…</div></div>
+  <div class="htitle">유입 · 퍼널</div>
+  <p class="intro">방문자가 어디서 오고 어디까지 도달하는지. <b>채널</b>은 UTM 태그(LinkedIn / 콜드메일 / 커뮤니티)를 읽고, <b>퍼널</b>은 랜딩 → 점검 → 공유/출력까지의 여정을 추적합니다 — 실제 관심을 보여주는 행동들이에요.</p>
+  <div id="statsBody"><div class="empty">불러오는 중…</div></div>
 </section>
 
 <section id="sites" class="hide">
-  <div class="htitle">Site checks</div>
-  <p class="intro">One row per location a visitor screened. <b>Verdict</b> is the ADVANCE / CAUTION / KILL call, <b>Fastest path</b> is the quickest viable on-site option, and <b>Options that meet</b> is how many of the scored pathways cleared your yardstick.</p>
+  <div class="htitle">사이트 점검</div>
+  <p class="intro">방문자가 점검한 위치당 한 줄. <b>판정</b>은 진행 / 주의 / 제외 결과, <b>가장 빠른 경로</b>는 가장 빠르게 가능한 온사이트 옵션, <b>기준 충족 옵션</b>은 점수화된 경로 중 기준을 통과한 개수입니다.</p>
   <div class="legend">
-    <div class="lg"><span class="dot g"></span><b>Advance</b></div>
-    <div class="lg"><span class="dot a"></span><b>Caution</b></div>
-    <div class="lg"><span class="dot r"></span><b>Kill</b></div>
+    <div class="lg"><span class="dot g"></span><b>진행</b></div>
+    <div class="lg"><span class="dot a"></span><b>주의</b></div>
+    <div class="lg"><span class="dot r"></span><b>제외</b></div>
   </div>
-  <div class="panel"><div id="sitesTable"><div class="empty">Loading…</div></div></div>
+  <div class="panel"><div id="sitesTable"><div class="empty">불러오는 중…</div></div></div>
 </section>
 
 <section id="feedback" class="hide">
-  <div class="htitle">Feedback</div>
-  <p class="intro">One-line notes visitors leave from the result page. The coordinate next to each note is the exact map point they were looking at when they wrote it. Use <b>Delete</b> to remove spam or test notes.</p>
-  <div class="panel"><div id="fbList"><div class="empty">Loading…</div></div></div>
+  <div class="htitle">피드백</div>
+  <p class="intro">방문자가 결과 화면에서 남긴 한 줄 메모입니다. 메모 옆 좌표는 작성 당시 보고 있던 정확한 지도 지점이에요. 스팸이나 테스트 메모는 <b>삭제</b>로 지우세요.</p>
+  <div class="panel"><div id="fbList"><div class="empty">불러오는 중…</div></div></div>
 </section>
 
 <section id="outreach" class="hide">
-  <div class="htitle">Outreach</div>
-  <p class="intro">This will show your email outreach (sent / opened / replied / booked) once it's connected.</p>
-  <div class="panel"><div class="empty">Not connected yet. Hook up Apollo (sequences) or Gmail to track outreach here.</div></div>
+  <div class="htitle">아웃리치</div>
+  <p class="intro">연동하면 이메일 아웃리치(발송 / 열람 / 회신 / 미팅)가 여기 표시됩니다.</p>
+  <div class="panel"><div class="empty">아직 연동 안 됨. Apollo(시퀀스)나 Gmail을 연결하면 여기서 아웃리치를 추적할 수 있어요.</div></div>
 </section>
 
 </div>
@@ -175,7 +188,7 @@
     if(fromUrl){ saveKey(fromUrl); history.replaceState(null,"",location.pathname); return fromUrl; }
     return storedKey();
   }
-  function changeKey(){ var k=prompt("Enter admin key"); if(k){ saveKey(k); loadAll(k); } }
+  function changeKey(){ var k=prompt("관리자 키를 입력하세요"); if(k){ saveKey(k); loadAll(k); } }
 
   function go(id,btn){
     ["overview","traffic","sites","feedback","outreach"].forEach(function(s){ document.getElementById(s).classList.add("hide"); });
@@ -189,17 +202,17 @@
   function rel(ts){
     var t=new Date(ts).getTime(); if(!isFinite(t)) return "";
     var s=Math.max(0,(Date.now()-t)/1000);
-    if(s<60) return "just now";
-    if(s<3600) return Math.floor(s/60)+"m ago";
-    if(s<86400) return Math.floor(s/3600)+"h ago";
-    if(s<604800) return Math.floor(s/86400)+"d ago";
-    return new Date(ts).toLocaleDateString();
+    if(s<60) return "방금";
+    if(s<3600) return Math.floor(s/60)+"분 전";
+    if(s<86400) return Math.floor(s/3600)+"시간 전";
+    if(s<604800) return Math.floor(s/86400)+"일 전";
+    return new Date(ts).toLocaleDateString("ko-KR");
   }
   function coord(it){ return (typeof it.lat==="number"&&typeof it.lng==="number") ? (it.lat.toFixed(3)+", "+it.lng.toFixed(3)) : "—"; }
   function pill(cat){
-    if(cat==="Yes") return '<span class="pill p-yes">Advance</span>';
-    if(cat==="No near-term") return '<span class="pill p-no">Kill</span>';
-    return '<span class="pill p-con">Caution</span>';
+    if(cat==="Yes") return '<span class="pill p-yes">진행</span>';
+    if(cat==="No near-term") return '<span class="pill p-no">제외</span>';
+    return '<span class="pill p-con">주의</span>';
   }
 
   /* ---------- site checks ---------- */
@@ -208,31 +221,35 @@
     var pow=items.filter(function(i){ return i.cat && i.cat!=="No near-term"; }).length;
     document.getElementById("kPow").textContent=items.length? (Math.round(100*pow/items.length)+"%") : "—";
     var recent=document.getElementById("recentSites");
-    if(!items.length){ recent.innerHTML='<div class="empty">No screens yet. As soon as someone runs a location on the site, it appears here.</div>'; }
+    if(!items.length){ recent.innerHTML='<div class="empty">아직 점검 없음. 누군가 사이트에서 위치를 점검하면 여기에 나타납니다.</div>'; }
     else {
       var rows=items.slice(0,6).map(function(i){
         return '<tr><td class="mono">'+esc(coord(i))+'</td><td>'+pill(i.cat)+'</td><td class="muted">'+esc(i.fastest||"")+'</td><td class="muted">'+rel(i.ts)+'</td></tr>';
       }).join("");
-      recent.innerHTML='<table><tr><th>Location (lat, lng)</th><th>Verdict</th><th>Fastest power path</th><th>Screened</th></tr>'+rows+'</table>';
+      recent.innerHTML='<table><tr><th>위치 (위도, 경도)</th><th>판정</th><th>가장 빠른 전력 경로</th><th>점검 시각</th></tr>'+rows+'</table>';
     }
     var full=document.getElementById("sitesTable");
-    if(!items.length){ full.innerHTML='<div class="empty">No site checks logged yet.</div>'; }
+    if(!items.length){ full.innerHTML='<div class="empty">아직 기록된 사이트 점검이 없습니다.</div>'; }
     else {
       var rows2=items.map(function(i){
-        return '<tr><td class="mono">'+esc(coord(i))+'</td><td>'+pill(i.cat)+'</td><td class="muted">'+esc(i.fastest||"")+'</td><td class="muted">'+(typeof i.feasible==="number"?(i.feasible+" meet"):"—")+'</td><td class="muted">'+rel(i.ts)+'</td></tr>';
+        return '<tr><td class="mono">'+esc(coord(i))+'</td><td>'+pill(i.cat)+'</td><td class="muted">'+esc(i.fastest||"")+'</td><td class="muted">'+(typeof i.feasible==="number"?(i.feasible+"개 충족"):"—")+'</td><td class="muted">'+rel(i.ts)+'</td></tr>';
       }).join("");
-      full.innerHTML='<table><tr><th>Location (lat, lng)</th><th>Verdict</th><th>Fastest power path</th><th>Options that meet</th><th>Screened</th></tr>'+rows2+'</table>';
+      full.innerHTML='<table><tr><th>위치 (위도, 경도)</th><th>판정</th><th>가장 빠른 전력 경로</th><th>기준 충족 옵션</th><th>점검 시각</th></tr>'+rows2+'</table>';
     }
   }
 
   /* ---------- traffic / funnel ---------- */
-  var CHANNEL_LABEL={ "linkedin/social":"LinkedIn", "coldemail/email":"Cold email", "community/post":"Community", "direct":"Direct" };
+  var CHANNEL_LABEL={ "linkedin/social":"LinkedIn", "coldemail/email":"콜드메일", "community/post":"커뮤니티", "direct":"직접 유입" };
   function chLabel(name){ return CHANNEL_LABEL[name] || name; }
+  var WD=["일","월","화","수","목","금","토"];
+  function dayLabel(ymd){ var p=String(ymd).split("-"); if(p.length<3) return ymd; var d=new Date(Number(p[0]),Number(p[1])-1,Number(p[2])); return Number(p[1])+"/"+Number(p[2])+" ("+WD[d.getDay()]+")"; }
   function renderStats(stats){
     var el=document.getElementById("statsBody");
+    var sc=document.getElementById("scopeCounts");
+    if(sc) sc.textContent=(stats&&stats.split)?("실제 방문자 "+stats.split.external+"명 · 내 방문 "+stats.split.internal+"명 (14일)"):"";
     if(!stats || stats.ok===false){
       document.getElementById("kSess").textContent="—";
-      el.innerHTML='<div class="panel"><div class="empty">Analytics are off. Set <span class="mono">DATABASE_URL</span> (Postgres) and <span class="mono">ADMIN_KEY</span> on the server to start collecting pageviews, channels, and the funnel. Site checks and feedback above work without it.</div></div>';
+      el.innerHTML='<div class="panel"><div class="empty">분석이 꺼져 있습니다. 서버에 <span class="mono">DATABASE_URL</span>(Postgres)과 <span class="mono">ADMIN_KEY</span>를 설정하면 페이지뷰·채널·퍼널 수집이 시작됩니다. 위의 사이트 점검과 피드백은 이것 없이도 작동해요.</div></div>';
       return;
     }
     var t=stats.totals||{};
@@ -241,12 +258,12 @@
     var a=stats.actions||{};
     var landing=find(stats.pages,"landing"), tool=find(stats.pages,"tool");
     var steps=[
-      ["Landing views", landing],
-      ["Tool opened", tool],
-      ["Site located", a.coordinate_set||0],
-      ["Screened (verdict)", a.computed||0],
-      ["Shared link", a.copy_link||0],
-      ["Printed PDF", a.word_download||0]
+      ["랜딩 조회", landing],
+      ["툴 열림", tool],
+      ["위치 지정", a.coordinate_set||0],
+      ["점검 완료(판정)", a.computed||0],
+      ["링크 공유", a.copy_link||0],
+      ["PDF 출력", a.word_download||0]
     ];
     var max=Math.max(1, landing, tool, a.computed||0);
     var funnel=steps.map(function(s){
@@ -257,31 +274,38 @@
 
     var sources=(stats.sources||[]).slice(0,12).map(function(s){
       return '<tr><td>'+esc(chLabel(s.name))+'</td><td class="mono">'+s.sessions+'</td></tr>';
-    }).join("") || '<tr><td class="muted" colspan="2">No channel data yet.</td></tr>';
+    }).join("") || '<tr><td class="muted" colspan="2">아직 채널 데이터 없음.</td></tr>';
 
     var actions=(stats.actions_all||[]).slice(0,12).map(function(s){
       return '<tr><td>'+esc(s.name)+'</td><td class="mono">'+s.sessions+'</td></tr>';
-    }).join("") || '<tr><td class="muted" colspan="2">No actions yet.</td></tr>';
+    }).join("") || '<tr><td class="muted" colspan="2">아직 액션 없음.</td></tr>';
 
     var byday=stats.by_day||[];
     var dmax=Math.max(1, Math.max.apply(null, byday.map(function(d){return d.sessions;}).concat([0])));
-    var bars=byday.map(function(d){ return '<div class="db" title="'+d.day+': '+d.sessions+'" style="height:'+Math.round(100*d.sessions/dmax)+'%"></div>'; }).join("");
+    var bars=byday.map(function(d){ return '<div class="db" title="'+dayLabel(d.day)+': '+d.sessions+'명" style="height:'+Math.round(100*d.sessions/dmax)+'%"></div>'; }).join("");
     var labels=byday.map(function(d,i){ return '<span>'+(i%2===0?d.day.slice(5):'')+'</span>'; }).join("");
+    /* 일별 방문자: 최신 날짜가 위로, 오늘은 강조 */
+    var todayYmd=new Date().toISOString().slice(0,10);
+    var dailyRows=byday.slice().reverse().map(function(d){
+      var isToday=d.day===todayYmd;
+      return '<tr'+(isToday?' style="font-weight:700"':'')+'><td>'+dayLabel(d.day)+(isToday?' · 오늘':'')+'</td><td class="mono">'+d.sessions+'명</td></tr>';
+    }).join("") || '<tr><td class="muted" colspan="2">아직 방문 없음.</td></tr>';
 
     el.innerHTML=
       '<div class="kpis" style="margin-bottom:6px">'+
-        '<div class="kpi"><div class="lab">Visitors (14d)</div><div class="n">'+(t.sessions||0)+'</div><div class="d">Unique sessions</div></div>'+
-        '<div class="kpi"><div class="lab">Page views</div><div class="n">'+(t.pageviews||0)+'</div><div class="d">Across all pages</div></div>'+
-        '<div class="kpi"><div class="lab">Last 24h</div><div class="n">'+(t.sessions_24h||0)+'</div><div class="d">Sessions today</div></div>'+
-        '<div class="kpi"><div class="lab">Last 7d</div><div class="n">'+(t.sessions_7d||0)+'</div><div class="d">Sessions this week</div></div>'+
+        '<div class="kpi"><div class="lab">방문자 (14일)</div><div class="n">'+(t.sessions||0)+'</div><div class="d">순 방문(세션)</div></div>'+
+        '<div class="kpi"><div class="lab">페이지뷰</div><div class="n">'+(t.pageviews||0)+'</div><div class="d">전체 페이지 합계</div></div>'+
+        '<div class="kpi"><div class="lab">오늘 (24시간)</div><div class="n">'+(t.sessions_24h||0)+'</div><div class="d">오늘 방문자</div></div>'+
+        '<div class="kpi"><div class="lab">이번 주 (7일)</div><div class="n">'+(t.sessions_7d||0)+'</div><div class="d">최근 7일 방문자</div></div>'+
       '</div>'+
       '<div class="grid2">'+
-        '<div class="panel"><div class="ph"><div class="pt">Funnel</div><div class="pd">Share is relative to landing views. "Screened" and "Shared" are the intent signals.</div></div><div class="funnel">'+funnel+'</div></div>'+
-        '<div class="panel"><div class="ph"><div class="pt">Channels</div><div class="pd">From UTM tags on your outreach links.</div></div><table><tr><th>Channel / source</th><th>Sessions</th></tr>'+sources+'</table></div>'+
+        '<div class="panel"><div class="ph"><div class="pt">일별 방문자</div><div class="pd">최근 14일, 하루에 몇 명이 방문했는지. 막대 위에 마우스를 올리면 인원이 보여요.</div></div><div class="daybars">'+bars+'</div><div class="daylabels">'+labels+'</div>'+
+          '<table style="margin-top:12px"><tr><th>날짜</th><th>방문자</th></tr>'+dailyRows+'</table></div>'+
+        '<div class="panel"><div class="ph"><div class="pt">퍼널</div><div class="pd">비율은 랜딩 조회 기준. "점검 완료"와 "링크 공유"가 실제 관심 신호예요.</div></div><div class="funnel">'+funnel+'</div></div>'+
       '</div>'+
       '<div class="grid2">'+
-        '<div class="panel"><div class="ph"><div class="pt">Sessions / day (14d)</div></div><div class="daybars">'+bars+'</div><div class="daylabels">'+labels+'</div></div>'+
-        '<div class="panel"><div class="ph"><div class="pt">All actions</div><div class="pd">Every tracked click, incl. computed &amp; copy_link.</div></div><table><tr><th>Action</th><th>Sessions</th></tr>'+actions+'</table></div>'+
+        '<div class="panel"><div class="ph"><div class="pt">유입 채널</div><div class="pd">아웃리치 링크의 UTM 태그 기준.</div></div><table><tr><th>채널 / 출처</th><th>방문자</th></tr>'+sources+'</table></div>'+
+        '<div class="panel"><div class="ph"><div class="pt">전체 액션</div><div class="pd">추적된 모든 클릭(점검 완료·링크 공유 포함).</div></div><table><tr><th>액션</th><th>방문자</th></tr>'+actions+'</table></div>'+
       '</div>';
   }
 
@@ -290,10 +314,10 @@
   function fbItemHTML(it,idx){
     var loc=(typeof it.lat==="number"&&typeof it.lng==="number") ? (it.lat.toFixed(2)+", "+it.lng.toFixed(2)) : "no location";
     return '<div class="fb"><div class="top2">'
-      + '<div class="who2">A visitor, looking at <b>'+esc(loc)+'</b></div>'
-      + '<div class="t">'+rel(it.ts)+'<button class="fbdel" onclick="deleteFb('+idx+')">Delete</button></div></div>'
+      + '<div class="who2">방문자 · 보던 위치 <b>'+esc(loc)+'</b></div>'
+      + '<div class="t">'+rel(it.ts)+'<button class="fbdel" onclick="deleteFb('+idx+')">삭제</button></div></div>'
       + '<div class="msg">“'+esc(it.text)+'”</div>'
-      + (it.verdict?('<div class="ctx">context: '+esc(it.verdict)+'</div>'):'')
+      + (it.verdict?('<div class="ctx">맥락: '+esc(it.verdict)+'</div>'):'')
       + '</div>';
   }
   function renderFeedback(items){
@@ -302,7 +326,7 @@
     var latest=document.getElementById("recentFb");
     var list=document.getElementById("fbList");
     if(!items.length){
-      var e='<div class="empty">No feedback yet. One-line notes visitors leave on a result will land here.</div>';
+      var e='<div class="empty">아직 피드백 없음. 방문자가 결과에 남긴 한 줄 메모가 여기에 표시됩니다.</div>';
       latest.innerHTML=e; list.innerHTML=e; return;
     }
     latest.innerHTML=items.slice(0,4).map(fbItemHTML).join("");
@@ -310,27 +334,58 @@
   }
   function deleteFb(idx){
     var it=FB_ITEMS[idx]; if(!it) return;
-    if(!confirm("Delete this feedback?")) return;
+    if(!confirm("이 피드백을 삭제할까요?")) return;
     fetch("/api/admin/feedback/delete"+(CURKEY?("?key="+encodeURIComponent(CURKEY)):""),
       {method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({ id:it.id })})
       .then(function(r){ if(!r.ok) throw new Error("del"); return r.json(); })
       .then(function(){ loadAll(CURKEY); })
-      .catch(function(){ alert("Could not delete that note."); });
+      .catch(function(){ alert("메모를 삭제하지 못했어요."); });
+  }
+
+  /* ---------- scope (real users vs my own visits) ---------- */
+  var SCOPE="external";
+  function scoped(path){ return path+"?scope="+encodeURIComponent(SCOPE); }
+  function refreshScopeUI(){
+    ["external","internal","all"].forEach(function(s){
+      var b=document.getElementById("sc-"+s); if(b) b.className="scbtn"+(s===SCOPE?" on":"");
+    });
+  }
+  function setScope(s){ SCOPE=s; refreshScopeUI(); loadAll(CURKEY||storedKey()); }
+  function resetData(){
+    var key=CURKEY||storedKey();
+    if(!key){ alert("먼저 관리자 키를 입력하세요 (admin.html?key=내키 로 열기)."); return; }
+    var internalOnly=(SCOPE==="internal");
+    var msg=internalOnly
+      ? "내 방문(테스트) 데이터만 삭제할까요? 실제 방문자 데이터는 유지됩니다. 되돌릴 수 없어요."
+      : "모든 분석 데이터(방문·사이트 점검·피드백, 실제 방문자 포함)를 전부 지울까요? 되돌릴 수 없어요.";
+    if(!confirm(msg)) return;
+    if(!internalOnly && !confirm("마지막 확인: 실제 방문자 데이터까지 삭제됩니다. 계속할까요?")) return;
+    fetch("/api/admin/reset?scope="+(internalOnly?"internal":"all")+"&key="+encodeURIComponent(key),{method:"POST"})
+      .then(function(r){ if(!r.ok) throw new Error("reset"); return r.json(); })
+      .then(function(j){
+        if(j&&j.ok){
+          alert(j.scope==="internal"
+            ? ("내 방문 데이터를 삭제했어요 (이벤트 "+((j.deleted&&j.deleted.events)||0)+"건, 사이트 점검 "+((j.deleted&&j.deleted.sitechecks)||0)+"건).")
+            : "모든 분석 데이터를 초기화했어요. 깨끗한 상태입니다.");
+          loadAll(key);
+        } else { alert((j&&j.error)||"초기화 실패."); }
+      })
+      .catch(function(){ alert("초기화하지 못했어요 — 관리자 키와 데이터베이스 연결을 확인하세요."); });
   }
 
   /* ---------- load ---------- */
   function api(path,key){
-    return fetch(path+(key?("?key="+encodeURIComponent(key)):""))
-      .then(function(r){ if(r.status===401) throw new Error("locked"); return r.json(); });
+    var u=path; if(key) u+=(u.indexOf("?")>=0?"&":"?")+"key="+encodeURIComponent(key);
+    return fetch(u).then(function(r){ if(r.status===401) throw new Error("locked"); return r.json(); });
   }
   function lockedUI(){
-    var m='<div class="empty">Locked. Reload and enter the admin key, or open as <span class="mono">admin.html?key=YOUR_ADMIN_KEY</span>.</div>';
+    var m='<div class="empty">잠김. 새로고침 후 관리자 키를 입력하거나 <span class="mono">admin.html?key=내_관리자_키</span> 로 여세요.</div>';
     ["recentSites","recentFb","sitesTable","fbList","statsBody"].forEach(function(id){ document.getElementById(id).innerHTML=m; });
     ["kSites","kPow","kFb","kSess"].forEach(function(id){ document.getElementById(id).textContent="—"; });
   }
   function loadAll(key){
     CURKEY=key||"";
-    Promise.all([ api("/api/admin/sitechecks",key), api("/api/admin/feedback",key), api("/api/admin/stats",key).catch(function(){return {ok:false};}) ])
+    Promise.all([ api(scoped("/api/admin/sitechecks"),key), api(scoped("/api/admin/feedback"),key), api(scoped("/api/admin/stats"),key).catch(function(){return {ok:false};}) ])
       .then(function(res){
         document.getElementById("relock").style.display="";
         renderSites((res[0]&&res[0].items)||[]);
@@ -340,14 +395,15 @@
       .catch(function(e){
         if(e&&e.message==="locked"){
           clearKey();
-          var k=prompt("This admin page is locked. Enter the admin key:");
+          var k=prompt("이 관리자 페이지는 잠겨 있어요. 관리자 키를 입력하세요:");
           if(k){ saveKey(k); loadAll(k); return; }
           lockedUI();
         } else {
-          ["recentSites","recentFb","sitesTable","fbList","statsBody"].forEach(function(id){ document.getElementById(id).innerHTML='<div class="empty">Could not load right now.</div>'; });
+          ["recentSites","recentFb","sitesTable","fbList","statsBody"].forEach(function(id){ document.getElementById(id).innerHTML='<div class="empty">지금은 불러올 수 없어요.</div>'; });
         }
       });
   }
+  refreshScopeUI();
   loadAll(initialKey());
 </script>
 </body>
