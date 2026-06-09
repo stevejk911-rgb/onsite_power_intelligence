@@ -57,7 +57,12 @@ if(DATABASE_URL){
       "CREATE TABLE IF NOT EXISTS sitechecks (" +
       "  id bigserial PRIMARY KEY, ts timestamptz NOT NULL DEFAULT now()," +
       "  lat double precision, lng double precision, verdict text, cat text, fastest text, feasible int, ua text);" +
-      "CREATE INDEX IF NOT EXISTS sitechecks_ts_idx ON sitechecks (ts DESC);"
+      "CREATE INDEX IF NOT EXISTS sitechecks_ts_idx ON sitechecks (ts DESC);" +
+      /* internal flag: marks operator/own-device traffic so the dashboard can
+         separate it from real users (also patched onto existing tables). */
+      "ALTER TABLE events     ADD COLUMN IF NOT EXISTS internal boolean NOT NULL DEFAULT false;" +
+      "ALTER TABLE sitechecks ADD COLUMN IF NOT EXISTS internal boolean NOT NULL DEFAULT false;" +
+      "ALTER TABLE feedback   ADD COLUMN IF NOT EXISTS internal boolean NOT NULL DEFAULT false;"
     ).then(() => console.log("Analytics: Postgres ready"))
      .catch((e) => console.log("Analytics: table init failed — " + (e && e.message)));
   } catch(e){
@@ -98,10 +103,12 @@ function readBody(req){
 }
 async function dbInsert(row){
   await pool.query(
-    "INSERT INTO events (session,type,name,path,referrer,utm,ua) VALUES ($1,$2,$3,$4,$5,$6,$7)",
-    [row.session, row.type, row.name, row.path, row.referrer, row.utm, row.ua]
+    "INSERT INTO events (session,type,name,path,referrer,utm,ua,internal) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)",
+    [row.session, row.type, row.name, row.path, row.referrer, row.utm, row.ua, row.internal === true]
   );
 }
+/* true when the visitor's browser is in operator mode (?ops=1) */
+function isInternal(ev){ return ev && (ev.internal === 1 || ev.internal === true || ev.internal === "1"); }
 function aggregate(rows){
   const now = Date.now();
   const sset = new Set(), s24 = new Set(), s7 = new Set();
@@ -144,13 +151,28 @@ function aggregate(rows){
     recent
   };
 }
-async function adminStats(){
+/* scope: "external" (real users, default) | "internal" (your own ?ops=1 traffic) | "all" */
+function scopeClause(scope){
+  if(scope === "internal") return " AND internal = true";
+  if(scope === "all")      return "";
+  return " AND internal = false"; // external — the real-user view
+}
+async function adminStats(scope){
   const since = new Date(Date.now() - 14 * 864e5).toISOString();
   const res = await pool.query(
-    "SELECT ts, session, type, name, referrer, utm FROM events WHERE ts >= $1 ORDER BY ts DESC LIMIT 50000",
+    "SELECT ts, session, type, name, referrer, utm FROM events WHERE ts >= $1" + scopeClause(scope) + " ORDER BY ts DESC LIMIT 50000",
     [since]
   );
-  return aggregate(res.rows);
+  const out = aggregate(res.rows);
+  /* session counts split by internal/external so the dashboard can label the toggle */
+  try {
+    const sp = await pool.query(
+      "SELECT internal, COUNT(DISTINCT session) AS n FROM events WHERE ts >= $1 GROUP BY internal", [since]);
+    let ext = 0, intl = 0;
+    sp.rows.forEach((r) => { if(r.internal) intl = Number(r.n); else ext = Number(r.n); });
+    out.split = { external: ext, internal: intl, scope: scope || "external" };
+  } catch(_){ out.split = { external: 0, internal: 0, scope: scope || "external" }; }
+  return out;
 }
 
 /* ---- API routes ----------------------------------------------------------- */
@@ -247,7 +269,8 @@ http.createServer(async (req, res) => {
             path:     String(ev.path     || "").slice(0, 200),
             referrer: String(ev.referrer || "").slice(0, 300),
             utm:      String(ev.utm      || "").slice(0, 160),
-            ua:       String(req.headers["user-agent"] || "").slice(0, 200)
+            ua:       String(req.headers["user-agent"] || "").slice(0, 200),
+            internal: isInternal(ev)
           };
           if(row.session && row.type) await dbInsert(row);
         }
@@ -271,12 +294,13 @@ http.createServer(async (req, res) => {
           tier: String(ev.tier || "").slice(0, 40),
           verdict: String(ev.verdict || "").slice(0, 200),
           ua: String(req.headers["user-agent"] || "").slice(0, 200),
+          internal: isInternal(ev),
           ts: new Date().toISOString()
         };
         if(pool){
           await pool.query(
-            "INSERT INTO feedback (text,lat,lng,tier,verdict,ua) VALUES ($1,$2,$3,$4,$5,$6)",
-            [row.text, row.lat, row.lng, row.tier, row.verdict, row.ua]
+            "INSERT INTO feedback (text,lat,lng,tier,verdict,ua,internal) VALUES ($1,$2,$3,$4,$5,$6,$7)",
+            [row.text, row.lat, row.lng, row.tier, row.verdict, row.ua, row.internal]
           );
         } else {
           row.id = "m" + (memSeq++);
@@ -302,12 +326,13 @@ http.createServer(async (req, res) => {
           fastest: String(ev.fastest || "").slice(0, 120),
           feasible: (typeof ev.feasible === "number" && isFinite(ev.feasible)) ? Math.round(ev.feasible) : null,
           ua: String(req.headers["user-agent"] || "").slice(0, 200),
+          internal: isInternal(ev),
           ts: new Date().toISOString()
         };
         if(pool){
           await pool.query(
-            "INSERT INTO sitechecks (lat,lng,verdict,cat,fastest,feasible,ua) VALUES ($1,$2,$3,$4,$5,$6,$7)",
-            [row.lat, row.lng, row.verdict, row.cat, row.fastest, row.feasible, row.ua]
+            "INSERT INTO sitechecks (lat,lng,verdict,cat,fastest,feasible,ua,internal) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)",
+            [row.lat, row.lng, row.verdict, row.cat, row.fastest, row.feasible, row.ua, row.internal]
           );
         } else {
           memSitechecks.unshift(row);
@@ -325,7 +350,8 @@ http.createServer(async (req, res) => {
       }
       try {
         if(pool){
-          const r = await pool.query("SELECT ts,lat,lng,verdict,cat,fastest,feasible FROM sitechecks ORDER BY ts DESC LIMIT 500");
+          const scope = url.searchParams.get("scope") || "external";
+          const r = await pool.query("SELECT ts,lat,lng,verdict,cat,fastest,feasible,internal FROM sitechecks WHERE 1=1" + scopeClause(scope) + " ORDER BY ts DESC LIMIT 500");
           res.writeHead(200); res.end(JSON.stringify({ ok:true, items: r.rows }));
         } else {
           res.writeHead(200); res.end(JSON.stringify({ ok:true, items: memSitechecks, note:"in-memory (no DATABASE_URL) — resets on restart" }));
@@ -341,7 +367,8 @@ http.createServer(async (req, res) => {
       }
       try {
         if(pool){
-          const r = await pool.query("SELECT id,ts,text,lat,lng,tier,verdict FROM feedback ORDER BY ts DESC LIMIT 500");
+          const scope = url.searchParams.get("scope") || "external";
+          const r = await pool.query("SELECT id,ts,text,lat,lng,tier,verdict,internal FROM feedback WHERE 1=1" + scopeClause(scope) + " ORDER BY ts DESC LIMIT 500");
           res.writeHead(200); res.end(JSON.stringify({ ok:true, items: r.rows }));
         } else {
           res.writeHead(200); res.end(JSON.stringify({ ok:true, items: memFeedback, note:"in-memory (no DATABASE_URL) — resets on restart" }));
@@ -380,8 +407,33 @@ http.createServer(async (req, res) => {
         res.writeHead(200); res.end(JSON.stringify({ ok:false, error:"Database not configured" })); return;
       }
       try {
-        const stats = await adminStats();
+        const scope = url.searchParams.get("scope") || "external";
+        const stats = await adminStats(scope);
         res.writeHead(200); res.end(JSON.stringify(stats));
+      } catch(e){ res.writeHead(502); res.end(JSON.stringify({ error: String((e && e.message) || e) })); }
+      return;
+    }
+
+    /* analytics: wipe stored data (key-gated, destructive).
+       ?scope=all      -> clear everything (events + sitechecks + feedback)
+       ?scope=internal -> clear only your own ?ops=1 traffic, keep real users */
+    if(url.pathname === "/api/admin/reset"){
+      if(req.method !== "POST"){ res.writeHead(405); res.end(JSON.stringify({ error:"POST only" })); return; }
+      if(!ADMIN_KEY || url.searchParams.get("key") !== ADMIN_KEY){
+        res.writeHead(401); res.end(JSON.stringify({ error:"unauthorized" })); return;
+      }
+      if(!pool){ res.writeHead(200); res.end(JSON.stringify({ ok:false, error:"Database not configured" })); return; }
+      try {
+        const scope = url.searchParams.get("scope") || "all";
+        if(scope === "internal"){
+          const a = await pool.query("DELETE FROM events WHERE internal = true");
+          const b = await pool.query("DELETE FROM sitechecks WHERE internal = true");
+          const c = await pool.query("DELETE FROM feedback WHERE internal = true");
+          res.writeHead(200); res.end(JSON.stringify({ ok:true, scope:"internal", deleted:{ events:a.rowCount, sitechecks:b.rowCount, feedback:c.rowCount } }));
+        } else {
+          await pool.query("TRUNCATE events, sitechecks, feedback RESTART IDENTITY");
+          res.writeHead(200); res.end(JSON.stringify({ ok:true, scope:"all", truncated:true }));
+        }
       } catch(e){ res.writeHead(502); res.end(JSON.stringify({ error: String((e && e.message) || e) })); }
       return;
     }
