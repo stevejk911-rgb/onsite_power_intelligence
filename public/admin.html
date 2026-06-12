@@ -150,6 +150,7 @@
 <section id="traffic" class="hide">
   <div class="htitle">유입 · 퍼널</div>
   <p class="intro">방문자가 어디서 오고 어디까지 도달하는지. <b>채널</b>은 UTM 태그(LinkedIn / 콜드메일 / 커뮤니티)를 읽고, <b>퍼널</b>은 랜딩 → 점검 → 공유/출력까지의 여정을 추적합니다 — 실제 관심을 보여주는 행동들이에요.</p>
+  <div id="sourcesBody" style="margin-bottom:18px"><div class="empty">불러오는 중…</div></div>
   <div id="statsBody"><div class="empty">불러오는 중…</div></div>
 </section>
 
@@ -243,10 +244,46 @@
   function chLabel(name){ return CHANNEL_LABEL[name] || name; }
   var WD=["일","월","화","수","목","금","토"];
   function dayLabel(ymd){ var p=String(ymd).split("-"); if(p.length<3) return ymd; var d=new Date(Number(p[0]),Number(p[1])-1,Number(p[2])); return Number(p[1])+"/"+Number(p[2])+" ("+WD[d.getDay()]+")"; }
+  /* ---------- visit sources (real vs bot, country, raw UA) ---------- */
+  function flag(cc){
+    if(!cc||cc.length!==2) return "";
+    return cc.toUpperCase().replace(/./g,function(c){ return String.fromCodePoint(127397+c.charCodeAt(0)); });
+  }
+  function renderSources(s){
+    var el=document.getElementById("sourcesBody"); if(!el) return;
+    if(!s||s.ok===false){ el.innerHTML=""; return; }
+    var hum=s.humans||0, bots=s.bots||0, intl=s.internal||0, us=0;
+    (s.by_country||[]).forEach(function(c){ if(c.country==="US") us=c.sessions; });
+    var countryRows=(s.by_country||[]).map(function(c){
+      var label=c.country==="??"?"미상 (IP 수집 전 기록)":((flag(c.country)?flag(c.country)+" ":"")+c.country+(c.country==="US"?" · 미국":""));
+      return '<tr><td>'+label+'</td><td class="mono">'+c.sessions+'명</td></tr>';
+    }).join("")||'<tr><td class="muted" colspan="2">아직 사람 방문 없음.</td></tr>';
+    var rows=(s.recent||[]).map(function(e){
+      var tag=e.internal?'<span class="pill p-con">내 방문</span>':(e.bot?'<span class="pill p-no">봇</span>':'<span class="pill p-yes">사람</span>');
+      var co=e.country?((flag(e.country)?flag(e.country)+" ":"")+e.country):"—";
+      var ref=e.referrer?esc(String(e.referrer).slice(0,36)):"(직접)";
+      return '<tr><td class="muted">'+rel(e.ts)+'</td><td>'+tag+'</td><td>'+co+'</td><td class="muted">'+esc(e.name||e.type||"")+'</td><td class="mono" style="font-size:11px">'+esc(String(e.ua||"").slice(0,58))+'</td><td class="muted" style="font-size:11px">'+ref+'</td></tr>';
+    }).join("")||'<tr><td class="muted" colspan="6">기록 없음.</td></tr>';
+    el.innerHTML=
+      '<div class="panel" style="border:1px solid #e6e6e3">'+
+        '<div class="ph"><div class="pt">방문 점검 — 진짜 사람인지, 미국인지</div><div class="pd">UA로 봇을 거르고 IP로 국가를 잡아요. 봇·내 방문은 "실제 방문자"에서 제외됩니다. (지난 14일)</div></div>'+
+        '<div class="kpis" style="margin:4px 0 14px">'+
+          '<div class="kpi"><div class="lab">실제 사람</div><div class="n">'+hum+'</div><div class="d">봇·내 방문 제외</div></div>'+
+          '<div class="kpi"><div class="lab">봇 / 크롤러</div><div class="n">'+bots+'</div><div class="d">허수(자동 트래픽)</div></div>'+
+          '<div class="kpi"><div class="lab">미국 사람</div><div class="n">'+us+'</div><div class="d">사람 중 US IP</div></div>'+
+          '<div class="kpi"><div class="lab">내 방문</div><div class="n">'+intl+'</div><div class="d">?ops=1 태그</div></div>'+
+        '</div>'+
+        '<div class="grid2">'+
+          '<div><div class="ph"><div class="pt" style="font-size:14px">국가별 (사람만)</div></div><table><tr><th>국가</th><th>방문자</th></tr>'+countryRows+'</table></div>'+
+          '<div><div class="ph"><div class="pt" style="font-size:14px">최근 방문 원본</div><div class="pd">봇·사람을 눈으로 확인하세요.</div></div><table><tr><th>시각</th><th>분류</th><th>국가</th><th>페이지</th><th>UA</th><th>출처</th></tr>'+rows+'</table></div>'+
+        '</div>'+
+      '</div>';
+  }
+
   function renderStats(stats){
     var el=document.getElementById("statsBody");
     var sc=document.getElementById("scopeCounts");
-    if(sc) sc.textContent=(stats&&stats.split)?("실제 방문자 "+stats.split.external+"명 · 내 방문 "+stats.split.internal+"명 (14일)"):"";
+    if(sc) sc.textContent=(stats&&stats.split)?("실제 방문자 "+stats.split.external+"명 · 내 방문 "+stats.split.internal+"명 · 봇 "+(stats.split.bot||0)+"명 (14일)"):"";
     if(!stats || stats.ok===false){
       document.getElementById("kSess").textContent="—";
       el.innerHTML='<div class="panel"><div class="empty">분석이 꺼져 있습니다. 서버에 <span class="mono">DATABASE_URL</span>(Postgres)과 <span class="mono">ADMIN_KEY</span>를 설정하면 페이지뷰·채널·퍼널 수집이 시작됩니다. 위의 사이트 점검과 피드백은 이것 없이도 작동해요.</div></div>';
@@ -380,17 +417,18 @@
   }
   function lockedUI(){
     var m='<div class="empty">잠김. 새로고침 후 관리자 키를 입력하거나 <span class="mono">admin.html?key=내_관리자_키</span> 로 여세요.</div>';
-    ["recentSites","recentFb","sitesTable","fbList","statsBody"].forEach(function(id){ document.getElementById(id).innerHTML=m; });
+    ["recentSites","recentFb","sitesTable","fbList","statsBody","sourcesBody"].forEach(function(id){ document.getElementById(id).innerHTML=m; });
     ["kSites","kPow","kFb","kSess"].forEach(function(id){ document.getElementById(id).textContent="—"; });
   }
   function loadAll(key){
     CURKEY=key||"";
-    Promise.all([ api(scoped("/api/admin/sitechecks"),key), api(scoped("/api/admin/feedback"),key), api(scoped("/api/admin/stats"),key).catch(function(){return {ok:false};}) ])
+    Promise.all([ api(scoped("/api/admin/sitechecks"),key), api(scoped("/api/admin/feedback"),key), api(scoped("/api/admin/stats"),key).catch(function(){return {ok:false};}), api("/api/admin/sources",key).catch(function(){return {ok:false};}) ])
       .then(function(res){
         document.getElementById("relock").style.display="";
         renderSites((res[0]&&res[0].items)||[]);
         renderFeedback((res[1]&&res[1].items)||[]);
         renderStats(res[2]);
+        renderSources(res[3]);
       })
       .catch(function(e){
         if(e&&e.message==="locked"){
@@ -399,7 +437,7 @@
           if(k){ saveKey(k); loadAll(k); return; }
           lockedUI();
         } else {
-          ["recentSites","recentFb","sitesTable","fbList","statsBody"].forEach(function(id){ document.getElementById(id).innerHTML='<div class="empty">지금은 불러올 수 없어요.</div>'; });
+          ["recentSites","recentFb","sitesTable","fbList","statsBody","sourcesBody"].forEach(function(id){ document.getElementById(id).innerHTML='<div class="empty">지금은 불러올 수 없어요.</div>'; });
         }
       });
   }
