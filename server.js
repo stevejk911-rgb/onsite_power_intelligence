@@ -192,21 +192,30 @@ function scopeClause(scope){
   if(scope === "all")      return "";
   return " AND internal = false AND bot = false"; // external — real humans only (no crawlers)
 }
+/* classify each SESSION into exactly ONE bucket (internal wins, then bot, else
+   human) so the headline counts reconcile: real + mine + bot = total. */
+function classifySessions(rows){
+  const flags = {};
+  rows.forEach((e) => { const f = flags[e.session] = flags[e.session] || { internal:false, bot:false, country:null };
+    if(e.internal) f.internal = true; if(e.bot) f.bot = true; if(!f.country && e.country) f.country = e.country; });
+  const classOf = {};
+  Object.keys(flags).forEach((s) => { classOf[s] = flags[s].internal ? "internal" : (flags[s].bot ? "bot" : "human"); });
+  return { flags, classOf };
+}
 async function adminStats(scope){
   const since = new Date(Date.now() - 14 * 864e5).toISOString();
   const res = await pool.query(
-    "SELECT ts, session, type, name, referrer, utm FROM events WHERE ts >= $1" + scopeClause(scope) + " ORDER BY ts DESC LIMIT 50000",
+    "SELECT ts, session, type, name, referrer, utm, internal, bot FROM events WHERE ts >= $1 ORDER BY ts DESC LIMIT 50000",
     [since]
   );
-  const out = aggregate(res.rows);
-  /* session counts split into real humans / your own visits / bots, for the toggle label */
-  try {
-    const sp = await pool.query(
-      "SELECT (CASE WHEN internal THEN 'internal' WHEN bot THEN 'bot' ELSE 'human' END) AS k, COUNT(DISTINCT session) AS n FROM events WHERE ts >= $1 GROUP BY 1", [since]);
-    let human = 0, intl = 0, bots = 0;
-    sp.rows.forEach((r) => { if(r.k === "internal") intl = Number(r.n); else if(r.k === "bot") bots = Number(r.n); else human = Number(r.n); });
-    out.split = { external: human, internal: intl, bot: bots, scope: scope || "external" };
-  } catch(_){ out.split = { external: 0, internal: 0, bot: 0, scope: scope || "external" }; }
+  const rows = res.rows;
+  const { classOf } = classifySessions(rows);
+  let human = 0, intl = 0, bots = 0;
+  Object.keys(classOf).forEach((s) => { const c = classOf[s]; if(c === "internal") intl++; else if(c === "bot") bots++; else human++; });
+  const want = scope === "internal" ? "internal" : (scope === "all" ? null : "human");
+  const filtered = want ? rows.filter((e) => classOf[e.session] === want) : rows;
+  const out = aggregate(filtered);
+  out.split = { external: human, internal: intl, bot: bots, scope: scope || "external" };
   return out;
 }
 /* visit-source diagnostics: real humans vs bots, country breakdown, and raw
@@ -217,21 +226,21 @@ async function visitSources(){
     "SELECT ts, type, name, referrer, ua, country, bot, internal, session FROM events WHERE ts >= $1 ORDER BY ts DESC LIMIT 5000",
     [since]);
   const rows = r.rows;
-  const sBot = new Set(), sHuman = new Set(), sInt = new Set(), cc = {};
-  rows.forEach((e) => {
-    if(e.internal){ sInt.add(e.session); return; }
-    if(e.bot){ sBot.add(e.session); return; }
-    sHuman.add(e.session);
-    const c = e.country || "??";
-    (cc[c] = cc[c] || new Set()).add(e.session);
+  const { flags, classOf } = classifySessions(rows);
+  let humans = 0, bots = 0, intl = 0; const cc = {};
+  Object.keys(classOf).forEach((s) => {
+    const c = classOf[s];
+    if(c === "internal") intl++;
+    else if(c === "bot") bots++;
+    else { humans++; const co = flags[s].country || "??"; cc[co] = (cc[co] || 0) + 1; }
   });
-  const by_country = Object.keys(cc).map((k) => ({ country: k, sessions: cc[k].size })).sort((a, b) => b.sessions - a.sessions);
+  const by_country = Object.keys(cc).map((k) => ({ country: k, sessions: cc[k] })).sort((a, b) => b.sessions - a.sessions);
   const recent = rows.slice(0, 50).map((e) => ({
     ts: e.ts, type: e.type, name: e.name, country: e.country || null,
-    bot: e.bot === true, internal: e.internal === true,
+    bot: e.bot === true, internal: e.internal === true, klass: classOf[e.session],
     ua: String(e.ua || "").slice(0, 180), referrer: e.referrer || ""
   }));
-  return { ok: true, humans: sHuman.size, bots: sBot.size, internal: sInt.size, by_country, recent };
+  return { ok: true, humans, bots, internal: intl, by_country, recent };
 }
 
 /* ---- API routes ----------------------------------------------------------- */
