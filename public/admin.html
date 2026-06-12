@@ -16,18 +16,18 @@
     -webkit-font-smoothing:antialiased;line-height:1.5}
 
   .top{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:10}
-  .top .in{max-width:1100px;margin:0 auto;padding:16px 24px;display:flex;align-items:center;justify-content:space-between}
+  .top .in{max-width:1320px;margin:0 auto;padding:16px 24px;display:flex;align-items:center;justify-content:space-between}
   .brand{font-size:12px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--blue)}
   .brand span{color:var(--muted)}
   .who{font-size:13px;color:var(--muted);display:flex;align-items:center;gap:14px}
   .who b{color:var(--ink)}
   .lock{font-size:12.5px;color:var(--blue);font-weight:600;cursor:pointer;background:none;border:0;padding:0}
 
-  .tabs{max-width:1100px;margin:0 auto;padding:0 24px;display:flex;gap:4px;border-bottom:1px solid var(--line);background:#fff;flex-wrap:wrap}
+  .tabs{max-width:1320px;margin:0 auto;padding:0 24px;display:flex;gap:4px;border-bottom:1px solid var(--line);background:#fff;flex-wrap:wrap}
   .tab{appearance:none;background:none;border:0;padding:14px 14px;font-size:14px;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px}
   .tab.on{color:var(--ink);border-bottom-color:var(--blue)}
 
-  .wrap{max-width:1100px;margin:0 auto;padding:26px 24px 70px}
+  .wrap{max-width:1320px;margin:0 auto;padding:26px 24px 70px}
   .htitle{font-size:18px;font-weight:700;color:var(--ink);margin:0 0 4px}
   .intro{font-size:13.5px;color:var(--muted);margin:0 0 18px;line-height:1.5;max-width:680px}
 
@@ -89,6 +89,9 @@
   .empty{padding:26px 20px;font-size:13.5px;color:var(--muted);line-height:1.55;text-align:center}
 
   .hide{display:none}
+  /* horizontal scroll for dense tables (mobile-friendly) */
+  .scrollx{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .tbl-wide{min-width:760px}
   .scbtn{border:1px solid #d9d9d6;background:#fff;color:#333;border-radius:8px;padding:6px 12px;font-size:13px;cursor:pointer}
   .scbtn.on{background:#111;color:#fff;border-color:#111}
 </style>
@@ -235,7 +238,7 @@
       var rows2=items.map(function(i){
         return '<tr><td class="mono">'+esc(coord(i))+'</td><td>'+pill(i.cat)+'</td><td class="muted">'+esc(i.fastest||"")+'</td><td class="muted">'+(typeof i.feasible==="number"?(i.feasible+"개 충족"):"—")+'</td><td class="muted">'+rel(i.ts)+'</td></tr>';
       }).join("");
-      full.innerHTML='<table><tr><th>위치 (위도, 경도)</th><th>판정</th><th>가장 빠른 전력 경로</th><th>기준 충족 옵션</th><th>점검 시각</th></tr>'+rows2+'</table>';
+      full.innerHTML='<div class="scrollx"><table class="tbl-wide"><tr><th>위치 (위도, 경도)</th><th>판정</th><th>가장 빠른 전력 경로</th><th>기준 충족 옵션</th><th>점검 시각</th></tr>'+rows2+'</table></div>';
     }
   }
 
@@ -259,7 +262,8 @@
       return '<tr><td>'+label+'</td><td class="mono">'+c.sessions+'명</td></tr>';
     }).join("")||'<tr><td class="muted" colspan="2">아직 사람 방문 없음.</td></tr>';
     var rows=(s.recent||[]).map(function(e){
-      var tag=e.internal?'<span class="pill p-con">내 방문</span>':(e.bot?'<span class="pill p-no">봇</span>':'<span class="pill p-yes">사람</span>');
+      var k=e.klass||(e.internal?"internal":(e.bot?"bot":"human"));
+      var tag=k==="internal"?'<span class="pill p-con">내 방문</span>':(k==="bot"?'<span class="pill p-no">봇</span>':'<span class="pill p-yes">사람</span>');
       var co=e.country?((flag(e.country)?flag(e.country)+" ":"")+e.country):"—";
       var ref=e.referrer?esc(String(e.referrer).slice(0,36)):"(직접)";
       return '<tr><td class="muted">'+rel(e.ts)+'</td><td>'+tag+'</td><td>'+co+'</td><td class="muted">'+esc(e.name||e.type||"")+'</td><td class="mono" style="font-size:11px">'+esc(String(e.ua||"").slice(0,58))+'</td><td class="muted" style="font-size:11px">'+ref+'</td></tr>';
@@ -273,9 +277,13 @@
           '<div class="kpi"><div class="lab">미국 사람</div><div class="n">'+us+'</div><div class="d">사람 중 US IP</div></div>'+
           '<div class="kpi"><div class="lab">내 방문</div><div class="n">'+intl+'</div><div class="d">?ops=1 태그</div></div>'+
         '</div>'+
-        '<div class="grid2">'+
-          '<div><div class="ph"><div class="pt" style="font-size:14px">국가별 (사람만)</div></div><table><tr><th>국가</th><th>방문자</th></tr>'+countryRows+'</table></div>'+
-          '<div><div class="ph"><div class="pt" style="font-size:14px">최근 방문 원본</div><div class="pd">봇·사람을 눈으로 확인하세요.</div></div><table><tr><th>시각</th><th>분류</th><th>국가</th><th>페이지</th><th>UA</th><th>출처</th></tr>'+rows+'</table></div>'+
+        '<div style="padding:0 4px 2px">'+
+          '<div class="ph"><div class="pt" style="font-size:14px">국가별 (사람만)</div></div>'+
+          '<div class="scrollx"><table><tr><th>국가</th><th>방문자</th></tr>'+countryRows+'</table></div>'+
+        '</div>'+
+        '<div style="padding:10px 4px 4px">'+
+          '<div class="ph"><div class="pt" style="font-size:14px">최근 방문 원본</div><div class="pd">봇·사람을 눈으로 확인하세요. (좁으면 표를 좌우로 스크롤)</div></div>'+
+          '<div class="scrollx"><table class="tbl-wide"><tr><th>시각</th><th>분류</th><th>국가</th><th>페이지</th><th>UA</th><th>출처</th></tr>'+rows+'</table></div>'+
         '</div>'+
       '</div>';
   }
