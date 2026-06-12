@@ -270,7 +270,7 @@
     }).join("")||'<tr><td class="muted" colspan="6">기록 없음.</td></tr>';
     el.innerHTML=
       '<div class="panel" style="border:1px solid #e6e6e3">'+
-        '<div class="ph"><div class="pt">방문 점검 — 진짜 사람인지, 미국인지</div><div class="pd">UA로 봇을 거르고 IP로 국가를 잡아요. 봇·내 방문은 "실제 방문자"에서 제외됩니다. (지난 14일)</div></div>'+
+        '<div class="ph"><div class="pt">방문 점검 — 진짜 사람인지, 미국인지</div><div class="pd">UA로 봇을 거르고 IP로 국가를 잡아요. 봇·내 방문은 "실제 방문자"에서 제외됩니다. (지난 14일)<br><b>전체 '+(hum+bots+intl)+'명 = 실제 '+hum+' + 내 방문 '+intl+' + 봇 '+bots+'</b></div></div>'+
         '<div class="kpis" style="margin:4px 0 14px">'+
           '<div class="kpi"><div class="lab">실제 사람</div><div class="n">'+hum+'</div><div class="d">봇·내 방문 제외</div></div>'+
           '<div class="kpi"><div class="lab">봇 / 크롤러</div><div class="n">'+bots+'</div><div class="d">허수(자동 트래픽)</div></div>'+
@@ -291,7 +291,12 @@
   function renderStats(stats){
     var el=document.getElementById("statsBody");
     var sc=document.getElementById("scopeCounts");
-    if(sc) sc.textContent=(stats&&stats.split)?("실제 방문자 "+stats.split.external+"명 · 내 방문 "+stats.split.internal+"명 · 봇 "+(stats.split.bot||0)+"명 (14일)"):"";
+    if(sc){
+      if(stats&&stats.split){
+        var sp=stats.split, tot=(sp.external||0)+(sp.internal||0)+(sp.bot||0);
+        sc.textContent="전체 "+tot+"명 = 실제 "+(sp.external||0)+" + 내 방문 "+(sp.internal||0)+" + 봇 "+(sp.bot||0)+"  ·  최근 14일";
+      } else { sc.textContent=""; }
+    }
     if(!stats || stats.ok===false){
       document.getElementById("kSess").textContent="—";
       el.innerHTML='<div class="panel"><div class="empty">분석이 꺼져 있습니다. 서버에 <span class="mono">DATABASE_URL</span>(Postgres)과 <span class="mono">ADMIN_KEY</span>를 설정하면 페이지뷰·채널·퍼널 수집이 시작됩니다. 위의 사이트 점검과 피드백은 이것 없이도 작동해요.</div></div>';
