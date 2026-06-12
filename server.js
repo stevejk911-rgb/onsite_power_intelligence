@@ -39,6 +39,31 @@ const UA       = "OnSitePowerIntelligence/0.2 (behind-the-meter planning tool)";
 /* ---- analytics config + Postgres pool ------------------------------------- */
 const DATABASE_URL = process.env.DATABASE_URL || "";
 const ADMIN_KEY    = process.env.ADMIN_KEY || "";
+
+/* ---- bot detection (User-Agent based) -------------------------------------
+   One source string used both as a JS RegExp and a Postgres ~* pattern, so the
+   live ingest and the one-time backfill of old rows classify identically. */
+const BOT_SQL = "(bot|crawl|spider|slurp|headless|phantom|python|curl|wget|libwww|okhttp|java/|go-http|node-fetch|axios|monitor|uptime|scan|probe|preview|facebookexternalhit|slackbot|whatsapp|telegram|discordbot|bingpreview|googlebot|bingbot|yandex|baidu|duckduck|ahrefs|semrush|mj12|petal|dataforseo|gptbot|claudebot|ccbot|bytespider|amazonbot|applebot|archive|lighthouse|pingdom|statuscake)";
+const BOT_RE  = new RegExp(BOT_SQL, "i");
+function isBot(ua){ return !ua || BOT_RE.test(ua); }
+function clientIp(req){
+  const xff = String((req.headers && req.headers["x-forwarded-for"]) || "");
+  if(xff) return xff.split(",")[0].trim();
+  return (req.socket && req.socket.remoteAddress) || "";
+}
+/* country from IP (best-effort, cached per IP). Free, no key, low volume. */
+async function ipCountry(ip){
+  if(!ip || ip === "127.0.0.1" || ip === "::1") return null;
+  const k = ckey(["ipc", ip]);
+  const hit = cacheGet(k); if(hit != null) return hit === "_" ? null : hit;
+  try {
+    const j = await getJSON("http://ip-api.com/json/" + encodeURIComponent(ip) + "?fields=status,countryCode",
+      { signal: AbortSignal.timeout(2500) });
+    const cc = (j && j.status === "success" && /^[A-Z]{2}$/.test(j.countryCode)) ? j.countryCode : null;
+    cacheSet(k, cc || "_"); return cc;
+  } catch(_){ cacheSet(k, "_"); return null; }
+}
+
 let pool = null;
 if(DATABASE_URL){
   try {
@@ -62,7 +87,17 @@ if(DATABASE_URL){
          separate it from real users (also patched onto existing tables). */
       "ALTER TABLE events     ADD COLUMN IF NOT EXISTS internal boolean NOT NULL DEFAULT false;" +
       "ALTER TABLE sitechecks ADD COLUMN IF NOT EXISTS internal boolean NOT NULL DEFAULT false;" +
-      "ALTER TABLE feedback   ADD COLUMN IF NOT EXISTS internal boolean NOT NULL DEFAULT false;"
+      "ALTER TABLE feedback   ADD COLUMN IF NOT EXISTS internal boolean NOT NULL DEFAULT false;" +
+      /* bot flag (from User-Agent) + visitor country (from IP) so we can tell
+         real US humans apart from crawlers/scanners. */
+      "ALTER TABLE events     ADD COLUMN IF NOT EXISTS bot boolean NOT NULL DEFAULT false;" +
+      "ALTER TABLE sitechecks ADD COLUMN IF NOT EXISTS bot boolean NOT NULL DEFAULT false;" +
+      "ALTER TABLE feedback   ADD COLUMN IF NOT EXISTS bot boolean NOT NULL DEFAULT false;" +
+      "ALTER TABLE events     ADD COLUMN IF NOT EXISTS country text;" +
+      /* backfill bot on rows already collected, by matching the stored UA */
+      "UPDATE events     SET bot = true WHERE bot = false AND (ua IS NULL OR ua ~* '" + BOT_SQL + "');" +
+      "UPDATE sitechecks SET bot = true WHERE bot = false AND (ua IS NULL OR ua ~* '" + BOT_SQL + "');" +
+      "UPDATE feedback   SET bot = true WHERE bot = false AND (ua IS NULL OR ua ~* '" + BOT_SQL + "');"
     ).then(() => console.log("Analytics: Postgres ready"))
      .catch((e) => console.log("Analytics: table init failed — " + (e && e.message)));
   } catch(e){
@@ -103,8 +138,8 @@ function readBody(req){
 }
 async function dbInsert(row){
   await pool.query(
-    "INSERT INTO events (session,type,name,path,referrer,utm,ua,internal) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)",
-    [row.session, row.type, row.name, row.path, row.referrer, row.utm, row.ua, row.internal === true]
+    "INSERT INTO events (session,type,name,path,referrer,utm,ua,internal,country,bot) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)",
+    [row.session, row.type, row.name, row.path, row.referrer, row.utm, row.ua, row.internal === true, row.country || null, row.bot === true]
   );
 }
 /* true when the visitor's browser is in operator mode (?ops=1) */
@@ -151,11 +186,11 @@ function aggregate(rows){
     recent
   };
 }
-/* scope: "external" (real users, default) | "internal" (your own ?ops=1 traffic) | "all" */
+/* scope: "external" (real human users, default) | "internal" (your own ?ops=1 traffic) | "all" */
 function scopeClause(scope){
   if(scope === "internal") return " AND internal = true";
   if(scope === "all")      return "";
-  return " AND internal = false"; // external — the real-user view
+  return " AND internal = false AND bot = false"; // external — real humans only (no crawlers)
 }
 async function adminStats(scope){
   const since = new Date(Date.now() - 14 * 864e5).toISOString();
@@ -164,15 +199,39 @@ async function adminStats(scope){
     [since]
   );
   const out = aggregate(res.rows);
-  /* session counts split by internal/external so the dashboard can label the toggle */
+  /* session counts split into real humans / your own visits / bots, for the toggle label */
   try {
     const sp = await pool.query(
-      "SELECT internal, COUNT(DISTINCT session) AS n FROM events WHERE ts >= $1 GROUP BY internal", [since]);
-    let ext = 0, intl = 0;
-    sp.rows.forEach((r) => { if(r.internal) intl = Number(r.n); else ext = Number(r.n); });
-    out.split = { external: ext, internal: intl, scope: scope || "external" };
-  } catch(_){ out.split = { external: 0, internal: 0, scope: scope || "external" }; }
+      "SELECT (CASE WHEN internal THEN 'internal' WHEN bot THEN 'bot' ELSE 'human' END) AS k, COUNT(DISTINCT session) AS n FROM events WHERE ts >= $1 GROUP BY 1", [since]);
+    let human = 0, intl = 0, bots = 0;
+    sp.rows.forEach((r) => { if(r.k === "internal") intl = Number(r.n); else if(r.k === "bot") bots = Number(r.n); else human = Number(r.n); });
+    out.split = { external: human, internal: intl, bot: bots, scope: scope || "external" };
+  } catch(_){ out.split = { external: 0, internal: 0, bot: 0, scope: scope || "external" }; }
   return out;
+}
+/* visit-source diagnostics: real humans vs bots, country breakdown, and raw
+   UA/referrer of recent sessions so the operator can eyeball it. (14 days) */
+async function visitSources(){
+  const since = new Date(Date.now() - 14 * 864e5).toISOString();
+  const r = await pool.query(
+    "SELECT ts, type, name, referrer, ua, country, bot, internal, session FROM events WHERE ts >= $1 ORDER BY ts DESC LIMIT 5000",
+    [since]);
+  const rows = r.rows;
+  const sBot = new Set(), sHuman = new Set(), sInt = new Set(), cc = {};
+  rows.forEach((e) => {
+    if(e.internal){ sInt.add(e.session); return; }
+    if(e.bot){ sBot.add(e.session); return; }
+    sHuman.add(e.session);
+    const c = e.country || "??";
+    (cc[c] = cc[c] || new Set()).add(e.session);
+  });
+  const by_country = Object.keys(cc).map((k) => ({ country: k, sessions: cc[k].size })).sort((a, b) => b.sessions - a.sessions);
+  const recent = rows.slice(0, 50).map((e) => ({
+    ts: e.ts, type: e.type, name: e.name, country: e.country || null,
+    bot: e.bot === true, internal: e.internal === true,
+    ua: String(e.ua || "").slice(0, 180), referrer: e.referrer || ""
+  }));
+  return { ok: true, humans: sHuman.size, bots: sBot.size, internal: sInt.size, by_country, recent };
 }
 
 /* ---- API routes ----------------------------------------------------------- */
@@ -272,6 +331,8 @@ http.createServer(async (req, res) => {
             ua:       String(req.headers["user-agent"] || "").slice(0, 200),
             internal: isInternal(ev)
           };
+          row.bot = isBot(row.ua);
+          row.country = (row.bot || row.internal) ? null : await ipCountry(clientIp(req));
           if(row.session && row.type) await dbInsert(row);
         }
         res.writeHead(204); res.end();
@@ -297,10 +358,11 @@ http.createServer(async (req, res) => {
           internal: isInternal(ev),
           ts: new Date().toISOString()
         };
+        row.bot = isBot(row.ua);
         if(pool){
           await pool.query(
-            "INSERT INTO feedback (text,lat,lng,tier,verdict,ua,internal) VALUES ($1,$2,$3,$4,$5,$6,$7)",
-            [row.text, row.lat, row.lng, row.tier, row.verdict, row.ua, row.internal]
+            "INSERT INTO feedback (text,lat,lng,tier,verdict,ua,internal,bot) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)",
+            [row.text, row.lat, row.lng, row.tier, row.verdict, row.ua, row.internal, row.bot]
           );
         } else {
           row.id = "m" + (memSeq++);
@@ -329,10 +391,11 @@ http.createServer(async (req, res) => {
           internal: isInternal(ev),
           ts: new Date().toISOString()
         };
+        row.bot = isBot(row.ua);
         if(pool){
           await pool.query(
-            "INSERT INTO sitechecks (lat,lng,verdict,cat,fastest,feasible,ua,internal) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)",
-            [row.lat, row.lng, row.verdict, row.cat, row.fastest, row.feasible, row.ua, row.internal]
+            "INSERT INTO sitechecks (lat,lng,verdict,cat,fastest,feasible,ua,internal,bot) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)",
+            [row.lat, row.lng, row.verdict, row.cat, row.fastest, row.feasible, row.ua, row.internal, row.bot]
           );
         } else {
           memSitechecks.unshift(row);
@@ -410,6 +473,19 @@ http.createServer(async (req, res) => {
         const scope = url.searchParams.get("scope") || "external";
         const stats = await adminStats(scope);
         res.writeHead(200); res.end(JSON.stringify(stats));
+      } catch(e){ res.writeHead(502); res.end(JSON.stringify({ error: String((e && e.message) || e) })); }
+      return;
+    }
+
+    /* visit-source diagnostics: real humans vs bots, country, raw UA (key-gated) */
+    if(url.pathname === "/api/admin/sources"){
+      if(!ADMIN_KEY || url.searchParams.get("key") !== ADMIN_KEY){
+        res.writeHead(401); res.end(JSON.stringify({ error:"unauthorized" })); return;
+      }
+      if(!pool){ res.writeHead(200); res.end(JSON.stringify({ ok:false, error:"Database not configured" })); return; }
+      try {
+        const data = await visitSources();
+        res.writeHead(200); res.end(JSON.stringify(data));
       } catch(e){ res.writeHead(502); res.end(JSON.stringify({ error: String((e && e.message) || e) })); }
       return;
     }
