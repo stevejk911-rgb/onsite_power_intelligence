@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Screen a site — On-Site Power Intelligence</title>
+<meta name="description" content="Drop a coordinate, get a live behind-the-meter ADVANCE / KILL verdict across 10 power options in 60 seconds. Real NREL + OSM data. Screening-grade ±40%.">
+<link rel="canonical" href="https://onsitespower.com/app.html">
+<meta name="robots" content="noindex,nofollow">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<link rel="stylesheet" href="styles.css">
+<style>
+  /* decision header: two time-to-power paths, sourced + confidence-rated */
+  .paths{display:flex;gap:14px;flex-wrap:wrap;margin:18px 0 6px}
+  .paths .path{flex:1 1 240px;background:#fff;border:1px solid var(--line-2);border-radius:14px;padding:15px 17px}
+  .paths .plab{font-family:var(--sans);font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+  .paths .pnum{font-size:30px;font-weight:700;letter-spacing:-.02em;color:var(--ink);margin:5px 0 3px;line-height:1.05}
+  .paths .pmeta{font-family:var(--sans);font-size:13px;color:var(--ink-2);line-height:1.45}
+  .paths .psrc{font-family:var(--sans);font-size:11.5px;color:var(--muted);margin-top:7px;line-height:1.4}
+  .conf{display:inline-block;font-family:var(--sans);font-size:10.5px;font-weight:700;padding:1px 7px;border-radius:10px}
+  .conf-high{background:var(--advance-bg);color:var(--advance)}
+  .conf-med{background:var(--caution-bg);color:var(--caution)}
+  .conf-low{background:#eef0ff;color:#5566cc}
+  .bankable{font-family:var(--sans);margin:12px 0 2px;font-size:14.5px;font-weight:600;color:var(--ink);background:#eef3ff;border:1px solid #d9e3ff;border-radius:10px;padding:11px 15px}
+  .bankable b{color:#1E50E6}
+</style>
+</head>
+<body>
+
+<nav class="nav no-print">
+  <div class="wrap">
+    <a class="brand" href="index.html"><span class="dot"></span><span>On-Site Power <small>Intelligence</small></span></a>
+    <div class="nav-links">
+      <a class="navlink" href="data-sources.html">Data</a>
+      <a class="navlink" href="index.html">Home</a>
+    </div>
+  </div>
+</nav>
+
+<div class="app-shell">
+
+  <div class="print-only" style="border-bottom:2px solid #000;padding-bottom:10px;margin-bottom:18px">
+    <strong>On-Site Power Intelligence</strong> — Behind-the-Meter Pre-screen · <span id="printMeta"></span> · Screening-grade ±40% · onsitespower.com
+  </div>
+
+  <div class="app-head no-print">
+    <div class="eyebrow">Behind-the-Meter Pre-screen · Live data</div>
+    <h1>Screen a site.</h1>
+    <p>Click the map (or type an address), set your power need and timeline, and get an ADVANCE / KILL call across every power option — scored on real solar, gas, and grid data.</p>
+  </div>
+
+  <!-- MAP -->
+  <div class="maphero no-print">
+    <div class="map-controls">
+      <input id="addr" placeholder="Enter a site address, or click the map" autocomplete="off"
+             onkeydown="if(event.key==='Enter')runScreen()">
+      <button onclick="runScreen()">Screen</button>
+    </div>
+    <div id="map"></div>
+    <div class="maphelp" id="maphelp">Click anywhere on the map to drop a site, or search an address above.</div>
+  </div>
+
+  <!-- SETTINGS -->
+  <div class="panel no-print" style="margin-top:16px">
+    <div class="controls">
+      <div>
+        <div class="field"><label>Power you need</label><div class="seg" id="segPower"></div></div>
+        <div class="field"><label>Need it online by</label><div class="seg" id="segTime"></div></div>
+      </div>
+      <div>
+        <div class="field"><label>Consider nuclear PPA?</label><div class="seg" id="segNuke"></div></div>
+        <div class="field"><label>&nbsp;</label>
+          <button class="btn btn-primary" onclick="runScreen()">Re-run screening <span class="arr">→</span></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESULT -->
+  <div id="result"></div>
+
+</div>
+
+<footer class="no-print">
+  <div class="wrap" style="flex-direction:column">
+    <div style="display:flex;justify-content:space-between;width:100%;flex-wrap:wrap;gap:16px">
+      <a class="brand" href="index.html" style="color:#fff"><span class="dot"></span><span>On-Site Power <small>Intelligence</small></span></a>
+      <div class="foot-links"><a href="index.html">Home</a><a href="data-sources.html">Data</a></div>
+    </div>
+    <p class="disclaimer">Not investment, legal, or engineering advice. Live pulls (NREL, OpenStreetMap) plus regional estimates; all numbers are planning estimates (±40%). Verify with utility, OEM, EPC, and qualified counsel before any commitment. v1 · 2026 · onsitespower.com</p>
+  </div>
+</footer>
+
+<script>
+/* ===== analytics (no-ops if backend has no DB) ===== */
+(function(){
+  function sid(){ try{ var k='osp_sid',v=localStorage.getItem(k); if(!v){v=Math.random().toString(36).slice(2)+Date.now().toString(36);localStorage.setItem(k,v);} return v;}catch(e){return 'anon';} }
+  var utm=''; try{ var p=new URLSearchParams(location.search); utm=p.get('utm_source')?(p.get('utm_source')+'/'+(p.get('utm_medium')||'')):''; }catch(e){}
+  /* operator mode: open with ?ops=1 once to tag THIS browser's traffic as internal (?ops=0 clears it) */
+  var ops=false; try{ var op=new URLSearchParams(location.search); if(op.get('ops')==='1'){localStorage.setItem('osp_ops','1');} else if(op.get('ops')==='0'){localStorage.removeItem('osp_ops');} ops=localStorage.getItem('osp_ops')==='1'; }catch(e){}
+  window.OSP_INTERNAL=ops;
+  window.track=function(type,name){ try{ fetch('/api/track',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({session:sid(),type:type,name:name,path:location.pathname,referrer:document.referrer,utm:utm,internal:ops?1:0})}).catch(function(){});}catch(e){} };
+  track('pageview','tool');
+})();
+
+/* ===== state ===== */
+var state={ powerMW:250, byMonths:18, nuclear:true };
+var lmap=null, marker=null, picked=null, DEFAULT=[39.0438,-77.4874]; // Ashburn, NoVA
+var lastCtx=null;
+
+/* ===== regional resolution (queue + nuclear off-take depth) =====
+   Live per-coordinate data covers solar/gas/grid-proximity. Interconnection-queue
+   timing and nuclear-PPA depth have no free per-coordinate API, so they resolve by
+   ISO/RTO — every U.S. state is mapped, sourced from LBNL queues + SEC/ISO filings.
+   Labeled "regional" in every result. Queue years are ISO-level; nuclear depth is
+   per-state based on the operating fleet / contracted off-take in that market. */
+var ISO_QUEUE={PJM:2031,MISO:2030,SPP:2029,ERCOT:2028,CAISO:2032,NYISO:2031,ISONE:2031,SERC:2030,FRCC:2030,WECC:2030,NW:2029};
+var ISO_LABEL={PJM:'PJM',MISO:'MISO',SPP:'SPP',ERCOT:'ERCOT',CAISO:'CAISO',NYISO:'NYISO',ISONE:'ISO-NE',SERC:'SERC/Southeast',FRCC:'Florida (FRCC)',WECC:'WECC',NW:'Northwest/BPA'};
+/* state -> [isoKey, nuclearOfftakeYear|null, nuclearCapMW] */
+var STATES={
+  'Virginia':['PJM',2029,1000],'Ohio':['PJM',2029,700],'Pennsylvania':['PJM',2028,1000],
+  'New Jersey':['PJM',2029,800],'Maryland':['PJM',2030,700],'Delaware':['PJM',null,0],
+  'West Virginia':['PJM',null,0],'Kentucky':['PJM',null,0],'District of Columbia':['PJM',null,0],
+  'Illinois':['PJM',2028,1000],'Indiana':['MISO',null,0],'Michigan':['MISO',2029,800],
+  'Minnesota':['MISO',2030,700],'Wisconsin':['MISO',2030,600],'Iowa':['MISO',2029,500],
+  'Missouri':['MISO',2030,600],'Arkansas':['MISO',2030,600],'Louisiana':['MISO',2030,700],
+  'Mississippi':['MISO',2031,600],'North Dakota':['MISO',null,0],'South Dakota':['MISO',null,0],
+  'Texas':['ERCOT',2032,500],'Kansas':['SPP',2029,500],'Oklahoma':['SPP',null,0],
+  'Nebraska':['SPP',2030,500],'New Mexico':['WECC',null,0],'California':['CAISO',null,0],
+  'Georgia':['SERC',2030,1000],'Alabama':['SERC',2030,800],'Tennessee':['SERC',2030,900],
+  'South Carolina':['SERC',2030,800],'North Carolina':['SERC',2030,900],'Florida':['FRCC',2030,800],
+  'New York':['NYISO',2029,800],'Connecticut':['ISONE',2029,700],'Massachusetts':['ISONE',null,0],
+  'Maine':['ISONE',null,0],'New Hampshire':['ISONE',2030,600],'Rhode Island':['ISONE',null,0],
+  'Vermont':['ISONE',null,0],'Arizona':['WECC',2030,1000],'Nevada':['WECC',null,0],
+  'Utah':['WECC',null,0],'Colorado':['WECC',null,0],'Idaho':['NW',null,0],
+  'Montana':['WECC',null,0],'Wyoming':['WECC',null,0],'Oregon':['NW',null,0],
+  'Washington':['NW',2031,600]
+};
+function regionFor(stateName){
+  var s=STATES[stateName];
+  if(!s) return {iso:'(regional est.)',queue:2030,nuke:null,nukeCap:0};
+  return {iso:ISO_LABEL[s[0]],queue:ISO_QUEUE[s[0]],nuke:s[1],nukeCap:s[2]};
+}
+
+/* ===== LOAD layer (Approach C, phase 1) — curated large-LOAD interconnection
+   reality for top data-center hot zones. Unlike LBNL (generation-queue proxy),
+   this is the actual large-load connect timeline for new data-center load,
+   hand-built from utility/ISO/PUC disclosures. Preferred over the gen proxy
+   where present; everywhere else we fall back to the regional gen estimate.
+   Key: "<State>|<County>" (county with no 'County' suffix). asOf 2026. */
+var HOTZONE_LOAD={
+  // Northern Virginia — Dominion. Most congested DC market on earth.
+  'Virginia|Loudoun':       {u:'Dominion',     y:2032, flag:'NoVA capacity-constrained; queue cited up to ~15 yr', src:'Dominion / Virginia SCC 2025-26'},
+  'Virginia|Prince William':{u:'Dominion',     y:2032, flag:'NoVA capacity-constrained; new-load wait multi-year', src:'Dominion / Virginia SCC 2025-26'},
+  'Virginia|Fairfax':       {u:'Dominion',     y:2031, flag:'NoVA constrained; transmission-gated', src:'Dominion 2025-26'},
+  'Virginia|Fauquier':      {u:'Dominion',     y:2031, flag:'NoVA-adjacent; transmission-gated', src:'Dominion 2025-26'},
+  // Dallas–Fort Worth — ERCOT / Oncor. SB6 (2025) large-load regime.
+  'Texas|Dallas':   {u:'ERCOT / Oncor', y:2029, flag:'SB6 large-load study (≥75MW); post-2025 curtailment risk', src:'ERCOT SB6 / NPRR1234 2025'},
+  'Texas|Tarrant':  {u:'ERCOT / Oncor', y:2029, flag:'SB6 study + curtailment risk', src:'ERCOT SB6 2025'},
+  'Texas|Denton':   {u:'ERCOT / Oncor', y:2029, flag:'SB6 study + curtailment risk', src:'ERCOT SB6 2025'},
+  'Texas|Collin':   {u:'ERCOT / Oncor', y:2029, flag:'SB6 study + curtailment risk', src:'ERCOT SB6 2025'},
+  'Texas|Ellis':    {u:'ERCOT / Oncor', y:2029, flag:'SB6 study + curtailment risk', src:'ERCOT SB6 2025'},
+  // Columbus — AEP Ohio. 2023 moratorium lifted; 2025 DC tariff.
+  'Ohio|Franklin':  {u:'AEP Ohio', y:2030, flag:'DC tariff (2025); load study + transmission upgrades', src:'PUCO / AEP Ohio 2025'},
+  'Ohio|Licking':   {u:'AEP Ohio', y:2030, flag:'DC tariff (2025); transmission-gated (New Albany cluster)', src:'PUCO / AEP Ohio 2025'},
+  'Ohio|Delaware':  {u:'AEP Ohio', y:2030, flag:'DC tariff (2025); study-gated', src:'PUCO / AEP Ohio 2025'},
+  // Atlanta — Georgia Power (regulated). >100MW large-load tariff.
+  'Georgia|Fulton':  {u:'Georgia Power', y:2030, flag:'>100MW tariff; 15-yr contract + PSC review', src:'Georgia PSC 2025 IRP'},
+  'Georgia|Douglas': {u:'Georgia Power', y:2030, flag:'>100MW tariff; new gen 2027-31', src:'Georgia PSC 2025'},
+  'Georgia|Coweta':  {u:'Georgia Power', y:2031, flag:'>100MW tariff; 15-yr contract', src:'Georgia PSC 2025'},
+  'Georgia|Bartow':  {u:'Georgia Power', y:2031, flag:'>100MW tariff; 15-yr contract', src:'Georgia PSC 2025'},
+  // Chicago — ComEd / PJM. ~8-yr app→COD; transformer lead times.
+  'Illinois|Cook':   {u:'ComEd / PJM', y:2032, flag:'PJM ~8-yr app→COD; transformer ~160-wk lead', src:'PJM / ComEd 2025'},
+  'Illinois|DuPage': {u:'ComEd / PJM', y:2032, flag:'PJM ~8-yr app→COD; transformer-gated', src:'PJM / ComEd 2025'},
+  'Illinois|Will':   {u:'ComEd / PJM', y:2032, flag:'PJM ~8-yr app→COD; transformer-gated', src:'PJM / ComEd 2025'},
+  'Illinois|Kane':   {u:'ComEd / PJM', y:2032, flag:'PJM ~8-yr app→COD', src:'PJM / ComEd 2025'},
+  // Quincy WA — Grant County PUD. Load caps until transmission expansion.
+  'Washington|Grant':{u:'Grant County PUD', y:2034, flag:'LOAD CAPS until transmission expansion; 7-10 yr wait', src:'Grant PUD 2025'},
+  // Phoenix — APS / SRP. Subscription model; new gen 2031-33; water-limited.
+  'Arizona|Maricopa':{u:'APS / SRP', y:2032, flag:'subscription model; new gen 2031-33; water-constrained', src:'APS/SRP 2025-26'},
+  'Arizona|Pinal':   {u:'APS / SRP', y:2032, flag:'subscription capacity; water-constrained', src:'APS/SRP 2025-26'}
+};
+function loadFor(stateName, county){
+  if(!stateName||!county) return null;
+  var c=String(county).replace(/\s+County$/i,'').trim();
+  return HOTZONE_LOAD[stateName+'|'+c] || null;
+}
+
+/* ===== geometry ===== */
+function haversineMi(la1,lo1,la2,lo2){
+  var R=3958.8, t=function(x){return x*Math.PI/180;};
+  var dLa=t(la2-la1), dLo=t(lo2-lo1);
+  var s=Math.sin(dLa/2)*Math.sin(dLa/2)+Math.cos(t(la1))*Math.cos(t(la2))*Math.sin(dLo/2)*Math.sin(dLo/2);
+  return 2*R*Math.asin(Math.min(1,Math.sqrt(s)));
+}
+function analyzeInfra(site, infra){
+  var gas=Infinity, sub=Infinity, plant=Infinity;
+  var els=(infra&&infra.elements)||[];
+  els.forEach(function(el){
+    var tags=el.tags||{};
+    var pts = el.geometry ? el.geometry : (el.lat!=null?[{lat:el.lat,lon:el.lon}]:[]);
+    var dmin=Infinity;
+    pts.forEach(function(p){ var d=haversineMi(site[0],site[1],p.lat,p.lon); if(d<dmin)dmin=d; });
+    if(dmin===Infinity) return;
+    if(tags.man_made==='pipeline') gas=Math.min(gas,dmin);
+    else if(tags.power==='substation') sub=Math.min(sub,dmin);
+    else if(tags.power==='plant'||tags.power==='generator') plant=Math.min(plant,dmin);
+  });
+  return {gasDistMi:gas, subDistMi:sub, plantDistMi:plant};
+}
+
+/* ===== scenario builder (consumes live signals) ===== */
+function buildScenarios(ctx){
+  var r=ctx.region, need=ctx.needMW, big=need>=1000;
+  var cf=ctx.solarCF; // 0..1
+  var gas=ctx.gasDistMi;
+  var gasNear = gas<=5, gasLateral = gas>5 && gas<=18, gasNone = !(gas<=18);
+  var latAdd = gasLateral?6:0;
+  var gasCostAdj = gasLateral?12:0;
+  var S=[];
+  // Grid — prefer curated LOAD timeline in covered hot zones, else regional gen proxy
+  var gridYear = ctx.load ? ctx.load.y : r.queue;
+  var gridNote = ctx.load ? ('load queue · '+ctx.load.u+' · '+ctx.load.flag) : 'queue date, not a build date';
+  S.push({grp:'Baseline',name:'Grid interconnection',months:Math.max(0,(gridYear-2026))*12,firm:100,lcoe:42,capex:250,note:gridNote});
+  // Gas family (gated by real pipeline distance)
+  function gasRow(grp,name,baseMo,firm,baseLcoe,capex,cap,note){
+    if(gasNone) return {grp:grp,name:name,na:true,note:'no gas pipeline within ~7 mi (OSM scan)'};
+    return {grp:grp,name:name,months:baseMo+latAdd+(big?4:0),firm:firm,lcoe:Math.round(baseLcoe+gasCostAdj),capex:capex,cap:cap,note:(gasLateral?'gas lateral ~'+(gas.toFixed(0))+' mi':'pipeline '+(gas.toFixed(1))+' mi')+(note?' · '+note:'')};
+  }
+  S.push(gasRow('Baseline','Fuel cell',12,95,128,1500,200));
+  S.push(gasRow('Baseline','Simple-cycle gas turbine',28,97,82,1150,450,'OEM backlog'));
+  S.push(gasRow('Baseline','Gas reciprocating + BESS',16,96,95,1350,600));
+  // Solar-only / Solar+BESS (live CF)
+  var solarFirm=Math.max(8,Math.min(62,Math.round(cf*100*2.6)));
+  S.push({grp:'Hybrid',name:'Solar + 8h BESS',months:20,firm:solarFirm,lcoe:Math.max(40,Math.round(70 - (cf-0.18)*120)),capex:1750,cap:220,note:'CF '+Math.round(cf*100)+'% (NREL) · non-firm alone'});
+  S.push(gasRow('Hybrid','Gas recip + Solar + BESS',20,96,86,1600,600,'CF '+Math.round(cf*100)+'%'));
+  S.push(gasRow('Hybrid','Gas + BESS (firming)',18,95,92,1450,600));
+  // Nuclear PPAs (regional)
+  if(ctx.nuclear){
+    if(r.nuke){
+      var nm=Math.max(0,(r.nuke-2026))*12;
+      S.push({grp:'Nuclear PPA',name:'Constellation off-take',months:nm,firm:100,lcoe:60,capex:0,cap:r.nukeCap,note:r.iso+' fleet'});
+      S.push({grp:'Nuclear PPA',name:'Vistra / Talen off-take',months:nm+6,firm:100,lcoe:64,capex:0,cap:r.nukeCap});
+      S.push({grp:'Nuclear PPA',name:'SMR (FOAK, contracted)',months:Math.max(72,nm+24),firm:100,lcoe:82,capex:0,note:'FOAK schedule risk'});
+    } else {
+      S.push({grp:'Nuclear PPA',name:'Nuclear off-take',na:true,note:'no contracted nuclear depth in '+r.iso});
+    }
+  }
+  return S;
+}
+function statusOf(s,need,by){
+  if(s.na) return 'no';
+  var capOk=!s.cap||s.cap>=need, fast=s.months<=by, near=s.months<=by+6, firm=s.firm>=90, semi=s.firm>=60;
+  if(fast&&firm&&capOk) return 'ok';
+  if((fast&&semi&&capOk)||(near&&firm&&capOk)) return 'warn';
+  return 'no';
+}
+
+/* ===== UI: segmented controls ===== */
+function setupSeg(elId,vals,labels,key){
+  var el=document.getElementById(elId); el.innerHTML='';
+  vals.forEach(function(v,i){
+    var b=document.createElement('button'); b.textContent=labels[i];
+    if(state[key]===v) b.classList.add('active');
+    b.onclick=function(){ state[key]=v; Array.prototype.forEach.call(el.children,function(c){c.classList.remove('active');}); b.classList.add('active'); };
+    el.appendChild(b);
+  });
+}
+
+/* ===== map ===== */
+function initMap(){
+  lmap=L.map('map').setView(DEFAULT,9);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; OpenStreetMap'}).addTo(lmap);
+  lmap.on('click',function(e){ setMarker(e.latlng.lat,e.latlng.lng); track('action','coordinate_set'); });
+  setTimeout(function(){ lmap.invalidateSize(); },150);
+}
+function setMarker(lat,lng){
+  if(marker){ marker.setLatLng([lat,lng]); } else { marker=L.marker([lat,lng]).addTo(lmap); }
+  picked=[lat,lng];
+  document.getElementById('addr').value=lat.toFixed(4)+', '+lng.toFixed(4);
+}
+
+/* ===== data fetch ===== */
+function api(path){ return fetch(path).then(function(r){ if(!r.ok) throw new Error(path); return r.json(); }); }
+async function geocode(q){
+  var arr=await api('/api/geo?q='+encodeURIComponent(q));
+  if(Array.isArray(arr)&&arr.length){ return [parseFloat(arr[0].lat),parseFloat(arr[0].lon),arr[0].display_name]; }
+  throw new Error('no geocode');
+}
+async function reverse(lat,lng){
+  try{ var j=await api('/api/geo?lat='+lat+'&lon='+lng); return j&&j.address?j.address:{}; }catch(e){ return {}; }
+}
+
+/* ===== run ===== */
+var SRC=['Geocoding (Nominatim)…','Solar resource (NREL PVWatts)…','Infrastructure scan (OpenStreetMap)…','Scoring 10 pathways…'];
+async function runScreen(){
+  var addr=document.getElementById('addr').value.trim();
+  var site;
+  // resolve coordinate
+  showLoading();
+  try{
+    if(picked && (addr==='' || addr===picked[0].toFixed(4)+', '+picked[1].toFixed(4))){ site=[picked[0],picked[1]]; }
+    else if(/^-?\d+(\.\d+)?\s*,\s*-?\d+(\.\d+)?$/.test(addr)){ var pp=addr.split(',').map(parseFloat); site=[pp[0],pp[1]]; }
+    else if(addr){ var g=await geocode(addr); site=[g[0],g[1]]; }
+    else { site=DEFAULT.slice(); }
+  }catch(e){ site=DEFAULT.slice(); }
+  setMarker(site[0],site[1]); lmap.setView(site,12);
+
+  // parallel live pulls (graceful fallback)
+  var solarP=api('/api/solar?lat='+site[0]+'&lon='+site[1]).catch(function(){return null;});
+  var infraP=api('/api/infra?lat='+site[0]+'&lon='+site[1]).catch(function(){return null;});
+  var addrP=reverse(site[0],site[1]);
+  var solar=await solarP, infra=await infraP, address=await addrP;
+
+  var solarLive = solar && typeof solar.capacityFactor==='number';
+  var cf = solarLive ? solar.capacityFactor : 0.19; // fallback CF
+  var sig = analyzeInfra(site, infra||{elements:[]});
+  var infraLive = !!infra;
+  var place = address.city||address.town||address.county||address.state||'this site';
+  var stateName = address.state||'';
+  var county = address.county||'';
+  var region = regionFor(stateName);
+  var load = loadFor(stateName, county); // curated large-load layer (hot zones)
+
+  var ctx={ site:site, solarCF:cf, solarLive:solarLive, infraLive:infraLive,
+            gasDistMi:sig.gasDistMi, subDistMi:sig.subDistMi, plantDistMi:sig.plantDistMi,
+            region:region, load:load, place:place, stateName:stateName, county:county,
+            needMW:state.powerMW, byMonths:state.byMonths, nuclear:state.nuclear };
+  lastCtx=ctx;
+  render(ctx);
+}
+
+function showLoading(){
+  document.getElementById('result').innerHTML=
+    '<div class="panel" style="margin-top:22px"><div class="loadbar"><span class="spin"></span><span class="loadtxt">Reading live data</span></div><div class="loadsrc" id="loadsrc">'+SRC[0]+'</div></div>';
+  var i=0; var t=setInterval(function(){ i++; var el=document.getElementById('loadsrc'); if(el&&i<SRC.length){el.textContent=SRC[i];} else clearInterval(t); },520);
+}
+
+/* ===== render ===== */
+function render(ctx){
+  var S=buildScenarios(ctx);
+  var st=S.map(function(s){return statusOf(s,ctx.needMW,ctx.byMonths);});
+  var hasOk=st.indexOf('ok')>=0, hasWarn=st.indexOf('warn')>=0;
+  var verdict=hasOk?'advance':(hasWarn?'caution':'kill');
+  var target=hasOk?'ok':(hasWarn?'warn':null);
+  var winIdx=-1, winMo=Infinity, onsite=Infinity;
+  S.forEach(function(s,i){ if(s.name==='Grid interconnection')return; if(st[i]==='ok'||st[i]==='warn'){ onsite=Math.min(onsite,s.months); if(target&&st[i]===target&&s.months<winMo){winMo=s.months;winIdx=i;} } });
+  var okCount=st.filter(function(x){return x==='ok';}).length;
+
+  var powerLbl=ctx.needMW>=1000?'1 GW+':ctx.needMW+' MW';
+  var gasTxt = (ctx.gasDistMi<=18)?(ctx.gasDistMi.toFixed(1)+' mi'):'none within ~7 mi';
+  var subTxt = (ctx.subDistMi<200)?ctx.subDistMi.toFixed(1)+' mi':'none nearby';
+
+  var effGridYear = ctx.load ? ctx.load.y : ctx.region.queue;
+  var gridWhich = ctx.load ? (ctx.load.u+' load queue') : (ctx.region.iso+' gen-queue proxy');
+  var V={
+    advance:{badge:'Advance',cls:'v-advance',title:'Worth a feasibility study.',
+      sum:'At least one on-site path delivers '+powerLbl+' firm within your '+ctx.byMonths+'-month window. The grid alone arrives ~'+effGridYear+' ('+gridWhich+'). Advance this parcel to EPC feasibility.'},
+    caution:{badge:'Caution',cls:'v-caution',title:'Borderline — tighten before you spend.',
+      sum:'No clean on-site path meets '+powerLbl+' firm in '+ctx.byMonths+' months; nearest viable is ~'+(isFinite(onsite)?onsite+' mo':'—')+'. Re-scope power or timeline before committing the $50k.'},
+    kill:{badge:'Kill',cls:'v-kill',title:'Screen out — don’t spend the $50k.',
+      sum:'No on-site or PPA path meets '+powerLbl+' firm within '+ctx.byMonths+' months here. Grid arrives ~'+effGridYear+' ('+gridWhich+'). Kill this parcel before EPC.'}
+  }[verdict];
+
+  /* ===== decision header: two sourced, confidence-rated time-to-power paths ===== */
+  var gridMo = Math.max(0,(effGridYear-2026))*12;
+  var gridConf = ctx.load ? 'high' : 'low';
+  var gridConfCls = gridConf==='high'?'conf-high':'conf-low';
+  var gridSrc = ctx.load ? ctx.load.src : (ctx.region.iso+' generation-queue proxy · LBNL/ISO');
+  var gridDetail = ctx.load ? (ctx.load.u+' load queue · '+ctx.load.flag) : (ctx.region.iso+' gen-queue proxy · a queue date, not a build date');
+  var win = winIdx>=0 ? S[winIdx] : null, hasOnsite = !!win, onsiteMo = win ? win.months : null;
+  var onsiteConf = hasOnsite ? ((win.firm>=95 && win.months<=ctx.byMonths) ? 'high' : 'medium') : 'na';
+  var onsiteConfCls = onsiteConf==='high'?'conf-high':'conf-med';
+  var onsiteCard='<div class="path">'
+    +'<div class="plab">Fastest on-site path</div>'
+    +'<div class="pnum">'+(hasOnsite?('~'+onsiteMo+' mo'):'none in window')+'</div>'
+    +'<div class="pmeta">'+(hasOnsite?(win.name+' · '+win.firm+'% firm'+(win.note?' · '+win.note:'')):('no on-site path meets '+powerLbl+' firm in '+ctx.byMonths+' mo'))+'</div>'
+    +'<div class="psrc">'+(hasOnsite?('confidence <span class="conf '+onsiteConfCls+'">'+onsiteConf+'</span> · equipment lead-time + live gas/solar'):'—')+'</div>'
+    +'</div>';
+  var gridCard='<div class="path">'
+    +'<div class="plab">Grid-only connection</div>'
+    +'<div class="pnum">~'+effGridYear+'</div>'
+    +'<div class="pmeta">'+gridDetail+'</div>'
+    +'<div class="psrc">source: '+gridSrc+' · as of 2026 · confidence <span class="conf '+gridConfCls+'">'+gridConf+'</span></div>'
+    +'</div>';
+  var bankable;
+  if(hasOnsite){
+    var aheadYrs=Math.max(0,Math.round((gridMo-onsiteMo)/12));
+    bankable='<div class="bankable">Fastest <b>bankable</b> path: <b>'+win.name+', ~'+onsiteMo+' mo</b>'+(aheadYrs>0?(' — about '+aheadYrs+' year'+(aheadYrs>1?'s':'')+' ahead of grid-only (~'+effGridYear+').'):'.')+'</div>';
+  } else {
+    bankable='<div class="bankable">No bankable on-site path inside your '+ctx.byMonths+'-month window. Grid-only arrives ~'+effGridYear+'.</div>';
+  }
+  var PATHS_HTML='<div class="paths">'+onsiteCard+gridCard+'</div>'+bankable;
+
+  // rows
+  var rows='';
+  S.forEach(function(s,i){
+    var c=st[i], chip=c==='ok'?'<span class="status-chip chip-ok">✓ meets</span>':c==='warn'?'<span class="status-chip chip-warn">▲ near-miss</span>':'<span class="status-chip chip-no">✗ fails</span>';
+    var win=(i===winIdx)?' class="win"':'';
+    if(s.na){ rows+='<tr><td class="scen">'+s.name+'<span class="grp">'+s.grp+(s.note?' · '+s.note:'')+'</span></td><td class="num muted">—</td><td class="num muted">—</td><td class="num muted">—</td><td class="num muted">—</td><td>'+chip+'</td></tr>'; }
+    else{
+      var mo=s.months===0?'0 mo':(s.name==='Grid interconnection'?('~'+effGridYear):(s.months+' mo'));
+      var capex=s.capex?('$'+s.capex.toLocaleString()):'PPA';
+      rows+='<tr'+win+'><td class="scen">'+s.name+'<span class="grp">'+s.grp+(s.note?' · '+s.note:'')+'</span></td><td class="num">'+mo+'</td><td class="num">'+s.firm+'%</td><td class="num">$'+s.lcoe+'</td><td class="num">'+capex+'</td><td>'+chip+'</td></tr>';
+    }
+  });
+
+  var now=new Date().toISOString().slice(0,10);
+  document.getElementById('printMeta').textContent=ctx.place+' ('+ctx.site[0].toFixed(2)+', '+ctx.site[1].toFixed(2)+') · need '+powerLbl+' by '+ctx.byMonths+' mo · '+now;
+
+  document.getElementById('result').innerHTML=
+    '<div class="verdict '+V.cls+'">'+
+      '<div class="vtop"><span class="badge">'+V.badge+'</span><span class="mono" style="font-size:13px;opacity:.8">'+ctx.place+' · '+ctx.region.iso+' · '+ctx.site[0].toFixed(2)+', '+ctx.site[1].toFixed(2)+'</span></div>'+
+      '<h2>'+V.title+'</h2><p class="sum">'+V.sum+'</p>'+
+      PATHS_HTML+
+      '<div class="signals">'+
+        '<span class="sigchip '+(ctx.solarLive?'live':'')+'">Solar CF '+(ctx.solarLive?'(NREL)':'(est.)')+': <b>'+Math.round(ctx.solarCF*100)+'%</b></span>'+
+        '<span class="sigchip '+(ctx.infraLive?'live':'')+'">Nearest gas pipeline '+(ctx.infraLive?'(OSM)':'(n/a)')+': <b>'+gasTxt+'</b></span>'+
+        '<span class="sigchip '+(ctx.infraLive?'live':'')+'">Nearest substation '+(ctx.infraLive?'(OSM)':'(n/a)')+': <b>'+subTxt+'</b></span>'+
+      '</div>'+
+    '</div>'+
+    '<div class="toolbar no-print"><button class="btn btn-dark" onclick="window.print();track(\'action\',\'word_download\')">Print board-ready PDF</button>'+
+      '<button class="btn btn-ghost" onclick="copyLink()">Copy shareable link</button><span class="hint" id="copyMsg"></span></div>'+
+    '<div class="matrix-wrap"><table class="matrix"><thead><tr><th>Scenario</th><th>Time to power</th><th>Firm capacity</th><th>~$/MWh</th><th>~$/kW capex</th><th>On your yardstick</th></tr></thead><tbody>'+rows+'</tbody></table></div>'+
+    '<p class="assump">Yardstick: '+powerLbl+' firm, online within '+ctx.byMonths+' months. "Meets" = on time at ≥90% firm capacity; "near-miss" = within 6 months or 60–90% firm. '+
+      'Live this run: solar capacity factor (NREL PVWatts), gas-pipeline & substation distance (OpenStreetMap/Overpass), geocode (Nominatim). '+
+      (ctx.load?('Grid timing for this hot zone is a curated large-LOAD connect estimate ('+ctx.load.u+', '+ctx.load.src+').'):'Grid timing is a regional generation-queue proxy (LBNL/ISO).')+' '+
+      'Nuclear-PPA depth is regional (SEC/ISO). Screening-grade ±40% — verify with utility, OEM, EPC, and counsel.</p>'+
+    '<div class="feedback no-print"><input id="fbtext" placeholder="See something off? Tell us in one line" onkeydown="if(event.key===\'Enter\')sendFb()"><button onclick="sendFb()">Send</button></div>'+
+    '<div class="fbthx hidden no-print" id="fbthx">Thanks — that is exactly how this gets sharper.</div>';
+
+  logSitecheck(ctx,verdict,onsite,winIdx>=0?S[winIdx].name:'',okCount);
+  track('action','computed');
+  document.getElementById('result').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+/* ===== logging / sharing / feedback ===== */
+function logSitecheck(ctx,verdict,onsite,winName,okCount){
+  try{
+    var cat=verdict==='advance'?'Yes':verdict==='caution'?'Constrained':'No near-term';
+    fetch('/api/sitecheck',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({lat:ctx.site[0],lng:ctx.site[1],verdict:verdict,cat:cat,fastest:winName+(isFinite(onsite)?(' · '+onsite+' mo'):''),feasible:(typeof okCount==='number'?okCount:0),internal:window.OSP_INTERNAL?1:0})}).catch(function(){});
+  }catch(e){}
+}
+function copyLink(){
+  var u=new URL(location.href.split('?')[0]);
+  if(picked){ u.searchParams.set('lat',picked[0].toFixed(4)); u.searchParams.set('lng',picked[1].toFixed(4)); }
+  u.searchParams.set('mw',state.powerMW); u.searchParams.set('by',state.byMonths); u.searchParams.set('n',state.nuclear?1:0);
+  if(navigator.clipboard) navigator.clipboard.writeText(u.toString());
+  var m=document.getElementById('copyMsg'); if(m) m.textContent='Link copied — share it, no login needed.';
+  track('action','copy_link');
+}
+function sendFb(){
+  var el=document.getElementById('fbtext'); var v=(el.value||'').trim(); if(!v){ el.focus(); return; }
+  var body={text:v,internal:window.OSP_INTERNAL?1:0}; if(picked){ body.lat=picked[0]; body.lng=picked[1]; } if(lastCtx){ body.verdict=lastCtx.place; }
+  el.disabled=true;
+  fetch('/api/feedback',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}).then(done,done);
+  function done(){ el.disabled=false; el.value=''; var t=document.getElementById('fbthx'); t.classList.remove('hidden'); setTimeout(function(){t.classList.add('hidden');},4000); }
+}
+
+/* ===== restore from shared link ===== */
+function restore(){
+  var p=new URLSearchParams(location.search);
+  if(p.get('mw')) state.powerMW=parseInt(p.get('mw'));
+  if(p.get('by')) state.byMonths=parseInt(p.get('by'));
+  if(p.get('n')!==null&&p.get('n')!=='') state.nuclear=p.get('n')==='1';
+  if(p.get('lat')&&p.get('lng')){ picked=[parseFloat(p.get('lat')),parseFloat(p.get('lng'))]; }
+}
+
+/* ===== init ===== */
+restore();
+setupSeg('segPower',[100,250,500,1000],['100 MW','250 MW','500 MW','1 GW+'],'powerMW');
+setupSeg('segTime',[12,18,24,36],['12 mo','18 mo','24 mo','36 mo'],'byMonths');
+setupSeg('segNuke',[true,false],['Yes','No'],'nuclear');
+initMap();
+if(picked){ setMarker(picked[0],picked[1]); lmap.setView(picked,12); }
+runScreen(); // land on a live result (default Ashburn if nothing picked)
+</script>
+</body>
+</html>
