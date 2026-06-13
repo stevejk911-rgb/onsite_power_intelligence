@@ -62,6 +62,9 @@
       <tr><td class="k">Chicago</td><td>ComEd / PJM — ~8-yr app→COD; ~160-wk transformer lead</td></tr>
       <tr><td class="k">Quincy, WA</td><td>Grant County PUD — load caps until transmission expansion (7–10 yr)</td></tr>
       <tr><td class="k">Phoenix</td><td>APS / SRP — subscription model; new gen 2031–33; water-constrained</td></tr>
+      <tr><td class="k">Abilene, TX</td><td>ERCOT / AEP Texas — ERCOT West; SB6 large-load study; transmission-gated (Stargate cluster)</td></tr>
+      <tr><td class="k">Central Louisiana</td><td>Entergy (MISO South) — utility-built gen 2028–29 (Franklin Farms 1.5GW) + $1.2bn 500kV line; LPSC &ldquo;Lightning&rdquo; fast-track</td></tr>
+      <tr><td class="k">Memphis, TN</td><td>MLGW / TVA — TVA board approval + substation-gated; on-site gas bridged xAI Colossus</td></tr>
     </tbody>
   </table>
   <p class="muted" style="font-size:13px">Curated, screening-grade, as of 2026. Outside these counties, grid timing falls back to the LBNL/ISO generation-queue proxy.</p>
@@ -81,6 +84,7 @@
       <tr><td class="k">2026-Q2</td><td>Moved the verdict from a regional bucket to live per-coordinate pulls (NREL solar + OSM gas/substation distance).</td></tr>
       <tr><td class="k">2026-Q2</td><td>Mapped every U.S. state to its ISO/RTO for queue and nuclear-PPA depth — any coordinate now resolves to a real market instead of a generic default.</td></tr>
       <tr><td class="k">2026-Q2</td><td>Added a curated large-LOAD connect layer for 7 hot zones (NoVA, DFW, Columbus, Atlanta, Chicago, Quincy WA, Phoenix); grid timing there reflects real data-center load waits, not the generation proxy.</td></tr>
+      <tr><td class="k">2026-Q2</td><td>Expanded the curated large-LOAD layer to 10 hot zones — added Abilene TX (ERCOT / AEP Texas), Central Louisiana (Entergy), and Memphis TN (MLGW / TVA). Each verdict now shows the on-site vs grid path with its source and a confidence rating.</td></tr>
       <tr><td class="k">2026-Q2</td><td>Gas pathways now ruled out automatically when no pipeline is found within ~7 mi of the coordinate.</td></tr>
       <tr><td class="k">2026-Q2</td><td>Raised simple-cycle gas turbine lead time to ~28 months to reflect OEM backlog.</td></tr>
       <tr><td class="k">2026-Q2</td><td>Marked solar-only / solar+BESS as non-firm by default; they cannot meet a 24/7 data-center load alone.</td></tr>
