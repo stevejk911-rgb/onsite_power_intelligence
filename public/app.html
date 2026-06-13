@@ -9,6 +9,21 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <link rel="stylesheet" href="styles.css">
+<style>
+  /* decision header: two time-to-power paths, sourced + confidence-rated */
+  .paths{display:flex;gap:14px;flex-wrap:wrap;margin:18px 0 6px}
+  .paths .path{flex:1 1 240px;background:#fff;border:1px solid var(--line-2);border-radius:14px;padding:15px 17px}
+  .paths .plab{font-family:var(--sans);font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+  .paths .pnum{font-size:30px;font-weight:700;letter-spacing:-.02em;color:var(--ink);margin:5px 0 3px;line-height:1.05}
+  .paths .pmeta{font-family:var(--sans);font-size:13px;color:var(--ink-2);line-height:1.45}
+  .paths .psrc{font-family:var(--sans);font-size:11.5px;color:var(--muted);margin-top:7px;line-height:1.4}
+  .conf{display:inline-block;font-family:var(--sans);font-size:10.5px;font-weight:700;padding:1px 7px;border-radius:10px}
+  .conf-high{background:var(--advance-bg);color:var(--advance)}
+  .conf-med{background:var(--caution-bg);color:var(--caution)}
+  .conf-low{background:#eef0ff;color:#5566cc}
+  .bankable{font-family:var(--sans);margin:12px 0 2px;font-size:14.5px;font-weight:600;color:var(--ink);background:#eef3ff;border:1px solid #d9e3ff;border-radius:10px;padding:11px 15px}
+  .bankable b{color:#1E50E6}
+</style>
 </head>
 <body>
 
@@ -347,6 +362,36 @@ function render(ctx){
       sum:'No on-site or PPA path meets '+powerLbl+' firm within '+ctx.byMonths+' months here. Grid arrives ~'+effGridYear+' ('+gridWhich+'). Kill this parcel before EPC.'}
   }[verdict];
 
+  /* ===== decision header: two sourced, confidence-rated time-to-power paths ===== */
+  var gridMo = Math.max(0,(effGridYear-2026))*12;
+  var gridConf = ctx.load ? 'high' : 'low';
+  var gridConfCls = gridConf==='high'?'conf-high':'conf-low';
+  var gridSrc = ctx.load ? ctx.load.src : (ctx.region.iso+' generation-queue proxy · LBNL/ISO');
+  var gridDetail = ctx.load ? (ctx.load.u+' load queue · '+ctx.load.flag) : (ctx.region.iso+' gen-queue proxy · a queue date, not a build date');
+  var win = winIdx>=0 ? S[winIdx] : null, hasOnsite = !!win, onsiteMo = win ? win.months : null;
+  var onsiteConf = hasOnsite ? ((win.firm>=95 && win.months<=ctx.byMonths) ? 'high' : 'medium') : 'na';
+  var onsiteConfCls = onsiteConf==='high'?'conf-high':'conf-med';
+  var onsiteCard='<div class="path">'
+    +'<div class="plab">Fastest on-site path</div>'
+    +'<div class="pnum">'+(hasOnsite?('~'+onsiteMo+' mo'):'none in window')+'</div>'
+    +'<div class="pmeta">'+(hasOnsite?(win.name+' · '+win.firm+'% firm'+(win.note?' · '+win.note:'')):('no on-site path meets '+powerLbl+' firm in '+ctx.byMonths+' mo'))+'</div>'
+    +'<div class="psrc">'+(hasOnsite?('confidence <span class="conf '+onsiteConfCls+'">'+onsiteConf+'</span> · equipment lead-time + live gas/solar'):'—')+'</div>'
+    +'</div>';
+  var gridCard='<div class="path">'
+    +'<div class="plab">Grid-only connection</div>'
+    +'<div class="pnum">~'+effGridYear+'</div>'
+    +'<div class="pmeta">'+gridDetail+'</div>'
+    +'<div class="psrc">source: '+gridSrc+' · as of 2026 · confidence <span class="conf '+gridConfCls+'">'+gridConf+'</span></div>'
+    +'</div>';
+  var bankable;
+  if(hasOnsite){
+    var aheadYrs=Math.max(0,Math.round((gridMo-onsiteMo)/12));
+    bankable='<div class="bankable">Fastest <b>bankable</b> path: <b>'+win.name+', ~'+onsiteMo+' mo</b>'+(aheadYrs>0?(' — about '+aheadYrs+' year'+(aheadYrs>1?'s':'')+' ahead of grid-only (~'+effGridYear+').'):'.')+'</div>';
+  } else {
+    bankable='<div class="bankable">No bankable on-site path inside your '+ctx.byMonths+'-month window. Grid-only arrives ~'+effGridYear+'.</div>';
+  }
+  var PATHS_HTML='<div class="paths">'+onsiteCard+gridCard+'</div>'+bankable;
+
   // rows
   var rows='';
   S.forEach(function(s,i){
@@ -367,13 +412,11 @@ function render(ctx){
     '<div class="verdict '+V.cls+'">'+
       '<div class="vtop"><span class="badge">'+V.badge+'</span><span class="mono" style="font-size:13px;opacity:.8">'+ctx.place+' · '+ctx.region.iso+' · '+ctx.site[0].toFixed(2)+', '+ctx.site[1].toFixed(2)+'</span></div>'+
       '<h2>'+V.title+'</h2><p class="sum">'+V.sum+'</p>'+
+      PATHS_HTML+
       '<div class="signals">'+
         '<span class="sigchip '+(ctx.solarLive?'live':'')+'">Solar CF '+(ctx.solarLive?'(NREL)':'(est.)')+': <b>'+Math.round(ctx.solarCF*100)+'%</b></span>'+
         '<span class="sigchip '+(ctx.infraLive?'live':'')+'">Nearest gas pipeline '+(ctx.infraLive?'(OSM)':'(n/a)')+': <b>'+gasTxt+'</b></span>'+
         '<span class="sigchip '+(ctx.infraLive?'live':'')+'">Nearest substation '+(ctx.infraLive?'(OSM)':'(n/a)')+': <b>'+subTxt+'</b></span>'+
-        (ctx.load
-          ? '<span class="sigchip load">Load connect ('+ctx.load.u+'): <b>~'+ctx.load.y+'</b> · '+ctx.load.flag+'</span>'
-          : '<span class="sigchip">Grid queue ('+ctx.region.iso+', gen-proxy): <b>~'+ctx.region.queue+'</b></span>')+
       '</div>'+
     '</div>'+
     '<div class="toolbar no-print"><button class="btn btn-dark" onclick="window.print();track(\'action\',\'word_download\')">Print board-ready PDF</button>'+
@@ -435,5 +478,3 @@ runScreen(); // land on a live result (default Ashburn if nothing picked)
 </script>
 </body>
 </html>
-<script>(function(){var qs=new URLSearchParams(location.search);var demo=qs.get('demo');if(!demo)return;if(window.__ospiDemo)return;window.__ospiDemo=true;function q(s){return document.querySelector(s);}function sb(){return [].slice.call(document.querySelectorAll('button')).filter(function(b){return b.textContent.trim()==='Screen';})[0];}function start(t){var i=q('#addr'),b=sb();if(!i||!b){if(t>0)return setTimeout(function(){start(t-1);},300);return;}i.value=demo.split(',').map(function(s){return s.trim();}).join(', ');i.dispatchEvent(new Event('input',{bubbles:true}));b.click();wv(40);}function wv(t){var v=q('.verdict');if(!v){if(t>0)return setTimeout(function(){wv(t-1);},250);return;}dec(v);}function dec(v){if(!document.getElementById('ospi-nudge')){var bar=document.createElement('div');bar.id='ospi-nudge';bar.style.cssText='margin:18px 0 10px;padding:14px 16px;border:1px solid #cfe9d6;background:#eef8f1;border-radius:10px;font:15px/1.55 -apple-system,Segoe UI,Arial;color:#15643a';bar.innerHTML='✅ <b>This is a real, already-built on-site data center site</b> <span style="color:#3f5147">— screened live just now.</span> <span style="color:#0b1220">Plenty of sites come back red. <b>Now drop your coordinate</b> to see its color.</span> <a href="#addr" id="ospi-go" style="margin-left:6px;color:#1d4ed8;font-weight:700;text-decoration:underline">Screen my site ↑</a>';v.parentNode.insertBefore(bar,v);var go=document.getElementById('ospi-go');if(go)go.addEventListener('click',function(e){e.preventDefault();var i=q('#addr');if(i){i.scrollIntoView({behavior:'smooth',block:'center'});setTimeout(function(){i.focus();},400);}});}var i=q('#addr');if(i){i.value='';i.dispatchEvent(new Event('input',{bubbles:true}));i.placeholder='Enter YOUR coordinate or address — verdict in 60s';}v.scrollIntoView({behavior:'smooth',block:'center'});}if(document.readyState!=='loading')start(40);else document.addEventListener('DOMContentLoaded',function(){start(40);});})();</script>
-<script>(function(){if(new URLSearchParams(location.search).get('demo')==null)return;var n=0;var iv=setInterval(function(){n++;var v=document.querySelector('.verdict');if(v&&!document.getElementById('ospi-nudge')){var bar=document.createElement('div');bar.id='ospi-nudge';bar.style.cssText='margin:18px 0 10px;padding:14px 16px;border:1px solid #cfe9d6;background:#eef8f1;border-radius:10px;font:15px/1.55 -apple-system,Segoe UI,Arial;color:#15643a';bar.innerHTML='✅ <b>This is a real, already-built on-site data center site</b> <span style="color:#3f5147">— screened live just now.</span> <span style="color:#0b1220">Plenty of sites come back red. <b>Now drop your coordinate</b> to see its color.</span>';v.parentNode.insertBefore(bar,v);}if(n>=30)clearInterval(iv);},500);})();</script>
