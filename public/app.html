@@ -178,11 +178,18 @@ var HOTZONE_LOAD={
   'Washington|Grant':{u:'Grant County PUD', y:2034, flag:'LOAD CAPS until transmission expansion; 7-10 yr wait', src:'Grant PUD 2025'},
   // Phoenix — APS / SRP. Subscription model; new gen 2031-33; water-limited.
   'Arizona|Maricopa':{u:'APS / SRP', y:2032, flag:'subscription model; new gen 2031-33; water-constrained', src:'APS/SRP 2025-26'},
-  'Arizona|Pinal':   {u:'APS / SRP', y:2032, flag:'subscription capacity; water-constrained', src:'APS/SRP 2025-26'}
+  'Arizona|Pinal':   {u:'APS / SRP', y:2032, flag:'subscription capacity; water-constrained', src:'APS/SRP 2025-26'},
+  // Abilene TX — ERCOT West / AEP Texas. Stargate (OpenAI/Oracle/Crusoe/Lancium) cluster.
+  'Texas|Taylor':    {u:'ERCOT / AEP Texas', y:2029, flag:'ERCOT West; SB6 large-load study (≥75MW); transmission-gated (Stargate buildout)', src:'ERCOT SB6 / AEP Texas 2025-26'},
+  // Central Louisiana — Entergy (MISO South). Meta Richland Parish; Hut 8 River Bend.
+  'Louisiana|Richland':       {u:'Entergy Louisiana', y:2029, flag:'utility-built gen 2028-29 (Franklin Farms 1.5GW) + 500kV line; LPSC "Lightning" fast-track', src:'Entergy / Louisiana PSC 2025-26'},
+  'Louisiana|West Feliciana': {u:'Entergy Louisiana', y:2030, flag:'MISO South; large-load study + transmission upgrades', src:'Entergy / Louisiana PSC 2026'},
+  // Memphis TN — MLGW / TVA. xAI Colossus (on-site gas bridged the grid wait).
+  'Tennessee|Shelby':{u:'MLGW / TVA', y:2029, flag:'TVA board approval + MLGW substation-gated; on-site gas bridged xAI Colossus', src:'MLGW / TVA 2025-26'}
 };
 function loadFor(stateName, county){
   if(!stateName||!county) return null;
-  var c=String(county).replace(/\s+County$/i,'').trim();
+  var c=String(county).replace(/\s+(County|Parish|Borough)$/i,'').trim();
   return HOTZONE_LOAD[stateName+'|'+c] || null;
 }
 
