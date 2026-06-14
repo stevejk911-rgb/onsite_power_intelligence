@@ -97,7 +97,16 @@ if(DATABASE_URL){
       /* backfill bot on rows already collected, by matching the stored UA */
       "UPDATE events     SET bot = true WHERE bot = false AND (ua IS NULL OR ua ~* '" + BOT_SQL + "');" +
       "UPDATE sitechecks SET bot = true WHERE bot = false AND (ua IS NULL OR ua ~* '" + BOT_SQL + "');" +
-      "UPDATE feedback   SET bot = true WHERE bot = false AND (ua IS NULL OR ua ~* '" + BOT_SQL + "');"
+      "UPDATE feedback   SET bot = true WHERE bot = false AND (ua IS NULL OR ua ~* '" + BOT_SQL + "');" +
+      /* corrections inbox: experts fix the decisive numbers. NEVER auto-applied to
+         the live verdict — operator reviews and promotes by hand. */
+      "CREATE TABLE IF NOT EXISTS corrections (" +
+      "  id bigserial PRIMARY KEY, ts timestamptz NOT NULL DEFAULT now()," +
+      "  lat double precision, lng double precision, market text, field text," +
+      "  our_value text, their_value text, source text, who text," +
+      "  status text NOT NULL DEFAULT 'new', ua text," +
+      "  internal boolean NOT NULL DEFAULT false, bot boolean NOT NULL DEFAULT false);" +
+      "CREATE INDEX IF NOT EXISTS corrections_ts_idx ON corrections (ts DESC);"
     ).then(() => console.log("Analytics: Postgres ready"))
      .catch((e) => console.log("Analytics: table init failed — " + (e && e.message)));
   } catch(e){
@@ -383,6 +392,39 @@ http.createServer(async (req, res) => {
       return;
     }
 
+    /* correction: an expert fixes a number (public). Stored in an inbox — NEVER
+       auto-applied to the live verdict. The operator reviews and promotes by hand. */
+    if(url.pathname === "/api/correction"){
+      if(req.method !== "POST"){ res.writeHead(405); res.end(JSON.stringify({ error:"POST only" })); return; }
+      try {
+        const body = await readBody(req);
+        let ev = {}; try { ev = JSON.parse(body || "{}"); } catch(_){}
+        const their = String(ev.their_value || "").trim().slice(0, 300);
+        if(!their){ res.writeHead(400); res.end(JSON.stringify({ error:"empty" })); return; }
+        const row = {
+          lat: (typeof ev.lat === "number" && isFinite(ev.lat)) ? ev.lat : null,
+          lng: (typeof ev.lng === "number" && isFinite(ev.lng)) ? ev.lng : null,
+          market: String(ev.market || "").slice(0, 200),
+          field: String(ev.field || "grid_year").slice(0, 40),
+          our_value: String(ev.our_value || "").slice(0, 100),
+          their_value: their,
+          source: String(ev.source || "").slice(0, 500),
+          who: String(ev.who || "").slice(0, 200),
+          ua: String(req.headers["user-agent"] || "").slice(0, 200),
+          internal: isInternal(ev)
+        };
+        row.bot = isBot(row.ua);
+        if(pool){
+          await pool.query(
+            "INSERT INTO corrections (lat,lng,market,field,our_value,their_value,source,who,ua,internal,bot) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)",
+            [row.lat, row.lng, row.market, row.field, row.our_value, row.their_value, row.source, row.who, row.ua, row.internal, row.bot]
+          );
+        }
+        res.writeHead(200); res.end(JSON.stringify({ ok:true }));
+      } catch(e){ res.writeHead(200); res.end(JSON.stringify({ ok:true })); }
+      return;
+    }
+
     /* sitecheck: log one screening run (public, best-effort) */
     if(url.pathname === "/api/sitecheck"){
       if(req.method !== "POST"){ res.writeHead(405); res.end(JSON.stringify({ error:"POST only" })); return; }
@@ -465,6 +507,38 @@ http.createServer(async (req, res) => {
         } else {
           for(let i = memFeedback.length - 1; i >= 0; i--){ if(String(memFeedback[i].id) === String(id)) memFeedback.splice(i, 1); }
         }
+        res.writeHead(200); res.end(JSON.stringify({ ok:true }));
+      } catch(e){ res.writeHead(502); res.end(JSON.stringify({ error: String((e && e.message) || e) })); }
+      return;
+    }
+
+    /* corrections: operator reads the inbox (key-gated) */
+    if(url.pathname === "/api/admin/corrections"){
+      if(!ADMIN_KEY || url.searchParams.get("key") !== ADMIN_KEY){
+        res.writeHead(401); res.end(JSON.stringify({ error:"unauthorized" })); return;
+      }
+      if(!pool){ res.writeHead(200); res.end(JSON.stringify({ ok:true, items: [] })); return; }
+      try {
+        const r = await pool.query("SELECT id,ts,lat,lng,market,field,our_value,their_value,source,who,status,internal,bot FROM corrections ORDER BY ts DESC LIMIT 500");
+        res.writeHead(200); res.end(JSON.stringify({ ok:true, items: r.rows }));
+      } catch(e){ res.writeHead(502); res.end(JSON.stringify({ error: String((e && e.message) || e) })); }
+      return;
+    }
+
+    /* corrections: operator sets a status (new | reviewed | applied | dismissed) — key-gated */
+    if(url.pathname === "/api/admin/corrections/status"){
+      if(req.method !== "POST"){ res.writeHead(405); res.end(JSON.stringify({ error:"POST only" })); return; }
+      if(!ADMIN_KEY || url.searchParams.get("key") !== ADMIN_KEY){
+        res.writeHead(401); res.end(JSON.stringify({ error:"unauthorized" })); return;
+      }
+      try {
+        const body = await readBody(req);
+        let ev = {}; try { ev = JSON.parse(body || "{}"); } catch(_){}
+        const id = ev.id, status = String(ev.status || "").trim();
+        if(id == null || id === "" || ["new","reviewed","applied","dismissed"].indexOf(status) < 0){
+          res.writeHead(400); res.end(JSON.stringify({ error:"id + valid status required" })); return;
+        }
+        if(pool) await pool.query("UPDATE corrections SET status = $1 WHERE id = $2", [status, id]);
         res.writeHead(200); res.end(JSON.stringify({ ok:true }));
       } catch(e){ res.writeHead(502); res.end(JSON.stringify({ error: String((e && e.message) || e) })); }
       return;
