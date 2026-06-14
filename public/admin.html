@@ -106,6 +106,7 @@
   <button class="tab" onclick="go('traffic',this)">유입 · 퍼널</button>
   <button class="tab" onclick="go('sites',this)">사이트 점검</button>
   <button class="tab" onclick="go('feedback',this)">피드백</button>
+  <button class="tab" onclick="go('corrections',this)">제보(교정)</button>
   <button class="tab" onclick="go('outreach',this)">아웃리치</button>
 </div>
 
@@ -174,6 +175,12 @@
   <div class="panel"><div id="fbList"><div class="empty">불러오는 중…</div></div></div>
 </section>
 
+<section id="corrections" class="hide">
+  <div class="htitle">제보(교정)</div>
+  <p class="intro">현업 전문가가 "이 지역 실제 연결 시점은 이게 맞다/틀리다"라고 보낸 교정입니다. <b>라이브 판정에는 절대 자동 반영되지 않아요.</b> 직접 검토하고, 맞으면 데이터(app.html의 HOTZONE_LOAD)를 손으로 고친 뒤 <b>반영</b>으로 표시하세요. 스팸/오입력은 <b>기각</b>.</p>
+  <div class="panel"><div class="scrollx"><div id="corrList"><div class="empty">불러오는 중…</div></div></div></div>
+</section>
+
 <section id="outreach" class="hide">
   <div class="htitle">아웃리치</div>
   <p class="intro">연동하면 이메일 아웃리치(발송 / 열람 / 회신 / 미팅)가 여기 표시됩니다.</p>
@@ -195,7 +202,7 @@
   function changeKey(){ var k=prompt("관리자 키를 입력하세요"); if(k){ saveKey(k); loadAll(k); } }
 
   function go(id,btn){
-    ["overview","traffic","sites","feedback","outreach"].forEach(function(s){ document.getElementById(s).classList.add("hide"); });
+    ["overview","traffic","sites","feedback","corrections","outreach"].forEach(function(s){ document.getElementById(s).classList.add("hide"); });
     document.getElementById(id).classList.remove("hide");
     document.querySelectorAll(".tab").forEach(function(t){ t.classList.remove("on"); });
     btn.classList.add("on");
@@ -382,6 +389,43 @@
     latest.innerHTML=items.slice(0,4).map(fbItemHTML).join("");
     list.innerHTML=items.map(fbItemHTML).join("");
   }
+
+  /* ---------- corrections (expert review queue; never auto-applied) ---------- */
+  var CORR_ITEMS=[];
+  var CORR_STATUS={ "new":"신규", reviewed:"검토함", applied:"반영됨", dismissed:"기각" };
+  function corrCoord(it){ return (typeof it.lat==="number"&&typeof it.lng==="number") ? (it.lat.toFixed(3)+", "+it.lng.toFixed(3)) : "—"; }
+  function renderCorrections(items){
+    CORR_ITEMS=items;
+    var el=document.getElementById("corrList");
+    if(!items.length){ el.innerHTML='<div class="empty">아직 제보 없음. 결과 화면의 "Correct the grid timing"으로 전문가가 보낸 교정이 여기에 쌓입니다.</div>'; return; }
+    var rows=items.map(function(it,idx){
+      var st=it.status||"new";
+      var tag=st==="applied"?'<span class="pill p-yes">반영됨</span>':st==="dismissed"?'<span class="pill p-no">기각</span>':st==="reviewed"?'<span class="pill p-con">검토함</span>':'<span class="pill" style="background:#eef0ff;color:#5566cc">신규</span>';
+      var kind=it.internal?' · 내 방문':(it.bot?' · 봇':'');
+      var btns='<button class="fbdel" onclick="setCorr('+idx+',\'reviewed\')">검토</button> <button class="fbdel" onclick="setCorr('+idx+',\'applied\')">반영</button> <button class="fbdel" onclick="setCorr('+idx+',\'dismissed\')">기각</button>';
+      return '<tr>'
+        +'<td class="muted" style="white-space:nowrap">'+rel(it.ts)+'</td>'
+        +'<td class="mono">'+esc(corrCoord(it))+'</td>'
+        +'<td>'+esc(it.market||"")+'</td>'
+        +'<td class="muted">'+esc(it.our_value||"")+'</td>'
+        +'<td><b>'+esc(it.their_value||"")+'</b></td>'
+        +'<td class="muted">'+(it.source?esc(it.source):'—')+'</td>'
+        +'<td class="muted">'+(it.who?esc(it.who):'익명')+kind+'</td>'
+        +'<td>'+tag+'</td>'
+        +'<td style="white-space:nowrap">'+btns+'</td>'
+        +'</tr>';
+    }).join("");
+    el.innerHTML='<table class="tbl-wide"><tr><th>시각</th><th>위치</th><th>시장(우리 값)</th><th>우리 숫자</th><th>전문가 값</th><th>출처</th><th>제보자</th><th>상태</th><th>처리</th></tr>'+rows+'</table>';
+  }
+  function setCorr(idx,status){
+    var it=CORR_ITEMS[idx]; if(!it) return;
+    var key=CURKEY||storedKey(); if(!key){ alert("관리자 키가 필요해요."); return; }
+    fetch("/api/admin/corrections/status?key="+encodeURIComponent(key),
+      {method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({ id:it.id, status:status })})
+      .then(function(r){ if(!r.ok) throw new Error("st"); return r.json(); })
+      .then(function(){ loadAll(key); })
+      .catch(function(){ alert("상태를 바꾸지 못했어요."); });
+  }
   function deleteFb(idx){
     var it=FB_ITEMS[idx]; if(!it) return;
     if(!confirm("이 피드백을 삭제할까요?")) return;
@@ -430,18 +474,19 @@
   }
   function lockedUI(){
     var m='<div class="empty">잠김. 새로고침 후 관리자 키를 입력하거나 <span class="mono">admin.html?key=내_관리자_키</span> 로 여세요.</div>';
-    ["recentSites","recentFb","sitesTable","fbList","statsBody","sourcesBody"].forEach(function(id){ document.getElementById(id).innerHTML=m; });
+    ["recentSites","recentFb","sitesTable","fbList","statsBody","sourcesBody","corrList"].forEach(function(id){ document.getElementById(id).innerHTML=m; });
     ["kSites","kPow","kFb","kSess"].forEach(function(id){ document.getElementById(id).textContent="—"; });
   }
   function loadAll(key){
     CURKEY=key||"";
-    Promise.all([ api(scoped("/api/admin/sitechecks"),key), api(scoped("/api/admin/feedback"),key), api(scoped("/api/admin/stats"),key).catch(function(){return {ok:false};}), api("/api/admin/sources",key).catch(function(){return {ok:false};}) ])
+    Promise.all([ api(scoped("/api/admin/sitechecks"),key), api(scoped("/api/admin/feedback"),key), api(scoped("/api/admin/stats"),key).catch(function(){return {ok:false};}), api("/api/admin/sources",key).catch(function(){return {ok:false};}), api("/api/admin/corrections",key).catch(function(){return {ok:false};}) ])
       .then(function(res){
         document.getElementById("relock").style.display="";
         renderSites((res[0]&&res[0].items)||[]);
         renderFeedback((res[1]&&res[1].items)||[]);
         renderStats(res[2]);
         renderSources(res[3]);
+        renderCorrections((res[4]&&res[4].items)||[]);
       })
       .catch(function(e){
         if(e&&e.message==="locked"){
@@ -450,7 +495,7 @@
           if(k){ saveKey(k); loadAll(k); return; }
           lockedUI();
         } else {
-          ["recentSites","recentFb","sitesTable","fbList","statsBody","sourcesBody"].forEach(function(id){ document.getElementById(id).innerHTML='<div class="empty">지금은 불러올 수 없어요.</div>'; });
+          ["recentSites","recentFb","sitesTable","fbList","statsBody","sourcesBody","corrList"].forEach(function(id){ document.getElementById(id).innerHTML='<div class="empty">지금은 불러올 수 없어요.</div>'; });
         }
       });
   }
