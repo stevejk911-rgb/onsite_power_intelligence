@@ -31,10 +31,25 @@
   .corr-form input{font-family:var(--sans);font-size:13px;padding:9px 11px;border:1px solid var(--line-2);border-radius:8px;background:#fff;color:var(--ink)}
   .corr-send{align-self:flex-start;font-family:var(--sans);font-size:13px;font-weight:600;background:#0b1220;color:#fff;border:0;border-radius:8px;padding:9px 15px;cursor:pointer}
   .corr-thx{font-family:var(--sans);font-size:12.5px;color:var(--advance);margin-top:2px}
+  /* verified real-world deployments map layer (additive; does not affect scoring) */
+  .vdl{font-family:var(--sans),-apple-system,sans-serif;font-size:12px;line-height:1.35;background:#fff;border:1px solid var(--line-2,#e6e6ea);border-radius:10px;padding:9px 11px;box-shadow:0 1px 6px rgba(0,0,0,.12);max-width:212px}
+  .vdl h4{margin:0 0 6px;font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:#6e6e73;font-weight:700}
+  .vdl label{display:flex;align-items:center;gap:6px;margin:3px 0;cursor:pointer;color:#1d1d1f}
+  .vdl .sw{display:inline-block;width:10px;height:10px;border-radius:50%;flex:0 0 auto}
+  .vdl .sw-btm{background:#15803d}
+  .vdl .sw-ftm{background:#1E50E6}
+  .vdl .vdl-note{margin-top:6px;color:#86868b;font-size:10.5px;line-height:1.3}
+  .vdl input{margin:0}
+  .vpop{font-family:var(--sans),-apple-system,sans-serif;font-size:12px;line-height:1.4;max-width:230px}
+  .vpop b{font-size:12.5px}
+  .vpop .vpm{color:#6e6e73;margin:2px 0}
+  .vpop .vtag{display:inline-block;font-size:10px;font-weight:700;padding:1px 6px;border-radius:9px;margin-bottom:4px}
+  .vpop .vtag-btm{background:#dcfce7;color:#15803d}
+  .vpop .vtag-ftm{background:#e7edff;color:#1E50E6}
+  .vpop a{color:#1E50E6}
 </style>
 </head>
 <body>
-
 <nav class="nav no-print">
   <div class="wrap">
     <a class="brand" href="index.html"><span class="dot"></span><span>On-Site Power <small>Intelligence</small></span></a>
@@ -44,19 +59,15 @@
     </div>
   </div>
 </nav>
-
 <div class="app-shell">
-
   <div class="print-only" style="border-bottom:2px solid #000;padding-bottom:10px;margin-bottom:18px">
     <strong>On-Site Power Intelligence</strong> — Behind-the-Meter Pre-screen · <span id="printMeta"></span> · Screening-grade ±40% · onsitespower.com
   </div>
-
   <div class="app-head no-print">
     <div class="eyebrow">Behind-the-Meter Pre-screen · Live data</div>
     <h1>Screen a site.</h1>
     <p>Click the map (or type an address), set your power need and timeline, and get an ADVANCE / KILL call across every power option — scored on real solar, gas, and grid data.</p>
   </div>
-
   <!-- MAP -->
   <div class="maphero no-print">
     <div class="map-controls">
@@ -67,7 +78,6 @@
     <div id="map"></div>
     <div class="maphelp" id="maphelp">Click anywhere on the map to drop a site, or search an address above.</div>
   </div>
-
   <!-- SETTINGS -->
   <div class="panel no-print" style="margin-top:16px">
     <div class="controls">
@@ -83,12 +93,9 @@
       </div>
     </div>
   </div>
-
   <!-- RESULT -->
   <div id="result"></div>
-
 </div>
-
 <footer class="no-print">
   <div class="wrap" style="flex-direction:column">
     <div style="display:flex;justify-content:space-between;width:100%;flex-wrap:wrap;gap:16px">
@@ -98,7 +105,6 @@
     <p class="disclaimer">Not investment, legal, or engineering advice. Live pulls (NREL, OpenStreetMap) plus regional estimates; all numbers are planning estimates (±40%). Verify with utility, OEM, EPC, and qualified counsel before any commitment. v1 · 2026 · onsitespower.com</p>
   </div>
 </footer>
-
 <script>
 /* ===== analytics (no-ops if backend has no DB) ===== */
 (function(){
@@ -110,12 +116,10 @@
   window.track=function(type,name){ try{ (function(){var __b=JSON.stringify({session:sid(),type:type,name:name,path:location.pathname,referrer:document.referrer,utm:utm,internal:ops?1:0}); if(navigator.sendBeacon){try{navigator.sendBeacon('/api/track',new Blob([__b],{type:'application/json'}));}catch(_){fetch('/api/track',{method:'POST',headers:{'Content-Type':'application/json'},body:__b,keepalive:true}).catch(function(){});}} else {fetch('/api/track',{method:'POST',headers:{'Content-Type':'application/json'},body:__b,keepalive:true}).catch(function(){});}})();}catch(e){} };
   track('pageview','tool');
 })();
-
 /* ===== state ===== */
 var state={ powerMW:250, byMonths:18, nuclear:true };
 var lmap=null, marker=null, picked=null, DEFAULT=[39.0438,-77.4874]; // Ashburn, NoVA
 var lastCtx=null;
-
 /* ===== regional resolution (queue + nuclear off-take depth) =====
    Live per-coordinate data covers solar/gas/grid-proximity. Interconnection-queue
    timing and nuclear-PPA depth have no free per-coordinate API, so they resolve by
@@ -149,7 +153,6 @@ function regionFor(stateName){
   if(!s) return {iso:'(regional est.)',queue:2030,nuke:null,nukeCap:0};
   return {iso:ISO_LABEL[s[0]],queue:ISO_QUEUE[s[0]],nuke:s[1],nukeCap:s[2]};
 }
-
 /* ===== LOAD layer (Approach C, phase 1) — curated large-LOAD interconnection
    reality for top data-center hot zones. Unlike LBNL (generation-queue proxy),
    this is the actual large-load connect timeline for new data-center load,
@@ -200,7 +203,6 @@ function loadFor(stateName, county){
   var c=String(county).replace(/\s+(County|Parish|Borough)$/i,'').trim();
   return HOTZONE_LOAD[stateName+'|'+c] || null;
 }
-
 /* ===== geometry ===== */
 function haversineMi(la1,lo1,la2,lo2){
   var R=3958.8, t=function(x){return x*Math.PI/180;};
@@ -223,7 +225,6 @@ function analyzeInfra(site, infra){
   });
   return {gasDistMi:gas, subDistMi:sub, plantDistMi:plant};
 }
-
 /* ===== scenario builder (consumes live signals) ===== */
 function buildScenarios(ctx){
   var r=ctx.region, need=ctx.needMW, big=need>=1000;
@@ -270,7 +271,6 @@ function statusOf(s,need,by){
   if((fast&&semi&&capOk)||(near&&firm&&capOk)) return 'warn';
   return 'no';
 }
-
 /* ===== UI: segmented controls ===== */
 function setupSeg(elId,vals,labels,key){
   var el=document.getElementById(elId); el.innerHTML='';
@@ -281,20 +281,69 @@ function setupSeg(elId,vals,labels,key){
     el.appendChild(b);
   });
 }
-
 /* ===== map ===== */
 function initMap(){
   lmap=L.map('map').setView(DEFAULT,9);
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; OpenStreetMap'}).addTo(lmap);
   lmap.on('click',function(e){ setMarker(e.latlng.lat,e.latlng.lng); track('action','coordinate_set'); });
   setTimeout(function(){ lmap.invalidateSize(); },150);
+  loadVerifiedDeployments();
+}
+/* ===== verified real-world deployments layer (2024-2026; self-verifiable via source link) =====
+   Purely additive: reads /onsite_power_cases.json and plots BTM (green) / grid-PPA (blue)
+   markers with a toggle. Silently no-ops if the file is missing. Does NOT touch scoring. */
+var vdlLoaded=false, vdlBTM=null, vdlFTM=null;
+function loadVerifiedDeployments(){
+  if(vdlLoaded||!lmap) return; vdlLoaded=true;
+  vdlBTM=L.layerGroup(); vdlFTM=L.layerGroup();
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+  fetch('/onsite_power_cases.json').then(function(r){ if(!r.ok) throw 0; return r.json(); }).then(function(d){
+    var cases=(d&&d.cases)||[], nb=0, nf=0;
+    cases.forEach(function(c){
+      if(c.mappable===false) return;
+      if(typeof c.lat!=='number'||typeof c.lon!=='number') return;
+      var isBTM=String(c.btm||'').toUpperCase()==='BTM';
+      var color=isBTM?'#15803d':'#1E50E6';
+      var src=c.source||'';
+      var srcHtml=/^https?:/i.test(src)?('<a href="'+esc(src)+'" target="_blank" rel="noopener">source ↗</a>'):(src?('source: '+esc(src)):'');
+      var html='<div class="vpop">'
+        +'<span class="vtag '+(isBTM?'vtag-btm':'vtag-ftm')+'">'+(isBTM?'BEHIND-THE-METER':'GRID / PPA')+'</span><br>'
+        +'<b>'+esc(c.name)+'</b>'
+        +'<div class="vpm">'+esc(c.operator||'')+(c.city?(' · '+esc(c.city)+', '+esc(c.state||'')):'')+'</div>'
+        +'<div class="vpm">'+esc(c.power_type||'')+(c.capacity_mw?(' · '+esc(c.capacity_mw)+' MW'):'')+'</div>'
+        +'<div class="vpm">'+esc(c.status||'')+(c.year?(' · '+esc(c.year)):'')+'</div>'
+        +(c.note?('<div class="vpm">'+esc(c.note)+'</div>'):'')
+        +(srcHtml?('<div class="vpm">'+srcHtml+'</div>'):'')
+        +'</div>';
+      var m=L.circleMarker([c.lat,c.lon],{radius:7,color:'#fff',weight:1.5,fillColor:color,fillOpacity:.92});
+      m.bindPopup(html);
+      m.on('click',function(){ try{ track('action','verified_case_view'); }catch(e){} });
+      if(isBTM){ m.addTo(vdlBTM); nb++; } else { m.addTo(vdlFTM); nf++; }
+    });
+    vdlBTM.addTo(lmap); vdlFTM.addTo(lmap);
+    var ctl=L.control({position:'topright'});
+    ctl.onAdd=function(){
+      var div=L.DomUtil.create('div','vdl');
+      div.innerHTML='<h4>Verified deployments</h4>'
+        +'<label><input type="checkbox" id="vdlB" checked><span class="sw sw-btm"></span>On-site / BTM ('+nb+')</label>'
+        +'<label><input type="checkbox" id="vdlF" checked><span class="sw sw-ftm"></span>Grid / PPA ('+nf+')</label>'
+        +'<div class="vdl-note">Real 2024–26 AI data-center power deals. Click a dot for the source — verify it yourself.</div>';
+      L.DomEvent.disableClickPropagation(div);
+      return div;
+    };
+    ctl.addTo(lmap);
+    setTimeout(function(){
+      var b=document.getElementById('vdlB'), f=document.getElementById('vdlF');
+      if(b) b.onchange=function(){ if(b.checked) vdlBTM.addTo(lmap); else lmap.removeLayer(vdlBTM); };
+      if(f) f.onchange=function(){ if(f.checked) vdlFTM.addTo(lmap); else lmap.removeLayer(vdlFTM); };
+    },0);
+  }).catch(function(){ /* optional layer; tool works without it */ });
 }
 function setMarker(lat,lng){
   if(marker){ marker.setLatLng([lat,lng]); } else { marker=L.marker([lat,lng]).addTo(lmap); }
   picked=[lat,lng];
   document.getElementById('addr').value=lat.toFixed(4)+', '+lng.toFixed(4);
 }
-
 /* ===== data fetch ===== */
 function api(path){ return fetch(path).then(function(r){ if(!r.ok) throw new Error(path); return r.json(); }); }
 async function geocode(q){
@@ -305,7 +354,6 @@ async function geocode(q){
 async function reverse(lat,lng){
   try{ var j=await api('/api/geo?lat='+lat+'&lon='+lng); return j&&j.address?j.address:{}; }catch(e){ return {}; }
 }
-
 /* ===== run ===== */
 var SRC=['Geocoding (Nominatim)…','Solar resource (NREL PVWatts)…','Infrastructure scan (OpenStreetMap)…','Scoring 10 pathways…'];
 async function runScreen(){
@@ -320,13 +368,11 @@ async function runScreen(){
     else { site=DEFAULT.slice(); }
   }catch(e){ site=DEFAULT.slice(); }
   setMarker(site[0],site[1]); lmap.setView(site,12);
-
   // parallel live pulls (graceful fallback)
   var solarP=api('/api/solar?lat='+site[0]+'&lon='+site[1]).catch(function(){return null;});
   var infraP=api('/api/infra?lat='+site[0]+'&lon='+site[1]).catch(function(){return null;});
   var addrP=reverse(site[0],site[1]);
   var solar=await solarP, infra=await infraP, address=await addrP;
-
   var solarLive = solar && typeof solar.capacityFactor==='number';
   var cf = solarLive ? solar.capacityFactor : 0.19; // fallback CF
   var sig = analyzeInfra(site, infra||{elements:[]});
@@ -336,7 +382,6 @@ async function runScreen(){
   var county = address.county||'';
   var region = regionFor(stateName);
   var load = loadFor(stateName, county); // curated large-load layer (hot zones)
-
   var ctx={ site:site, solarCF:cf, solarLive:solarLive, infraLive:infraLive,
             gasDistMi:sig.gasDistMi, subDistMi:sig.subDistMi, plantDistMi:sig.plantDistMi,
             region:region, load:load, place:place, stateName:stateName, county:county,
@@ -344,13 +389,11 @@ async function runScreen(){
   lastCtx=ctx;
   render(ctx);
 }
-
 function showLoading(){
   document.getElementById('result').innerHTML=
     '<div class="panel" style="margin-top:22px"><div class="loadbar"><span class="spin"></span><span class="loadtxt">Reading live data</span></div><div class="loadsrc" id="loadsrc">'+SRC[0]+'</div></div>';
   var i=0; var t=setInterval(function(){ i++; var el=document.getElementById('loadsrc'); if(el&&i<SRC.length){el.textContent=SRC[i];} else clearInterval(t); },520);
 }
-
 /* ===== render ===== */
 function render(ctx){
   var S=buildScenarios(ctx);
@@ -361,11 +404,9 @@ function render(ctx){
   var winIdx=-1, winMo=Infinity, onsite=Infinity;
   S.forEach(function(s,i){ if(s.name==='Grid interconnection')return; if(st[i]==='ok'||st[i]==='warn'){ onsite=Math.min(onsite,s.months); if(target&&st[i]===target&&s.months<winMo){winMo=s.months;winIdx=i;} } });
   var okCount=st.filter(function(x){return x==='ok';}).length;
-
   var powerLbl=ctx.needMW>=1000?'1 GW+':ctx.needMW+' MW';
   var gasTxt = (ctx.gasDistMi<=18)?(ctx.gasDistMi.toFixed(1)+' mi'):'none within ~7 mi';
   var subTxt = (ctx.subDistMi<200)?ctx.subDistMi.toFixed(1)+' mi':'none nearby';
-
   var effGridYear = ctx.load ? ctx.load.y : ctx.region.queue;
   var gridWhich = ctx.load ? (ctx.load.u+' load queue') : (ctx.region.iso+' gen-queue proxy');
   var V={
@@ -376,7 +417,6 @@ function render(ctx){
     kill:{badge:'Kill',cls:'v-kill',title:'Screen out — don’t spend the $50k.',
       sum:'No on-site or PPA path meets '+powerLbl+' firm within '+ctx.byMonths+' months here. Grid arrives ~'+effGridYear+' ('+gridWhich+'). Kill this parcel before EPC.'}
   }[verdict];
-
   /* ===== decision header: two sourced, confidence-rated time-to-power paths ===== */
   var gridMo = Math.max(0,(effGridYear-2026))*12;
   var gridConf = ctx.load ? 'high' : 'low';
@@ -419,7 +459,6 @@ function render(ctx){
       +'<span class="corr-thx"></span>'
     +'</div></div>';
   var PATHS_HTML='<div class="paths">'+onsiteCard+gridCard+'</div>'+bankable+correctBlock;
-
   // rows
   var rows='';
   S.forEach(function(s,i){
@@ -432,10 +471,8 @@ function render(ctx){
       rows+='<tr'+win+'><td class="scen">'+s.name+'<span class="grp">'+s.grp+(s.note?' · '+s.note:'')+'</span></td><td class="num">'+mo+'</td><td class="num">'+s.firm+'%</td><td class="num">$'+s.lcoe+'</td><td class="num">'+capex+'</td><td>'+chip+'</td></tr>';
     }
   });
-
   var now=new Date().toISOString().slice(0,10);
   document.getElementById('printMeta').textContent=ctx.place+' ('+ctx.site[0].toFixed(2)+', '+ctx.site[1].toFixed(2)+') · need '+powerLbl+' by '+ctx.byMonths+' mo · '+now;
-
   document.getElementById('result').innerHTML=
     '<div class="verdict '+V.cls+'">'+
       '<div class="vtop"><span class="badge">'+V.badge+'</span><span class="mono" style="font-size:13px;opacity:.8">'+ctx.place+' · '+ctx.region.iso+' · '+ctx.site[0].toFixed(2)+', '+ctx.site[1].toFixed(2)+'</span></div>'+
@@ -456,12 +493,10 @@ function render(ctx){
       'Nuclear-PPA depth is regional (SEC/ISO). Screening-grade ±40% — verify with utility, OEM, EPC, and counsel.</p>'+
     '<div class="feedback no-print"><input id="fbtext" placeholder="See something off? Tell us in one line" onkeydown="if(event.key===\'Enter\')sendFb()"><button onclick="sendFb()">Send</button></div>'+
     '<div class="fbthx hidden no-print" id="fbthx">Thanks — that is exactly how this gets sharper.</div>';
-
   logSitecheck(ctx,verdict,onsite,winIdx>=0?S[winIdx].name:'',okCount);
   track('action','computed');
   document.getElementById('result').scrollIntoView({behavior:'smooth',block:'start'});
 }
-
 /* ===== expert correction (review queue; never auto-applied) ===== */
 function openCorrect(a){
   var box=a.closest('.correct'); var f=box.querySelector('.corr-form');
@@ -487,7 +522,6 @@ function sendCorrection(btn){
   }
   track('action','correct_send');
 }
-
 /* ===== logging / sharing / feedback ===== */
 function logSitecheck(ctx,verdict,onsite,winName,okCount){
   try{
@@ -511,7 +545,6 @@ function sendFb(){
   fetch('/api/feedback',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}).then(done,done);
   function done(){ el.disabled=false; el.value=''; var t=document.getElementById('fbthx'); t.classList.remove('hidden'); setTimeout(function(){t.classList.add('hidden');},4000); }
 }
-
 /* ===== restore from shared link ===== */
 function restore(){
   var p=new URLSearchParams(location.search);
@@ -520,7 +553,6 @@ function restore(){
   if(p.get('n')!==null&&p.get('n')!=='') state.nuclear=p.get('n')==='1';
   if(p.get('lat')&&p.get('lng')){ picked=[parseFloat(p.get('lat')),parseFloat(p.get('lng'))]; }
 }
-
 /* ===== init ===== */
 restore();
 setupSeg('segPower',[100,250,500,1000],['100 MW','250 MW','500 MW','1 GW+'],'powerMW');
