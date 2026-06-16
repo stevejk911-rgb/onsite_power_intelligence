@@ -309,7 +309,7 @@ async function reverse(lat,lng){
 
 /* ===== run ===== */
 var SRC=['Geocoding (Nominatim)…','Solar resource (NREL PVWatts)…','Infrastructure scan (OpenStreetMap)…','Scoring 10 pathways…'];
-async function runScreen(){
+async function runScreen(auto){
   var addr=document.getElementById('addr').value.trim();
   var site;
   // resolve coordinate
@@ -341,7 +341,8 @@ async function runScreen(){
   var ctx={ site:site, solarCF:cf, solarLive:solarLive, infraLive:infraLive,
             gasDistMi:sig.gasDistMi, subDistMi:sig.subDistMi, plantDistMi:sig.plantDistMi,
             region:region, load:load, place:place, stateName:stateName, county:county,
-            needMW:state.powerMW, byMonths:state.byMonths, nuclear:state.nuclear };
+            needMW:state.powerMW, byMonths:state.byMonths, nuclear:state.nuclear,
+            auto:(auto===true) };
   lastCtx=ctx;
   render(ctx);
 }
@@ -458,8 +459,12 @@ function render(ctx){
     '<div class="feedback no-print"><input id="fbtext" placeholder="See something off? Tell us in one line" onkeydown="if(event.key===\'Enter\')sendFb()"><button onclick="sendFb()">Send</button></div>'+
     '<div class="fbthx hidden no-print" id="fbthx">Thanks — that is exactly how this gets sharper.</div>';
 
-  logSitecheck(ctx,verdict,onsite,winIdx>=0?S[winIdx].name:'',okCount);
-  track('action','computed');
+  /* only record a screening when the USER ran it — the auto demo on page load
+     (default Ashburn) is shown but never logged, so metrics reflect real intent */
+  if(!ctx.auto){
+    logSitecheck(ctx,verdict,onsite,winIdx>=0?S[winIdx].name:'',okCount);
+    track('action','computed');
+  }
   document.getElementById('result').scrollIntoView({behavior:'smooth',block:'start'});
 }
 
@@ -529,7 +534,7 @@ setupSeg('segTime',[12,18,24,36],['12 mo','18 mo','24 mo','36 mo'],'byMonths');
 setupSeg('segNuke',[true,false],['Yes','No'],'nuclear');
 initMap();
 if(picked){ setMarker(picked[0],picked[1]); lmap.setView(picked,12); }
-runScreen(); // land on a live result (default Ashburn if nothing picked)
+runScreen(true); // auto demo on load — shows a live result but does NOT log (only user-run screens are recorded)
 </script>
 </body>
 </html>
