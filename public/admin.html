@@ -94,12 +94,18 @@
   .tbl-wide{min-width:760px}
   .scbtn{border:1px solid #d9d9d6;background:#fff;color:#333;border-radius:8px;padding:6px 12px;font-size:13px;cursor:pointer}
   .scbtn.on{background:#111;color:#fff;border-color:#111}
+  .live{display:inline-flex;align-items:center;gap:7px;background:#f1f5f1;border:1px solid #cfe3cf;color:#15622f;
+    border-radius:999px;padding:5px 12px;font-size:13px;font-weight:700;margin-right:14px;white-space:nowrap}
+  .live .ldot{width:9px;height:9px;border-radius:50%;background:#9aa0a6;box-shadow:0 0 0 0 rgba(46,160,67,.5)}
+  .live.on{background:#eaf7ee;border-color:#aee0bb}
+  .live.on .ldot{background:#2ea043;animation:lpulse 1.6s infinite}
+  @keyframes lpulse{0%{box-shadow:0 0 0 0 rgba(46,160,67,.55)}70%{box-shadow:0 0 0 7px rgba(46,160,67,0)}100%{box-shadow:0 0 0 0 rgba(46,160,67,0)}}
 </style>
 </head>
 <body>
 <div class="top"><div class="in">
   <div class="brand">On-Site Power Intelligence <span>· 관리자</span></div>
-  <div class="who"><span>관리자: <b>Steve</b></span><button class="lock" id="relock" onclick="changeKey()" style="display:none">키 변경</button></div>
+  <div class="who"><span class="live" id="live" title="최근 5분 안에 활동한 실제 방문자 수"><span class="ldot"></span><span id="liveTxt">실시간 —</span></span><span>관리자: <b>Steve</b></span><button class="lock" id="relock" onclick="changeKey()" style="display:none">키 변경</button></div>
 </div></div>
 <div class="tabs">
   <button class="tab on" onclick="go('overview',this)">개요</button>
@@ -477,6 +483,27 @@
     ["recentSites","recentFb","sitesTable","fbList","statsBody","sourcesBody","corrList"].forEach(function(id){ document.getElementById(id).innerHTML=m; });
     ["kSites","kPow","kFb","kSess"].forEach(function(id){ document.getElementById(id).textContent="—"; });
   }
+  /* ---------- live presence (online now) ---------- */
+  var LIVE_TIMER=null;
+  function renderLive(d){
+    var el=document.getElementById("live"), txt=document.getElementById("liveTxt");
+    if(!el||!txt) return;
+    if(!d||d.ok===false){ el.classList.remove("on"); txt.textContent="실시간 —"; return; }
+    var n=d.human||0;
+    el.classList.toggle("on", n>0);
+    txt.textContent = n>0 ? ("실시간 "+n+"명") : "실시간 0명";
+    var extra=[]; if(d.internal) extra.push("내 방문 "+d.internal); if(d.bot) extra.push("봇 "+d.bot);
+    el.title = "최근 "+(d.windowMin||5)+"분 안에 활동한 실제 방문자"+(extra.length?(" · "+extra.join(", ")):"");
+  }
+  function pollLive(){
+    if(!CURKEY) return;
+    api("/api/admin/live",CURKEY).then(renderLive).catch(function(){});
+  }
+  function startLive(){
+    if(LIVE_TIMER) clearInterval(LIVE_TIMER);
+    pollLive();
+    LIVE_TIMER=setInterval(pollLive,15000);
+  }
   function loadAll(key){
     CURKEY=key||"";
     Promise.all([ api(scoped("/api/admin/sitechecks"),key), api(scoped("/api/admin/feedback"),key), api(scoped("/api/admin/stats"),key).catch(function(){return {ok:false};}), api("/api/admin/sources",key).catch(function(){return {ok:false};}), api("/api/admin/corrections",key).catch(function(){return {ok:false};}) ])
@@ -487,6 +514,7 @@
         renderStats(res[2]);
         renderSources(res[3]);
         renderCorrections((res[4]&&res[4].items)||[]);
+        startLive();
       })
       .catch(function(e){
         if(e&&e.message==="locked"){
