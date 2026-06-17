@@ -251,6 +251,24 @@ async function visitSources(){
   }));
   return { ok: true, humans, bots, internal: intl, by_country, recent };
 }
+/* live presence: sessions with any event in the last N minutes ("online now").
+   Split into real humans / mine / bots so the badge shows true visitors. */
+async function liveNow(){
+  const winMin = 5;
+  const since = new Date(Date.now() - winMin * 60000).toISOString();
+  const r = await pool.query(
+    "SELECT session, internal, bot, country FROM events WHERE ts >= $1", [since]);
+  const { flags, classOf } = classifySessions(r.rows);
+  let human = 0, intl = 0, bot = 0; const cc = {};
+  Object.keys(classOf).forEach((s) => {
+    const c = classOf[s];
+    if(c === "internal") intl++;
+    else if(c === "bot") bot++;
+    else { human++; const co = flags[s].country || "??"; cc[co] = (cc[co] || 0) + 1; }
+  });
+  const by_country = Object.keys(cc).map((k) => ({ country: k, sessions: cc[k] })).sort((a, b) => b.sessions - a.sessions);
+  return { ok: true, windowMin: winMin, human, internal: intl, bot, by_country };
+}
 
 /* ---- API routes ----------------------------------------------------------- */
 const api = {
@@ -568,6 +586,19 @@ http.createServer(async (req, res) => {
       if(!pool){ res.writeHead(200); res.end(JSON.stringify({ ok:false, error:"Database not configured" })); return; }
       try {
         const data = await visitSources();
+        res.writeHead(200); res.end(JSON.stringify(data));
+      } catch(e){ res.writeHead(502); res.end(JSON.stringify({ error: String((e && e.message) || e) })); }
+      return;
+    }
+
+    /* live presence: who's online right now (last 5 min), key-gated */
+    if(url.pathname === "/api/admin/live"){
+      if(!ADMIN_KEY || url.searchParams.get("key") !== ADMIN_KEY){
+        res.writeHead(401); res.end(JSON.stringify({ error:"unauthorized" })); return;
+      }
+      if(!pool){ res.writeHead(200); res.end(JSON.stringify({ ok:false, error:"Database not configured" })); return; }
+      try {
+        const data = await liveNow();
         res.writeHead(200); res.end(JSON.stringify(data));
       } catch(e){ res.writeHead(502); res.end(JSON.stringify({ error: String((e && e.message) || e) })); }
       return;
