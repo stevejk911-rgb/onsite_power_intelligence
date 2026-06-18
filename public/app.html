@@ -65,6 +65,21 @@
   .cue{position:absolute;left:50%;transform:translateX(-50%);top:-46px;background:#0b1220;color:#fff;font-family:var(--sans);font-size:13px;font-weight:600;padding:8px 13px;border-radius:9px;white-space:nowrap;box-shadow:0 10px 24px rgba(10,18,48,.30);opacity:0;pointer-events:none;transition:opacity .2s ease, top .2s ease;z-index:900}
   .cue::after{content:"";position:absolute;left:50%;transform:translateX(-50%);bottom:-6px;width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-top:6px solid #0b1220}
   .cue.show{opacity:1;top:-52px}
+  /* real on-site-powered data centers plotted on the map */
+  .dc-tip{background:#0b1220;color:#fff;border:0;border-radius:6px;padding:2px 7px;font-family:var(--sans);font-size:11px;font-weight:700;box-shadow:0 4px 12px rgba(10,18,48,.25);white-space:nowrap}
+  .dc-tip::before{display:none!important}
+  .dc-pop{font-family:var(--sans);max-width:262px}
+  .dc-pop-h{font-weight:800;font-size:14px;color:#0b1220;margin-bottom:2px}
+  .dc-pop-loc{font-size:12px;color:#5b6472;margin-bottom:7px}
+  .dc-pop-power{font-size:12.5px;color:#1a2230;line-height:1.46}
+  .dc-pop-power b{color:#b25a00}
+  .dc-pop-meta{font-size:11.5px;color:#5b6472;margin-top:6px}
+  .dc-pop-actions{display:flex;gap:10px;align-items:center;margin-top:10px}
+  .dc-pop-btn{border:0;background:#1E50E6;color:#fff;font-weight:700;font-size:12.5px;padding:7px 12px;border-radius:7px;cursor:pointer;font-family:var(--sans)}
+  .dc-pop-btn:hover{background:#1840c0}
+  .dc-pop-src{font-size:11.5px;color:#1E50E6;text-decoration:none;white-space:nowrap}
+  .dc-legend{font-family:var(--sans);background:rgba(255,255,255,.94);border:1px solid var(--line-2);border-radius:8px;padding:6px 10px;font-size:12px;color:#1a2230;box-shadow:0 4px 12px rgba(10,18,48,.12);font-weight:600;max-width:230px;line-height:1.35}
+  .dc-legend b{color:#b25a00}
 </style>
 </head>
 <body>
@@ -361,10 +376,56 @@ function setupSeg(elId,vals,labels,key){
 }
 
 /* ===== map ===== */
+/* Real, verified data centers running on ON-SITE / behind-the-meter power.
+   Every figure is sourced (see .src). These anchor the map so a first-time
+   visitor immediately sees what this tool is about — and can verify it. */
+var DC_SITES=[
+  { n:'Stargate · Site 1', op:'Crusoe — OpenAI / Oracle', lat:32.5079, lng:-99.7772, loc:'Abilene, TX · ERCOT',
+    power:'On-site natural gas turbines (captive power for the campus): 360 MW (Unit 1, online 2026) scaling to ~1.4 GW (Unit 2), plus ~191 MW diesel backup. Campus 1.2 GW IT.',
+    status:'Phase 1 live · on-site gas units under construction',
+    src:'https://www.gem.wiki/Longhorn_Data_Center_power_station' },
+  { n:'xAI Colossus', op:'xAI (Grok)', lat:35.0601, lng:-90.1522, loc:'Memphis, TN · TVA / MLGW',
+    power:'On-site natural gas turbines, behind-the-meter: ~420 MW deployed (≈35 units) to supplement a small grid feed; 247 MW (15 units) air-permitted in 2025.',
+    status:'Operating',
+    src:'https://www.cnbc.com/2025/07/03/musks-xai-gets-permit-for-turbines-to-power-supercomputer-in-memphis.html' },
+  { n:'Homer City Energy Campus', op:'Homer City Redevelopment / Kiewit', lat:40.5139, lng:-79.1958, loc:'Homer City, PA · PJM',
+    power:'On-site natural gas: 7× GE Vernova 7HA turbines, up to ~4.5 GW dedicated to the campus. Built on a retired coal plant site.',
+    status:'In construction · power expected ~2027',
+    src:'https://www.datacenterdynamics.com/en/news/homer-city-and-kiewit-unveil-plans-for-45gw-natural-gas-powered-ai-data-center-in-pennsylvania/' },
+  { n:'Soluna · Project Kati', op:'Soluna', lat:26.4123, lng:-97.7897, loc:'Willacy County, TX · ERCOT',
+    power:'Behind-the-meter wind: up to 166 MW under a PPA with the co-located 273 MW Las Majadas wind farm (EDF Renewables / Masdar).',
+    status:'Phase 1 (83 MW) ~2026',
+    src:'https://www.powermag.com/soluna-breaks-ground-on-166-mw-texas-wind-powered-data-center-for-crypto-and-ai/' },
+  { n:'Stronghold · Scrubgrass', op:'Stronghold Digital Mining', lat:41.2685, lng:-79.8125, loc:'Venango County, PA · PJM',
+    power:'On-site coal-refuse (waste-coal) generation, behind-the-meter: 83.5 MW Scrubgrass + 80 MW Panther Creek ≈ 165 MW of owned generation with co-located compute.',
+    status:'Operating · AI campus pivot underway',
+    src:'https://ir.strongholddigitalmining.com/news-releases/news-release-details/stronghold-digital-mining-closes-panther-creek-plant-acquisition' }
+];
+function addDcSites(){
+  if(!lmap || !window.DC_SITES) return;
+  DC_SITES.forEach(function(s){
+    var m=L.circleMarker([s.lat,s.lng],{radius:7,color:'#fff',weight:2,fillColor:'#F59E0B',fillOpacity:1}).addTo(lmap);
+    m.bindTooltip(s.n,{permanent:true,direction:'top',offset:[0,-6],className:'dc-tip'});
+    var html='<div class="dc-pop"><div class="dc-pop-h">⚡ '+s.n+'</div>'
+      +'<div class="dc-pop-loc">'+s.loc+' · '+s.op+'</div>'
+      +'<div class="dc-pop-power"><b>On-site power:</b> '+s.power+'</div>'
+      +'<div class="dc-pop-meta">'+s.status+'</div>'
+      +'<div class="dc-pop-actions"><button class="dc-pop-btn" onclick="screenDc('+s.lat+','+s.lng+')">Screen this site →</button>'
+      +'<a class="dc-pop-src" href="'+s.src+'" target="_blank" rel="noopener">Source ↗</a></div></div>';
+    m.bindPopup(html,{maxWidth:300});
+  });
+  var legend=L.control({position:'bottomleft'});
+  legend.onAdd=function(){ var d=L.DomUtil.create('div','dc-legend');
+    d.innerHTML='<b>⚡ On-site / behind-the-meter powered</b> data centers — click a marker'; return d; };
+  legend.addTo(lmap);
+}
+function screenDc(lat,lng){ if(lmap){ lmap.closePopup(); } setMarker(lat,lng); lmap.setView([lat,lng],12); runScreen(); }
+window.screenDc=screenDc; window.DC_SITES=DC_SITES;
 function initMap(){
-  lmap=L.map('map').setView(DEFAULT,9);
+  lmap=L.map('map').setView([39.5,-97],4);   // open on the whole US so the on-site-powered DCs are visible
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; OpenStreetMap'}).addTo(lmap);
   lmap.on('click',function(e){ setMarker(e.latlng.lat,e.latlng.lng); track('action','coordinate_set'); });
+  addDcSites();
   setTimeout(function(){ lmap.invalidateSize(); },150);
 }
 function setMarker(lat,lng){
