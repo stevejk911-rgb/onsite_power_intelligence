@@ -80,8 +80,8 @@
     <p class="app-sub">Drop a site. Get the fastest bankable power path and the real grid wait. Live data. No signup.</p>
     <div class="steps3">
       <div class="st" role="button" tabindex="0" onclick="focusStep(1)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();focusStep(1)}"><span class="stn">1</span><div><b>Drop a pin.</b><i>On the map, or by address.</i></div></div>
-      <div class="st" role="button" tabindex="0" onclick="focusStep(2)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();focusStep(2)}"><span class="stn">2</span><div><b>Set the need.</b><i>Megawatts and timeline.</i></div></div>
-      <div class="st" role="button" tabindex="0" onclick="focusStep(3)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();focusStep(3)}"><span class="stn">3</span><div><b>Get the call.</b><i>Verdict, ten options, sources.</i></div></div>
+      <div class="st" role="button" tabindex="0" onclick="focusStep(2)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();focusStep(2)}"><span class="stn">2</span><div><b>Set the load.</b><i>How many MW, by when.</i></div></div>
+      <div class="st" role="button" tabindex="0" onclick="focusStep(3)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();focusStep(3)}"><span class="stn">3</span><div><b>Get the verdict.</b><i>Advance or kill — 10 options, sources.</i></div></div>
     </div>
   </div>
 
@@ -142,16 +142,29 @@
 /* ===== state ===== */
 var state={ powerMW:250, byMonths:18, nuclear:true };
 /* step cards (1/2/3) -> scroll to the matching tool area and flash a neon ring */
-function focusStep(n){
-  var el = n===1 ? document.getElementById('step1')
-         : n===2 ? document.getElementById('step2')
-         : document.getElementById('result');
+function flashEl(el, block){
   if(!el) return;
-  try{ el.scrollIntoView({behavior:'smooth', block:'center'}); }catch(e){ el.scrollIntoView(); }
+  try{ el.scrollIntoView({behavior:'smooth', block: block||'center'}); }catch(e){ el.scrollIntoView(); }
   el.classList.remove('flash');
   void el.offsetWidth;            // force reflow so re-clicks replay the animation
   el.classList.add('flash');
   setTimeout(function(){ el.classList.remove('flash'); }, 1600);
+}
+function focusStep(n){
+  var resultEl = document.getElementById('result');
+  var hasResult = resultEl && resultEl.innerHTML.trim().length > 0;
+  if(n === 1){ flashEl(document.getElementById('step1'), 'start'); return; }
+  if(n === 2){ flashEl(document.getElementById('step2')); return; }
+  // step 3: the verdict. If nothing has been screened yet, guide to the input.
+  if(hasResult){ flashEl(resultEl); return; }
+  flashEl(document.querySelector('.map-controls'), 'start');
+  var a = document.getElementById('addr'); if(a){ setTimeout(function(){ try{ a.focus(); }catch(e){} }, 350); }
+  var mh = document.getElementById('maphelp');
+  if(mh && !mh.dataset.busy){
+    mh.dataset.busy = '1'; var prev = mh.innerHTML;
+    mh.innerHTML = '<b>Screen a site first</b> — drop a pin or enter an address, then the verdict appears here.';
+    setTimeout(function(){ mh.innerHTML = prev; delete mh.dataset.busy; }, 3800);
+  }
 }
 window.focusStep = focusStep;
 var lmap=null, marker=null, picked=null, DEFAULT=[39.0438,-77.4874]; // Ashburn, NoVA
