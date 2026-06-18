@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <title>Screen a site — On-Site Power Intelligence</title>
 <meta name="description" content="Drop a coordinate, get a live behind-the-meter ADVANCE / KILL verdict across 10 power options in 60 seconds. Real NREL + OSM data. Screening-grade ±40%.">
 <link rel="canonical" href="https://onsitespower.com/app.html">
@@ -192,12 +192,12 @@ function flashEl(el, block){
 function focusStep(n){
   var resultEl = document.getElementById('result');
   var hasResult = resultEl && resultEl.innerHTML.trim().length > 0;
-  if(n === 1){ flashEl(document.getElementById('step1'), 'start'); return; }
+  if(n === 1){ flashEl(document.getElementById('step1'), 'nearest'); return; }
   if(n === 2){ flashEl(document.getElementById('step2')); return; }
   // step 3: the verdict. If nothing has been screened yet, guide to the input.
   if(hasResult){ flashEl(resultEl); return; }
-  flashEl(document.querySelector('.map-controls'), 'center');
-  var a = document.getElementById('addr'); if(a){ setTimeout(function(){ try{ a.focus(); }catch(e){} }, 450); }
+  flashEl(document.querySelector('.map-controls'), 'nearest');
+  var a = document.getElementById('addr'); if(a){ setTimeout(function(){ try{ a.focus({preventScroll:true}); }catch(e){ try{a.focus();}catch(_){} } }, 350); }
   var cue = document.getElementById('cue');
   if(cue){ cue.classList.add('show'); clearTimeout(window.__cueT); window.__cueT = setTimeout(function(){ cue.classList.remove('show'); }, 4200); }
 }
