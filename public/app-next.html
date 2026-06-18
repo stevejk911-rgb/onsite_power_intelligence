@@ -681,7 +681,7 @@ initMap();
     new IntersectionObserver(function(es){ es.forEach(function(en){
       sb.classList.toggle('show', !en.isIntersecting);
       sb.setAttribute('aria-hidden', en.isIntersecting ? 'true' : 'false');
-    }); }, { threshold:0 }).observe(mc);
+    }); }, { threshold:0, rootMargin:'-72px 0px 0px 0px' }).observe(mc);
   }
 })();
 /* No auto-demo on load. Land clean: headline + map + input only.
