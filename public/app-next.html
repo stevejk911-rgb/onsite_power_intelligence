@@ -93,7 +93,7 @@
       <button onclick="runScreen()">Screen</button>
     </div>
     <div id="map"></div>
-    <div class="maphelp" id="maphelp"><b>Click the map to drop your site.</b> A live example is loaded below. Make it yours.</div>
+    <div class="maphelp" id="maphelp"><b>Click the map to drop your site</b> — or type an address above, then Screen.</div>
   </div>
 
   <!-- SETTINGS -->
@@ -573,8 +573,9 @@ setupSeg('segPower',[100,250,500,1000],['100 MW','250 MW','500 MW','1 GW+'],'pow
 setupSeg('segTime',[12,18,24,36],['12 mo','18 mo','24 mo','36 mo'],'byMonths');
 setupSeg('segNuke',[true,false],['Yes','No'],'nuclear');
 initMap();
-if(picked){ setMarker(picked[0],picked[1]); lmap.setView(picked,12); }
-runScreen(true); // auto demo on load — shows a live result but does NOT log (only user-run screens are recorded)
+/* No auto-demo on load. Land clean: headline + map + input only.
+   Only a shared link that carries a coordinate (?lat&lng) restores its result. */
+if(picked){ setMarker(picked[0],picked[1]); lmap.setView(picked,12); runScreen(true); }
 </script>
 </body>
 </html>
