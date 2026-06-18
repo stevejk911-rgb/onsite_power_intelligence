@@ -424,7 +424,7 @@ function screenDc(lat,lng){ if(lmap){ lmap.closePopup(); } setMarker(lat,lng); l
 window.screenDc=screenDc; window.DC_SITES=DC_SITES;
 function initMap(){
   lmap=L.map('map').setView([38.2,-92],5);   // open zoomed on the central/eastern US so the on-site-powered DCs are visible
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',{maxZoom:19,subdomains:'abcd',attribution:'&copy; OpenStreetMap &copy; CARTO'}).addTo(lmap);
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',{maxZoom:19,subdomains:'abcd',attribution:'&copy; OpenStreetMap &copy; CARTO'}).addTo(lmap);
   lmap.on('click',function(e){ setMarker(e.latlng.lat,e.latlng.lng); track('action','coordinate_set'); });
   addDcSites();
   setTimeout(function(){ lmap.invalidateSize(); },150);
