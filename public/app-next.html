@@ -402,7 +402,15 @@ var DC_SITES=[
   { n:'Stronghold · Scrubgrass', op:'Stronghold Digital Mining', lat:41.2685, lng:-79.8125, loc:'Venango County, PA · PJM',
     power:'On-site coal-refuse (waste-coal) generation, behind-the-meter: 83.5 MW Scrubgrass + 80 MW Panther Creek ≈ 165 MW of owned generation with co-located compute.',
     status:'Operating · AI campus pivot underway',
-    src:'https://ir.strongholddigitalmining.com/news-releases/news-release-details/stronghold-digital-mining-closes-panther-creek-plant-acquisition' }
+    src:'https://ir.strongholddigitalmining.com/news-releases/news-release-details/stronghold-digital-mining-closes-panther-creek-plant-acquisition' },
+  { n:'Fermi · HyperGrid', op:'Fermi America', lat:35.32, lng:-101.58, loc:'Amarillo, TX · private grid', dir:'bottom',
+    power:'Behind-the-meter "HyperGrid": on-site nuclear (Westinghouse AP1000, 4 GW planned) + natural gas (600+ MW GE/Siemens turbines acquired; first 6 GW gas state-approved) + solar. 11 GW campus.',
+    status:'First ~1 GW targeted late 2026',
+    src:'https://www.datacenterdynamics.com/en/news/fermi-america-acquires-600mw-of-gas-turbines-for-11gw-ai-mega-campus-in-amarillo-texas/' },
+  { n:'Prometheus · WY-1', op:'Prometheus Hyperscale', lat:41.2682, lng:-110.9638, loc:'Evanston, WY · off-grid',
+    power:'Behind-the-meter natural gas (PureWest low-carbon supply) + carbon capture. 1.2 GW campus; Phase 1 ~150 MW.',
+    status:'Phase 1 ~2026–27 · scaling to 1.2 GW by 2029',
+    src:'https://www.datacenterdynamics.com/en/news/prometheus-hyperscale-to-power-wyoming-data-center-with-natural-gas-will-offset-through-carbon-capture/' }
 ];
 function addDcSites(){
   if(!lmap || !window.DC_SITES) return;
@@ -433,7 +441,9 @@ var DC_PROVEN={
   'xAI Colossus':{type:'on-site natural-gas turbines', mw:'~420 MW', state:'operating'},
   'Homer City Energy Campus':{type:'on-site natural gas (7× GE Vernova 7HA)', mw:'up to ~4.5 GW', state:'in construction, power ~2027'},
   'Soluna · Project Kati':{type:'behind-the-meter wind PPA (Las Majadas)', mw:'up to 166 MW', state:'Phase 1 ~2026'},
-  'Stronghold · Scrubgrass':{type:'on-site waste-coal generation', mw:'~165 MW', state:'operating'}
+  'Stronghold · Scrubgrass':{type:'on-site waste-coal generation', mw:'~165 MW', state:'operating'},
+  'Fermi · HyperGrid':{type:'on-site nuclear + natural gas + solar (HyperGrid)', mw:'~1 GW (2026) → 11 GW', state:'first ~1 GW targeted late 2026; 6 GW gas state-approved'},
+  'Prometheus · WY-1':{type:'on-site natural gas (PureWest low-carbon) + carbon capture', mw:'150 MW → 1.2 GW', state:'Phase 1 ~2026–27'}
 };
 function knownSiteFor(lat,lng){
   if(!window.DC_SITES) return null;
