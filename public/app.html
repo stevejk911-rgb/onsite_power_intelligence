@@ -80,6 +80,8 @@
   .dc-pop-src{font-size:11.5px;color:#1E50E6;text-decoration:none;white-space:nowrap}
   .dc-legend{font-family:var(--sans);background:rgba(255,255,255,.94);border:1px solid var(--line-2);border-radius:8px;padding:6px 10px;font-size:12px;color:#1a2230;box-shadow:0 4px 12px rgba(10,18,48,.12);font-weight:600;max-width:230px;line-height:1.35}
   .dc-legend b{color:#b25a00}
+  .path.proven{border:1.5px solid #1a7f37;background:#f3fbf5}
+  .path.proven .pnum{color:#10612b}
 </style>
 </head>
 <body>
@@ -421,6 +423,27 @@ function addDcSites(){
 }
 function screenDc(lat,lng){ if(lmap){ lmap.closePopup(); } setMarker(lat,lng); lmap.setView([lat,lng],12); runScreen(); }
 window.screenDc=screenDc; window.DC_SITES=DC_SITES;
+/* Ground-truth layer: the verified on-site solution actually built at each
+   campus. When a screened coordinate lands on one of these, we show the real,
+   sourced answer instead of a blind public-data verdict (OSM can't see private
+   on-site generation — that gap is exactly what this layer closes). */
+var DC_PROVEN={
+  'Stargate · Site 1':{type:'on-site natural-gas turbines (GE Vernova)', mw:'360 MW → ~1.4 GW', state:'Phase 1 live; gas units in construction'},
+  'xAI Colossus':{type:'on-site natural-gas turbines', mw:'~420 MW', state:'operating'},
+  'Homer City Energy Campus':{type:'on-site natural gas (7× GE Vernova 7HA)', mw:'up to ~4.5 GW', state:'in construction, power ~2027'},
+  'Soluna · Project Kati':{type:'behind-the-meter wind PPA (Las Majadas)', mw:'up to 166 MW', state:'Phase 1 ~2026'},
+  'Stronghold · Scrubgrass':{type:'on-site waste-coal generation', mw:'~165 MW', state:'operating'}
+};
+function knownSiteFor(lat,lng){
+  if(!window.DC_SITES) return null;
+  for(var i=0;i<DC_SITES.length;i++){ var s=DC_SITES[i];
+    if(Math.abs(s.lat-lat)<0.2 && Math.abs(s.lng-lng)<0.2){
+      var p=DC_PROVEN[s.n]||{};
+      return { n:s.n, op:s.op, loc:s.loc, src:s.src, type:p.type||'on-site generation', mw:p.mw||'', state:p.state||(s.status||'') };
+    } }
+  return null;
+}
+window.knownSiteFor=knownSiteFor;
 function initMap(){
   lmap=L.map('map').setView([38.2,-92],5);   // open zoomed on the central/eastern US so the on-site-powered DCs are visible
   L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',{maxZoom:19,subdomains:'abcd',attribution:'&copy; OpenStreetMap &copy; CARTO'}).addTo(lmap);
@@ -482,6 +505,7 @@ async function runScreen(auto){
             gasDistMi:sig.gasDistMi, subDistMi:sig.subDistMi, plantDistMi:sig.plantDistMi,
             region:region, load:load, place:place, stateName:stateName, county:county,
             needMW:state.powerMW, byMonths:state.byMonths, nuclear:state.nuclear,
+            known:knownSiteFor(site[0],site[1]),
             auto:(auto===true) };
   lastCtx=ctx;
   render(ctx);
@@ -547,6 +571,23 @@ function render(ctx){
   } else {
     bankable='<div class="bankable">No bankable on-site path inside your '+ctx.byMonths+'-month window. Grid-only arrives ~'+effGridYear+'.</div>';
   }
+  /* ground-truth override: this coordinate IS a verified on-site-powered campus */
+  var matrixNote='';
+  if(ctx.known){
+    var k=ctx.known;
+    verdict='advance';
+    V={ badge:'Proven', cls:'v-advance',
+        title:'A real, on-site-powered campus.',
+        sum:k.op+' powers '+k.n+' with '+k.type+' ('+k.mw+') — '+k.state+'. This is a working behind-the-meter site. The blind public-data screen below can’t see private on-site generation, which is exactly the gap this map closes.' };
+    onsiteCard='<div class="path proven">'
+      +'<div class="plab">On-site power — built &amp; running</div>'
+      +'<div class="pnum">'+k.mw+'</div>'
+      +'<div class="pmeta">'+k.type+' · '+k.op+'</div>'
+      +'<div class="psrc">confidence <span class="conf conf-high">verified</span> · '+k.state+' · <a href="'+k.src+'" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline">source ↗</a></div>'
+      +'</div>';
+    bankable='<div class="bankable">✅ <b>'+k.n+'</b> already runs on-site power ('+k.mw+' · '+k.type+'). Grid-only here would arrive ~'+effGridYear+' — building power on-site is how this campus skipped that wait.</div>';
+    matrixNote='<p class="assump" style="margin-top:18px"><b>Reference screen (blind):</b> the table below scores this exact coordinate against your inputs ('+powerLbl+' by '+ctx.byMonths+' mo) using only public live data — it intentionally excludes the verified on-site generation shown above.</p>';
+  }
   /* correction inbox: an expert fixes the decisive grid number. Goes to a review
      queue — never changes the live verdict. (context captured here) */
   window.OSP_CORRECT={ lat:ctx.site[0], lng:ctx.site[1], market:(ctx.load?ctx.load.u:ctx.region.iso), our_value:'~'+effGridYear, field:'grid_year' };
@@ -591,7 +632,7 @@ function render(ctx){
     '</div>'+
     '<div class="toolbar no-print"><button class="btn btn-dark" onclick="window.print();track(\'action\',\'word_download\')">Print board-ready PDF</button>'+
       '<button class="btn btn-ghost" onclick="copyLink()">Copy shareable link</button><span class="hint" id="copyMsg"></span></div>'+
-    '<div class="matrix-wrap"><table class="matrix"><thead><tr><th>Scenario</th><th>Time to power</th><th>Firm capacity</th><th>~$/MWh</th><th>~$/kW capex</th><th>On your yardstick</th></tr></thead><tbody>'+rows+'</tbody></table></div>'+
+    matrixNote+'<div class="matrix-wrap"><table class="matrix"><thead><tr><th>Scenario</th><th>Time to power</th><th>Firm capacity</th><th>~$/MWh</th><th>~$/kW capex</th><th>On your yardstick</th></tr></thead><tbody>'+rows+'</tbody></table></div>'+
     '<p class="assump">Yardstick: '+powerLbl+' firm, online within '+ctx.byMonths+' months. "Meets" = on time at ≥90% firm capacity; "near-miss" = within 6 months or 60–90% firm. '+
       'Live this run: solar capacity factor (NREL PVWatts), gas-pipeline & substation distance (OpenStreetMap/Overpass), geocode (Nominatim). '+
       (ctx.load?('Grid timing for this hot zone is a curated large-LOAD connect estimate ('+ctx.load.u+', '+ctx.load.src+').'):'Grid timing is a regional generation-queue proxy (LBNL/ISO).')+' '+
