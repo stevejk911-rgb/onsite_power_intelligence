@@ -389,7 +389,7 @@ var DC_SITES=[
     power:'On-site natural gas turbines, behind-the-meter: ~420 MW deployed (≈35 units) to supplement a small grid feed; 247 MW (15 units) air-permitted in 2025.',
     status:'Operating',
     src:'https://www.cnbc.com/2025/07/03/musks-xai-gets-permit-for-turbines-to-power-supercomputer-in-memphis.html' },
-  { n:'Homer City Energy Campus', op:'Homer City Redevelopment / Kiewit', lat:40.5139, lng:-79.1958, loc:'Homer City, PA · PJM',
+  { n:'Homer City Energy Campus', op:'Homer City Redevelopment / Kiewit', lat:40.5139, lng:-79.1958, loc:'Homer City, PA · PJM', dir:'bottom',
     power:'On-site natural gas: 7× GE Vernova 7HA turbines, up to ~4.5 GW dedicated to the campus. Built on a retired coal plant site.',
     status:'In construction · power expected ~2027',
     src:'https://www.datacenterdynamics.com/en/news/homer-city-and-kiewit-unveil-plans-for-45gw-natural-gas-powered-ai-data-center-in-pennsylvania/' },
@@ -406,7 +406,7 @@ function addDcSites(){
   if(!lmap || !window.DC_SITES) return;
   DC_SITES.forEach(function(s){
     var m=L.circleMarker([s.lat,s.lng],{radius:7,color:'#fff',weight:2,fillColor:'#F59E0B',fillOpacity:1}).addTo(lmap);
-    m.bindTooltip(s.n,{permanent:true,direction:'top',offset:[0,-6],className:'dc-tip'});
+    m.bindTooltip(s.n,{permanent:true,direction:(s.dir||'top'),offset:(s.dir==='bottom'?[0,6]:[0,-6]),className:'dc-tip'});
     var html='<div class="dc-pop"><div class="dc-pop-h">⚡ '+s.n+'</div>'
       +'<div class="dc-pop-loc">'+s.loc+' · '+s.op+'</div>'
       +'<div class="dc-pop-power"><b>On-site power:</b> '+s.power+'</div>'

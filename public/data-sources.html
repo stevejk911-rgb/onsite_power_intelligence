@@ -69,6 +69,20 @@
   </table>
   <p class="muted" style="font-size:13px">Curated, screening-grade, as of 2026. Outside these counties, grid timing falls back to the LBNL/ISO generation-queue proxy.</p>
 
+  <h2>On-site / behind-the-meter powered data centers</h2>
+  <p>The amber markers on the <a href="app.html">map</a> are real campuses that run on <b>on-site or behind-the-meter generation</b> — the exact strategy this tool screens for. Every figure below is sourced to a primary or industry record. If one is wrong, tell us and we'll correct it.</p>
+  <table class="src-table">
+    <thead><tr><th>Campus · operator</th><th>Location</th><th>On-site power (verified)</th><th>Source</th></tr></thead>
+    <tbody>
+      <tr><td class="k">Stargate Site 1 · Crusoe (OpenAI / Oracle)</td><td>Abilene, TX · ERCOT</td><td>On-site natural-gas turbines (captive): 360 MW Unit 1 (online 2026) scaling to ~1.4 GW Unit 2, +191 MW diesel backup; campus 1.2 GW IT</td><td><a href="https://www.gem.wiki/Longhorn_Data_Center_power_station" target="_blank" rel="noopener">GEM / TCEQ permits</a></td></tr>
+      <tr><td class="k">xAI Colossus · xAI</td><td>Memphis, TN · TVA / MLGW</td><td>On-site natural-gas turbines, behind-the-meter: ~420 MW deployed (≈35 units); 247 MW (15 units) air-permitted in 2025</td><td><a href="https://www.cnbc.com/2025/07/03/musks-xai-gets-permit-for-turbines-to-power-supercomputer-in-memphis.html" target="_blank" rel="noopener">CNBC</a></td></tr>
+      <tr><td class="k">Homer City Energy Campus · Homer City Redevelopment / Kiewit</td><td>Homer City, PA · PJM</td><td>On-site natural gas: 7× GE Vernova 7HA turbines, up to ~4.5 GW dedicated; built on a retired coal-plant site; power ~2027</td><td><a href="https://www.datacenterdynamics.com/en/news/homer-city-and-kiewit-unveil-plans-for-45gw-natural-gas-powered-ai-data-center-in-pennsylvania/" target="_blank" rel="noopener">DCD</a></td></tr>
+      <tr><td class="k">Project Kati · Soluna</td><td>Willacy County, TX · ERCOT</td><td>Behind-the-meter wind: up to 166 MW under a PPA with the co-located 273 MW Las Majadas wind farm; Phase 1 (83 MW) ~2026</td><td><a href="https://www.powermag.com/soluna-breaks-ground-on-166-mw-texas-wind-powered-data-center-for-crypto-and-ai/" target="_blank" rel="noopener">POWER</a></td></tr>
+      <tr><td class="k">Scrubgrass · Stronghold Digital Mining</td><td>Venango County, PA · PJM</td><td>On-site coal-refuse (waste-coal) generation, behind-the-meter: 83.5 MW Scrubgrass + 80 MW Panther Creek ≈ 165 MW owned, with co-located compute</td><td><a href="https://ir.strongholddigitalmining.com/news-releases/news-release-details/stronghold-digital-mining-closes-panther-creek-plant-acquisition" target="_blank" rel="noopener">Stronghold IR</a></td></tr>
+    </tbody>
+  </table>
+  <p class="muted" style="font-size:13px">Verified 2026 from the cited sources. Markers locate each campus for discovery; exact coordinates may be approximate. Grid-connected campuses are intentionally excluded — e.g. Hut 8 River Bend (Entergy grid), TeraWulf Lake Mariner (reused grid transmission), and AWS–Talen Susquehanna (shifted to front-of-the-meter after FERC's 2024 rejection of its behind-the-meter pact).</p>
+
   <h2>The method, in one paragraph</h2>
   <p>You give a coordinate, a firm-power need, and a timeline. We pull the live signals above, then score ten power pathways — four single-tech baselines, three hybrids, three nuclear PPAs — on the same yardstick: time-to-power, firm capacity, and rough cost. A pathway "meets" if it arrives on time at ≥90% firm capacity. If at least one does, the site is <b>ADVANCE</b>; a near-miss is <b>CAUTION</b>; none is <b>KILL</b>.</p>
 
@@ -88,6 +102,7 @@
       <tr><td class="k">2026-Q2</td><td>Gas pathways now ruled out automatically when no pipeline is found within ~7 mi of the coordinate.</td></tr>
       <tr><td class="k">2026-Q2</td><td>Raised simple-cycle gas turbine lead time to ~28 months to reflect OEM backlog.</td></tr>
       <tr><td class="k">2026-Q2</td><td>Marked solar-only / solar+BESS as non-firm by default; they cannot meet a 24/7 data-center load alone.</td></tr>
+      <tr><td class="k">2026-Q2</td><td>Plotted five real on-site / behind-the-meter powered data centers on the map (Crusoe/Stargate Abilene, xAI Colossus, Homer City, Soluna Project Kati, Stronghold Scrubgrass), each with a primary source. Verified and <b>excluded</b> grid-connected campuses (Hut 8 River Bend on Entergy, TeraWulf Lake Mariner, AWS–Talen Susquehanna after its FERC-driven shift to front-of-the-meter).</td></tr>
     </tbody>
   </table>
 
