@@ -67,7 +67,7 @@
   .cue::after{content:"";position:absolute;left:50%;transform:translateX(-50%);bottom:-6px;width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-top:6px solid #0b1220}
   .cue.show{opacity:1;top:-52px}
   /* real on-site-powered data centers plotted on the map */
-  .dc-tip{background:#0b1220;color:#fff;border:0;border-radius:6px;padding:2px 7px;font-family:var(--sans);font-size:11px;font-weight:700;box-shadow:0 4px 12px rgba(10,18,48,.25);white-space:nowrap}
+  .dc-tip{background:rgba(255,255,255,.9);color:#39424f;border:1px solid var(--line-2);border-radius:5px;padding:1px 6px;font-family:var(--sans);font-size:10.5px;font-weight:600;letter-spacing:.01em;box-shadow:0 1px 4px rgba(10,18,48,.08);white-space:nowrap}
   .dc-tip::before{display:none!important}
   .dc-pop{font-family:var(--sans);max-width:262px}
   .dc-pop-h{font-weight:800;font-size:14px;color:#0b1220;margin-bottom:2px}
@@ -405,7 +405,7 @@ var DC_SITES=[
 function addDcSites(){
   if(!lmap || !window.DC_SITES) return;
   DC_SITES.forEach(function(s){
-    var m=L.circleMarker([s.lat,s.lng],{radius:7,color:'#fff',weight:2,fillColor:'#F59E0B',fillOpacity:1}).addTo(lmap);
+    var m=L.circleMarker([s.lat,s.lng],{radius:6,color:'#fff',weight:1.5,fillColor:'#F59E0B',fillOpacity:1}).addTo(lmap);
     m.bindTooltip(s.n,{permanent:true,direction:(s.dir||'top'),offset:(s.dir==='bottom'?[0,6]:[0,-6]),className:'dc-tip'});
     var html='<div class="dc-pop"><div class="dc-pop-h">⚡ '+s.n+'</div>'
       +'<div class="dc-pop-loc">'+s.loc+' · '+s.op+'</div>'
@@ -424,7 +424,7 @@ function screenDc(lat,lng){ if(lmap){ lmap.closePopup(); } setMarker(lat,lng); l
 window.screenDc=screenDc; window.DC_SITES=DC_SITES;
 function initMap(){
   lmap=L.map('map').setView([38.2,-92],5);   // open zoomed on the central/eastern US so the on-site-powered DCs are visible
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; OpenStreetMap'}).addTo(lmap);
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',{maxZoom:19,subdomains:'abcd',attribution:'&copy; OpenStreetMap &copy; CARTO'}).addTo(lmap);
   lmap.on('click',function(e){ setMarker(e.latlng.lat,e.latlng.lng); track('action','coordinate_set'); });
   addDcSites();
   setTimeout(function(){ lmap.invalidateSize(); },150);
