@@ -421,20 +421,13 @@ var DC_SITES=[
     status:'Phase 1 ~2026–27 · scaling to 1.2 GW by 2029',
     src:'https://www.datacenterdynamics.com/en/news/prometheus-hyperscale-to-power-wyoming-data-center-with-natural-gas-will-offset-through-carbon-capture/' }
 ];
-/* live satellite thumbnail of a coordinate (Esri World Imagery — real aerial, no key) */
-function dcSat(lat,lng){
-  var R=6378137, x=R*lng*Math.PI/180, y=R*Math.log(Math.tan(Math.PI/4+lat*Math.PI/360));
-  var hw=1500, hh=hw*150/300, bb=(x-hw)+','+(y-hh)+','+(x+hw)+','+(y+hh);
-  return 'https://server.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer/export?bbox='+bb+'&bboxSR=3857&imageSR=3857&size=300,150&format=jpg&f=image';
-}
 function addDcSites(){
   if(!lmap || !window.DC_SITES) return;
   DC_SITES.forEach(function(s){
     var m=L.circleMarker([s.lat,s.lng],{radius:6,color:'#fff',weight:1.5,fillColor:'#F59E0B',fillOpacity:1}).addTo(lmap);
     m.bindTooltip(s.n,{permanent:true,direction:(s.dir||'top'),offset:(s.dir==='bottom'?[0,6]:[0,-6]),className:'dc-tip'});
-    var html='<div class="dc-pop">'
-      +'<img class="dc-pop-img" src="'+dcSat(s.lat,s.lng)+'" alt="Satellite view of '+s.n+'" loading="lazy" onerror="this.style.display=\'none\'">'
-      +'<div class="dc-pop-cap">Live satellite · Esri</div>'
+    var imgHtml = s.photo ? ('<img class="dc-pop-img" src="'+s.photo+'" alt="'+s.n+'" loading="lazy" onerror="this.style.display=\'none\'">'+(s.credit?('<div class="dc-pop-cap">'+s.credit+'</div>'):'')) : '';
+    var html='<div class="dc-pop">'+imgHtml
       +'<div class="dc-pop-h">⚡ '+s.n+'</div>'
       +'<div class="dc-pop-loc">'+s.loc+' · '+s.op+'</div>'
       +'<div class="dc-pop-power"><b>On-site power:</b> '+s.power+'</div>'
