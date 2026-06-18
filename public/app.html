@@ -179,14 +179,19 @@
 
 /* ===== state ===== */
 var state={ powerMW:250, byMonths:18, nuclear:true };
-/* step cards (1/2/3) -> scroll to the matching tool area and flash a neon ring */
-function flashEl(el, block){
+/* just replay the neon ring, no scrolling */
+function ringEl(el){
   if(!el) return;
-  try{ el.scrollIntoView({behavior:'smooth', block: block||'center'}); }catch(e){ el.scrollIntoView(); }
   el.classList.remove('flash');
   void el.offsetWidth;            // force reflow so re-clicks replay the animation
   el.classList.add('flash');
   setTimeout(function(){ el.classList.remove('flash'); }, 1600);
+}
+/* step cards (1/2/3) -> scroll to the matching tool area and flash a neon ring */
+function flashEl(el, block){
+  if(!el) return;
+  try{ el.scrollIntoView({behavior:'smooth', block: block||'center'}); }catch(e){ el.scrollIntoView(); }
+  ringEl(el);
 }
 function focusStep(n){
   var resultEl = document.getElementById('result');
@@ -195,8 +200,9 @@ function focusStep(n){
   if(n === 2){ flashEl(document.getElementById('step2')); return; }
   // step 3: the verdict. If nothing has been screened yet, guide to the input.
   if(hasResult){ flashEl(resultEl); return; }
-  flashEl(document.querySelector('.map-controls'), 'nearest');
-  var a = document.getElementById('addr'); if(a){ setTimeout(function(){ try{ a.focus({preventScroll:true}); }catch(e){ try{a.focus();}catch(_){} } }, 350); }
+  // no screening yet — highlight the search box IN PLACE (no scroll, no jitter) + cue
+  ringEl(document.querySelector('.map-controls'));
+  var a = document.getElementById('addr'); if(a){ try{ a.focus({preventScroll:true}); }catch(e){} }
   var cue = document.getElementById('cue');
   if(cue){ cue.classList.add('show'); clearTimeout(window.__cueT); window.__cueT = setTimeout(function(){ cue.classList.remove('show'); }, 4200); }
 }
