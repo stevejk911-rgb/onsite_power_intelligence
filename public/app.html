@@ -71,6 +71,8 @@
   .dc-tip{background:rgba(255,255,255,.9);color:#39424f;border:1px solid var(--line-2);border-radius:5px;padding:1px 6px;font-family:var(--sans);font-size:10.5px;font-weight:600;letter-spacing:.01em;box-shadow:0 1px 4px rgba(10,18,48,.08);white-space:nowrap}
   .dc-tip::before{display:none!important}
   .dc-pop{font-family:var(--sans);max-width:262px}
+  .dc-pop-img{width:100%;height:118px;object-fit:cover;border-radius:8px;display:block;background:#e9eef5}
+  .dc-pop-cap{font-size:10px;color:#9aa0a6;text-align:right;margin:2px 0 7px}
   .dc-pop-h{font-weight:800;font-size:14px;color:#0b1220;margin-bottom:2px}
   .dc-pop-loc{font-size:12px;color:#5b6472;margin-bottom:7px}
   .dc-pop-power{font-size:12.5px;color:#1a2230;line-height:1.46}
@@ -414,17 +416,26 @@ var DC_SITES=[
     power:'Behind-the-meter "HyperGrid": on-site nuclear (Westinghouse AP1000, 4 GW planned) + natural gas (600+ MW GE/Siemens turbines acquired; first 6 GW gas state-approved) + solar. 11 GW campus.',
     status:'First ~1 GW targeted late 2026',
     src:'https://www.datacenterdynamics.com/en/news/fermi-america-acquires-600mw-of-gas-turbines-for-11gw-ai-mega-campus-in-amarillo-texas/' },
-  { n:'Prometheus · WY-1', op:'Prometheus Hyperscale', lat:41.2682, lng:-110.9638, loc:'Evanston, WY · off-grid',
+  { n:'Prometheus · WY-1', op:'Prometheus Hyperscale', lat:41.30, lng:-110.82, loc:'Evanston, WY (Project Torch ranch) · off-grid',
     power:'Behind-the-meter natural gas (PureWest low-carbon supply) + carbon capture. 1.2 GW campus; Phase 1 ~150 MW.',
     status:'Phase 1 ~2026–27 · scaling to 1.2 GW by 2029',
     src:'https://www.datacenterdynamics.com/en/news/prometheus-hyperscale-to-power-wyoming-data-center-with-natural-gas-will-offset-through-carbon-capture/' }
 ];
+/* live satellite thumbnail of a coordinate (Esri World Imagery — real aerial, no key) */
+function dcSat(lat,lng){
+  var R=6378137, x=R*lng*Math.PI/180, y=R*Math.log(Math.tan(Math.PI/4+lat*Math.PI/360));
+  var hw=1500, hh=hw*150/300, bb=(x-hw)+','+(y-hh)+','+(x+hw)+','+(y+hh);
+  return 'https://server.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer/export?bbox='+bb+'&bboxSR=3857&imageSR=3857&size=300,150&format=jpg&f=image';
+}
 function addDcSites(){
   if(!lmap || !window.DC_SITES) return;
   DC_SITES.forEach(function(s){
     var m=L.circleMarker([s.lat,s.lng],{radius:6,color:'#fff',weight:1.5,fillColor:'#F59E0B',fillOpacity:1}).addTo(lmap);
     m.bindTooltip(s.n,{permanent:true,direction:(s.dir||'top'),offset:(s.dir==='bottom'?[0,6]:[0,-6]),className:'dc-tip'});
-    var html='<div class="dc-pop"><div class="dc-pop-h">⚡ '+s.n+'</div>'
+    var html='<div class="dc-pop">'
+      +'<img class="dc-pop-img" src="'+dcSat(s.lat,s.lng)+'" alt="Satellite view of '+s.n+'" loading="lazy" onerror="this.style.display=\'none\'">'
+      +'<div class="dc-pop-cap">Live satellite · Esri</div>'
+      +'<div class="dc-pop-h">⚡ '+s.n+'</div>'
       +'<div class="dc-pop-loc">'+s.loc+' · '+s.op+'</div>'
       +'<div class="dc-pop-power"><b>On-site power:</b> '+s.power+'</div>'
       +'<div class="dc-pop-meta">'+s.status+'</div>'
