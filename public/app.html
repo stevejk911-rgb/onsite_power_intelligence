@@ -719,6 +719,9 @@ function restore(){
 }
 
 /* ===== init ===== */
+/* always open at the very top on refresh — ignore the browser's scroll restoration */
+if('scrollRestoration' in history){ try{ history.scrollRestoration='manual'; }catch(e){} }
+window.scrollTo(0,0);
 restore();
 setupSeg('segPower',[100,250,500,1000],['100 MW','250 MW','500 MW','1 GW+'],'powerMW');
 setupSeg('segTime',[12,18,24,36],['12 mo','18 mo','24 mo','36 mo'],'byMonths');
@@ -737,6 +740,8 @@ initMap();
 /* No auto-demo on load. Land clean: headline + map + input only.
    Only a shared link that carries a coordinate (?lat&lng) restores its result. */
 if(picked){ setMarker(picked[0],picked[1]); lmap.setView(picked,12); runScreen(true); }
+/* belt-and-suspenders: after full load, snap to top unless a (shared-link) result is showing */
+window.addEventListener('load',function(){ var r=document.getElementById('result'); if(!r || r.innerHTML.trim().length===0){ window.scrollTo(0,0); } });
 </script>
 </body>
 </html>
