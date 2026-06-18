@@ -54,6 +54,18 @@
   /* shorter map so the value + flow are visible on arrival */
   #map{height:clamp(330px,48vh,540px)}
   .maphelp b{color:var(--ink-2)}
+  /* sticky search bar (shows on scroll) */
+  .stickybar{position:fixed;top:0;left:0;right:0;z-index:1200;background:rgba(255,255,255,.96);backdrop-filter:saturate(180%) blur(8px);-webkit-backdrop-filter:saturate(180%) blur(8px);border-bottom:1px solid var(--line-2);box-shadow:0 6px 20px rgba(10,18,48,.08);transform:translateY(-100%);transition:transform .22s ease;padding:9px 16px}
+  .stickybar.show{transform:translateY(0)}
+  .sb-in{max-width:680px;margin:0 auto;display:flex;gap:8px}
+  .sb-in input{flex:1;border:1.5px solid var(--line-2);border-radius:8px;padding:11px 13px;font-size:15px;color:var(--ink);outline:none;background:#fff;font-family:var(--sans)}
+  .sb-in input:focus{border-color:#1E50E6}
+  .sb-in button{border:0;background:#1E50E6;color:#fff;font-size:15px;font-weight:700;padding:0 20px;border-radius:8px;cursor:pointer;white-space:nowrap}
+  .sb-in button:hover{background:#1840c0}
+  /* "start here" cue bubble above the search box */
+  .cue{position:absolute;left:50%;transform:translateX(-50%);top:-46px;background:#0b1220;color:#fff;font-family:var(--sans);font-size:13px;font-weight:600;padding:8px 13px;border-radius:9px;white-space:nowrap;box-shadow:0 10px 24px rgba(10,18,48,.30);opacity:0;pointer-events:none;transition:opacity .2s ease, top .2s ease;z-index:900}
+  .cue::after{content:"";position:absolute;left:50%;transform:translateX(-50%);bottom:-6px;width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-top:6px solid #0b1220}
+  .cue.show{opacity:1;top:-52px}
 </style>
 </head>
 <body>
@@ -67,6 +79,15 @@
     </div>
   </div>
 </nav>
+
+<!-- sticky search bar: appears when the map's own search scrolls out of view -->
+<div id="stickybar" class="stickybar no-print" aria-hidden="true">
+  <div class="sb-in">
+    <input id="addr2" placeholder="Enter a site address or coordinates, then Screen" autocomplete="off"
+           onkeydown="if(event.key==='Enter')runScreenFrom('addr2')">
+    <button onclick="runScreenFrom('addr2')">Screen</button>
+  </div>
+</div>
 
 <div class="app-shell">
 
@@ -88,6 +109,7 @@
   <!-- MAP -->
   <div class="maphero no-print" id="step1">
     <div class="map-controls">
+      <div class="cue" id="cue">Start here — drop a pin or type an address</div>
       <input id="addr" placeholder="Enter a site address, or click the map" autocomplete="off"
              onkeydown="if(event.key==='Enter')runScreen()">
       <button onclick="runScreen()">Screen</button>
@@ -157,16 +179,19 @@ function focusStep(n){
   if(n === 2){ flashEl(document.getElementById('step2')); return; }
   // step 3: the verdict. If nothing has been screened yet, guide to the input.
   if(hasResult){ flashEl(resultEl); return; }
-  flashEl(document.querySelector('.map-controls'), 'start');
-  var a = document.getElementById('addr'); if(a){ setTimeout(function(){ try{ a.focus(); }catch(e){} }, 350); }
-  var mh = document.getElementById('maphelp');
-  if(mh && !mh.dataset.busy){
-    mh.dataset.busy = '1'; var prev = mh.innerHTML;
-    mh.innerHTML = '<b>Screen a site first</b> — drop a pin or enter an address, then the verdict appears here.';
-    setTimeout(function(){ mh.innerHTML = prev; delete mh.dataset.busy; }, 3800);
-  }
+  flashEl(document.querySelector('.map-controls'), 'center');
+  var a = document.getElementById('addr'); if(a){ setTimeout(function(){ try{ a.focus(); }catch(e){} }, 450); }
+  var cue = document.getElementById('cue');
+  if(cue){ cue.classList.add('show'); clearTimeout(window.__cueT); window.__cueT = setTimeout(function(){ cue.classList.remove('show'); }, 4200); }
 }
 window.focusStep = focusStep;
+/* run a screening from a secondary input (e.g. the sticky bar) */
+function runScreenFrom(id){
+  var s = document.getElementById(id);
+  if(s){ var a = document.getElementById('addr'); if(a){ a.value = s.value; } }
+  runScreen();
+}
+window.runScreenFrom = runScreenFrom;
 var lmap=null, marker=null, picked=null, DEFAULT=[39.0438,-77.4874]; // Ashburn, NoVA
 var lastCtx=null;
 
@@ -346,7 +371,9 @@ function initMap(){
 function setMarker(lat,lng){
   if(marker){ marker.setLatLng([lat,lng]); } else { marker=L.marker([lat,lng]).addTo(lmap); }
   picked=[lat,lng];
-  document.getElementById('addr').value=lat.toFixed(4)+', '+lng.toFixed(4);
+  var v=lat.toFixed(4)+', '+lng.toFixed(4);
+  document.getElementById('addr').value=v;
+  var a2=document.getElementById('addr2'); if(a2){ a2.value=v; }
 }
 
 /* ===== data fetch ===== */
@@ -586,6 +613,16 @@ setupSeg('segPower',[100,250,500,1000],['100 MW','250 MW','500 MW','1 GW+'],'pow
 setupSeg('segTime',[12,18,24,36],['12 mo','18 mo','24 mo','36 mo'],'byMonths');
 setupSeg('segNuke',[true,false],['Yes','No'],'nuclear');
 initMap();
+/* show the sticky search bar once the map's own search scrolls out of view */
+(function(){
+  var mc=document.querySelector('.map-controls'), sb=document.getElementById('stickybar');
+  if(mc && sb && 'IntersectionObserver' in window){
+    new IntersectionObserver(function(es){ es.forEach(function(en){
+      sb.classList.toggle('show', !en.isIntersecting);
+      sb.setAttribute('aria-hidden', en.isIntersecting ? 'true' : 'false');
+    }); }, { threshold:0 }).observe(mc);
+  }
+})();
 /* No auto-demo on load. Land clean: headline + map + input only.
    Only a shared link that carries a coordinate (?lat&lng) restores its result. */
 if(picked){ setMarker(picked[0],picked[1]); lmap.setView(picked,12); runScreen(true); }
