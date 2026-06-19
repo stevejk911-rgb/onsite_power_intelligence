@@ -1,0 +1,37 @@
+# On-Site Power Intelligence — open to search & answer engines
+User-agent: *
+Allow: /
+
+# Google (Search + Gemini grounding)
+User-agent: Googlebot
+Allow: /
+User-agent: Google-Extended
+Allow: /
+
+# Microsoft Bing (also powers ChatGPT Search)
+User-agent: Bingbot
+Allow: /
+
+# OpenAI / ChatGPT
+User-agent: GPTBot
+Allow: /
+User-agent: OAI-SearchBot
+Allow: /
+User-agent: ChatGPT-User
+Allow: /
+
+# Anthropic, Perplexity, Apple
+User-agent: ClaudeBot
+Allow: /
+User-agent: PerplexityBot
+Allow: /
+User-agent: Applebot
+Allow: /
+User-agent: Applebot-Extended
+Allow: /
+
+# Naver (Korea)
+User-agent: Yeti
+Allow: /
+
+Sitemap: https://onsitespower.com/sitemap.xml
