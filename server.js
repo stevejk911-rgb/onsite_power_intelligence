@@ -330,7 +330,9 @@ const api = {
 
 /* ---- static file serving -------------------------------------------------- */
 const MIME = { ".html":"text/html; charset=utf-8", ".js":"text/javascript", ".css":"text/css",
-  ".json":"application/json", ".svg":"image/svg+xml", ".png":"image/png", ".ico":"image/x-icon" };
+  ".json":"application/json", ".svg":"image/svg+xml", ".png":"image/png", ".ico":"image/x-icon",
+  ".jpg":"image/jpeg", ".jpeg":"image/jpeg", ".webp":"image/webp", ".gif":"image/gif",
+  ".txt":"text/plain; charset=utf-8", ".xml":"application/xml; charset=utf-8" };
 function serveStatic(req, res){
   let p = decodeURIComponent(new URL(req.url, "http://x").pathname);
   if(p === "/") p = "/index.html";
