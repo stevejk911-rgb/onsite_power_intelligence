@@ -328,14 +328,14 @@ var LABEL_META = {
    verified short excerpt — never fabricated. cad = review cadence (days). */
 var SOURCES = {
   nrel:{title:'PVWatts v8 solar model', pub:'NREL (U.S. DOE national lab)', type:'Live solar capacity-factor model', tier:1, label:'measured', kind:'measured', url:'https://pvwatts.nrel.gov/', published:'continuously updated', cad:0,
-    how:'Opens the NREL PVWatts calculator. Enter this coordinate and it returns the same solar capacity factor we used.'},
+    how:'In NREL’s PVWatts tool (search “NREL PVWatts”), enter this coordinate — it returns the same solar capacity factor we used.'},
   osm:{title:'Gas pipelines & substations (Overpass)', pub:'OpenStreetMap contributors', type:'Open primary geospatial data', tier:1, label:'measured', kind:'measured', url:'https://www.openstreetmap.org/', published:'continuously updated', cad:0,
     note:'Crowd-sourced primary geodata; live but completeness varies by region.',
     how:'These are straight-line distances from your screened point to the nearest gas pipeline and electrical substation in OpenStreetMap. We don’t pinpoint the exact feature — search the location below to inspect the area yourself.'},
   nominatim:{title:'Geocoding (place & state)', pub:'OpenStreetMap / Nominatim', type:'Open geocoder', tier:1, label:'measured', kind:'measured', url:'https://www.openstreetmap.org/', published:'continuously updated', cad:0,
-    how:'Opens OpenStreetMap at this point so you can confirm the place and state we resolved.'},
+    how:'How we resolved the place, county, and state for this coordinate (OpenStreetMap / Nominatim).'},
   lbnl:{title:'"Queued Up" interconnection-queue study', pub:'Lawrence Berkeley National Laboratory', type:'Generation-queue proxy for grid timing', tier:1, label:'modeled', kind:'cited', url:'https://emp.lbl.gov/queues', published:'2025', cad:90,
-    how:'Opens LBNL’s queues page. Find the latest "Queued Up" report and your ISO/RTO’s queue length — the basis for our grid-timing proxy.'},
+    how:'Search “LBNL Queued Up” for the latest interconnection-queue report and your ISO/RTO’s queue length — the basis for our grid-timing proxy.'},
   ercot_sb6:{title:'SB6 large-load interconnection (≥75 MW)', pub:'ERCOT / Public Utility Commission of Texas', type:'Large-load study & curtailment rule', tier:1, label:'modeled', kind:'cited', url:'https://www.ercot.com/', published:'2025', cad:90,
     how:'On ERCOT / PUCT, search "Senate Bill 6 large load" — the interconnection study and curtailment rule behind this connect estimate.'},
   dominion_scc:{title:'Dominion load-service & NoVA capacity', pub:'Virginia State Corporation Commission / Dominion', type:'Utility filing', tier:1, label:'modeled', kind:'cited', url:'https://scc.virginia.gov/', published:'2025-26', cad:90,
@@ -351,7 +351,7 @@ var SOURCES = {
   sec_nuclear:{title:'Nuclear-PPA depth (Constellation · Vistra · Talen)', pub:'SEC EDGAR filings', type:'Primary company disclosure', tier:2, label:'modeled', kind:'cited', url:'https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany', published:'2025', cad:90,
     how:'Search SEC EDGAR for Constellation, Vistra, or Talen — their filings set how much nuclear off-take is realistically available in each region.'},
   atb_cost:{title:'Tech cost & equipment lead time', pub:'NREL ATB · Lazard LCOE · OEM disclosures', type:'Cost & schedule benchmarks', tier:1, label:'modeled', kind:'cited', url:'https://atb.nrel.gov/', published:'2025', cad:90,
-    how:'Open NREL’s Annual Technology Baseline for cost & capacity-factor benchmarks; turbine/engine lead times come from GE Vernova / Wärtsilä disclosures.'},
+    how:'Search “NREL Annual Technology Baseline (ATB)” for cost & capacity-factor benchmarks; turbine/engine lead times come from GE Vernova / Wärtsilä disclosures.'},
   generic_reg:{title:'Regulatory / utility filing (synthesis)', pub:'State PUC / ISO / utility', type:'Synthesis of public filings', tier:1, label:'modeled', kind:'cited', url:'', published:'2025-26', cad:90,
     how:'This grid-timing figure is our synthesis of the local utility, ISO, and PUC filings for this market. Search that utility / PUC for current large-load interconnection terms.'}
 };
@@ -391,8 +391,8 @@ function regAdhoc(url,title,pub){
   if(!url) return null;
   for(var k in _adhoc){ if(_adhoc[k].url===url) return k; }
   var c=classifySrc(url); var id='ad'+(++_adhocN);
-  _adhoc[id]={id:id, title:title||domainOf(url), pub:pub||domainOf(url), type:'Third-party report', tier:c.tier, label:c.label, kind:'cited', url:url, published:'', cad:30, adhoc:true,
-    how:'Opens the original report. Look for the on-site generation figure cited above — the capacity (MW/GW), fuel type, and operating status.'};
+  _adhoc[id]={id:id, title:title||domainOf(url), pub:pub||domainOf(url), type:'Third-party report ('+domainOf(url)+')', tier:c.tier, label:c.label, kind:'cited', url:url, published:'', cad:30, adhoc:true,
+    how:'This figure is from a cited third-party report ('+domainOf(url)+'). Search that outlet for the campus name above to read it — look for the on-site generation capacity (MW/GW), fuel type, and operating status.'};
   return id;
 }
 function getSrc(id){ var s=SOURCES[id]||_adhoc[id]||null; if(s && !s.id){ s.id=id; } return s; }
@@ -428,16 +428,12 @@ function openEv(elm){
   var s=getSrc(id); if(!s) return;
   var tierKey=s.label==='measured'?'live':s.tier;
   var tm=TIER_META[tierKey], lm=LABEL_META[lab||s.label];
-  var lf=linkFor(s);
   var html='<div class="evpop-top"><span class="evtier"><span class="ev-dot '+tm.dot+'"></span>'+tm.name+'</span><button class="evpop-x" onclick="closeEv()" aria-label="close">×</button></div>'
     +'<div class="evpop-pub">'+s.pub+'</div><div class="evpop-type">'+s.type+(s.title?(' — '+s.title):'')+'</div>'
     +(s.quote?('<div class="evpop-claim">“'+s.quote+'”</div>'):'')
     +'<div class="evpop-dates">'+(s.published?('Published: '+s.published+' · '):'')+'as of '+(s.asof||TODAY)+'</div>'
     +locBlock(s)
-    +(s.how?('<div class="evpop-how"><b>How to verify:</b> '+s.how+'</div>'):'')
-    +'<div class="evpop-act">'
-      +(lf.href?('<a href="'+lf.href+'" target="_blank" rel="noopener" onclick="track(\'action\',\'src_view\')">'+lf.label+'</a>'):'')
-    +'</div>'
+    +(s.how?('<div class="evpop-how"><b>Where to verify:</b> '+s.how+'</div>'):'')
     +'<div class="evpop-note"><b>'+lm.name+'.</b> '+lm.note+(s.note?(' '+s.note):'')+'</div>';
   var d=document.getElementById('evpop'); d.innerHTML=html;
   document.getElementById('evback').classList.add('show'); d.classList.add('show');
@@ -470,12 +466,11 @@ function sourcesPanel(){
   var ids=Object.keys(set); if(!ids.length) return '';
   var order={live:0,1:1,2:2,3:3,4:4,5:5};
   ids.sort(function(a,b){ var sa=getSrc(a),sb=getSrc(b); var ka=sa.label==='measured'?'live':sa.tier, kb=sb.label==='measured'?'live':sb.tier; return order[ka]-order[kb]; });
-  var rows=ids.map(function(id){ var s=getSrc(id); var tk=s.label==='measured'?'live':s.tier; var tm=TIER_META[tk]; var lf=linkFor(s);
+  var rows=ids.map(function(id){ var s=getSrc(id); var tk=s.label==='measured'?'live':s.tier; var tm=TIER_META[tk];
     return '<div class="src-row"><span class="ev-dot '+tm.dot+'"></span><div class="src-main">'
       +'<div class="src-title">'+s.pub+(s.title?(' — '+s.title):'')+'</div>'
       +'<div class="src-meta">'+(s.published?('Published '+s.published+' · '):'')+'as of '+(s.asof||TODAY)+' · '+LABEL_META[s.label].name+'</div>'
       +(s.how?('<div class="src-how">'+s.how+'</div>'):'')
-      +'<div class="src-links">'+(lf.href?('<a href="'+lf.href+'" target="_blank" rel="noopener">'+lf.label+'</a>'):'')+'</div>'
       +'</div><span class="src-tierbadge">'+tm.name.split(' · ')[0]+'</span></div>';
   }).join('');
   return '<div class="srcs no-print" id="srcsPanel"><div class="srcs-h" onclick="document.getElementById(\'srcsPanel\').classList.toggle(\'closed\')"><b>Sources &amp; evidence <span class="srcs-sub">— the live pulls and reference data this screen is built on ('+ids.length+')</span></b><span class="srcs-tog">▾</span></div><div class="srcs-body">'+rows+'</div></div>';
