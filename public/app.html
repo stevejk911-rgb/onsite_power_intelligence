@@ -752,7 +752,10 @@ async function runScreen(auto){
     else if(addr){ var g=await geocode(addr); site=[g[0],g[1]]; }
     else { site=DEFAULT.slice(); }
   }catch(e){ site=DEFAULT.slice(); }
-  setMarker(site[0],site[1]); lmap.setView(site,12);
+  setMarker(site[0],site[1]);
+  // keep the user's current zoom & pan — only recenter if the pin is off-screen
+  try{ if(!lmap.getBounds().contains(L.latLng(site[0],site[1]))){ lmap.setView(site, lmap.getZoom()); } }
+  catch(e){ lmap.setView(site,12); }
 
   // parallel live pulls (graceful fallback)
   var solarP=api('/api/solar?lat='+site[0]+'&lon='+site[1]).catch(function(){return null;});
