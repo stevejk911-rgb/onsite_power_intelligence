@@ -356,7 +356,7 @@ const api = {
     const u = "https://developer.nrel.gov/api/pvwatts/v8.json?api_key=" + NREL_KEY
       + "&lat=" + lat + "&lon=" + lon
       + "&system_capacity=1&azimuth=180&tilt=20&array_type=2&module_type=0&losses=14";
-    const d = await getJSON(u);
+    const d = await getJSON(u, { headers: { "User-Agent": UA }, signal: AbortSignal.timeout(8000) });
     const o = d && d.outputs ? d.outputs : {};
     return cacheSet(k, {
       capacityFactor: typeof o.capacity_factor === "number" ? o.capacity_factor / 100 : null,
