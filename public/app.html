@@ -77,8 +77,12 @@
   .cue::after{content:"";position:absolute;left:50%;transform:translateX(-50%);bottom:-6px;width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-top:6px solid #0b1220}
   .cue.show{opacity:1;top:-52px}
   /* real on-site-powered data centers plotted on the map */
-  .dc-tip{background:rgba(255,255,255,.9);color:#39424f;border:1px solid var(--line-2);border-radius:5px;padding:1px 6px;font-family:var(--sans);font-size:10.5px;font-weight:600;letter-spacing:.01em;box-shadow:0 1px 4px rgba(10,18,48,.08);white-space:nowrap}
+  .dc-tip{background:rgba(255,255,255,.96);color:#39424f;border:1px solid var(--line-2);border-radius:6px;padding:3px 9px;font-family:var(--sans);font-size:11px;font-weight:600;letter-spacing:.01em;box-shadow:0 1px 5px rgba(10,18,48,.1);white-space:nowrap;cursor:pointer;transition:box-shadow .12s,border-color .12s,transform .12s}
+  .dc-tip:hover{border-color:#F59E0B;box-shadow:0 4px 14px rgba(245,158,11,.3);transform:translateY(-1px);color:#b25a00}
   .dc-tip::before{display:none!important}
+  /* visible dot: pointer cursor + soft amber glow so it reads as clickable */
+  .leaflet-interactive.dc-dot{cursor:pointer;filter:drop-shadow(0 0 3px rgba(245,158,11,.55))}
+  .leaflet-interactive.dc-dot:hover{filter:drop-shadow(0 0 6px rgba(245,158,11,.85))}
   .dc-pop{font-family:var(--sans);max-width:262px}
   .dc-pop-img{width:100%;height:118px;object-fit:cover;border-radius:8px;display:block;background:#e9eef5}
   .dc-pop-cap{font-size:10px;color:#9aa0a6;text-align:right;margin:2px 0 7px}
@@ -435,8 +439,6 @@ var DC_SITES=[
 function addDcSites(){
   if(!lmap || !window.DC_SITES) return;
   DC_SITES.forEach(function(s){
-    var m=L.circleMarker([s.lat,s.lng],{radius:6,color:'#fff',weight:1.5,fillColor:'#F59E0B',fillOpacity:1}).addTo(lmap);
-    m.bindTooltip(s.n,{permanent:true,direction:(s.dir||'top'),offset:(s.dir==='bottom'?[0,6]:[0,-6]),className:'dc-tip'});
     var imgHtml = s.photo
       ? ('<img class="dc-pop-img" src="'+s.photo+'" alt="'+s.n+'" loading="lazy" onerror="this.style.display=\'none\'">'+(s.credit?('<div class="dc-pop-cap">'+s.credit+'</div>'):''))
       : '<div class="dc-pop-ph">📷 Photo area<span>recommended ~600×280 · 2.2:1</span></div>';
@@ -447,11 +449,20 @@ function addDcSites(){
       +'<div class="dc-pop-meta">'+s.status+'</div>'
       +'<div class="dc-pop-actions"><button class="dc-pop-btn" onclick="screenDc('+s.lat+','+s.lng+')">Screen this site →</button>'
       +'<a class="dc-pop-src" href="'+s.src+'" target="_blank" rel="noopener">Source ↗</a></div></div>';
-    m.bindPopup(html,{maxWidth:300});
+    var popOpts={maxWidth:300,autoPan:true,autoPanPadding:[24,24]};
+    /* wide invisible hit-circle: a much bigger click target around the dot */
+    var hit=L.circleMarker([s.lat,s.lng],{radius:20,weight:0,opacity:0,fillOpacity:0,fillColor:'#F59E0B',pane:'markerPane',bubblingMouseEvents:false}).addTo(lmap);
+    /* visible dot, enlarged from r6 → r8 with a soft halo so it reads as clickable */
+    var m=L.circleMarker([s.lat,s.lng],{radius:8,color:'#fff',weight:2.5,fillColor:'#F59E0B',fillOpacity:1,className:'dc-dot',bubblingMouseEvents:false}).addTo(lmap);
+    m.bindPopup(html,popOpts);
+    /* clicking the wide hit area, the dot, OR the name label all open the popup */
+    hit.on('click',function(e){ m.openPopup(); if(e&&e.originalEvent){L.DomEvent.stop(e.originalEvent);} });
+    m.bindTooltip(s.n,{permanent:true,direction:(s.dir||'top'),offset:(s.dir==='bottom'?[0,9]:[0,-9]),className:'dc-tip',interactive:true});
+    m.on('tooltipopen',function(ev){ var el=ev.tooltip.getElement(); if(el){ el.style.cursor='pointer'; el.onclick=function(evt){ if(evt){evt.stopPropagation();} m.openPopup(); }; } });
   });
   var legend=L.control({position:'bottomleft'});
   legend.onAdd=function(){ var d=L.DomUtil.create('div','dc-legend');
-    d.innerHTML='<b>⚡ On-site / behind-the-meter powered</b> data centers — click a marker'; return d; };
+    d.innerHTML='<b>⚡ On-site / behind-the-meter powered</b> data centers — click a dot or its label'; return d; };
   legend.addTo(lmap);
 }
 function screenDc(lat,lng){ if(lmap){ lmap.closePopup(); } setMarker(lat,lng); lmap.setView([lat,lng],12); runScreen(); }
