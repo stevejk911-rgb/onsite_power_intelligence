@@ -106,12 +106,50 @@ if(DATABASE_URL){
       "  our_value text, their_value text, source text, who text," +
       "  status text NOT NULL DEFAULT 'new', ua text," +
       "  internal boolean NOT NULL DEFAULT false, bot boolean NOT NULL DEFAULT false);" +
-      "CREATE INDEX IF NOT EXISTS corrections_ts_idx ON corrections (ts DESC);"
+      "CREATE INDEX IF NOT EXISTS corrections_ts_idx ON corrections (ts DESC);" +
+      /* data-freshness: last manual re-review date per source category */
+      "CREATE TABLE IF NOT EXISTS data_reviews (" +
+      "  category text PRIMARY KEY, last_reviewed date NOT NULL DEFAULT current_date);"
     ).then(() => console.log("Analytics: Postgres ready"))
      .catch((e) => console.log("Analytics: table init failed — " + (e && e.message)));
   } catch(e){
     console.log("Analytics: 'pg' not installed — run npm install. " + (e && e.message));
   }
+}
+
+/* ---- data-freshness registry (tiered re-review cadence) ------------------- */
+const FRESHNESS_CATS = [
+  { id:"grid_load",      label:"Hot-zone LOAD layer (utility / ISO / PUC)",          tier:1, cadenceDays:90 },
+  { id:"grid_queue",     label:"Interconnection-queue proxy (LBNL / ISO)",           tier:1, cadenceDays:90 },
+  { id:"nuclear_ppa",    label:"Nuclear-PPA depth (SEC / ISO)",                       tier:2, cadenceDays:90 },
+  { id:"campus_primary", label:"Proven campuses — primary disclosure (SEC / IR)",     tier:2, cadenceDays:90 },
+  { id:"campus_press",   label:"Proven campuses — trade press / news",                tier:3, cadenceDays:30 },
+  { id:"tech_cost",      label:"Tech lead-time & cost (NREL ATB / OEM disclosures)",  tier:1, cadenceDays:90 }
+];
+const FRESH_SEED = "2026-06-20"; // seed: everything reviewed today on first deploy
+async function freshnessRows(){
+  const map = {};
+  if(pool){
+    try{
+      const r = await pool.query("SELECT category, last_reviewed FROM data_reviews");
+      r.rows.forEach((x) => {
+        map[x.category] = (x.last_reviewed instanceof Date)
+          ? x.last_reviewed.toISOString().slice(0,10)
+          : String(x.last_reviewed).slice(0,10);
+      });
+    }catch(e){}
+  }
+  const today = new Date();
+  return FRESHNESS_CATS.map((c) => {
+    const last = map[c.id] || FRESH_SEED;
+    const next = new Date(last + "T00:00:00Z");
+    next.setUTCDate(next.getUTCDate() + c.cadenceDays);
+    const nextStr = next.toISOString().slice(0,10);
+    const overdue = next < today;
+    const daysLeft = Math.round((next - today) / 86400000);
+    return { id:c.id, label:c.label, tier:c.tier, cadenceDays:c.cadenceDays,
+             lastReviewed:last, nextDue:nextStr, overdue:overdue, daysLeft:daysLeft };
+  });
 }
 
 /* in-memory fallback when there is no database (resets on restart) */
@@ -559,6 +597,41 @@ http.createServer(async (req, res) => {
           res.writeHead(400); res.end(JSON.stringify({ error:"id + valid status required" })); return;
         }
         if(pool) await pool.query("UPDATE corrections SET status = $1 WHERE id = $2", [status, id]);
+        res.writeHead(200); res.end(JSON.stringify({ ok:true }));
+      } catch(e){ res.writeHead(502); res.end(JSON.stringify({ error: String((e && e.message) || e) })); }
+      return;
+    }
+
+    /* data freshness: public read (non-sensitive — our own review cadence) */
+    if(url.pathname === "/api/freshness"){
+      try {
+        const rows = await freshnessRows();
+        res.writeHead(200); res.end(JSON.stringify({
+          ok:true, today:new Date().toISOString().slice(0,10),
+          items: rows, overdue: rows.filter((r) => r.overdue).map((r) => r.label)
+        }));
+      } catch(e){ res.writeHead(502); res.end(JSON.stringify({ error: String((e && e.message) || e) })); }
+      return;
+    }
+
+    /* data freshness: operator marks a category reviewed today (key-gated) */
+    if(url.pathname === "/api/admin/freshness/review"){
+      if(req.method !== "POST"){ res.writeHead(405); res.end(JSON.stringify({ error:"POST only" })); return; }
+      if(!ADMIN_KEY || url.searchParams.get("key") !== ADMIN_KEY){
+        res.writeHead(401); res.end(JSON.stringify({ error:"unauthorized" })); return;
+      }
+      try {
+        const body = await readBody(req);
+        let ev = {}; try { ev = JSON.parse(body || "{}"); } catch(_){}
+        const cat = String(ev.category || "").trim();
+        if(FRESHNESS_CATS.findIndex((c) => c.id === cat) < 0){
+          res.writeHead(400); res.end(JSON.stringify({ error:"unknown category" })); return;
+        }
+        if(pool){
+          await pool.query(
+            "INSERT INTO data_reviews (category, last_reviewed) VALUES ($1, current_date) " +
+            "ON CONFLICT (category) DO UPDATE SET last_reviewed = current_date", [cat]);
+        }
         res.writeHead(200); res.end(JSON.stringify({ ok:true }));
       } catch(e){ res.writeHead(502); res.end(JSON.stringify({ error: String((e && e.message) || e) })); }
       return;
