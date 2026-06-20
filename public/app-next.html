@@ -97,7 +97,7 @@
   .dc-pop-actions{display:flex;gap:10px;align-items:center;margin-top:10px}
   .dc-pop-btn{border:0;background:#1E50E6;color:#fff;font-weight:700;font-size:12.5px;padding:7px 12px;border-radius:7px;cursor:pointer;font-family:var(--sans)}
   .dc-pop-btn:hover{background:#1840c0}
-  .dc-pop-src{font-size:11.5px;color:#1E50E6;text-decoration:none;white-space:nowrap}
+  .dc-pop-src{font-size:11px;color:#8a93a3;text-decoration:none;white-space:nowrap}
   .dc-legend{font-family:var(--sans);background:rgba(255,255,255,.94);border:1px solid var(--line-2);border-radius:8px;padding:6px 10px;font-size:12px;color:#1a2230;box-shadow:0 4px 12px rgba(10,18,48,.12);font-weight:600;max-width:230px;line-height:1.35}
   .dc-legend b{color:#b25a00}
   .path.proven{border:1.5px solid #1a7f37;background:#f3fbf5}
@@ -159,6 +159,10 @@
   .src-links a{color:#1E50E6;text-decoration:none}
   .src-links a:hover{text-decoration:underline}
   .src-tierbadge{font-family:var(--sans);font-size:9.5px;font-weight:800;letter-spacing:.03em;text-transform:uppercase;padding:1px 6px;border-radius:4px;background:#eef2f7;color:#39424f;white-space:nowrap}
+  /* Screen button "working" state */
+  .screen-btn.is-screening{opacity:.92;cursor:progress;display:inline-flex;align-items:center;gap:7px}
+  .btn-spin{display:inline-block;width:13px;height:13px;border:2px solid rgba(255,255,255,.45);border-top-color:#fff;border-radius:50%;animation:btnspin .7s linear infinite;flex:none}
+  @keyframes btnspin{to{transform:rotate(360deg)}}
   /* plain small-text assumptions — no box, blends with the page */
   .yard{margin-top:16px;font-family:var(--sans)}
   .yard-row{display:flex;gap:12px;align-items:baseline;padding:2px 2px;font-size:11.5px;color:#7a838f;line-height:1.55}
@@ -184,7 +188,7 @@
   <div class="sb-in">
     <input id="addr2" placeholder="Enter a site address or coordinates, then Screen" autocomplete="off"
            onkeydown="if(event.key==='Enter')runScreenFrom('addr2')">
-    <button onclick="runScreenFrom('addr2')">Screen</button>
+    <button class="screen-btn" onclick="runScreenFrom('addr2')">Screen</button>
   </div>
 </div>
 
@@ -211,7 +215,7 @@
       <div class="cue" id="cue">Start here — drop a pin or type an address</div>
       <input id="addr" placeholder="Enter a site address, or click the map" autocomplete="off"
              onkeydown="if(event.key==='Enter')runScreen()">
-      <button onclick="runScreen()">Screen</button>
+      <button class="screen-btn" onclick="runScreen()">Screen</button>
     </div>
     <div id="map"></div>
     <div class="maphelp" id="maphelp"><b>Click the map to drop your site</b> — or type an address above, then Screen.</div>
@@ -227,7 +231,7 @@
       <div>
         <div class="field"><label>Consider nuclear PPA?</label><div class="seg" id="segNuke"></div></div>
         <div class="field"><label>&nbsp;</label>
-          <button class="btn btn-primary" onclick="runScreen()">Re-run screening <span class="arr">→</span></button>
+          <button class="btn btn-primary screen-btn" onclick="runScreen()">Re-run screening <span class="arr">→</span></button>
         </div>
       </div>
     </div>
@@ -689,7 +693,7 @@ function addDcSites(){
       +'<div class="dc-pop-power"><b>On-site power:</b> '+s.power+'</div>'
       +'<div class="dc-pop-meta">'+s.status+'</div>'
       +'<div class="dc-pop-actions"><button class="dc-pop-btn" onclick="screenDc('+s.lat+','+s.lng+')">Screen this site →</button>'
-      +'<a class="dc-pop-src" href="'+s.src+'" target="_blank" rel="noopener">Source ↗</a></div></div>';
+      +'<span class="dc-pop-src">Source: '+domainOf(s.src)+'</span></div></div>';
     var popOpts={maxWidth:300,autoPan:true,autoPanPadding:[24,24]};
     /* wide invisible hit-circle: a much bigger click target around the dot */
     var hit=L.circleMarker([s.lat,s.lng],{radius:20,weight:0,opacity:0,fillOpacity:0,fillColor:'#F59E0B',pane:'markerPane',bubblingMouseEvents:false}).addTo(lmap);
@@ -759,11 +763,21 @@ async function reverse(lat,lng){
 
 /* ===== run ===== */
 var SRC=['Geocoding (Nominatim)…','Solar resource (NREL PVWatts)…','Infrastructure scan (OpenStreetMap)…','Scoring 10 pathways…'];
+/* visible "working…" state on every Screen button while a run is in flight */
+function setScreening(on){
+  var btns=document.querySelectorAll('.screen-btn');
+  for(var i=0;i<btns.length;i++){ var b=btns[i];
+    if(on){ if(b.dataset.orig===undefined){ b.dataset.orig=b.innerHTML; } b.innerHTML='<span class="btn-spin"></span>Screening…'; b.disabled=true; b.classList.add('is-screening'); }
+    else { if(b.dataset.orig!==undefined){ b.innerHTML=b.dataset.orig; } b.disabled=false; b.classList.remove('is-screening'); }
+  }
+  var mh=document.getElementById('maphelp'); if(mh){ mh.innerHTML = on ? '<b>Screening this site…</b> reading live solar, gas & grid data.' : '<b>Click the map to drop your site</b> — or type an address above, then Screen.'; }
+}
 async function runScreen(auto){
   var addr=document.getElementById('addr').value.trim();
   var site;
   // resolve coordinate
   showLoading();
+  setScreening(true);
   try{
     if(picked && (addr==='' || addr===picked[0].toFixed(4)+', '+picked[1].toFixed(4))){ site=[picked[0],picked[1]]; }
     else if(/^-?\d+(\.\d+)?\s*,\s*-?\d+(\.\d+)?$/.test(addr)){ var pp=addr.split(',').map(parseFloat); site=[pp[0],pp[1]]; }
@@ -799,6 +813,7 @@ async function runScreen(auto){
             auto:(auto===true) };
   lastCtx=ctx;
   render(ctx);
+  setScreening(false);
 }
 
 function showLoading(){
