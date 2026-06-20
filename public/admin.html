@@ -113,10 +113,13 @@
   <button class="tab" onclick="go('sites',this)">사이트 점검</button>
   <button class="tab" onclick="go('feedback',this)">피드백</button>
   <button class="tab" onclick="go('corrections',this)">제보(교정)</button>
+  <button class="tab" id="tab-fresh" onclick="go('freshness',this)">데이터 신선도</button>
   <button class="tab" onclick="go('outreach',this)">아웃리치</button>
 </div>
 
 <div class="wrap">
+
+<div id="freshAlarm" onclick="document.getElementById('tab-fresh').click()" style="display:none;cursor:pointer;align-items:center;gap:10px;background:#fff4e5;border:1px solid #f0c98a;border-radius:12px;padding:11px 15px;margin:16px 0 0;color:#8a4b00;font-size:13px;font-weight:700">⏰ <span id="freshAlarmTxt"></span> <span style="font-weight:500;color:#a86a2a">— 클릭해서 검토하기</span></div>
 
 <div id="datactl" style="display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;background:#fff;border:1px solid #e6e6e3;border-radius:12px;padding:10px 14px;margin:16px 0 4px">
   <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
@@ -187,6 +190,12 @@
   <div class="panel"><div class="scrollx"><div id="corrList"><div class="empty">불러오는 중…</div></div></div></div>
 </section>
 
+<section id="freshness" class="hide">
+  <div class="htitle">데이터 신선도</div>
+  <p class="intro">출처 유형별 재검토 주기입니다. 기한이 지나면 위에 알람이 뜹니다. 한 항목을 검토·갱신했으면 <b>오늘 검토함</b>을 눌러 주기를 리셋하세요. (티어별 차등: 규제·기관·SEC는 분기, 기사·뉴스는 매월, 라이브 측정은 매 조회.)</p>
+  <div class="panel"><div id="freshTable"><div class="empty">불러오는 중…</div></div></div>
+</section>
+
 <section id="outreach" class="hide">
   <div class="htitle">아웃리치</div>
   <p class="intro">연동하면 이메일 아웃리치(발송 / 열람 / 회신 / 미팅)가 여기 표시됩니다.</p>
@@ -208,7 +217,7 @@
   function changeKey(){ var k=prompt("관리자 키를 입력하세요"); if(k){ saveKey(k); loadAll(k); } }
 
   function go(id,btn){
-    ["overview","traffic","sites","feedback","corrections","outreach"].forEach(function(s){ document.getElementById(s).classList.add("hide"); });
+    ["overview","traffic","sites","feedback","corrections","freshness","outreach"].forEach(function(s){ document.getElementById(s).classList.add("hide"); });
     document.getElementById(id).classList.remove("hide");
     document.querySelectorAll(".tab").forEach(function(t){ t.classList.remove("on"); });
     btn.classList.add("on");
@@ -504,8 +513,46 @@
     pollLive();
     LIVE_TIMER=setInterval(pollLive,15000);
   }
+  /* ===== data freshness ===== */
+  var TIER_DOT={1:"#0e7490",2:"#1E50E6",3:"#b25a00",4:"#d97706",5:"#8a93a3"};
+  function loadFreshness(){
+    fetch("/api/freshness").then(function(r){return r.json();}).then(renderFreshness).catch(function(){
+      var el=document.getElementById("freshTable"); if(el) el.innerHTML='<div class="empty">지금은 불러올 수 없어요.</div>';
+    });
+  }
+  function renderFreshness(d){
+    var items=(d&&d.items)||[]; var el=document.getElementById("freshTable"); if(!el) return;
+    if(!items.length){ el.innerHTML='<div class="empty">항목이 없습니다.</div>'; return; }
+    var overdue=items.filter(function(x){return x.overdue;});
+    // top alarm banner + tab badge
+    var banner=document.getElementById("freshAlarm"), btxt=document.getElementById("freshAlarmTxt"), tab=document.getElementById("tab-fresh");
+    if(overdue.length){ banner.style.display="flex"; btxt.textContent="재검토 기한이 지난 데이터 "+overdue.length+"건"; tab.innerHTML="데이터 신선도 <span style='background:#b42318;color:#fff;border-radius:9px;padding:0 6px;font-size:11px;font-weight:800'>"+overdue.length+"</span>"; }
+    else { banner.style.display="none"; tab.textContent="데이터 신선도"; }
+    var rows=items.map(function(x){
+      var due = x.overdue ? ("<span style='color:#b42318;font-weight:800'>기한 지남 ("+Math.abs(x.daysLeft)+"일 경과)</span>")
+                          : ("<span style='color:#1a7f37;font-weight:700'>"+x.daysLeft+"일 남음</span>");
+      var dot="<span style='display:inline-block;width:9px;height:9px;border-radius:50%;background:"+(TIER_DOT[x.tier]||"#8a93a3")+";margin-right:7px;vertical-align:middle'></span>";
+      return "<tr style='border-bottom:1px solid #eee'>"
+        +"<td style='padding:9px 8px'>"+dot+esc(x.label)+"</td>"
+        +"<td style='padding:9px 8px;font-size:12px;color:#666;white-space:nowrap'>Tier "+x.tier+" · "+x.cadenceDays+"일</td>"
+        +"<td style='padding:9px 8px;font-size:12px;color:#666;white-space:nowrap'>"+x.lastReviewed+" → "+x.nextDue+"</td>"
+        +"<td style='padding:9px 8px;white-space:nowrap'>"+due+"</td>"
+        +"<td style='padding:9px 8px;text-align:right'><button onclick=\"markReviewed('"+x.id+"')\" style='border:1px solid #cbd5e1;background:#fff;border-radius:7px;padding:5px 10px;font-size:12px;font-weight:700;cursor:pointer'>오늘 검토함</button></td>"
+        +"</tr>";
+    }).join("");
+    el.innerHTML="<div class='scrollx'><table style='width:100%;border-collapse:collapse;font-size:13.5px'><thead><tr style='text-align:left;color:#888;font-size:12px'>"
+      +"<th style='padding:6px 8px'>출처 카테고리</th><th style='padding:6px 8px'>주기</th><th style='padding:6px 8px'>최근 검토 → 다음 기한</th><th style='padding:6px 8px'>상태</th><th></th></tr></thead><tbody>"+rows+"</tbody></table></div>";
+  }
+  function markReviewed(cat){
+    var key=CURKEY||storedKey(); if(!key){ alert("관리자 키가 필요해요."); return; }
+    fetch("/api/admin/freshness/review?key="+encodeURIComponent(key),{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({category:cat})})
+      .then(function(r){return r.json();}).then(function(){ loadFreshness(); }).catch(function(){ alert("저장에 실패했어요."); });
+  }
+  window.markReviewed=markReviewed;
+
   function loadAll(key){
     CURKEY=key||"";
+    loadFreshness();
     Promise.all([ api(scoped("/api/admin/sitechecks"),key), api(scoped("/api/admin/feedback"),key), api(scoped("/api/admin/stats"),key).catch(function(){return {ok:false};}), api("/api/admin/sources",key).catch(function(){return {ok:false};}), api("/api/admin/corrections",key).catch(function(){return {ok:false};}) ])
       .then(function(res){
         document.getElementById("relock").style.display="";

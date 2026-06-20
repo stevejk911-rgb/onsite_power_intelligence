@@ -102,6 +102,56 @@
   .dc-legend b{color:#b25a00}
   .path.proven{border:1.5px solid #1a7f37;background:#f3fbf5}
   .path.proven .pnum{color:#10612b}
+  /* ===== visible provenance: clickable evidence + tier dots ===== */
+  .ev{cursor:pointer;border-bottom:1.5px dotted currentColor;position:relative;white-space:nowrap}
+  .ev:focus{outline:2px solid #1E50E6;outline-offset:2px;border-radius:2px}
+  .ev-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:4px;vertical-align:baseline;border:1px solid rgba(255,255,255,.7);box-shadow:0 0 0 1px rgba(10,18,48,.12)}
+  .t-live{background:#10612b}      /* measured / live */
+  .t1{background:#0e7490}          /* gov / regulator / ISO / national lab */
+  .t2{background:#1E50E6}          /* primary company disclosure */
+  .t3{background:#b25a00}          /* established trade press */
+  .t4{background:#d97706}          /* general news */
+  .t5{background:#8a93a3}          /* blog / forum / social */
+  .lbl-pill{display:inline-block;font-family:var(--sans);font-size:9.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:1px 5px;border-radius:4px;vertical-align:middle;margin-left:5px}
+  .lbl-measured{background:#e6f4ea;color:#10612b}
+  .lbl-modeled{background:#eef2ff;color:#1E50E6}
+  .lbl-claimed{background:#fff4e5;color:#b25a00}
+  .evpop{position:fixed;z-index:1200;max-width:340px;background:#fff;border:1px solid var(--line-2);border-radius:12px;box-shadow:0 14px 40px rgba(10,18,48,.22);padding:14px 15px 13px;font-family:var(--sans);display:none}
+  .evpop.show{display:block}
+  .evpop-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:7px}
+  .evtier{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:800;letter-spacing:.02em;color:#1a2230}
+  .evtier .ev-dot{width:9px;height:9px;margin:0}
+  .evpop-x{border:0;background:#f1f3f7;color:#5a6573;width:22px;height:22px;border-radius:6px;cursor:pointer;font-size:15px;line-height:1}
+  .evpop-x:hover{background:#e6e9ef}
+  .evpop-pub{font-size:12.5px;font-weight:700;color:#1a2230;line-height:1.3}
+  .evpop-type{font-size:11px;color:#6b7280;margin-top:1px}
+  .evpop-claim{font-size:12.5px;color:#2b3340;line-height:1.45;margin:8px 0;padding:7px 10px;background:#f7f8fb;border-left:3px solid #c8cfdb;border-radius:4px;font-style:italic}
+  .evpop-dates{font-size:11px;color:#6b7280;margin-top:6px}
+  .evpop-act{display:flex;flex-wrap:wrap;gap:10px;margin-top:9px;font-size:12px;font-weight:700}
+  .evpop-act a{color:#1E50E6;text-decoration:none}
+  .evpop-act a:hover{text-decoration:underline}
+  .evpop-note{font-size:10.5px;color:#8a93a3;margin-top:9px;line-height:1.4;border-top:1px solid var(--line-2);padding-top:8px}
+  .ev-back{position:fixed;inset:0;z-index:1199;display:none}
+  .ev-back.show{display:block}
+  /* sources & evidence panel */
+  .srcs{margin-top:18px;border:1px solid var(--line-2);border-radius:12px;background:#fbfcfe;overflow:hidden}
+  .srcs-h{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 15px;background:#f3f6fb;border-bottom:1px solid var(--line-2);cursor:pointer;font-family:var(--sans)}
+  .srcs-h b{font-size:13px;color:#1a2230}
+  .srcs-h .srcs-sub{font-size:11px;color:#6b7280;font-weight:500}
+  .srcs-h .srcs-tog{font-size:18px;color:#8a93a3;transition:transform .15s}
+  .srcs.closed .srcs-body{display:none}
+  .srcs.closed .srcs-tog{transform:rotate(-90deg)}
+  .srcs-body{padding:6px 6px}
+  .src-row{display:flex;gap:11px;align-items:flex-start;padding:10px 11px;border-radius:8px}
+  .src-row+.src-row{border-top:1px solid #eef1f6}
+  .src-row .ev-dot{margin-top:4px;flex:none}
+  .src-main{flex:1;min-width:0}
+  .src-title{font-family:var(--sans);font-size:12.5px;font-weight:700;color:#1a2230;line-height:1.3}
+  .src-meta{font-family:var(--sans);font-size:11px;color:#6b7280;margin-top:2px}
+  .src-links{font-family:var(--sans);font-size:11.5px;font-weight:700;margin-top:4px;display:flex;gap:12px;flex-wrap:wrap}
+  .src-links a{color:#1E50E6;text-decoration:none}
+  .src-links a:hover{text-decoration:underline}
+  .src-tierbadge{font-family:var(--sans);font-size:9.5px;font-weight:800;letter-spacing:.03em;text-transform:uppercase;padding:1px 6px;border-radius:4px;background:#eef2f7;color:#39424f;white-space:nowrap}
 </style>
 </head>
 <body>
@@ -236,6 +286,147 @@ function runScreenFrom(id){
 window.runScreenFrom = runScreenFrom;
 var lmap=null, marker=null, picked=null, DEFAULT=[39.0438,-77.4874]; // Ashburn, NoVA
 var lastCtx=null;
+
+/* =====================================================================
+   VISIBLE PROVENANCE — every decisive number carries a sourced, tiered,
+   dated evidence object you can open and verify. Three labels:
+     measured = live pull this run   modeled = our estimate/synthesis (±)
+     claimed  = third-party stated (we cite, we don't assert)
+   Tiers (citation trust): 1 gov/regulator/ISO/national-lab ·
+     2 primary company disclosure (SEC/IR) · 3 established trade press ·
+     4 general news · 5 blog/forum/social (lead only, never a verdict basis)
+   We store facts + a SHORT quote + a deep link + a snapshot — never a
+   copy of the source text (keeps us inside fair use / public-domain).
+   ===================================================================== */
+var TODAY = new Date().toISOString().slice(0,10);
+var TIER_META = {
+  live:{dot:'t-live', name:'LIVE · measured'},
+  1:{dot:'t1', name:'Tier 1 · gov / regulator / ISO / national lab'},
+  2:{dot:'t2', name:'Tier 2 · primary company disclosure'},
+  3:{dot:'t3', name:'Tier 3 · established trade press'},
+  4:{dot:'t4', name:'Tier 4 · general news'},
+  5:{dot:'t5', name:'Tier 5 · blog / forum / social'}
+};
+var LABEL_META = {
+  measured:{cls:'lbl-measured', name:'Measured', note:'Pulled live from the source this run.'},
+  modeled:{cls:'lbl-modeled', name:'Modeled', note:'Our screening estimate / synthesis of filings — planning-grade, ±40%.'},
+  claimed:{cls:'lbl-claimed', name:'Claimed', note:'Stated by a third party. We cite it; we do not independently assert it.'}
+};
+/* canonical, deep-linkable sources. quote/frag are filled only where we have a
+   verified short excerpt — never fabricated. cad = review cadence (days). */
+var SOURCES = {
+  nrel:{title:'PVWatts solar resource model', pub:'NREL (U.S. DOE national lab)', type:'Live solar capacity-factor model', tier:1, label:'measured', url:'https://pvwatts.nrel.gov/', published:'continuously updated', cad:0},
+  osm:{title:'Gas pipelines & substations (Overpass)', pub:'OpenStreetMap contributors', type:'Open primary geospatial data', tier:1, label:'measured', url:'https://www.openstreetmap.org/', published:'continuously updated', cad:0, note:'Crowd-sourced primary geodata; distances are live but completeness varies by region.'},
+  nominatim:{title:'Geocoding', pub:'OpenStreetMap / Nominatim', type:'Open geocoder', tier:1, label:'measured', url:'https://nominatim.org/', published:'continuously updated', cad:0},
+  lbnl:{title:'"Queued Up" interconnection-queue study', pub:'Lawrence Berkeley National Laboratory', type:'Generation-queue proxy for grid timing', tier:1, label:'modeled', url:'https://emp.lbl.gov/queues', published:'2025', cad:90},
+  ercot_sb6:{title:'SB6 large-load interconnection (≥75 MW)', pub:'ERCOT / Public Utility Commission of Texas', type:'Large-load study & curtailment rule', tier:1, label:'modeled', url:'https://www.ercot.com/', published:'2025', cad:90},
+  dominion_scc:{title:'Dominion load-service & NoVA capacity', pub:'Virginia State Corporation Commission / Dominion', type:'Utility filing', tier:1, label:'modeled', url:'https://scc.virginia.gov/', published:'2025-26', cad:90},
+  puco_aep:{title:'AEP Ohio data-center tariff', pub:'Public Utilities Commission of Ohio / AEP', type:'Tariff & load-study ruling', tier:1, label:'modeled', url:'https://puco.ohio.gov/', published:'2025', cad:90},
+  ga_psc:{title:'Georgia 2025 IRP & >100 MW tariff', pub:'Georgia Public Service Commission', type:'Integrated resource plan', tier:1, label:'modeled', url:'https://psc.ga.gov/', published:'2025', cad:90},
+  pjm:{title:'PJM interconnection process & timing', pub:'PJM Interconnection (ISO/RTO)', type:'Queue / connection timing', tier:1, label:'modeled', url:'https://www.pjm.com/planning', published:'2025', cad:90},
+  eia:{title:'EIA generator & capacity data', pub:'U.S. Energy Information Administration', type:'Federal energy statistics', tier:1, label:'modeled', url:'https://www.eia.gov/electricity/', published:'2025', cad:90},
+  generic_reg:{title:'Regulatory / utility filing (synthesis)', pub:'State PUC / ISO / utility', type:'Synthesis of public filings', tier:1, label:'modeled', url:'', published:'2025-26', cad:90}
+};
+/* classify a third-party (campus) source URL into a tier + label */
+function classifySrc(url){
+  url=url||''; var u=url.toLowerCase();
+  if(/sec\.gov/.test(u)) return {tier:2,label:'claimed'};
+  if(/\.gov(\/|$)/.test(u)) return {tier:1,label:'claimed'};
+  if(/(datacenterdynamics|datacenterfrontier|powermag|utilitydive|reuters|bloomberg)\.com/.test(u)) return {tier:3,label:'claimed'};
+  if(/(\/news-releases\/|\/press|ir\.|investors?\.)/.test(u)) return {tier:2,label:'claimed'};
+  if(/(gem\.wiki|wikipedia\.org|medium\.com|reddit\.com|substack\.com|blogspot|wordpress)/.test(u)) return {tier:5,label:'claimed'};
+  return {tier:4,label:'claimed'};
+}
+function domainOf(url){ try{ return new URL(url).hostname.replace(/^www\./,''); }catch(e){ return url||''; } }
+/* build the deep, highlighted "view source" link (Text Fragment / PDF page) */
+function viewUrl(s){
+  var u=s.url||''; if(!u) return '';
+  if(s.page){ return u+(u.indexOf('#')<0?'#page='+s.page:''); }
+  if(s.quote){ return u+(u.indexOf('#')<0?'#:~:text='+encodeURIComponent(s.quote):''); }
+  return u;
+}
+function snapUrl(url){ return url?('https://web.archive.org/web/'+encodeURIComponent(url)):''; }
+
+/* register an ad-hoc third-party source (campus pages) and return its id */
+var _adhoc={}, _adhocN=0;
+function regAdhoc(url,title,pub){
+  if(!url) return null;
+  for(var k in _adhoc){ if(_adhoc[k].url===url) return k; }
+  var c=classifySrc(url); var id='ad'+(++_adhocN);
+  _adhoc[id]={title:title||domainOf(url), pub:pub||domainOf(url), type:'Third-party report', tier:c.tier, label:c.label, url:url, published:'', cad:30, adhoc:true};
+  return id;
+}
+function getSrc(id){ return SOURCES[id]||_adhoc[id]||null; }
+
+/* render a clickable, tier-dotted evidence chip around a value */
+var _used={};
+function ev(val, id, opts){
+  var s=getSrc(id); if(!s){ return ''+val; }
+  _used[id]=true; opts=opts||{};
+  var tier=s.tier, dot=TIER_META[s.label==='measured'?'live':tier].dot;
+  var lab=opts.label||s.label;
+  var pill = opts.pill!==false ? (' <span class="lbl-pill '+LABEL_META[lab].cls+'">'+LABEL_META[lab].name+'</span>') : '';
+  return '<span class="ev" tabindex="0" role="button" data-id="'+id+'" data-lab="'+lab+'" onclick="openEv(this)" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();openEv(this)}"><span class="ev-dot '+dot+'"></span>'+val+'</span>'+pill;
+}
+/* evidence popover */
+function ensureEvPop(){
+  if(document.getElementById('evpop')) return;
+  var b=document.createElement('div'); b.className='ev-back'; b.id='evback'; b.onclick=closeEv; document.body.appendChild(b);
+  var d=document.createElement('div'); d.className='evpop'; d.id='evpop'; document.body.appendChild(d);
+  document.addEventListener('keydown',function(e){ if(e.key==='Escape') closeEv(); });
+}
+function openEv(elm){
+  ensureEvPop();
+  var id=elm.getAttribute('data-id'), lab=elm.getAttribute('data-lab');
+  var s=getSrc(id); if(!s) return;
+  var tierKey=s.label==='measured'?'live':s.tier;
+  var tm=TIER_META[tierKey], lm=LABEL_META[lab||s.label];
+  var vu=viewUrl(s), snap=snapUrl(s.url);
+  var html='<div class="evpop-top"><span class="evtier"><span class="ev-dot '+tm.dot+'"></span>'+tm.name+'</span><button class="evpop-x" onclick="closeEv()" aria-label="close">×</button></div>'
+    +'<div class="evpop-pub">'+s.pub+'</div><div class="evpop-type">'+s.type+(s.title?(' — '+s.title):'')+'</div>'
+    +(s.quote?('<div class="evpop-claim">“'+s.quote+'”</div>'):'')
+    +'<div class="evpop-dates">'+(s.published?('Published: '+s.published+' · '):'')+'as of '+(s.asof||TODAY)+'</div>'
+    +'<div class="evpop-act">'
+      +(vu?('<a href="'+vu+'" target="_blank" rel="noopener" onclick="track(\'action\',\'src_view\')">View source'+(s.quote?' (highlighted)':'')+' ↗</a>'):'')
+      +(snap?('<a href="'+snap+'" target="_blank" rel="noopener">Snapshot ↗</a>'):'')
+    +'</div>'
+    +'<div class="evpop-note"><b>'+lm.name+'.</b> '+lm.note+(s.note?(' '+s.note):'')+'</div>';
+  var d=document.getElementById('evpop'); d.innerHTML=html;
+  document.getElementById('evback').classList.add('show'); d.classList.add('show');
+  // position near the clicked chip, clamped to viewport
+  var r=elm.getBoundingClientRect(), pw=Math.min(340,window.innerWidth-20), ph=d.offsetHeight;
+  var left=Math.min(Math.max(10,r.left), window.innerWidth-pw-10);
+  var top=r.bottom+8; if(top+ph>window.innerHeight-10){ top=Math.max(10,r.top-ph-8); }
+  d.style.left=left+'px'; d.style.top=top+'px';
+  track('action','ev_open');
+}
+function closeEv(){ var d=document.getElementById('evpop'), b=document.getElementById('evback'); if(d)d.classList.remove('show'); if(b)b.classList.remove('show'); }
+window.openEv=openEv; window.closeEv=closeEv;
+/* map a regional 'src' label string to a registry id (for grid-timing evidence) */
+function gridSrcId(ctx){
+  if(!ctx.load) return 'lbnl';
+  var t=(ctx.load.src||'').toLowerCase();
+  if(/ercot|sb6/.test(t)) return 'ercot_sb6';
+  if(/dominion|virginia|scc/.test(t)) return 'dominion_scc';
+  if(/puco|aep ohio/.test(t)) return 'puco_aep';
+  if(/georgia|psc/.test(t)) return 'ga_psc';
+  if(/pjm|comed/.test(t)) return 'pjm';
+  return 'generic_reg';
+}
+/* build the "Sources & evidence" panel from everything cited this render */
+function sourcesPanel(){
+  var ids=Object.keys(_used); if(!ids.length) return '';
+  var order={live:0,1:1,2:2,3:3,4:4,5:5};
+  ids.sort(function(a,b){ var sa=getSrc(a),sb=getSrc(b); var ka=sa.label==='measured'?'live':sa.tier, kb=sb.label==='measured'?'live':sb.tier; return order[ka]-order[kb]; });
+  var rows=ids.map(function(id){ var s=getSrc(id); var tk=s.label==='measured'?'live':s.tier; var tm=TIER_META[tk]; var vu=viewUrl(s), snap=snapUrl(s.url);
+    return '<div class="src-row"><span class="ev-dot '+tm.dot+'"></span><div class="src-main">'
+      +'<div class="src-title">'+s.pub+(s.title?(' — '+s.title):'')+'</div>'
+      +'<div class="src-meta">'+(s.published?('Published '+s.published+' · '):'')+'as of '+(s.asof||TODAY)+' · '+LABEL_META[s.label].name+'</div>'
+      +'<div class="src-links">'+(vu?('<a href="'+vu+'" target="_blank" rel="noopener">View source ↗</a>'):'')+(snap?('<a href="'+snap+'" target="_blank" rel="noopener">Snapshot ↗</a>'):'')+'</div>'
+      +'</div><span class="src-tierbadge">'+tm.name.split(' · ')[0]+'</span></div>';
+  }).join('');
+  return '<div class="srcs no-print" id="srcsPanel"><div class="srcs-h" onclick="document.getElementById(\'srcsPanel\').classList.toggle(\'closed\')"><b>Sources &amp; evidence <span class="srcs-sub">— every number above is clickable; this lists them all</span></b><span class="srcs-tog">▾</span></div><div class="srcs-body">'+rows+'</div></div>';
+}
 
 /* ===== regional resolution (queue + nuclear off-take depth) =====
    Live per-coordinate data covers solar/gas/grid-proximity. Interconnection-queue
@@ -566,6 +757,7 @@ function showLoading(){
 
 /* ===== render ===== */
 function render(ctx){
+  _used={};   // reset cited-source set for this render
   var S=buildScenarios(ctx);
   var st=S.map(function(s){return statusOf(s,ctx.needMW,ctx.byMonths);});
   var hasOk=st.indexOf('ok')>=0, hasWarn=st.indexOf('warn')>=0;
@@ -605,11 +797,12 @@ function render(ctx){
     +'<div class="pmeta">'+(hasOnsite?(win.name+' · '+win.firm+'% firm'+(win.note?' · '+win.note:'')):('no on-site path meets '+powerLbl+' firm in '+ctx.byMonths+' mo'))+'</div>'
     +'<div class="psrc">'+(hasOnsite?('confidence <span class="conf '+onsiteConfCls+'">'+onsiteConf+'</span> · equipment lead-time + live gas/solar'):'—')+'</div>'
     +'</div>';
+  var gsid=gridSrcId(ctx);
   var gridCard='<div class="path">'
     +'<div class="plab">Grid-only connection</div>'
-    +'<div class="pnum">~'+effGridYear+'</div>'
+    +'<div class="pnum">'+ev('~'+effGridYear, gsid)+'</div>'
     +'<div class="pmeta">'+gridDetail+'</div>'
-    +'<div class="psrc">source: '+gridSrc+' · as of 2026 · confidence <span class="conf '+gridConfCls+'">'+gridConf+'</span></div>'
+    +'<div class="psrc">confidence <span class="conf '+gridConfCls+'">'+gridConf+'</span> · tap the year for the sourced filing</div>'
     +'</div>';
   var bankable;
   if(hasOnsite){
@@ -626,11 +819,12 @@ function render(ctx){
     V={ badge:'Proven', cls:'v-advance',
         title:'A real, on-site-powered campus.',
         sum:k.op+' powers '+k.n+' with '+k.type+' ('+k.mw+') — '+k.state+'. This is a working behind-the-meter site. The blind public-data screen below can’t see private on-site generation, which is exactly the gap this map closes.' };
+    var adId=regAdhoc(k.src, k.n+' — on-site power', k.op);
     onsiteCard='<div class="path proven">'
       +'<div class="plab">On-site power — built &amp; running</div>'
-      +'<div class="pnum">'+k.mw+'</div>'
+      +'<div class="pnum">'+ev(k.mw, adId, {label:'claimed'})+'</div>'
       +'<div class="pmeta">'+k.type+' · '+k.op+'</div>'
-      +'<div class="psrc">confidence <span class="conf conf-high">verified</span> · '+k.state+' · <a href="'+k.src+'" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline">source ↗</a></div>'
+      +'<div class="psrc">confidence <span class="conf conf-high">verified</span> · '+k.state+' · tap the figure for the source</div>'
       +'</div>';
     bankable='<div class="bankable">✅ <b>'+k.n+'</b> already runs on-site power ('+k.mw+' · '+k.type+'). Grid-only here would arrive ~'+effGridYear+' — building power on-site is how this campus skipped that wait.</div>';
     matrixNote='<p class="assump" style="margin-top:18px"><b>Reference screen (blind):</b> the table below scores this exact coordinate against your inputs ('+powerLbl+' by '+ctx.byMonths+' mo) using only public live data — it intentionally excludes the verified on-site generation shown above.</p>';
@@ -666,15 +860,21 @@ function render(ctx){
   var now=new Date().toISOString().slice(0,10);
   document.getElementById('printMeta').textContent=ctx.place+' ('+ctx.site[0].toFixed(2)+', '+ctx.site[1].toFixed(2)+') · need '+powerLbl+' by '+ctx.byMonths+' mo · '+now;
 
+  /* live signal values, each a clickable measured-evidence chip */
+  var solarVal = ctx.solarLive ? ev('<b>'+Math.round(ctx.solarCF*100)+'%</b>','nrel',{pill:false})
+                               : '<b>'+Math.round(ctx.solarCF*100)+'%</b> <span class="lbl-pill lbl-modeled">Est.</span>';
+  var gasVal = ctx.infraLive ? ev('<b>'+gasTxt+'</b>','osm',{pill:false}) : '<b>'+gasTxt+'</b>';
+  var subVal = ctx.infraLive ? ev('<b>'+subTxt+'</b>','osm',{pill:false}) : '<b>'+subTxt+'</b>';
+
   document.getElementById('result').innerHTML=
     '<div class="verdict '+V.cls+'">'+
       '<div class="vtop"><span class="badge">'+V.badge+'</span><span class="mono" style="font-size:13px;opacity:.8">'+ctx.place+' · '+ctx.region.iso+' · '+ctx.site[0].toFixed(2)+', '+ctx.site[1].toFixed(2)+'</span></div>'+
       '<h2>'+V.title+'</h2><p class="sum">'+V.sum+'</p>'+
       PATHS_HTML+
       '<div class="signals">'+
-        '<span class="sigchip '+(ctx.solarLive?'live':'')+'">Solar CF '+(ctx.solarLive?'(NREL)':'(est.)')+': <b>'+Math.round(ctx.solarCF*100)+'%</b></span>'+
-        '<span class="sigchip '+(ctx.infraLive?'live':'')+'">Nearest gas pipeline '+(ctx.infraLive?'(OSM)':'(n/a)')+': <b>'+gasTxt+'</b></span>'+
-        '<span class="sigchip '+(ctx.infraLive?'live':'')+'">Nearest substation '+(ctx.infraLive?'(OSM)':'(n/a)')+': <b>'+subTxt+'</b></span>'+
+        '<span class="sigchip '+(ctx.solarLive?'live':'')+'">Solar CF '+(ctx.solarLive?'(NREL)':'(est.)')+': '+solarVal+'</span>'+
+        '<span class="sigchip '+(ctx.infraLive?'live':'')+'">Nearest gas pipeline '+(ctx.infraLive?'(OSM)':'(n/a)')+': '+gasVal+'</span>'+
+        '<span class="sigchip '+(ctx.infraLive?'live':'')+'">Nearest substation '+(ctx.infraLive?'(OSM)':'(n/a)')+': '+subVal+'</span>'+
       '</div>'+
     '</div>'+
     '<div class="toolbar no-print"><button class="btn btn-dark" onclick="window.print();track(\'action\',\'word_download\')">Print board-ready PDF</button>'+
@@ -684,6 +884,7 @@ function render(ctx){
       'Live this run: solar capacity factor (NREL PVWatts), gas-pipeline & substation distance (OpenStreetMap/Overpass), geocode (Nominatim). '+
       (ctx.load?('Grid timing for this hot zone is a curated large-LOAD connect estimate ('+ctx.load.u+', '+ctx.load.src+').'):'Grid timing is a regional generation-queue proxy (LBNL/ISO).')+' '+
       'Nuclear-PPA depth is regional (SEC/ISO). Screening-grade ±40% — verify with utility, OEM, EPC, and counsel.</p>'+
+    sourcesPanel()+
     '<div class="feedback no-print"><input id="fbtext" placeholder="See something off? Tell us in one line" onkeydown="if(event.key===\'Enter\')sendFb()"><button onclick="sendFb()">Send</button></div>'+
     '<div class="fbthx hidden no-print" id="fbthx">Thanks — that is exactly how this gets sharper.</div>';
 

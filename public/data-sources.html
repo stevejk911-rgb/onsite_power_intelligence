@@ -36,6 +36,28 @@
 
   <div class="callout"><b>Screening-grade, ±40%.</b> Every number is a planning estimate meant to <i>triage</i> sites — to decide which parcels deserve a paid feasibility study and which to kill. It is not engineering, and it does not replace your utility, OEM, EPC, or counsel.</div>
 
+  <h2>How we source every number — and how you verify it</h2>
+  <p>Every decisive figure in a verdict is a <b>clickable evidence object</b>. Open it to see the publisher, the exact date, a short quoted excerpt, a <b>deep link that scrolls to and highlights the line</b> in the original (web pages via text-fragment links; PDFs jump to the page), and an <b>archived snapshot</b> in case the page moves. We store facts and a short quote — never a copy of the source — so each citation stays inside fair-use and public-domain reuse.</p>
+
+  <p><b>Three honesty labels, shown on every line:</b></p>
+  <p style="margin:6px 0 2px"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#10612b;margin-right:7px;vertical-align:middle"></span><b>Measured</b> — pulled live from the source this run (NREL solar, OSM gas/substation distance).</p>
+  <p style="margin:2px 0"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#1E50E6;margin-right:7px;vertical-align:middle"></span><b>Modeled</b> — our screening estimate or synthesis of filings; planning-grade, ±40%.</p>
+  <p style="margin:2px 0 14px"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#b25a00;margin-right:7px;vertical-align:middle"></span><b>Claimed</b> — stated by a third party; we cite it, we don't independently assert it.</p>
+
+  <p><b>Source-trust tiers</b>, highest to lowest. When sources conflict we show both and take the higher tier; newer always wins over older.</p>
+  <table class="src-table">
+    <thead><tr><th>Tier</th><th>What qualifies</th><th>Re-review</th></tr></thead>
+    <tbody>
+      <tr><td class="k"><span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:#10612b;margin-right:6px;vertical-align:middle"></span>Live</td><td>Measured live this run — NREL PVWatts, OpenStreetMap / Overpass, Nominatim</td><td>Every screening</td></tr>
+      <tr><td class="k"><span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:#0e7490;margin-right:6px;vertical-align:middle"></span>Tier 1</td><td>Government / regulator / ISO-RTO / national lab — NREL, EIA, FERC, state PUCs, LBNL, PJM / ERCOT / MISO queues</td><td>Quarterly</td></tr>
+      <tr><td class="k"><span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:#1E50E6;margin-right:6px;vertical-align:middle"></span>Tier 2</td><td>Primary company disclosure — SEC filings, official investor-relations / press releases</td><td>Quarterly</td></tr>
+      <tr><td class="k"><span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:#b25a00;margin-right:6px;vertical-align:middle"></span>Tier 3</td><td>Established trade press — Data Center Dynamics, Datacenter Frontier, Utility Dive, Reuters</td><td>Monthly</td></tr>
+      <tr><td class="k"><span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:#d97706;margin-right:6px;vertical-align:middle"></span>Tier 4</td><td>General news</td><td>Monthly</td></tr>
+      <tr><td class="k"><span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:#8a93a3;margin-right:6px;vertical-align:middle"></span>Tier 5</td><td>Blog / forum / social — used only as a lead, <b>never</b> as the basis for a verdict</td><td>Monthly</td></tr>
+    </tbody>
+  </table>
+  <p class="muted" style="font-size:13px">Sources older than their cadence are flagged for re-review; conflicts are surfaced, not hidden. This page is also designed to be machine-readable so AI assistants can cite it accurately.</p>
+
   <h2>What's live, per coordinate</h2>
   <p>When you screen a site, three pulls run against public APIs for that exact point — no canned answers:</p>
   <table class="src-table">
@@ -115,6 +137,7 @@
       <tr><td class="k">2026-Q2</td><td>Marked solar-only / solar+BESS as non-firm by default; they cannot meet a 24/7 data-center load alone.</td></tr>
       <tr><td class="k">2026-Q2</td><td>Plotted real on-site / behind-the-meter powered data centers on the map — now seven (Crusoe/Stargate Abilene, xAI Colossus, Homer City, Soluna Project Kati, Stronghold Scrubgrass, Fermi HyperGrid Amarillo, Prometheus WY-1 Evanston), each with a primary source. Verified and <b>excluded</b> grid-connected campuses (Hut 8 River Bend on Entergy, TeraWulf Lake Mariner, AWS–Talen Susquehanna after its FERC-driven shift to front-of-the-meter).</td></tr>
       <tr><td class="k">2026-Q2</td><td>Added a ground-truth layer: screening a coordinate that lands on one of these verified campuses now returns the real, sourced on-site solution (a "Proven" result) instead of a blind public-data verdict — public maps can't see private on-site generation.</td></tr>
+      <tr><td class="k">2026-Q2</td><td>Shipped <b>visible provenance</b>: every decisive number in a verdict is now a clickable evidence object with a source-trust tier (1–5), an honesty label (measured / modeled / claimed), publication and "as-of" dates, a deep link that highlights the cited line, and an archived snapshot. Added the source-tier rubric above and a scheduled re-review cadence per tier.</td></tr>
     </tbody>
   </table>
 
