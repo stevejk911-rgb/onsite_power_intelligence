@@ -340,6 +340,12 @@ var SOURCES = {
   osm:{title:'Gas pipelines & substations (Overpass)', pub:'OpenStreetMap contributors', type:'Open primary geospatial data', tier:1, label:'measured', kind:'measured', url:'https://www.openstreetmap.org/', published:'continuously updated', cad:0,
     note:'Crowd-sourced primary geodata; live but completeness varies by region.',
     how:'These are straight-line distances from your screened point to the nearest gas pipeline and electrical substation in OpenStreetMap. We don’t pinpoint the exact feature — search the location below to inspect the area yourself.'},
+  osm_gas:{title:'Nearest gas pipeline (Overpass)', pub:'OpenStreetMap contributors', type:'Open primary geospatial data', tier:1, label:'measured', kind:'measured', url:'https://www.openstreetmap.org/', published:'continuously updated', cad:0,
+    note:'Crowd-sourced; pipeline coverage varies by region.',
+    how:'We measured the straight-line distance to the nearest gas pipeline in OpenStreetMap. Its location is below — open it on the map to see the pipeline itself.'},
+  osm_sub:{title:'Nearest substation (Overpass)', pub:'OpenStreetMap contributors', type:'Open primary geospatial data', tier:1, label:'measured', kind:'measured', url:'https://www.openstreetmap.org/', published:'continuously updated', cad:0,
+    note:'Crowd-sourced; substation coverage varies by region.',
+    how:'We measured the straight-line distance to the nearest electrical substation in OpenStreetMap. Its location is below — open it on the map to see the substation itself.'},
   nominatim:{title:'Geocoding (place & state)', pub:'OpenStreetMap / Nominatim', type:'Open geocoder', tier:1, label:'measured', kind:'measured', url:'https://www.openstreetmap.org/', published:'continuously updated', cad:0,
     how:'How we resolved the place, county, and state for this coordinate (OpenStreetMap / Nominatim).'},
   lbnl:{title:'"Queued Up" interconnection-queue study', pub:'Lawrence Berkeley National Laboratory', type:'Generation-queue proxy for grid timing', tier:1, label:'modeled', kind:'cited', url:'https://emp.lbl.gov/queues', published:'2025', cad:90,
@@ -383,14 +389,15 @@ function osmAt(){
   return 'https://www.openstreetmap.org/';
 }
 /* the one honest action link for a source: where to go + what label */
+/* We only ever render ONE kind of external link: an OpenStreetMap link to the
+   exact gas-pipeline / substation feature we measured (these reliably open).
+   Every other source is link-less text ("where to verify") to avoid broken pages. */
 function linkFor(s){
-  if(s.kind==='measured'){
-    if(s.id==='nrel') return { href:s.url, label:'Open the calculator ↗', snap:'' };
-    if(s.id==='osm')  return { href:'', label:'', snap:'' };           // distance-only: no single feature to map
-    return { href:osmAt(), label:'Open this location ↗', snap:'' };   // nominatim (confirms the geocoded point)
+  if(s.id==='osm_gas' || s.id==='osm_sub'){
+    var f=window.__feat && window.__feat[s.id==='osm_gas'?'gas':'sub'];
+    if(f) return { href:'https://www.openstreetmap.org/?mlat='+f.lat+'&mlon='+f.lng+'#map=15/'+(+f.lat).toFixed(4)+'/'+(+f.lng).toFixed(4), label:'Open this feature on OSM ↗' };
   }
-  // cited: the real article/filing URL; snapshot only when it's a deep page (not a homepage)
-  return { href:s.url||'', label:'View source ↗', snap:(s.url && hasDeepPath(s.url))?('https://web.archive.org/web/'+encodeURIComponent(s.url)):'' };
+  return { href:'', label:'' };
 }
 
 /* register an ad-hoc third-party source (campus pages) and return its id */
@@ -409,7 +416,7 @@ function srcLive(s){
   if(!s || s.label!=='measured') return null;
   var L=window.__live||{};
   if(s.id==='nrel') return !!L.nrel;
-  if(s.id==='osm') return !!L.osm;
+  if(s.id==='osm'||s.id==='osm_gas'||s.id==='osm_sub') return !!L.osm;
   if(s.id==='nominatim') return !!L.nominatim;
   return null;
 }
@@ -433,13 +440,16 @@ function ev(val, id, opts){
 }
 /* for distance-only OSM data: a searchable location instead of a misleading map */
 function locBlock(s){
-  if(s.id!=='osm' || !window.__screenLoc) return '';
-  var L0=window.__screenLoc;
-  var parts=[L0.place,L0.county,L0.state].filter(function(x){return x && x!=='this site';});
-  parts=parts.filter(function(x,i){return parts.indexOf(x)===i;});   // drop duplicates (place==county)
-  var place=parts.join(', ');
-  var coord=(+L0.lat).toFixed(4)+', '+(+L0.lng).toFixed(4);
-  return '<div class="evpop-loc"><b>Screened location</b>'+(place?('<div>'+place+'</div>'):'')+'<div class="evpop-coord">'+coord+'</div><div class="evpop-locsub">Copy this coordinate or place name to search it in any map.</div></div>';
+  if(s.id==='osm_gas' || s.id==='osm_sub'){
+    var f=window.__feat && window.__feat[s.id==='osm_gas'?'gas':'sub'];
+    var what=s.id==='osm_gas'?'gas pipeline':'substation';
+    if(f){
+      return '<div class="evpop-loc"><b>Nearest '+what+'</b><div>~'+f.mi.toFixed(1)+' mi '+f.dir+' of your pin</div><div class="evpop-coord">'+(+f.lat).toFixed(4)+', '+(+f.lng).toFixed(4)+'</div><div class="evpop-locsub">The exact OpenStreetMap point we measured to — open it on the map to see the '+what+' itself.</div></div>';
+    }
+    var L1=window.__screenLoc;
+    return '<div class="evpop-loc"><b>No '+what+' found</b><div>None within the ~7 mi OSM scan around your pin'+(L1?(' ('+(+L1.lat).toFixed(4)+', '+(+L1.lng).toFixed(4)+')'):'')+'.</div><div class="evpop-locsub">OSM coverage varies — verify locally before ruling it out.</div></div>';
+  }
+  return '';
 }
 /* evidence popover */
 function ensureEvPop(){
@@ -460,6 +470,7 @@ function openEv(elm){
     +'<div class="evpop-dates">'+(s.published?('Published: '+s.published+' · '):'')+'as of '+(s.asof||TODAY)+'</div>'
     +locBlock(s)
     +(s.how?('<div class="evpop-how"><b>Where to verify:</b> '+s.how+'</div>'):'')
+    +(function(){var lf=linkFor(s);return lf.href?('<div class="evpop-act"><a href="'+lf.href+'" target="_blank" rel="noopener" onclick="track(\'action\',\'src_view\')">'+lf.label+'</a></div>'):'';})()
     +'<div class="evpop-note"><b>'+lm.name+'.</b> '+lm.note+(s.note?(' '+s.note):'')+'</div>';
   var d=document.getElementById('evpop'); d.innerHTML=html;
   document.getElementById('evback').classList.add('show'); d.classList.add('show');
@@ -485,7 +496,7 @@ function gridSrcId(ctx){
 }
 /* the standing evidence base every screen rests on — shown even when a given
    run only inline-cites a couple of them, so the verdict never looks thin */
-var ENGINE_SOURCES=['nrel','osm','nominatim','lbnl','sec_nuclear','atb_cost'];
+var ENGINE_SOURCES=['nrel','nominatim','lbnl','sec_nuclear','atb_cost'];
 /* build the "Sources & evidence" panel: full engine base + this run's specifics */
 function sourcesPanel(){
   var set={}; ENGINE_SOURCES.forEach(function(id){ set[id]=true; }); Object.keys(_used).forEach(function(id){ set[id]=true; });
@@ -497,6 +508,7 @@ function sourcesPanel(){
       +'<div class="src-title">'+s.pub+(s.title?(' — '+s.title):'')+'</div>'
       +'<div class="src-meta">'+(s.published?('Published '+s.published+' · '):'')+'as of '+(s.asof||TODAY)+' · '+disp.labName+'</div>'
       +(s.how?('<div class="src-how">'+s.how+'</div>'):'')
+      +(function(){var lf=linkFor(s);return lf.href?('<div class="src-links"><a href="'+lf.href+'" target="_blank" rel="noopener">'+lf.label+'</a></div>'):'';})()
       +'</div><span class="src-tierbadge">'+tm.name.split(' · ')[0]+'</span></div>';
   }).join('');
   return '<div class="srcs no-print" id="srcsPanel"><div class="srcs-h" onclick="document.getElementById(\'srcsPanel\').classList.toggle(\'closed\')"><b>Sources &amp; evidence <span class="srcs-sub">— the live pulls and reference data this screen is built on ('+ids.length+')</span></b><span class="srcs-tog">▾</span></div><div class="srcs-body">'+rows+'</div></div>';
@@ -595,19 +607,27 @@ function haversineMi(la1,lo1,la2,lo2){
   return 2*R*Math.asin(Math.min(1,Math.sqrt(s)));
 }
 function analyzeInfra(site, infra){
-  var gas=Infinity, sub=Infinity, plant=Infinity;
+  var gas=Infinity, sub=Infinity, plant=Infinity, gasAt=null, subAt=null;
   var els=(infra&&infra.elements)||[];
   els.forEach(function(el){
     var tags=el.tags||{};
     var pts = el.geometry ? el.geometry : (el.lat!=null?[{lat:el.lat,lon:el.lon}]:[]);
-    var dmin=Infinity;
-    pts.forEach(function(p){ var d=haversineMi(site[0],site[1],p.lat,p.lon); if(d<dmin)dmin=d; });
+    var dmin=Infinity, pmin=null;
+    pts.forEach(function(p){ var d=haversineMi(site[0],site[1],p.lat,p.lon); if(d<dmin){dmin=d;pmin=p;} });
     if(dmin===Infinity) return;
-    if(tags.man_made==='pipeline') gas=Math.min(gas,dmin);
-    else if(tags.power==='substation') sub=Math.min(sub,dmin);
+    if(tags.man_made==='pipeline'){ if(dmin<gas){gas=dmin;gasAt=pmin;} }
+    else if(tags.power==='substation'){ if(dmin<sub){sub=dmin;subAt=pmin;} }
     else if(tags.power==='plant'||tags.power==='generator') plant=Math.min(plant,dmin);
   });
-  return {gasDistMi:gas, subDistMi:sub, plantDistMi:plant};
+  return {gasDistMi:gas, subDistMi:sub, plantDistMi:plant, gasAt:gasAt, subAt:subAt};
+}
+/* compass bearing from screened point to a feature, for human-readable context */
+function bearingTo(site, p){
+  if(!p) return '';
+  var dLon=(p.lon-site[1])*Math.PI/180, y=Math.sin(dLon)*Math.cos(p.lat*Math.PI/180);
+  var x=Math.cos(site[0]*Math.PI/180)*Math.sin(p.lat*Math.PI/180)-Math.sin(site[0]*Math.PI/180)*Math.cos(p.lat*Math.PI/180)*Math.cos(dLon);
+  var b=(Math.atan2(y,x)*180/Math.PI+360)%360;
+  return ['N','NE','E','SE','S','SW','W','NW'][Math.round(b/45)%8];
 }
 
 /* ===== scenario builder (consumes live signals) ===== */
@@ -828,7 +848,7 @@ async function runScreen(auto){
   var load = loadFor(stateName, county); // curated large-load layer (hot zones)
 
   var ctx={ site:site, solarCF:cf, solarLive:solarLive, solarProvider:solarProvider, infraLive:infraLive,
-            gasDistMi:sig.gasDistMi, subDistMi:sig.subDistMi, plantDistMi:sig.plantDistMi,
+            gasDistMi:sig.gasDistMi, subDistMi:sig.subDistMi, plantDistMi:sig.plantDistMi, gasAt:sig.gasAt, subAt:sig.subAt,
             region:region, load:load, place:place, stateName:stateName, county:county,
             needMW:state.powerMW, byMonths:state.byMonths, nuclear:state.nuclear,
             known:knownSiteFor(site[0],site[1]),
@@ -950,6 +970,9 @@ function render(ctx){
   document.getElementById('printMeta').textContent=ctx.place+' ('+ctx.site[0].toFixed(2)+', '+ctx.site[1].toFixed(2)+') · need '+powerLbl+' by '+ctx.byMonths+' mo · '+now;
   window.__screenLoc={place:ctx.place,county:ctx.county,state:ctx.stateName,lat:ctx.site[0],lng:ctx.site[1]};
   window.__live={ nrel:!!ctx.solarLive, osm:!!ctx.infraLive, nominatim:!!ctx.stateName };
+  /* per-feature OSM locations so each chip verifies its OWN feature, not the pin */
+  window.__feat={ gas:(ctx.gasAt?{lat:ctx.gasAt.lat,lng:ctx.gasAt.lon,mi:ctx.gasDistMi,dir:bearingTo(ctx.site,ctx.gasAt)}:null),
+                  sub:(ctx.subAt?{lat:ctx.subAt.lat,lng:ctx.subAt.lon,mi:ctx.subDistMi,dir:bearingTo(ctx.site,ctx.subAt)}:null) };
   /* relabel the solar source to whichever provider actually answered this run */
   var SOLAR_PROV={
     'NREL PVWatts v8':{pub:'NREL (U.S. DOE national lab)', title:'PVWatts v8 solar model', short:'NREL', how:'In NREL’s PVWatts tool (search “NREL PVWatts”), enter this coordinate to reproduce the solar capacity factor.'},
@@ -964,8 +987,8 @@ function render(ctx){
   /* live signal values, each a clickable measured-evidence chip */
   var solarVal = ctx.solarLive ? ev('<b>'+Math.round(ctx.solarCF*100)+'%</b>','nrel',{pill:false})
                                : '<b>'+Math.round(ctx.solarCF*100)+'%</b> <span class="lbl-pill lbl-modeled">Est.</span>';
-  var gasVal = ctx.infraLive ? ev('<b>'+gasTxt+'</b>','osm',{pill:false}) : '<b>'+gasTxt+'</b>';
-  var subVal = ctx.infraLive ? ev('<b>'+subTxt+'</b>','osm',{pill:false}) : '<b>'+subTxt+'</b>';
+  var gasVal = ctx.infraLive ? ev('<b>'+gasTxt+'</b>','osm_gas',{pill:false}) : '<b>'+gasTxt+'</b>';
+  var subVal = ctx.infraLive ? ev('<b>'+subTxt+'</b>','osm_sub',{pill:false}) : '<b>'+subTxt+'</b>';
 
   document.getElementById('result').innerHTML=
     '<div class="verdict '+V.cls+'">'+
