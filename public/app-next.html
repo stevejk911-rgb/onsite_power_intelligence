@@ -159,6 +159,9 @@
   .src-links a{color:#1E50E6;text-decoration:none}
   .src-links a:hover{text-decoration:underline}
   .src-tierbadge{font-family:var(--sans);font-size:9.5px;font-weight:800;letter-spacing:.03em;text-transform:uppercase;padding:1px 6px;border-radius:4px;background:#eef2f7;color:#39424f;white-space:nowrap}
+  /* "Previous pin" undo control, floating over the map */
+  .undo-fab{position:absolute;top:12px;right:12px;z-index:600;align-items:center;gap:5px;background:#fff;border:1px solid var(--line-2);border-radius:9px;padding:7px 12px;font-family:var(--sans);font-size:13px;font-weight:700;color:#1a2230;box-shadow:0 2px 8px rgba(10,18,48,.16);cursor:pointer}
+  .undo-fab:hover{border-color:#1E50E6;color:#1840c0}
   /* bigger, touch-friendly zoom buttons */
   .leaflet-control-zoom a{width:36px!important;height:36px!important;line-height:36px!important;font-size:22px!important;font-weight:600;color:#1a2230}
   .leaflet-touch .leaflet-control-zoom{border:1px solid rgba(10,18,48,.15);box-shadow:0 2px 8px rgba(10,18,48,.14)}
@@ -225,7 +228,8 @@
       <button class="screen-btn" onclick="runScreen()">Screen</button>
     </div>
     <div id="map"></div>
-    <div class="maphelp" id="maphelp"><b>Click the map to drop your site</b> — drag the pin to fine-tune · scroll or +/− to zoom · double-click to zoom in.</div>
+    <button id="undoBtn" class="undo-fab no-print" onclick="undoPin()" title="Back to the previous pin (Ctrl/Cmd+Z)" style="display:none">↶ Previous pin</button>
+    <div class="maphelp" id="maphelp"><b>Click the map to drop your site</b> — drag the pin to adjust · scroll or +/− to zoom · ⌘/Ctrl+Z (or “↶ Previous pin”) to undo.</div>
   </div>
 
   <!-- SETTINGS -->
@@ -829,12 +833,29 @@ function setMarker(lat,lng){
   }
   writePin(lat,lng);
 }
-function writePin(lat,lng){
+var pinHistory=[];
+function writePin(lat,lng,fromUndo){
+  /* remember the spot we're leaving so the user can always get back to it */
+  if(!fromUndo && picked && (Math.abs(picked[0]-lat)>1e-9 || Math.abs(picked[1]-lng)>1e-9)){
+    pinHistory.push([picked[0],picked[1]]); if(pinHistory.length>25) pinHistory.shift();
+  }
   picked=[lat,lng];
   var v=lat.toFixed(4)+', '+lng.toFixed(4);
   var a=document.getElementById('addr'); if(a){ a.value=v; }
   var a2=document.getElementById('addr2'); if(a2){ a2.value=v; }
+  updateUndoBtn();
 }
+function updateUndoBtn(){ var b=document.getElementById('undoBtn'); if(b){ b.style.display=pinHistory.length?'flex':'none'; } }
+function undoPin(){
+  if(!pinHistory.length) return;
+  var prev=pinHistory.pop();
+  if(marker){ marker.setLatLng(prev); } else { marker=L.marker(prev,{draggable:true}).addTo(lmap); marker.on('dragend',function(){ var ll=marker.getLatLng(); writePin(ll.lat,ll.lng); }); }
+  writePin(prev[0],prev[1],true);   // fromUndo: don't re-record
+  try{ lmap.panTo(prev,{animate:true}); }catch(e){}
+  updateUndoBtn();
+  track('action','pin_undo');
+}
+window.undoPin=undoPin;
 
 /* ===== data fetch ===== */
 function api(path){ return fetch(path).then(function(r){ if(!r.ok) throw new Error(path); return r.json(); }); }
@@ -856,7 +877,7 @@ function setScreening(on){
     if(on){ if(b.dataset.orig===undefined){ b.dataset.orig=b.innerHTML; } b.innerHTML='<span class="btn-spin"></span>Screening…'; b.disabled=true; b.classList.add('is-screening'); }
     else { if(b.dataset.orig!==undefined){ b.innerHTML=b.dataset.orig; } b.disabled=false; b.classList.remove('is-screening'); }
   }
-  var mh=document.getElementById('maphelp'); if(mh){ mh.innerHTML = on ? '<b>Screening this site…</b> reading live solar, gas & grid data.' : '<b>Click the map to drop your site</b> — drag the pin to fine-tune · scroll or +/− to zoom · double-click to zoom in.'; }
+  var mh=document.getElementById('maphelp'); if(mh){ mh.innerHTML = on ? '<b>Screening this site…</b> reading live solar, gas & grid data.' : '<b>Click the map to drop your site</b> — drag the pin to adjust · scroll or +/− to zoom · ⌘/Ctrl+Z (or “↶ Previous pin”) to undo.'; }
 }
 async function runScreen(auto){
   var addr=document.getElementById('addr').value.trim();
@@ -1147,6 +1168,14 @@ setupSeg('segPower',[100,250,500,1000],['100 MW','250 MW','500 MW','1 GW+'],'pow
 setupSeg('segTime',[12,18,24,36],['12 mo','18 mo','24 mo','36 mo'],'byMonths');
 setupSeg('segNuke',[true,false],['Yes','No'],'nuclear');
 initMap();
+/* Ctrl/Cmd+Z returns to the previous pin (ignored while typing in a field) */
+document.addEventListener('keydown',function(e){
+  if((e.ctrlKey||e.metaKey) && (e.key==='z'||e.key==='Z')){
+    var t=e.target, tag=t&&t.tagName;
+    if(tag==='INPUT'||tag==='TEXTAREA') return;
+    if(pinHistory.length){ e.preventDefault(); undoPin(); }
+  }
+});
 /* show the sticky search bar once the map's own search scrolls out of view */
 (function(){
   var mc=document.querySelector('.map-controls'), sb=document.getElementById('stickybar');
