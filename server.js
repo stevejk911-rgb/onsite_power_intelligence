@@ -169,6 +169,35 @@ async function getJSON(url, opts){
   if(!r.ok) throw new Error("upstream " + r.status + " from " + new URL(url).host);
   return r.json();
 }
+/* Overpass with mirror fall-through. The public OSM query servers frequently
+   time out under load and return PARTIAL data (a 200 with a "remark" and missing
+   elements) — which made "nearest pipeline/substation" vary run-to-run. We try
+   mirrors in order and reject partial/timed-out responses so the result is the
+   true nearest feature, not whatever a half-finished query happened to return. */
+async function overpass(query){
+  const mirrors = [
+    "https://overpass-api.de/api/interpreter",
+    "https://overpass.kumi.systems/api/interpreter",
+    "https://overpass.openstreetmap.fr/api/interpreter"
+  ];
+  let last = "none";
+  for(let i = 0; i < mirrors.length; i++){
+    try {
+      const r = await fetch(mirrors[i], {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded", "User-Agent": UA },
+        body: "data=" + encodeURIComponent(query),
+        signal: AbortSignal.timeout(20000)
+      });
+      if(!r.ok){ last = "http " + r.status; continue; }
+      const j = await r.json();
+      if(j && j.remark && /timed out|runtime error/i.test(j.remark)){ last = "partial/timeout"; continue; }
+      if(j && Array.isArray(j.elements)) return j;
+      last = "no elements";
+    } catch(e){ last = String((e && e.message) || e); }
+  }
+  throw new Error("overpass unavailable (" + last + ")");
+}
 const round = (n, d) => {
   const f = Math.pow(10, d == null ? 3 : d);
   return Math.round(parseFloat(n) * f) / f;
@@ -334,18 +363,14 @@ const api = {
     const hit = cacheGet(k); if(hit) return hit;
     const d = 0.10;
     const bb = (lat-d) + "," + (lon-d) + "," + (lat+d) + "," + (lon+d);
-    const query = "[out:json][timeout:25];("
+    const query = "[out:json][timeout:30];("
       + 'way["power"="line"](' + bb + ');'
       + 'way["power"="substation"](' + bb + ');node["power"="substation"](' + bb + ');'
       + 'way["power"="plant"](' + bb + ');node["power"="plant"](' + bb + ');'
       + 'way["power"="generator"](' + bb + ');node["power"="generator"](' + bb + ');'
       + 'way["man_made"="pipeline"]["substance"~"gas",i](' + bb + ');'
       + ");out tags geom;";
-    const data = await getJSON("https://overpass-api.de/api/interpreter", {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded", "User-Agent": UA },
-      body: "data=" + encodeURIComponent(query)
-    });
+    const data = await overpass(query);
     return cacheSet(k, data);
   },
   /* Live solar capacity factor with provider fall-through, so ANY pin gets a
