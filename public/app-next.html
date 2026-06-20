@@ -318,6 +318,7 @@ var lastCtx=null;
 var TODAY = new Date().toISOString().slice(0,10);
 var TIER_META = {
   live:{dot:'t-live', name:'LIVE · measured'},
+  est:{dot:'t4', name:'Estimate · not live this run'},
   1:{dot:'t1', name:'Tier 1 · gov / regulator / ISO / national lab'},
   2:{dot:'t2', name:'Tier 2 · primary company disclosure'},
   3:{dot:'t3', name:'Tier 3 · established trade press'},
@@ -326,6 +327,7 @@ var TIER_META = {
 };
 var LABEL_META = {
   measured:{cls:'lbl-measured', name:'Measured', note:'Pulled live from the source this run.'},
+  estimate:{cls:'lbl-modeled', name:'Estimate', note:'The live source did not respond this run, so a screening-grade fallback value was used. Not measured.'},
   modeled:{cls:'lbl-modeled', name:'Modeled', note:'Our screening estimate / synthesis of filings — planning-grade, ±40%.'},
   claimed:{cls:'lbl-claimed', name:'Claimed', note:'Stated by a third party. We cite it; we do not independently assert it.'}
 };
@@ -401,6 +403,22 @@ function regAdhoc(url,title,pub){
   return id;
 }
 function getSrc(id){ var s=SOURCES[id]||_adhoc[id]||null; if(s && !s.id){ s.id=id; } return s; }
+/* did this measured source actually run live this render? true / false / null(n-a) */
+function srcLive(s){
+  if(!s || s.label!=='measured') return null;
+  var L=window.__live||{};
+  if(s.id==='nrel') return !!L.nrel;
+  if(s.id==='osm') return !!L.osm;
+  if(s.id==='nominatim') return !!L.nominatim;
+  return null;
+}
+/* tier key + label name + label-meta for a source, honest about live vs fallback */
+function srcDisplay(s){
+  var live=srcLive(s);
+  if(live===false) return { tk:'est', lm:LABEL_META.estimate, labName:'Estimate' };
+  var tk = s.label==='measured' ? 'live' : s.tier;
+  return { tk:tk, lm:LABEL_META[s.label], labName:LABEL_META[s.label].name };
+}
 
 /* render a clickable, tier-dotted evidence chip around a value */
 var _used={};
@@ -416,7 +434,9 @@ function ev(val, id, opts){
 function locBlock(s){
   if(s.id!=='osm' || !window.__screenLoc) return '';
   var L0=window.__screenLoc;
-  var place=[L0.place,L0.county,L0.state].filter(function(x){return x && x!=='this site';}).join(', ');
+  var parts=[L0.place,L0.county,L0.state].filter(function(x){return x && x!=='this site';});
+  parts=parts.filter(function(x,i){return parts.indexOf(x)===i;});   // drop duplicates (place==county)
+  var place=parts.join(', ');
   var coord=(+L0.lat).toFixed(4)+', '+(+L0.lng).toFixed(4);
   return '<div class="evpop-loc"><b>Screened location</b>'+(place?('<div>'+place+'</div>'):'')+'<div class="evpop-coord">'+coord+'</div><div class="evpop-locsub">Copy this coordinate or place name to search it in any map.</div></div>';
 }
@@ -431,8 +451,8 @@ function openEv(elm){
   ensureEvPop();
   var id=elm.getAttribute('data-id'), lab=elm.getAttribute('data-lab');
   var s=getSrc(id); if(!s) return;
-  var tierKey=s.label==='measured'?'live':s.tier;
-  var tm=TIER_META[tierKey], lm=LABEL_META[lab||s.label];
+  var disp=srcDisplay(s);
+  var tm=TIER_META[disp.tk], lm=disp.lm;
   var html='<div class="evpop-top"><span class="evtier"><span class="ev-dot '+tm.dot+'"></span>'+tm.name+'</span><button class="evpop-x" onclick="closeEv()" aria-label="close">×</button></div>'
     +'<div class="evpop-pub">'+s.pub+'</div><div class="evpop-type">'+s.type+(s.title?(' — '+s.title):'')+'</div>'
     +(s.quote?('<div class="evpop-claim">“'+s.quote+'”</div>'):'')
@@ -471,10 +491,10 @@ function sourcesPanel(){
   var ids=Object.keys(set); if(!ids.length) return '';
   var order={live:0,1:1,2:2,3:3,4:4,5:5};
   ids.sort(function(a,b){ var sa=getSrc(a),sb=getSrc(b); var ka=sa.label==='measured'?'live':sa.tier, kb=sb.label==='measured'?'live':sb.tier; return order[ka]-order[kb]; });
-  var rows=ids.map(function(id){ var s=getSrc(id); var tk=s.label==='measured'?'live':s.tier; var tm=TIER_META[tk];
+  var rows=ids.map(function(id){ var s=getSrc(id); var disp=srcDisplay(s); var tm=TIER_META[disp.tk];
     return '<div class="src-row"><span class="ev-dot '+tm.dot+'"></span><div class="src-main">'
       +'<div class="src-title">'+s.pub+(s.title?(' — '+s.title):'')+'</div>'
-      +'<div class="src-meta">'+(s.published?('Published '+s.published+' · '):'')+'as of '+(s.asof||TODAY)+' · '+LABEL_META[s.label].name+'</div>'
+      +'<div class="src-meta">'+(s.published?('Published '+s.published+' · '):'')+'as of '+(s.asof||TODAY)+' · '+disp.labName+'</div>'
       +(s.how?('<div class="src-how">'+s.how+'</div>'):'')
       +'</div><span class="src-tierbadge">'+tm.name.split(' · ')[0]+'</span></div>';
   }).join('');
@@ -927,6 +947,7 @@ function render(ctx){
   var now=new Date().toISOString().slice(0,10);
   document.getElementById('printMeta').textContent=ctx.place+' ('+ctx.site[0].toFixed(2)+', '+ctx.site[1].toFixed(2)+') · need '+powerLbl+' by '+ctx.byMonths+' mo · '+now;
   window.__screenLoc={place:ctx.place,county:ctx.county,state:ctx.stateName,lat:ctx.site[0],lng:ctx.site[1]};
+  window.__live={ nrel:!!ctx.solarLive, osm:!!ctx.infraLive, nominatim:!!ctx.stateName };
 
   /* live signal values, each a clickable measured-evidence chip */
   var solarVal = ctx.solarLive ? ev('<b>'+Math.round(ctx.solarCF*100)+'%</b>','nrel',{pill:false})
