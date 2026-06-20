@@ -126,6 +126,9 @@
   .evpop-type{font-size:11px;color:#6b7280;margin-top:1px}
   .evpop-claim{font-size:12.5px;color:#2b3340;line-height:1.45;margin:8px 0;padding:7px 10px;background:#f7f8fb;border-left:3px solid #c8cfdb;border-radius:4px;font-style:italic}
   .evpop-dates{font-size:11px;color:#6b7280;margin-top:6px}
+  .evpop-how{font-size:11.5px;color:#39424f;line-height:1.5;margin-top:9px;padding:8px 10px;background:#f0f6ff;border:1px solid #d8e4ff;border-radius:7px}
+  .evpop-how b{color:#1840c0}
+  .src-how{font-size:11px;color:#5a6573;line-height:1.45;margin-top:4px}
   .evpop-act{display:flex;flex-wrap:wrap;gap:10px;margin-top:9px;font-size:12px;font-weight:700}
   .evpop-act a{color:#1E50E6;text-decoration:none}
   .evpop-act a:hover{text-decoration:underline}
@@ -314,17 +317,29 @@ var LABEL_META = {
 /* canonical, deep-linkable sources. quote/frag are filled only where we have a
    verified short excerpt — never fabricated. cad = review cadence (days). */
 var SOURCES = {
-  nrel:{title:'PVWatts solar resource model', pub:'NREL (U.S. DOE national lab)', type:'Live solar capacity-factor model', tier:1, label:'measured', url:'https://pvwatts.nrel.gov/', published:'continuously updated', cad:0},
-  osm:{title:'Gas pipelines & substations (Overpass)', pub:'OpenStreetMap contributors', type:'Open primary geospatial data', tier:1, label:'measured', url:'https://www.openstreetmap.org/', published:'continuously updated', cad:0, note:'Crowd-sourced primary geodata; distances are live but completeness varies by region.'},
-  nominatim:{title:'Geocoding', pub:'OpenStreetMap / Nominatim', type:'Open geocoder', tier:1, label:'measured', url:'https://nominatim.org/', published:'continuously updated', cad:0},
-  lbnl:{title:'"Queued Up" interconnection-queue study', pub:'Lawrence Berkeley National Laboratory', type:'Generation-queue proxy for grid timing', tier:1, label:'modeled', url:'https://emp.lbl.gov/queues', published:'2025', cad:90},
-  ercot_sb6:{title:'SB6 large-load interconnection (≥75 MW)', pub:'ERCOT / Public Utility Commission of Texas', type:'Large-load study & curtailment rule', tier:1, label:'modeled', url:'https://www.ercot.com/', published:'2025', cad:90},
-  dominion_scc:{title:'Dominion load-service & NoVA capacity', pub:'Virginia State Corporation Commission / Dominion', type:'Utility filing', tier:1, label:'modeled', url:'https://scc.virginia.gov/', published:'2025-26', cad:90},
-  puco_aep:{title:'AEP Ohio data-center tariff', pub:'Public Utilities Commission of Ohio / AEP', type:'Tariff & load-study ruling', tier:1, label:'modeled', url:'https://puco.ohio.gov/', published:'2025', cad:90},
-  ga_psc:{title:'Georgia 2025 IRP & >100 MW tariff', pub:'Georgia Public Service Commission', type:'Integrated resource plan', tier:1, label:'modeled', url:'https://psc.ga.gov/', published:'2025', cad:90},
-  pjm:{title:'PJM interconnection process & timing', pub:'PJM Interconnection (ISO/RTO)', type:'Queue / connection timing', tier:1, label:'modeled', url:'https://www.pjm.com/planning', published:'2025', cad:90},
-  eia:{title:'EIA generator & capacity data', pub:'U.S. Energy Information Administration', type:'Federal energy statistics', tier:1, label:'modeled', url:'https://www.eia.gov/electricity/', published:'2025', cad:90},
-  generic_reg:{title:'Regulatory / utility filing (synthesis)', pub:'State PUC / ISO / utility', type:'Synthesis of public filings', tier:1, label:'modeled', url:'', published:'2025-26', cad:90}
+  nrel:{title:'PVWatts v8 solar model', pub:'NREL (U.S. DOE national lab)', type:'Live solar capacity-factor model', tier:1, label:'measured', kind:'measured', url:'https://pvwatts.nrel.gov/', published:'continuously updated', cad:0,
+    how:'Opens the NREL PVWatts calculator. Enter this coordinate and it returns the same solar capacity factor we used.'},
+  osm:{title:'Gas pipelines & substations (Overpass)', pub:'OpenStreetMap contributors', type:'Open primary geospatial data', tier:1, label:'measured', kind:'measured', url:'https://www.openstreetmap.org/', published:'continuously updated', cad:0,
+    note:'Crowd-sourced primary geodata; live but completeness varies by region.',
+    how:'Opens OpenStreetMap centered on this exact point (with a pin). Use the right-click → "Query features" tool to see the pipeline / substation we measured the distance to.'},
+  nominatim:{title:'Geocoding (place & state)', pub:'OpenStreetMap / Nominatim', type:'Open geocoder', tier:1, label:'measured', kind:'measured', url:'https://www.openstreetmap.org/', published:'continuously updated', cad:0,
+    how:'Opens OpenStreetMap at this point so you can confirm the place and state we resolved.'},
+  lbnl:{title:'"Queued Up" interconnection-queue study', pub:'Lawrence Berkeley National Laboratory', type:'Generation-queue proxy for grid timing', tier:1, label:'modeled', kind:'cited', url:'https://emp.lbl.gov/queues', published:'2025', cad:90,
+    how:'Opens LBNL’s queues page. Find the latest "Queued Up" report and your ISO/RTO’s queue length — the basis for our grid-timing proxy.'},
+  ercot_sb6:{title:'SB6 large-load interconnection (≥75 MW)', pub:'ERCOT / Public Utility Commission of Texas', type:'Large-load study & curtailment rule', tier:1, label:'modeled', kind:'cited', url:'https://www.ercot.com/', published:'2025', cad:90,
+    how:'On ERCOT / PUCT, search "Senate Bill 6 large load" — the interconnection study and curtailment rule behind this connect estimate.'},
+  dominion_scc:{title:'Dominion load-service & NoVA capacity', pub:'Virginia State Corporation Commission / Dominion', type:'Utility filing', tier:1, label:'modeled', kind:'cited', url:'https://scc.virginia.gov/', published:'2025-26', cad:90,
+    how:'In the Virginia SCC docket system, search Dominion data-center / large-load service filings for Northern Virginia.'},
+  puco_aep:{title:'AEP Ohio data-center tariff', pub:'Public Utilities Commission of Ohio / AEP', type:'Tariff & load-study ruling', tier:1, label:'modeled', kind:'cited', url:'https://puco.ohio.gov/', published:'2025', cad:90,
+    how:'In the PUCO docket, search for the AEP Ohio data-center tariff (2025) and its load-study terms.'},
+  ga_psc:{title:'Georgia 2025 IRP & >100 MW tariff', pub:'Georgia Public Service Commission', type:'Integrated resource plan', tier:1, label:'modeled', kind:'cited', url:'https://psc.ga.gov/', published:'2025', cad:90,
+    how:'On the Georgia PSC site, find the 2025 Georgia Power IRP and the >100 MW large-load tariff.'},
+  pjm:{title:'PJM interconnection process & timing', pub:'PJM Interconnection (ISO/RTO)', type:'Queue / connection timing', tier:1, label:'modeled', kind:'cited', url:'https://www.pjm.com/planning', published:'2025', cad:90,
+    how:'On PJM Planning, see the interconnection process and cycle timing behind this date.'},
+  eia:{title:'EIA generator & capacity data', pub:'U.S. Energy Information Administration', type:'Federal energy statistics', tier:1, label:'modeled', kind:'cited', url:'https://www.eia.gov/electricity/', published:'2025', cad:90,
+    how:'On EIA Electricity, see generator-level capacity and operations data.'},
+  generic_reg:{title:'Regulatory / utility filing (synthesis)', pub:'State PUC / ISO / utility', type:'Synthesis of public filings', tier:1, label:'modeled', kind:'cited', url:'', published:'2025-26', cad:90,
+    how:'This grid-timing figure is our synthesis of the local utility, ISO, and PUC filings for this market. Search that utility / PUC for current large-load interconnection terms.'}
 };
 /* classify a third-party (campus) source URL into a tier + label */
 function classifySrc(url){
@@ -337,14 +352,23 @@ function classifySrc(url){
   return {tier:4,label:'claimed'};
 }
 function domainOf(url){ try{ return new URL(url).hostname.replace(/^www\./,''); }catch(e){ return url||''; } }
-/* build the deep, highlighted "view source" link (Text Fragment / PDF page) */
-function viewUrl(s){
-  var u=s.url||''; if(!u) return '';
-  if(s.page){ return u+(u.indexOf('#')<0?'#page='+s.page:''); }
-  if(s.quote){ return u+(u.indexOf('#')<0?'#:~:text='+encodeURIComponent(s.quote):''); }
-  return u;
+/* does this URL point at a specific article/filing (deep path) vs a homepage? */
+function hasDeepPath(url){ try{ var u=new URL(url); return !!(u.pathname && u.pathname.replace(/\/+$/,'').length>1); }catch(e){ return false; } }
+/* OpenStreetMap centered on the screened coordinate, with a pin */
+function osmAt(){
+  var c = window.lastCtx && lastCtx.site;
+  if(c){ return 'https://www.openstreetmap.org/?mlat='+c[0]+'&mlon='+c[1]+'#map=15/'+(+c[0]).toFixed(4)+'/'+(+c[1]).toFixed(4); }
+  return 'https://www.openstreetmap.org/';
 }
-function snapUrl(url){ return url?('https://web.archive.org/web/'+encodeURIComponent(url)):''; }
+/* the one honest action link for a source: where to go + what label */
+function linkFor(s){
+  if(s.kind==='measured'){
+    if(s.id==='nrel') return { href:s.url, label:'Open the calculator ↗', snap:'' };
+    return { href:osmAt(), label:'Open this location ↗', snap:'' };   // osm / nominatim
+  }
+  // cited: the real article/filing URL; snapshot only when it's a deep page (not a homepage)
+  return { href:s.url||'', label:'View source ↗', snap:(s.url && hasDeepPath(s.url))?('https://web.archive.org/web/'+encodeURIComponent(s.url)):'' };
+}
 
 /* register an ad-hoc third-party source (campus pages) and return its id */
 var _adhoc={}, _adhocN=0;
@@ -352,10 +376,11 @@ function regAdhoc(url,title,pub){
   if(!url) return null;
   for(var k in _adhoc){ if(_adhoc[k].url===url) return k; }
   var c=classifySrc(url); var id='ad'+(++_adhocN);
-  _adhoc[id]={title:title||domainOf(url), pub:pub||domainOf(url), type:'Third-party report', tier:c.tier, label:c.label, url:url, published:'', cad:30, adhoc:true};
+  _adhoc[id]={id:id, title:title||domainOf(url), pub:pub||domainOf(url), type:'Third-party report', tier:c.tier, label:c.label, kind:'cited', url:url, published:'', cad:30, adhoc:true,
+    how:'Opens the original report. Look for the on-site generation figure cited above — the capacity (MW/GW), fuel type, and operating status.'};
   return id;
 }
-function getSrc(id){ return SOURCES[id]||_adhoc[id]||null; }
+function getSrc(id){ var s=SOURCES[id]||_adhoc[id]||null; if(s && !s.id){ s.id=id; } return s; }
 
 /* render a clickable, tier-dotted evidence chip around a value */
 var _used={};
@@ -380,14 +405,15 @@ function openEv(elm){
   var s=getSrc(id); if(!s) return;
   var tierKey=s.label==='measured'?'live':s.tier;
   var tm=TIER_META[tierKey], lm=LABEL_META[lab||s.label];
-  var vu=viewUrl(s), snap=snapUrl(s.url);
+  var lf=linkFor(s);
   var html='<div class="evpop-top"><span class="evtier"><span class="ev-dot '+tm.dot+'"></span>'+tm.name+'</span><button class="evpop-x" onclick="closeEv()" aria-label="close">×</button></div>'
     +'<div class="evpop-pub">'+s.pub+'</div><div class="evpop-type">'+s.type+(s.title?(' — '+s.title):'')+'</div>'
     +(s.quote?('<div class="evpop-claim">“'+s.quote+'”</div>'):'')
     +'<div class="evpop-dates">'+(s.published?('Published: '+s.published+' · '):'')+'as of '+(s.asof||TODAY)+'</div>'
+    +(s.how?('<div class="evpop-how"><b>How to verify:</b> '+s.how+'</div>'):'')
     +'<div class="evpop-act">'
-      +(vu?('<a href="'+vu+'" target="_blank" rel="noopener" onclick="track(\'action\',\'src_view\')">View source'+(s.quote?' (highlighted)':'')+' ↗</a>'):'')
-      +(snap?('<a href="'+snap+'" target="_blank" rel="noopener">Snapshot ↗</a>'):'')
+      +(lf.href?('<a href="'+lf.href+'" target="_blank" rel="noopener" onclick="track(\'action\',\'src_view\')">'+lf.label+'</a>'):'')
+      +(lf.snap?('<a href="'+lf.snap+'" target="_blank" rel="noopener" title="archived copy, in case the page moves">Archived copy ↗</a>'):'')
     +'</div>'
     +'<div class="evpop-note"><b>'+lm.name+'.</b> '+lm.note+(s.note?(' '+s.note):'')+'</div>';
   var d=document.getElementById('evpop'); d.innerHTML=html;
@@ -417,11 +443,12 @@ function sourcesPanel(){
   var ids=Object.keys(_used); if(!ids.length) return '';
   var order={live:0,1:1,2:2,3:3,4:4,5:5};
   ids.sort(function(a,b){ var sa=getSrc(a),sb=getSrc(b); var ka=sa.label==='measured'?'live':sa.tier, kb=sb.label==='measured'?'live':sb.tier; return order[ka]-order[kb]; });
-  var rows=ids.map(function(id){ var s=getSrc(id); var tk=s.label==='measured'?'live':s.tier; var tm=TIER_META[tk]; var vu=viewUrl(s), snap=snapUrl(s.url);
+  var rows=ids.map(function(id){ var s=getSrc(id); var tk=s.label==='measured'?'live':s.tier; var tm=TIER_META[tk]; var lf=linkFor(s);
     return '<div class="src-row"><span class="ev-dot '+tm.dot+'"></span><div class="src-main">'
       +'<div class="src-title">'+s.pub+(s.title?(' — '+s.title):'')+'</div>'
       +'<div class="src-meta">'+(s.published?('Published '+s.published+' · '):'')+'as of '+(s.asof||TODAY)+' · '+LABEL_META[s.label].name+'</div>'
-      +'<div class="src-links">'+(vu?('<a href="'+vu+'" target="_blank" rel="noopener">View source ↗</a>'):'')+(snap?('<a href="'+snap+'" target="_blank" rel="noopener">Snapshot ↗</a>'):'')+'</div>'
+      +(s.how?('<div class="src-how">'+s.how+'</div>'):'')
+      +'<div class="src-links">'+(lf.href?('<a href="'+lf.href+'" target="_blank" rel="noopener">'+lf.label+'</a>'):'')+(lf.snap?('<a href="'+lf.snap+'" target="_blank" rel="noopener">Archived copy ↗</a>'):'')+'</div>'
       +'</div><span class="src-tierbadge">'+tm.name.split(' · ')[0]+'</span></div>';
   }).join('');
   return '<div class="srcs no-print" id="srcsPanel"><div class="srcs-h" onclick="document.getElementById(\'srcsPanel\').classList.toggle(\'closed\')"><b>Sources &amp; evidence <span class="srcs-sub">— every number above is clickable; this lists them all</span></b><span class="srcs-tog">▾</span></div><div class="srcs-body">'+rows+'</div></div>';
