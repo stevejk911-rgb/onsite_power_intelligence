@@ -158,6 +158,8 @@
   .src-links a{color:#1E50E6;text-decoration:none}
   .src-links a:hover{text-decoration:underline}
   .src-tierbadge{font-family:var(--sans);font-size:9.5px;font-weight:800;letter-spacing:.03em;text-transform:uppercase;padding:1px 6px;border-radius:4px;background:#eef2f7;color:#39424f;white-space:nowrap}
+  /* neutral "unverified" matrix chip (e.g. OSM gap, not a confident fail) */
+  .status-chip.chip-na{background:#eef1f6;color:#6b7280;border:1px solid var(--line-2)}
   /* Screen button "working" state */
   .screen-btn.is-screening{opacity:.92;cursor:progress;display:inline-flex;align-items:center;gap:7px}
   .btn-spin{display:inline-block;width:13px;height:13px;border:2px solid rgba(255,255,255,.45);border-top-color:#fff;border-radius:50%;animation:btnspin .7s linear infinite;flex:none}
@@ -623,7 +625,7 @@ function buildScenarios(ctx){
   S.push({grp:'Baseline',name:'Grid interconnection',months:Math.max(0,(gridYear-2026))*12,firm:100,lcoe:42,capex:250,note:gridNote});
   // Gas family (gated by real pipeline distance)
   function gasRow(grp,name,baseMo,firm,baseLcoe,capex,cap,note){
-    if(gasNone) return {grp:grp,name:name,na:true,note:'no gas pipeline within ~7 mi (OSM scan)'};
+    if(gasNone) return {grp:grp,name:name,na:true,note:'no pipeline in OpenStreetMap nearby — OSM coverage varies; verify locally'};
     return {grp:grp,name:name,months:baseMo+latAdd+(big?4:0),firm:firm,lcoe:Math.round(baseLcoe+gasCostAdj),capex:capex,cap:cap,note:(gasLateral?'gas lateral ~'+(gas.toFixed(0))+' mi':'pipeline '+(gas.toFixed(1))+' mi')+(note?' · '+note:'')};
   }
   S.push(gasRow('Baseline','Fuel cell',12,95,128,1500,200));
@@ -631,7 +633,7 @@ function buildScenarios(ctx){
   S.push(gasRow('Baseline','Gas reciprocating + BESS',16,96,95,1350,600));
   // Solar-only / Solar+BESS (live CF)
   var solarFirm=Math.max(8,Math.min(62,Math.round(cf*100*2.6)));
-  S.push({grp:'Hybrid',name:'Solar + 8h BESS',months:20,firm:solarFirm,lcoe:Math.max(40,Math.round(70 - (cf-0.18)*120)),capex:1750,cap:220,note:'CF '+Math.round(cf*100)+'% (NREL) · non-firm alone'});
+  S.push({grp:'Hybrid',name:'Solar + 8h BESS',months:20,firm:solarFirm,lcoe:Math.max(40,Math.round(70 - (cf-0.18)*120)),capex:1750,cap:220,note:'CF '+Math.round(cf*100)+'% · non-firm alone'});
   S.push(gasRow('Hybrid','Gas recip + Solar + BESS',20,96,86,1600,600,'CF '+Math.round(cf*100)+'%'));
   S.push(gasRow('Hybrid','Gas + BESS (firming)',18,95,92,1450,600));
   // Nuclear PPAs (regional)
@@ -814,8 +816,9 @@ async function runScreen(auto){
   var addrP=reverse(site[0],site[1]);
   var solar=await solarP, infra=await infraP, address=await addrP;
 
-  var solarLive = solar && typeof solar.capacityFactor==='number';
-  var cf = solarLive ? solar.capacityFactor : 0.19; // fallback CF
+  var solarLive = !!(solar && solar.live && typeof solar.capacityFactor==='number');
+  var cf = solarLive ? solar.capacityFactor : 0.19; // honest fallback CF when no provider answered
+  var solarProvider = (solar && solar.provider) || 'estimate';
   var sig = analyzeInfra(site, infra||{elements:[]});
   var infraLive = !!infra;
   var place = address.city||address.town||address.county||address.state||'this site';
@@ -824,7 +827,7 @@ async function runScreen(auto){
   var region = regionFor(stateName);
   var load = loadFor(stateName, county); // curated large-load layer (hot zones)
 
-  var ctx={ site:site, solarCF:cf, solarLive:solarLive, infraLive:infraLive,
+  var ctx={ site:site, solarCF:cf, solarLive:solarLive, solarProvider:solarProvider, infraLive:infraLive,
             gasDistMi:sig.gasDistMi, subDistMi:sig.subDistMi, plantDistMi:sig.plantDistMi,
             region:region, load:load, place:place, stateName:stateName, county:county,
             needMW:state.powerMW, byMonths:state.byMonths, nuclear:state.nuclear,
@@ -854,7 +857,7 @@ function render(ctx){
   var okCount=st.filter(function(x){return x==='ok';}).length;
 
   var powerLbl=ctx.needMW>=1000?'1 GW+':ctx.needMW+' MW';
-  var gasTxt = (ctx.gasDistMi<=18)?(ctx.gasDistMi.toFixed(1)+' mi'):'none within ~7 mi';
+  var gasTxt = (ctx.gasDistMi<=18)?(ctx.gasDistMi.toFixed(1)+' mi'):'none in OSM (≤7 mi)';
   var subTxt = (ctx.subDistMi<200)?ctx.subDistMi.toFixed(1)+' mi':'none nearby';
 
   var effGridYear = ctx.load ? ctx.load.y : ctx.region.queue;
@@ -935,7 +938,7 @@ function render(ctx){
   S.forEach(function(s,i){
     var c=st[i], chip=c==='ok'?'<span class="status-chip chip-ok">✓ meets</span>':c==='warn'?'<span class="status-chip chip-warn">▲ near-miss</span>':'<span class="status-chip chip-no">✗ fails</span>';
     var win=(i===winIdx)?' class="win"':'';
-    if(s.na){ rows+='<tr><td class="scen">'+s.name+'<span class="grp">'+s.grp+(s.note?' · '+s.note:'')+'</span></td><td class="num muted">—</td><td class="num muted">—</td><td class="num muted">—</td><td class="num muted">—</td><td>'+chip+'</td></tr>'; }
+    if(s.na){ var naChip='<span class="status-chip chip-na">— unverified</span>'; rows+='<tr><td class="scen">'+s.name+'<span class="grp">'+s.grp+(s.note?' · '+s.note:'')+'</span></td><td class="num muted">—</td><td class="num muted">—</td><td class="num muted">—</td><td class="num muted">—</td><td>'+naChip+'</td></tr>'; }
     else{
       var mo=s.months===0?'0 mo':(s.name==='Grid interconnection'?('~'+effGridYear):(s.months+' mo'));
       var capex=s.capex?('$'+s.capex.toLocaleString()):'PPA';
@@ -947,6 +950,16 @@ function render(ctx){
   document.getElementById('printMeta').textContent=ctx.place+' ('+ctx.site[0].toFixed(2)+', '+ctx.site[1].toFixed(2)+') · need '+powerLbl+' by '+ctx.byMonths+' mo · '+now;
   window.__screenLoc={place:ctx.place,county:ctx.county,state:ctx.stateName,lat:ctx.site[0],lng:ctx.site[1]};
   window.__live={ nrel:!!ctx.solarLive, osm:!!ctx.infraLive, nominatim:!!ctx.stateName };
+  /* relabel the solar source to whichever provider actually answered this run */
+  var SOLAR_PROV={
+    'NREL PVWatts v8':{pub:'NREL (U.S. DOE national lab)', title:'PVWatts v8 solar model', short:'NREL', how:'In NREL’s PVWatts tool (search “NREL PVWatts”), enter this coordinate to reproduce the solar capacity factor.'},
+    'PVGIS (EU JRC)':{pub:'European Commission · JRC', title:'PVGIS PV model', short:'PVGIS', how:'Search “PVGIS” (EU JRC), enter this coordinate, and read the yearly PV yield — our capacity factor is that yield ÷ 8,760 h.'},
+    'NASA POWER':{pub:'NASA POWER', title:'satellite solar resource', short:'NASA', how:'Search “NASA POWER data access”, enter this coordinate, and read annual ALLSKY_SFC_SW_DWN (GHI) — the basis for this value.'},
+    'estimate':{pub:'Solar resource (fallback)', title:'screening estimate', short:'est.', how:'No live solar provider responded this run, so a screening-grade fallback value was used.'}
+  };
+  var sp=SOLAR_PROV[ctx.solarProvider]||SOLAR_PROV['estimate'];
+  SOURCES.nrel.pub=sp.pub; SOURCES.nrel.title=sp.title; SOURCES.nrel.how=sp.how;
+  ctx.solarShort=sp.short;
 
   /* live signal values, each a clickable measured-evidence chip */
   var solarVal = ctx.solarLive ? ev('<b>'+Math.round(ctx.solarCF*100)+'%</b>','nrel',{pill:false})
@@ -960,7 +973,7 @@ function render(ctx){
       '<h2>'+V.title+'</h2><p class="sum">'+V.sum+'</p>'+
       PATHS_HTML+
       '<div class="signals">'+
-        '<span class="sigchip '+(ctx.solarLive?'live':'')+'">Solar CF '+(ctx.solarLive?'(NREL)':'(est.)')+': '+solarVal+'</span>'+
+        '<span class="sigchip '+(ctx.solarLive?'live':'')+'">Solar CF '+(ctx.solarLive?'('+ctx.solarShort+')':'(est.)')+': '+solarVal+'</span>'+
         '<span class="sigchip '+(ctx.infraLive?'live':'')+'">Nearest gas pipeline '+(ctx.infraLive?'(OSM)':'(n/a)')+': '+gasVal+'</span>'+
         '<span class="sigchip '+(ctx.infraLive?'live':'')+'">Nearest substation '+(ctx.infraLive?'(OSM)':'(n/a)')+': '+subVal+'</span>'+
       '</div>'+
@@ -970,7 +983,10 @@ function render(ctx){
     matrixNote+'<div class="matrix-wrap"><table class="matrix"><thead><tr><th>Scenario</th><th>Time to power</th><th>Firm capacity</th><th>~$/MWh</th><th>~$/kW capex</th><th>On your yardstick</th></tr></thead><tbody>'+rows+'</tbody></table></div>'+
     '<div class="yard">'+
       '<div class="yard-row"><b>Yardstick</b><span>'+powerLbl+' firm, online within '+ctx.byMonths+' months. <b style="font-weight:600">Meets</b> = on time at ≥90% firm; <b style="font-weight:600">near-miss</b> = within 6 months or 60–90% firm.</span></div>'+
-      '<div class="yard-row"><b>Live this run</b><span>Solar capacity factor (NREL PVWatts) · gas-pipeline &amp; substation distance (OpenStreetMap) · geocode (Nominatim).</span></div>'+
+      '<div class="yard-row"><b>Live this run</b><span>'
+        +'Solar CF '+(ctx.solarLive?('('+sp.pub.replace(/ ·.*/,'')+', live)'):'(estimate — no live provider responded)')+' · '
+        +'gas-pipeline &amp; substation distance '+(ctx.infraLive?'(OpenStreetMap, live)':'(unavailable)')+' · '
+        +'geocode '+(ctx.stateName?'(Nominatim, live)':'(unavailable)')+'.</span></div>'+
       '<div class="yard-row"><b>Grid timing</b><span>'+(ctx.load?('Curated large-load connect estimate — '+ctx.load.u+' ('+ctx.load.src+').'):'Regional generation-queue proxy (LBNL / ISO).')+'</span></div>'+
       '<div class="yard-row"><b>Nuclear-PPA depth</b><span>Regional (SEC / ISO).</span></div>'+
       '<div class="yard-foot">Screening-grade ±40% — verify with utility, OEM, EPC, and counsel before any commitment.</div>'+
