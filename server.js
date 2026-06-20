@@ -348,21 +348,56 @@ const api = {
     });
     return cacheSet(k, data);
   },
+  /* Live solar capacity factor with provider fall-through, so ANY pin gets a
+     real, location-varying number even when one provider is unreachable.
+     Order: NREL PVWatts -> PVGIS (EU JRC) -> NASA POWER. Each is independent;
+     the first that answers wins and we report which one. If all fail we return
+     live:false and the frontend shows an honest "Estimate", never a fake live. */
   "/api/solar": async (q) => {
     const lat = round(q.get("lat")), lon = round(q.get("lon"));
     if(!isFinite(lat) || !isFinite(lon)) throw new Error("lat/lon required");
     const k = ckey(["solar", lat, lon]);
     const hit = cacheGet(k); if(hit) return hit;
-    const u = "https://developer.nrel.gov/api/pvwatts/v8.json?api_key=" + NREL_KEY
-      + "&lat=" + lat + "&lon=" + lon
-      + "&system_capacity=1&azimuth=180&tilt=20&array_type=2&module_type=0&losses=14";
-    const d = await getJSON(u, { headers: { "User-Agent": UA }, signal: AbortSignal.timeout(8000) });
-    const o = d && d.outputs ? d.outputs : {};
-    return cacheSet(k, {
-      capacityFactor: typeof o.capacity_factor === "number" ? o.capacity_factor / 100 : null,
-      acAnnualKwh: typeof o.ac_annual === "number" ? o.ac_annual : null,
-      source: "NREL PVWatts v8 (1-axis tracking)"
-    });
+    const opt = { headers: { "User-Agent": UA }, signal: AbortSignal.timeout(8000) };
+
+    // 1) NREL PVWatts v8 (single-axis tracking)
+    try {
+      const u = "https://developer.nrel.gov/api/pvwatts/v8.json?api_key=" + NREL_KEY
+        + "&lat=" + lat + "&lon=" + lon
+        + "&system_capacity=1&azimuth=180&tilt=20&array_type=2&module_type=0&losses=14";
+      const o = (await getJSON(u, opt)).outputs || {};
+      if(typeof o.capacity_factor === "number" && o.capacity_factor > 0)
+        return cacheSet(k, { capacityFactor: o.capacity_factor / 100, live: true,
+          provider: "NREL PVWatts v8", providerNote: "1-axis tracking" });
+    } catch(e){ /* fall through */ }
+
+    // 2) PVGIS (European Commission JRC) — true modeled PV yield at optimal angle
+    try {
+      const u = "https://re.jrc.ec.europa.eu/api/v5_2/PVcalc?outputformat=json"
+        + "&lat=" + lat + "&lon=" + lon + "&peakpower=1&loss=14&mountingplace=free&optimalangles=1";
+      const j = await getJSON(u, opt);
+      const Ey = j && j.outputs && j.outputs.totals && j.outputs.totals.fixed
+        ? j.outputs.totals.fixed.E_y : null;          // kWh/yr per 1 kWp
+      if(typeof Ey === "number" && Ey > 0)
+        return cacheSet(k, { capacityFactor: Math.min(0.45, Ey / 8760), live: true,
+          provider: "PVGIS (EU JRC)", providerNote: "fixed, optimal tilt" });
+    } catch(e){ /* fall through */ }
+
+    // 3) NASA POWER — annual horizontal GHI -> approximate fixed-tilt CF
+    try {
+      const u = "https://power.larc.nasa.gov/api/temporal/climatology/point?format=json"
+        + "&community=RE&parameters=ALLSKY_SFC_SW_DWN&longitude=" + lon + "&latitude=" + lat;
+      const j = await getJSON(u, opt);
+      const ghi = j && j.properties && j.properties.parameter
+        && j.properties.parameter.ALLSKY_SFC_SW_DWN
+        ? j.properties.parameter.ALLSKY_SFC_SW_DWN.ANN : null;   // kWh/m2/day, annual avg
+      if(typeof ghi === "number" && ghi > 0)
+        return cacheSet(k, { capacityFactor: Math.min(0.45, ghi * 0.0367), live: true,
+          provider: "NASA POWER", providerNote: "from GHI, screening-grade" });
+    } catch(e){ /* fall through */ }
+
+    // all providers unreachable — honest non-live result (frontend shows Estimate)
+    return { capacityFactor: null, live: false, provider: "estimate" };
   }
 };
 
