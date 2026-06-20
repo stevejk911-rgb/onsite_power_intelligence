@@ -154,12 +154,12 @@
   .src-links a{color:#1E50E6;text-decoration:none}
   .src-links a:hover{text-decoration:underline}
   .src-tierbadge{font-family:var(--sans);font-size:9.5px;font-weight:800;letter-spacing:.03em;text-transform:uppercase;padding:1px 6px;border-radius:4px;background:#eef2f7;color:#39424f;white-space:nowrap}
-  /* clean, scannable assumptions block */
-  .yard{margin-top:18px;border:1px solid var(--line-2);border-radius:12px;background:#fbfcfe;padding:4px 4px 2px;font-family:var(--sans)}
-  .yard-row{display:flex;gap:14px;align-items:baseline;padding:9px 15px;border-bottom:1px solid #eef1f6;font-size:12.5px;color:#39424f;line-height:1.5}
-  .yard-row b{flex:0 0 118px;color:#1a2230;font-weight:700;font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;padding-top:1px}
-  .yard-foot{padding:10px 15px 9px;font-size:11.5px;color:#8a93a3;font-style:italic}
-  @media(max-width:560px){ .yard-row{flex-direction:column;gap:2px} .yard-row b{flex:none} }
+  /* plain small-text assumptions — no box, blends with the page */
+  .yard{margin-top:16px;font-family:var(--sans)}
+  .yard-row{display:flex;gap:12px;align-items:baseline;padding:2px 2px;font-size:11.5px;color:#7a838f;line-height:1.55}
+  .yard-row b{flex:0 0 116px;color:#98a1ad;font-weight:700;font-size:9.5px;text-transform:uppercase;letter-spacing:.05em}
+  .yard-foot{padding:7px 2px 0;font-size:11px;color:#a3abb6;font-style:italic}
+  @media(max-width:560px){ .yard-row{flex-direction:column;gap:1px} .yard-row b{flex:none} }
 </style>
 </head>
 <body>
@@ -344,6 +344,10 @@ var SOURCES = {
     how:'On PJM Planning, see the interconnection process and cycle timing behind this date.'},
   eia:{title:'EIA generator & capacity data', pub:'U.S. Energy Information Administration', type:'Federal energy statistics', tier:1, label:'modeled', kind:'cited', url:'https://www.eia.gov/electricity/', published:'2025', cad:90,
     how:'On EIA Electricity, see generator-level capacity and operations data.'},
+  sec_nuclear:{title:'Nuclear-PPA depth (Constellation · Vistra · Talen)', pub:'SEC EDGAR filings', type:'Primary company disclosure', tier:2, label:'modeled', kind:'cited', url:'https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany', published:'2025', cad:90,
+    how:'Search SEC EDGAR for Constellation, Vistra, or Talen — their filings set how much nuclear off-take is realistically available in each region.'},
+  atb_cost:{title:'Tech cost & equipment lead time', pub:'NREL ATB · Lazard LCOE · OEM disclosures', type:'Cost & schedule benchmarks', tier:1, label:'modeled', kind:'cited', url:'https://atb.nrel.gov/', published:'2025', cad:90,
+    how:'Open NREL’s Annual Technology Baseline for cost & capacity-factor benchmarks; turbine/engine lead times come from GE Vernova / Wärtsilä disclosures.'},
   generic_reg:{title:'Regulatory / utility filing (synthesis)', pub:'State PUC / ISO / utility', type:'Synthesis of public filings', tier:1, label:'modeled', kind:'cited', url:'', published:'2025-26', cad:90,
     how:'This grid-timing figure is our synthesis of the local utility, ISO, and PUC filings for this market. Search that utility / PUC for current large-load interconnection terms.'}
 };
@@ -443,9 +447,13 @@ function gridSrcId(ctx){
   if(/pjm|comed/.test(t)) return 'pjm';
   return 'generic_reg';
 }
-/* build the "Sources & evidence" panel from everything cited this render */
+/* the standing evidence base every screen rests on — shown even when a given
+   run only inline-cites a couple of them, so the verdict never looks thin */
+var ENGINE_SOURCES=['nrel','osm','nominatim','lbnl','sec_nuclear','atb_cost'];
+/* build the "Sources & evidence" panel: full engine base + this run's specifics */
 function sourcesPanel(){
-  var ids=Object.keys(_used); if(!ids.length) return '';
+  var set={}; ENGINE_SOURCES.forEach(function(id){ set[id]=true; }); Object.keys(_used).forEach(function(id){ set[id]=true; });
+  var ids=Object.keys(set); if(!ids.length) return '';
   var order={live:0,1:1,2:2,3:3,4:4,5:5};
   ids.sort(function(a,b){ var sa=getSrc(a),sb=getSrc(b); var ka=sa.label==='measured'?'live':sa.tier, kb=sb.label==='measured'?'live':sb.tier; return order[ka]-order[kb]; });
   var rows=ids.map(function(id){ var s=getSrc(id); var tk=s.label==='measured'?'live':s.tier; var tm=TIER_META[tk]; var lf=linkFor(s);
@@ -456,7 +464,7 @@ function sourcesPanel(){
       +'<div class="src-links">'+(lf.href?('<a href="'+lf.href+'" target="_blank" rel="noopener">'+lf.label+'</a>'):'')+'</div>'
       +'</div><span class="src-tierbadge">'+tm.name.split(' · ')[0]+'</span></div>';
   }).join('');
-  return '<div class="srcs no-print" id="srcsPanel"><div class="srcs-h" onclick="document.getElementById(\'srcsPanel\').classList.toggle(\'closed\')"><b>Sources &amp; evidence <span class="srcs-sub">— every number above is clickable; this lists them all</span></b><span class="srcs-tog">▾</span></div><div class="srcs-body">'+rows+'</div></div>';
+  return '<div class="srcs no-print" id="srcsPanel"><div class="srcs-h" onclick="document.getElementById(\'srcsPanel\').classList.toggle(\'closed\')"><b>Sources &amp; evidence <span class="srcs-sub">— the live pulls and reference data this screen is built on ('+ids.length+')</span></b><span class="srcs-tog">▾</span></div><div class="srcs-body">'+rows+'</div></div>';
 }
 
 /* ===== regional resolution (queue + nuclear off-take depth) =====
