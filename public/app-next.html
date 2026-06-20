@@ -159,6 +159,11 @@
   .src-links a{color:#1E50E6;text-decoration:none}
   .src-links a:hover{text-decoration:underline}
   .src-tierbadge{font-family:var(--sans);font-size:9.5px;font-weight:800;letter-spacing:.03em;text-transform:uppercase;padding:1px 6px;border-radius:4px;background:#eef2f7;color:#39424f;white-space:nowrap}
+  /* brand-blue pin: soft glow + grab cursor + gentle settle on drop */
+  .brand-pin{filter:drop-shadow(0 4px 5px rgba(30,80,230,.38));cursor:grab}
+  .brand-pin:active{cursor:grabbing}
+  .brand-pin svg{display:block;animation:pinSettle .28s cubic-bezier(.2,.9,.3,1.25)}
+  @keyframes pinSettle{0%{transform:translateY(-8px) scale(.9);opacity:.5}100%{transform:translateY(0) scale(1);opacity:1}}
   /* "Previous pin" undo control, floating over the map */
   .undo-fab{position:absolute;top:12px;right:12px;z-index:600;align-items:center;gap:5px;background:#fff;border:1px solid var(--line-2);border-radius:9px;padding:7px 12px;font-family:var(--sans);font-size:13px;font-weight:700;color:#1a2230;box-shadow:0 2px 8px rgba(10,18,48,.16);cursor:pointer}
   .undo-fab:hover{border-color:#1E50E6;color:#1840c0}
@@ -824,13 +829,25 @@ function initMap(){
   addDcSites();
   setTimeout(function(){ lmap.invalidateSize(); },150);
 }
+/* brand-blue teardrop pin (SVG) — matches the headline / CTA blue (#1E50E6) */
+function brandPinIcon(){
+  var svg='<svg width="32" height="44" viewBox="0 0 32 44" xmlns="http://www.w3.org/2000/svg">'
+    +'<defs><linearGradient id="bpg" x1="0" y1="0" x2="0" y2="1">'
+    +'<stop offset="0" stop-color="#4A74F7"/><stop offset="1" stop-color="#1E50E6"/></linearGradient></defs>'
+    +'<ellipse cx="16" cy="41" rx="6.5" ry="2.2" fill="rgba(10,18,48,.22)"/>'
+    +'<path d="M16 1.5C8.27 1.5 2 7.74 2 15.45c0 9.6 11.6 23.1 13.46 25.2a1.4 1.4 0 0 0 2.08 0C19.4 38.55 30 25.05 30 15.45 30 7.74 23.73 1.5 16 1.5Z" fill="url(#bpg)" stroke="#163FB0" stroke-width="1.1"/>'
+    +'<circle cx="16" cy="15.4" r="5.4" fill="#fff"/>'
+    +'<circle cx="16" cy="15.4" r="2.5" fill="#1E50E6"/></svg>';
+  return L.divIcon({ className:'brand-pin', html:svg, iconSize:[32,44], iconAnchor:[16,42], popupAnchor:[0,-40] });
+}
+function attachPin(lat,lng){
+  marker=L.marker([lat,lng],{draggable:true, autoPan:true, title:'Drag to fine-tune', icon:brandPinIcon()}).addTo(lmap);
+  /* drag the pin to adjust — no need to re-find the spot by clicking */
+  marker.on('dragend',function(){ var ll=marker.getLatLng(); writePin(ll.lat,ll.lng); track('action','pin_dragged'); });
+  return marker;
+}
 function setMarker(lat,lng){
-  if(marker){ marker.setLatLng([lat,lng]); }
-  else {
-    marker=L.marker([lat,lng],{draggable:true, autoPan:true, title:'Drag to fine-tune'}).addTo(lmap);
-    /* drag the pin to adjust — no need to re-find the spot by clicking */
-    marker.on('dragend',function(){ var ll=marker.getLatLng(); writePin(ll.lat,ll.lng); track('action','pin_dragged'); });
-  }
+  if(marker){ marker.setLatLng([lat,lng]); } else { attachPin(lat,lng); }
   writePin(lat,lng);
 }
 var pinHistory=[];
@@ -849,7 +866,7 @@ function updateUndoBtn(){ var b=document.getElementById('undoBtn'); if(b){ b.sty
 function undoPin(){
   if(!pinHistory.length) return;
   var prev=pinHistory.pop();
-  if(marker){ marker.setLatLng(prev); } else { marker=L.marker(prev,{draggable:true}).addTo(lmap); marker.on('dragend',function(){ var ll=marker.getLatLng(); writePin(ll.lat,ll.lng); }); }
+  if(marker){ marker.setLatLng(prev); } else { attachPin(prev[0],prev[1]); }
   writePin(prev[0],prev[1],true);   // fromUndo: don't re-record
   try{ lmap.panTo(prev,{animate:true}); }catch(e){}
   updateUndoBtn();
