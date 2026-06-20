@@ -127,6 +127,10 @@
   .evpop-type{font-size:11px;color:#6b7280;margin-top:1px}
   .evpop-claim{font-size:12.5px;color:#2b3340;line-height:1.45;margin:8px 0;padding:7px 10px;background:#f7f8fb;border-left:3px solid #c8cfdb;border-radius:4px;font-style:italic}
   .evpop-dates{font-size:11px;color:#6b7280;margin-top:6px}
+  .evpop-loc{margin-top:9px;padding:8px 10px;background:#f7f8fb;border:1px solid var(--line-2);border-radius:7px;font-size:12px;color:#39424f}
+  .evpop-loc b{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.04em;color:#8a93a3;margin-bottom:3px;font-weight:700}
+  .evpop-coord{font-family:ui-monospace,Menlo,monospace;font-size:12.5px;color:#1a2230;user-select:all;font-weight:600;margin-top:2px}
+  .evpop-locsub{font-size:10.5px;color:#9aa3b0;margin-top:5px;line-height:1.4}
   .evpop-how{font-size:11.5px;color:#39424f;line-height:1.5;margin-top:9px;padding:8px 10px;background:#f0f6ff;border:1px solid #d8e4ff;border-radius:7px}
   .evpop-how b{color:#1840c0}
   .src-how{font-size:11px;color:#5a6573;line-height:1.45;margin-top:4px}
@@ -328,7 +332,7 @@ var SOURCES = {
     how:'Opens the NREL PVWatts calculator. Enter this coordinate and it returns the same solar capacity factor we used.'},
   osm:{title:'Gas pipelines & substations (Overpass)', pub:'OpenStreetMap contributors', type:'Open primary geospatial data', tier:1, label:'measured', kind:'measured', url:'https://www.openstreetmap.org/', published:'continuously updated', cad:0,
     note:'Crowd-sourced primary geodata; live but completeness varies by region.',
-    how:'Opens OpenStreetMap at this exact point (with a pin) so you can see the location and surroundings we scanned. These distances are measured from OSM’s underlying data for this area. For a clearer view of power lines & pipelines, the same data also renders at openinframap.org. (The map appears in your own browser’s language.)'},
+    how:'These are straight-line distances from your screened point to the nearest gas pipeline and electrical substation in OpenStreetMap. We don’t pinpoint the exact feature — search the location below to inspect the area yourself.'},
   nominatim:{title:'Geocoding (place & state)', pub:'OpenStreetMap / Nominatim', type:'Open geocoder', tier:1, label:'measured', kind:'measured', url:'https://www.openstreetmap.org/', published:'continuously updated', cad:0,
     how:'Opens OpenStreetMap at this point so you can confirm the place and state we resolved.'},
   lbnl:{title:'"Queued Up" interconnection-queue study', pub:'Lawrence Berkeley National Laboratory', type:'Generation-queue proxy for grid timing', tier:1, label:'modeled', kind:'cited', url:'https://emp.lbl.gov/queues', published:'2025', cad:90,
@@ -375,7 +379,8 @@ function osmAt(){
 function linkFor(s){
   if(s.kind==='measured'){
     if(s.id==='nrel') return { href:s.url, label:'Open the calculator ↗', snap:'' };
-    return { href:osmAt(), label:'Open this location ↗', snap:'' };   // osm / nominatim
+    if(s.id==='osm')  return { href:'', label:'', snap:'' };           // distance-only: no single feature to map
+    return { href:osmAt(), label:'Open this location ↗', snap:'' };   // nominatim (confirms the geocoded point)
   }
   // cited: the real article/filing URL; snapshot only when it's a deep page (not a homepage)
   return { href:s.url||'', label:'View source ↗', snap:(s.url && hasDeepPath(s.url))?('https://web.archive.org/web/'+encodeURIComponent(s.url)):'' };
@@ -403,6 +408,14 @@ function ev(val, id, opts){
   var pill = opts.pill!==false ? (' <span class="lbl-pill '+LABEL_META[lab].cls+'">'+LABEL_META[lab].name+'</span>') : '';
   return '<span class="ev" tabindex="0" role="button" data-id="'+id+'" data-lab="'+lab+'" onclick="openEv(this)" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();openEv(this)}"><span class="ev-dot '+dot+'"></span>'+val+'</span>'+pill;
 }
+/* for distance-only OSM data: a searchable location instead of a misleading map */
+function locBlock(s){
+  if(s.id!=='osm' || !window.__screenLoc) return '';
+  var L0=window.__screenLoc;
+  var place=[L0.place,L0.county,L0.state].filter(function(x){return x && x!=='this site';}).join(', ');
+  var coord=(+L0.lat).toFixed(4)+', '+(+L0.lng).toFixed(4);
+  return '<div class="evpop-loc"><b>Screened location</b>'+(place?('<div>'+place+'</div>'):'')+'<div class="evpop-coord">'+coord+'</div><div class="evpop-locsub">Copy this coordinate or place name to search it in any map.</div></div>';
+}
 /* evidence popover */
 function ensureEvPop(){
   if(document.getElementById('evpop')) return;
@@ -421,6 +434,7 @@ function openEv(elm){
     +'<div class="evpop-pub">'+s.pub+'</div><div class="evpop-type">'+s.type+(s.title?(' — '+s.title):'')+'</div>'
     +(s.quote?('<div class="evpop-claim">“'+s.quote+'”</div>'):'')
     +'<div class="evpop-dates">'+(s.published?('Published: '+s.published+' · '):'')+'as of '+(s.asof||TODAY)+'</div>'
+    +locBlock(s)
     +(s.how?('<div class="evpop-how"><b>How to verify:</b> '+s.how+'</div>'):'')
     +'<div class="evpop-act">'
       +(lf.href?('<a href="'+lf.href+'" target="_blank" rel="noopener" onclick="track(\'action\',\'src_view\')">'+lf.label+'</a>'):'')
@@ -902,6 +916,7 @@ function render(ctx){
 
   var now=new Date().toISOString().slice(0,10);
   document.getElementById('printMeta').textContent=ctx.place+' ('+ctx.site[0].toFixed(2)+', '+ctx.site[1].toFixed(2)+') · need '+powerLbl+' by '+ctx.byMonths+' mo · '+now;
+  window.__screenLoc={place:ctx.place,county:ctx.county,state:ctx.stateName,lat:ctx.site[0],lng:ctx.site[1]};
 
   /* live signal values, each a clickable measured-evidence chip */
   var solarVal = ctx.solarLive ? ev('<b>'+Math.round(ctx.solarCF*100)+'%</b>','nrel',{pill:false})
