@@ -101,6 +101,14 @@
   .dc-legend b{color:#b25a00}
   .path.proven{border:1.5px solid #1a7f37;background:#f3fbf5}
   .path.proven .pnum{color:#10612b}
+  /* realized base-rate "reality check" block */
+  .reality{margin-top:14px;border:1px solid #d8e4ff;background:#f4f8ff;border-radius:12px;padding:12px 15px;font-family:var(--sans)}
+  .reality-h{font-size:11px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:#1840c0;margin-bottom:5px}
+  .reality-b{font-size:13px;color:#2b3340;line-height:1.55}
+  .reality-src{margin-top:8px;font-size:12px}
+  .reality-note{margin-top:7px;font-size:11.5px;color:#6b7280}
+  .reality-note a{color:#1E50E6;text-decoration:none;font-weight:600}
+  .reality-note a:hover{text-decoration:underline}
   /* ===== visible provenance: clickable evidence + tier dots ===== */
   .ev{cursor:pointer;border-bottom:1.5px dotted currentColor;position:relative;white-space:nowrap}
   .ev:focus{outline:2px solid #1E50E6;outline-offset:2px;border-radius:2px}
@@ -192,6 +200,7 @@
     <a class="brand" href="index.html"><span class="dot"></span><span>On-Site Power <small>Intelligence</small></span></a>
     <div class="nav-links">
       <a class="navlink" href="data-sources.html">Data</a>
+      <a class="navlink" href="ledger.html">Ledger</a>
       <a class="navlink" href="index.html">Home</a>
     </div>
   </div>
@@ -343,6 +352,7 @@ var TIER_META = {
 var LABEL_META = {
   measured:{cls:'lbl-measured', name:'Measured', note:'Pulled live from the source this run.'},
   estimate:{cls:'lbl-modeled', name:'Estimate', note:'The live source did not respond this run, so a screening-grade fallback value was used. Not measured.'},
+  realized:{cls:'lbl-measured', name:'Realized', note:'Actual completed-project outcomes — what really happened in the field, not our estimate.'},
   modeled:{cls:'lbl-modeled', name:'Modeled', note:'Our screening estimate / synthesis of filings — planning-grade, ±40%.'},
   claimed:{cls:'lbl-claimed', name:'Claimed', note:'Stated by a third party. We cite it; we do not independently assert it.'}
 };
@@ -364,6 +374,10 @@ var SOURCES = {
     how:'How we resolved the place, county, and state for this coordinate (OpenStreetMap / Nominatim).'},
   lbnl:{title:'"Queued Up" interconnection-queue study', pub:'Lawrence Berkeley National Laboratory', type:'Generation-queue proxy for grid timing', tier:1, label:'modeled', kind:'cited', url:'https://emp.lbl.gov/queues', published:'2025', cad:90,
     how:'Search “LBNL Queued Up” for the latest interconnection-queue report and your ISO/RTO’s queue length — the basis for our grid-timing proxy.'},
+  lbnl_realized:{title:'"Queued Up" — realized request→COD durations', pub:'Lawrence Berkeley National Laboratory', type:'Completed-project interconnection timelines', tier:1, label:'realized', kind:'cited', url:'https://emp.lbl.gov/queues', published:'2025', cad:90,
+    how:'In “LBNL Queued Up (2025 Edition)”, see the realized median time from interconnection request to commercial operation for completed projects, and the withdrawal rate.'},
+  cleanpower_iso:{title:'Average months in interconnection queue, by ISO', pub:'American Clean Power', type:'Industry fact sheet', tier:3, label:'realized', kind:'cited', url:'https://cleanpower.org/', published:'2023', cad:180,
+    how:'Search “American Clean Power interconnection fact sheet” for average months in queue by ISO (CAISO / ERCOT / PJM).'},
   ercot_sb6:{title:'SB6 large-load interconnection (≥75 MW)', pub:'ERCOT / Public Utility Commission of Texas', type:'Large-load study & curtailment rule', tier:1, label:'modeled', kind:'cited', url:'https://www.ercot.com/', published:'2025', cad:90,
     how:'On ERCOT / PUCT, search "Senate Bill 6 large load" — the interconnection study and curtailment rule behind this connect estimate.'},
   dominion_scc:{title:'Dominion load-service & NoVA capacity', pub:'Virginia State Corporation Commission / Dominion', type:'Utility filing', tier:1, label:'modeled', kind:'cited', url:'https://scc.virginia.gov/', published:'2025-26', cad:90,
@@ -510,7 +524,18 @@ function gridSrcId(ctx){
 }
 /* the standing evidence base every screen rests on — shown even when a given
    run only inline-cites a couple of them, so the verdict never looks thin */
-var ENGINE_SOURCES=['nrel','nominatim','lbnl','sec_nuclear','atb_cost'];
+var ENGINE_SOURCES=['nrel','nominatim','lbnl','lbnl_realized','sec_nuclear','atb_cost'];
+/* realized base rates — what actually happened to completed projects (LBNL/ACP) */
+var REALIZED={ nationalMedianYr:4.5, nationalCohort:'projects reaching operation in 2024',
+  priorMedianYr:2, priorCohort:'2000–07', withdrawPct:80, asof:'2025',
+  isoMonths:{CAISO:43, ERCOT:22, PJM:24} };
+function isoAvgMonths(isoLabel){
+  var s=(isoLabel||'').toUpperCase();
+  if(s.indexOf('CAISO')>=0||s.indexOf('CALIFORN')>=0) return REALIZED.isoMonths.CAISO;
+  if(s.indexOf('ERCOT')>=0) return REALIZED.isoMonths.ERCOT;
+  if(s.indexOf('PJM')>=0) return REALIZED.isoMonths.PJM;
+  return null;
+}
 /* build the "Sources & evidence" panel: full engine base + this run's specifics */
 function sourcesPanel(){
   var set={}; ENGINE_SOURCES.forEach(function(id){ set[id]=true; }); Object.keys(_used).forEach(function(id){ set[id]=true; });
@@ -1039,7 +1064,16 @@ function render(ctx){
       +'<button class="corr-send" onclick="sendCorrection(this)">Submit correction</button>'
       +'<span class="corr-thx"></span>'
     +'</div></div>';
-  var PATHS_HTML='<div class="paths">'+onsiteCard+gridCard+'</div>'+bankable+correctBlock;
+  /* realized base-rate reality check — actual completed-project outcomes vs our estimate */
+  var isoMo=isoAvgMonths(ctx.region.iso);
+  var realityBlock='<div class="reality"><div class="reality-h">Reality check — what actually happened</div>'
+    +'<div class="reality-b">Across completed U.S. grid projects, the median time from interconnection request to <b>energized</b> climbed to <b>~'+REALIZED.nationalMedianYr+' years</b> ('+REALIZED.nationalCohort+'), up from under '+REALIZED.priorMedianYr+' years in '+REALIZED.priorCohort+' — and <b>~'+REALIZED.withdrawPct+'%</b> of queued projects withdraw before ever connecting.'
+    +(isoMo?(' In '+ctx.region.iso+', the average queue wait has run ~'+isoMo+' months.'):'')
+    +' Our modeled grid date above ('+gridYearTxt+') is a screening estimate; these are the realized base rates.'
+    +'<div class="reality-src">'+ev('LBNL Queued Up — realized','lbnl_realized',{pill:false})+(isoMo?(' · '+ev('ACP by-ISO','cleanpower_iso',{pill:false})):'')+'</div>'
+    +'<div class="reality-note">Market- and utility-specific realized timelines are being collected from real projects — tracked openly in our <a href="ledger.html">accuracy ledger</a>.</div>'
+    +'</div>';
+  var PATHS_HTML='<div class="paths">'+onsiteCard+gridCard+'</div>'+bankable+realityBlock+correctBlock;
 
   // rows
   var rows='';
