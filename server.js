@@ -1,6 +1,6 @@
 "use strict";
 /* =============================================================================
- * On-Site Power Intelligence — backend
+ * On-Site Power Intelligence - backend
  * -----------------------------------------------------------------------------
  * Node 18+ (built-in fetch). Serves the frontend and proxies open-data APIs so
  * the browser never calls them directly (CORS, User-Agent, hidden key, cache).
@@ -29,7 +29,7 @@ try {
     const m = line.match(/^\s*([A-Z0-9_]+)\s*=\s*(.*?)\s*$/);
     if(m && m[2] !== "" && !process.env[m[1]]) process.env[m[1]] = m[2];
   });
-} catch(e){ /* no .env file — fine, defaults apply */ }
+} catch(e){ /* no .env file - fine, defaults apply */ }
 
 const PORT     = process.env.PORT || 8080;
 const NREL_KEY = process.env.NREL_API_KEY || "DEMO_KEY"; // NREL's shared demo key works, rate-limited
@@ -99,7 +99,7 @@ if(DATABASE_URL){
       "UPDATE sitechecks SET bot = true WHERE bot = false AND (ua IS NULL OR ua ~* '" + BOT_SQL + "');" +
       "UPDATE feedback   SET bot = true WHERE bot = false AND (ua IS NULL OR ua ~* '" + BOT_SQL + "');" +
       /* corrections inbox: experts fix the decisive numbers. NEVER auto-applied to
-         the live verdict — operator reviews and promotes by hand. */
+         the live verdict - operator reviews and promotes by hand. */
       "CREATE TABLE IF NOT EXISTS corrections (" +
       "  id bigserial PRIMARY KEY, ts timestamptz NOT NULL DEFAULT now()," +
       "  lat double precision, lng double precision, market text, field text," +
@@ -111,9 +111,9 @@ if(DATABASE_URL){
       "CREATE TABLE IF NOT EXISTS data_reviews (" +
       "  category text PRIMARY KEY, last_reviewed date NOT NULL DEFAULT current_date);"
     ).then(() => console.log("Analytics: Postgres ready"))
-     .catch((e) => console.log("Analytics: table init failed — " + (e && e.message)));
+     .catch((e) => console.log("Analytics: table init failed - " + (e && e.message)));
   } catch(e){
-    console.log("Analytics: 'pg' not installed — run npm install. " + (e && e.message));
+    console.log("Analytics: 'pg' not installed - run npm install. " + (e && e.message));
   }
 }
 
@@ -122,8 +122,8 @@ const FRESHNESS_CATS = [
   { id:"grid_load",      label:"Hot-zone LOAD layer (utility / ISO / PUC)",          tier:1, cadenceDays:90 },
   { id:"grid_queue",     label:"Interconnection-queue proxy (LBNL / ISO)",           tier:1, cadenceDays:90 },
   { id:"nuclear_ppa",    label:"Nuclear-PPA depth (SEC / ISO)",                       tier:2, cadenceDays:90 },
-  { id:"campus_primary", label:"Proven campuses — primary disclosure (SEC / IR)",     tier:2, cadenceDays:90 },
-  { id:"campus_press",   label:"Proven campuses — trade press / news",                tier:3, cadenceDays:30 },
+  { id:"campus_primary", label:"Proven campuses - primary disclosure (SEC / IR)",     tier:2, cadenceDays:90 },
+  { id:"campus_press",   label:"Proven campuses - trade press / news",                tier:3, cadenceDays:30 },
   { id:"tech_cost",      label:"Tech lead-time & cost (NREL ATB / OEM disclosures)",  tier:1, cadenceDays:90 }
 ];
 const FRESH_SEED = "2026-06-20"; // seed: everything reviewed today on first deploy
@@ -171,7 +171,7 @@ async function getJSON(url, opts){
 }
 /* Overpass with mirror fall-through. The public OSM query servers frequently
    time out under load and return PARTIAL data (a 200 with a "remark" and missing
-   elements) — which made "nearest pipeline/substation" vary run-to-run. We try
+   elements) - which made "nearest pipeline/substation" vary run-to-run. We try
    mirrors in order and reject partial/timed-out responses so the result is the
    true nearest feature, not whatever a half-finished query happened to return. */
 async function overpass(query){
@@ -266,7 +266,7 @@ function aggregate(rows){
 function scopeClause(scope){
   if(scope === "internal") return " AND internal = true";
   if(scope === "all")      return "";
-  return " AND internal = false AND bot = false"; // external — real humans only (no crawlers)
+  return " AND internal = false AND bot = false"; // external - real humans only (no crawlers)
 }
 /* classify each SESSION into exactly ONE bucket (internal wins, then bot, else
    human) so the headline counts reconcile: real + mine + bot = total. */
@@ -396,7 +396,7 @@ const api = {
           provider: "NREL PVWatts v8", providerNote: "1-axis tracking" });
     } catch(e){ /* fall through */ }
 
-    // 2) PVGIS (European Commission JRC) — true modeled PV yield at optimal angle
+    // 2) PVGIS (European Commission JRC) - true modeled PV yield at optimal angle
     try {
       const u = "https://re.jrc.ec.europa.eu/api/v5_2/PVcalc?outputformat=json"
         + "&lat=" + lat + "&lon=" + lon + "&peakpower=1&loss=14&mountingplace=free&optimalangles=1";
@@ -408,7 +408,7 @@ const api = {
           provider: "PVGIS (EU JRC)", providerNote: "fixed, optimal tilt" });
     } catch(e){ /* fall through */ }
 
-    // 3) NASA POWER — annual horizontal GHI -> approximate fixed-tilt CF
+    // 3) NASA POWER - annual horizontal GHI -> approximate fixed-tilt CF
     try {
       const u = "https://power.larc.nasa.gov/api/temporal/climatology/point?format=json"
         + "&community=RE&parameters=ALLSKY_SFC_SW_DWN&longitude=" + lon + "&latitude=" + lat;
@@ -421,7 +421,7 @@ const api = {
           provider: "NASA POWER", providerNote: "from GHI, screening-grade" });
     } catch(e){ /* fall through */ }
 
-    // all providers unreachable — honest non-live result (frontend shows Estimate)
+    // all providers unreachable - honest non-live result (frontend shows Estimate)
     return { capacityFactor: null, live: false, provider: "estimate" };
   }
 };
@@ -510,7 +510,7 @@ http.createServer(async (req, res) => {
       return;
     }
 
-    /* correction: an expert fixes a number (public). Stored in an inbox — NEVER
+    /* correction: an expert fixes a number (public). Stored in an inbox - NEVER
        auto-applied to the live verdict. The operator reviews and promotes by hand. */
     if(url.pathname === "/api/correction"){
       if(req.method !== "POST"){ res.writeHead(405); res.end(JSON.stringify({ error:"POST only" })); return; }
@@ -586,7 +586,7 @@ http.createServer(async (req, res) => {
           const r = await pool.query("SELECT ts,lat,lng,verdict,cat,fastest,feasible,internal FROM sitechecks WHERE 1=1" + scopeClause(scope) + " ORDER BY ts DESC LIMIT 500");
           res.writeHead(200); res.end(JSON.stringify({ ok:true, items: r.rows }));
         } else {
-          res.writeHead(200); res.end(JSON.stringify({ ok:true, items: memSitechecks, note:"in-memory (no DATABASE_URL) — resets on restart" }));
+          res.writeHead(200); res.end(JSON.stringify({ ok:true, items: memSitechecks, note:"in-memory (no DATABASE_URL) - resets on restart" }));
         }
       } catch(e){ res.writeHead(502); res.end(JSON.stringify({ error: String((e && e.message) || e) })); }
       return;
@@ -603,7 +603,7 @@ http.createServer(async (req, res) => {
           const r = await pool.query("SELECT id,ts,text,lat,lng,tier,verdict,internal FROM feedback WHERE 1=1" + scopeClause(scope) + " ORDER BY ts DESC LIMIT 500");
           res.writeHead(200); res.end(JSON.stringify({ ok:true, items: r.rows }));
         } else {
-          res.writeHead(200); res.end(JSON.stringify({ ok:true, items: memFeedback, note:"in-memory (no DATABASE_URL) — resets on restart" }));
+          res.writeHead(200); res.end(JSON.stringify({ ok:true, items: memFeedback, note:"in-memory (no DATABASE_URL) - resets on restart" }));
         }
       } catch(e){ res.writeHead(502); res.end(JSON.stringify({ error: String((e && e.message) || e) })); }
       return;
@@ -643,7 +643,7 @@ http.createServer(async (req, res) => {
       return;
     }
 
-    /* corrections: operator sets a status (new | reviewed | applied | dismissed) — key-gated */
+    /* corrections: operator sets a status (new | reviewed | applied | dismissed) - key-gated */
     if(url.pathname === "/api/admin/corrections/status"){
       if(req.method !== "POST"){ res.writeHead(405); res.end(JSON.stringify({ error:"POST only" })); return; }
       if(!ADMIN_KEY || url.searchParams.get("key") !== ADMIN_KEY){
@@ -662,7 +662,7 @@ http.createServer(async (req, res) => {
       return;
     }
 
-    /* data freshness: public read (non-sensitive — our own review cadence) */
+    /* data freshness: public read (non-sensitive - our own review cadence) */
     if(url.pathname === "/api/freshness"){
       try {
         const rows = await freshnessRows();
