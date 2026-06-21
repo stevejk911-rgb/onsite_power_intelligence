@@ -3,14 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Data &amp; method — On-Site Power Intelligence</title>
+<title>Data &amp; method - On-Site Power Intelligence</title>
 <meta name="description" content="What the screening verdict is built on: live NREL + OpenStreetMap pulls, regional queue data, the method, the accuracy band (±40%), and our honest-corrections log.">
 <link rel="canonical" href="https://onsitespower.com/data-sources.html">
 <meta name="robots" content="index, follow, max-image-preview:large">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="On-Site Power Intelligence">
 <meta property="og:url" content="https://onsitespower.com/data-sources.html">
-<meta property="og:title" content="Data &amp; method — On-Site Power Intelligence">
+<meta property="og:title" content="Data &amp; method - On-Site Power Intelligence">
 <meta property="og:description" content="What the screening verdict is built on: live NREL + OSM pulls, the method, the ±40% accuracy band, and our honest-corrections log.">
 <meta property="og:image" content="https://onsitespower.com/og.png">
 <meta name="twitter:card" content="summary_large_image">
@@ -34,37 +34,37 @@
   <h1>What the verdict is built on.</h1>
   <p class="lead muted">A screening tool is only worth the data behind it. Here is exactly what we pull live per coordinate, what is regional, how the call is made, and where it's reliable.</p>
 
-  <div class="callout"><b>Screening-grade, ±40%.</b> Every number is a planning estimate meant to <i>triage</i> sites — to decide which parcels deserve a paid feasibility study and which to kill. It is not engineering, and it does not replace your utility, OEM, EPC, or counsel.</div>
+  <div class="callout"><b>Screening-grade, ±40%.</b> Every number is a planning estimate meant to <i>triage</i> sites - to decide which parcels deserve a paid feasibility study and which to kill. It is not engineering, and it does not replace your utility, OEM, EPC, or counsel.</div>
 
-  <h2>How we source every number — and how you verify it</h2>
-  <p>Every decisive figure in a verdict is a <b>clickable evidence object</b>. Open it to see the publisher, the date, an honesty label, a <b>direct link to the original source</b>, and a short <b>"how to verify"</b> note telling you exactly where to find the cited figure there. Live measured signals open the map or calculator at your coordinate so you can reproduce the number yourself; article and filing pages also carry an <b>archived copy</b> in case the page moves. We store facts — never a copy of the source — so each citation stays inside fair-use and public-domain reuse.</p>
+  <h2>How we source every number - and how you verify it</h2>
+  <p>Every decisive figure in a verdict is a <b>clickable evidence object</b>. Open it to see the publisher, the date, an honesty label, a <b>direct link to the original source</b>, and a short <b>"how to verify"</b> note telling you exactly where to find the cited figure there. Live measured signals open the map or calculator at your coordinate so you can reproduce the number yourself; article and filing pages also carry an <b>archived copy</b> in case the page moves. We store facts - never a copy of the source - so each citation stays inside fair-use and public-domain reuse.</p>
 
   <p><b>Three honesty labels, shown on every line:</b></p>
-  <p style="margin:6px 0 2px"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#10612b;margin-right:7px;vertical-align:middle"></span><b>Measured</b> — pulled live from the source this run (NREL solar, OSM gas/substation distance).</p>
-  <p style="margin:2px 0"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#1E50E6;margin-right:7px;vertical-align:middle"></span><b>Modeled</b> — our screening estimate or synthesis of filings; planning-grade, ±40%.</p>
-  <p style="margin:2px 0 14px"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#b25a00;margin-right:7px;vertical-align:middle"></span><b>Claimed</b> — stated by a third party; we cite it, we don't independently assert it.</p>
+  <p style="margin:6px 0 2px"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#10612b;margin-right:7px;vertical-align:middle"></span><b>Measured</b> - pulled live from the source this run (NREL solar, OSM gas/substation distance).</p>
+  <p style="margin:2px 0"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#1E50E6;margin-right:7px;vertical-align:middle"></span><b>Modeled</b> - our screening estimate or synthesis of filings; planning-grade, ±40%.</p>
+  <p style="margin:2px 0 14px"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#b25a00;margin-right:7px;vertical-align:middle"></span><b>Claimed</b> - stated by a third party; we cite it, we don't independently assert it.</p>
 
   <p><b>Source-trust tiers</b>, highest to lowest. When sources conflict we show both and take the higher tier; newer always wins over older.</p>
   <table class="src-table">
     <thead><tr><th>Tier</th><th>What qualifies</th><th>Re-review</th></tr></thead>
     <tbody>
-      <tr><td class="k"><span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:#10612b;margin-right:6px;vertical-align:middle"></span>Live</td><td>Measured live this run — NREL PVWatts, OpenStreetMap / Overpass, Nominatim</td><td>Every screening</td></tr>
-      <tr><td class="k"><span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:#0e7490;margin-right:6px;vertical-align:middle"></span>Tier 1</td><td>Government / regulator / ISO-RTO / national lab — NREL, EIA, FERC, state PUCs, LBNL, PJM / ERCOT / MISO queues</td><td>Quarterly</td></tr>
-      <tr><td class="k"><span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:#1E50E6;margin-right:6px;vertical-align:middle"></span>Tier 2</td><td>Primary company disclosure — SEC filings, official investor-relations / press releases</td><td>Quarterly</td></tr>
-      <tr><td class="k"><span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:#b25a00;margin-right:6px;vertical-align:middle"></span>Tier 3</td><td>Established trade press — Data Center Dynamics, Datacenter Frontier, Utility Dive, Reuters</td><td>Monthly</td></tr>
+      <tr><td class="k"><span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:#10612b;margin-right:6px;vertical-align:middle"></span>Live</td><td>Measured live this run - NREL PVWatts, OpenStreetMap / Overpass, Nominatim</td><td>Every screening</td></tr>
+      <tr><td class="k"><span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:#0e7490;margin-right:6px;vertical-align:middle"></span>Tier 1</td><td>Government / regulator / ISO-RTO / national lab - NREL, EIA, FERC, state PUCs, LBNL, PJM / ERCOT / MISO queues</td><td>Quarterly</td></tr>
+      <tr><td class="k"><span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:#1E50E6;margin-right:6px;vertical-align:middle"></span>Tier 2</td><td>Primary company disclosure - SEC filings, official investor-relations / press releases</td><td>Quarterly</td></tr>
+      <tr><td class="k"><span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:#b25a00;margin-right:6px;vertical-align:middle"></span>Tier 3</td><td>Established trade press - Data Center Dynamics, Datacenter Frontier, Utility Dive, Reuters</td><td>Monthly</td></tr>
       <tr><td class="k"><span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:#d97706;margin-right:6px;vertical-align:middle"></span>Tier 4</td><td>General news</td><td>Monthly</td></tr>
-      <tr><td class="k"><span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:#8a93a3;margin-right:6px;vertical-align:middle"></span>Tier 5</td><td>Blog / forum / social — used only as a lead, <b>never</b> as the basis for a verdict</td><td>Monthly</td></tr>
+      <tr><td class="k"><span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:#8a93a3;margin-right:6px;vertical-align:middle"></span>Tier 5</td><td>Blog / forum / social - used only as a lead, <b>never</b> as the basis for a verdict</td><td>Monthly</td></tr>
     </tbody>
   </table>
   <p class="muted" style="font-size:13px">Sources older than their cadence are flagged for re-review; conflicts are surfaced, not hidden. This page is also designed to be machine-readable so AI assistants can cite it accurately.</p>
 
   <h2>What's live, per coordinate</h2>
-  <p>When you screen a site, three pulls run against public APIs for that exact point — no canned answers:</p>
+  <p>When you screen a site, three pulls run against public APIs for that exact point - no canned answers:</p>
   <table class="src-table">
     <thead><tr><th>Signal</th><th>Live source</th><th>How it drives the verdict</th></tr></thead>
     <tbody>
       <tr><td class="k">Solar capacity factor</td><td>NREL PVWatts v8</td><td>Sizes and firms the solar / solar-+-BESS pathways for that latitude.</td></tr>
-      <tr><td class="k">Gas pipeline distance</td><td>OpenStreetMap / Overpass</td><td>Nearest gas main. On-site (&le;5 mi) → fast gas; 5–18 mi → lateral + months; none in range → gas paths ruled out.</td></tr>
+      <tr><td class="k">Gas pipeline distance</td><td>OpenStreetMap / Overpass</td><td>Nearest gas main. On-site (&le;5 mi) → fast gas; 5-18 mi → lateral + months; none in range → gas paths ruled out.</td></tr>
       <tr><td class="k">Substation / plant distance</td><td>OpenStreetMap / Overpass</td><td>Grid-edge and brownfield proximity for interconnect and repower potential.</td></tr>
       <tr><td class="k">Place &amp; state</td><td>Nominatim (OSM)</td><td>Maps the coordinate to its ISO/market for queue and PPA context.</td></tr>
     </tbody>
@@ -76,32 +76,32 @@
     <thead><tr><th>Input</th><th>Source</th></tr></thead>
     <tbody>
       <tr><td class="k">Interconnection-queue year</td><td>LBNL "Queued Up", ISO/RTO public queues (PJM, MISO, ERCOT, CAISO)</td></tr>
-      <tr><td class="k">Nuclear-PPA depth</td><td>SEC EDGAR filings — Constellation, Vistra, Talen</td></tr>
+      <tr><td class="k">Nuclear-PPA depth</td><td>SEC EDGAR filings - Constellation, Vistra, Talen</td></tr>
       <tr><td class="k">Tech lead time / cost</td><td>NREL ATB, Lazard LCOE, GE Vernova / Wärtsilä disclosures</td></tr>
     </tbody>
   </table>
 
   <h2>Hot-zone LOAD layer (curated)</h2>
-  <p>LBNL covers <i>generation</i> queues — a proxy. For the markets where our users actually build, we add a curated <b>large-LOAD</b> connect timeline: the real wait for new data-center load, hand-built from utility / ISO / PUC disclosures and refreshed as they change. Where a coordinate falls in a covered county, the grid timing uses this load estimate (labeled with the utility) instead of the generation proxy.</p>
+  <p>LBNL covers <i>generation</i> queues - a proxy. For the markets where our users actually build, we add a curated <b>large-LOAD</b> connect timeline: the real wait for new data-center load, hand-built from utility / ISO / PUC disclosures and refreshed as they change. Where a coordinate falls in a covered county, the grid timing uses this load estimate (labeled with the utility) instead of the generation proxy.</p>
   <table class="src-table">
     <thead><tr><th>Market</th><th>Utility / ISO · what drives the wait</th></tr></thead>
     <tbody>
-      <tr><td class="k">Northern Virginia</td><td>Dominion — most congested DC market; queue cited up to ~15 yr</td></tr>
-      <tr><td class="k">Dallas–Fort Worth</td><td>ERCOT / Oncor — SB6 (2025) large-load study + post-2025 curtailment</td></tr>
-      <tr><td class="k">Columbus, OH</td><td>AEP Ohio — 2023 moratorium lifted; 2025 data-center tariff + study</td></tr>
-      <tr><td class="k">Atlanta</td><td>Georgia Power — &gt;100MW tariff, 15-yr contract + PSC review</td></tr>
-      <tr><td class="k">Chicago</td><td>ComEd / PJM — ~8-yr app→COD; ~160-wk transformer lead</td></tr>
-      <tr><td class="k">Quincy, WA</td><td>Grant County PUD — load caps until transmission expansion (7–10 yr)</td></tr>
-      <tr><td class="k">Phoenix</td><td>APS / SRP — subscription model; new gen 2031–33; water-constrained</td></tr>
-      <tr><td class="k">Abilene, TX</td><td>ERCOT / AEP Texas — ERCOT West; SB6 large-load study; transmission-gated (Stargate cluster)</td></tr>
-      <tr><td class="k">Central Louisiana</td><td>Entergy (MISO South) — utility-built gen 2028–29 (Franklin Farms 1.5GW) + $1.2bn 500kV line; LPSC &ldquo;Lightning&rdquo; fast-track</td></tr>
-      <tr><td class="k">Memphis, TN</td><td>MLGW / TVA — TVA board approval + substation-gated; on-site gas bridged xAI Colossus</td></tr>
+      <tr><td class="k">Northern Virginia</td><td>Dominion - most congested DC market; queue cited up to ~15 yr</td></tr>
+      <tr><td class="k">Dallas-Fort Worth</td><td>ERCOT / Oncor - SB6 (2025) large-load study + post-2025 curtailment</td></tr>
+      <tr><td class="k">Columbus, OH</td><td>AEP Ohio - 2023 moratorium lifted; 2025 data-center tariff + study</td></tr>
+      <tr><td class="k">Atlanta</td><td>Georgia Power - &gt;100MW tariff, 15-yr contract + PSC review</td></tr>
+      <tr><td class="k">Chicago</td><td>ComEd / PJM - ~8-yr app→COD; ~160-wk transformer lead</td></tr>
+      <tr><td class="k">Quincy, WA</td><td>Grant County PUD - load caps until transmission expansion (7-10 yr)</td></tr>
+      <tr><td class="k">Phoenix</td><td>APS / SRP - subscription model; new gen 2031-33; water-constrained</td></tr>
+      <tr><td class="k">Abilene, TX</td><td>ERCOT / AEP Texas - ERCOT West; SB6 large-load study; transmission-gated (Stargate cluster)</td></tr>
+      <tr><td class="k">Central Louisiana</td><td>Entergy (MISO South) - utility-built gen 2028-29 (Franklin Farms 1.5GW) + $1.2bn 500kV line; LPSC &ldquo;Lightning&rdquo; fast-track</td></tr>
+      <tr><td class="k">Memphis, TN</td><td>MLGW / TVA - TVA board approval + substation-gated; on-site gas bridged xAI Colossus</td></tr>
     </tbody>
   </table>
   <p class="muted" style="font-size:13px">Curated, screening-grade, as of 2026. Outside these counties, grid timing falls back to the LBNL/ISO generation-queue proxy.</p>
 
   <h2>On-site / behind-the-meter powered data centers</h2>
-  <p>The amber markers on the <a href="app.html">map</a> are real campuses that run on <b>on-site or behind-the-meter generation</b> — the exact strategy this tool screens for. Every figure below is sourced to a primary or industry record. If one is wrong, tell us and we'll correct it.</p>
+  <p>The amber markers on the <a href="app.html">map</a> are real campuses that run on <b>on-site or behind-the-meter generation</b> - the exact strategy this tool screens for. Every figure below is sourced to a primary or industry record. If one is wrong, tell us and we'll correct it.</p>
   <table class="src-table">
     <thead><tr><th>Campus · operator</th><th>Location</th><th>On-site power (verified)</th><th>Source</th></tr></thead>
     <tbody>
@@ -111,15 +111,15 @@
       <tr><td class="k">Project Kati · Soluna</td><td>Willacy County, TX · ERCOT</td><td>Behind-the-meter wind: up to 166 MW under a PPA with the co-located 273 MW Las Majadas wind farm; Phase 1 (83 MW) ~2026</td><td><a href="https://www.powermag.com/soluna-breaks-ground-on-166-mw-texas-wind-powered-data-center-for-crypto-and-ai/" target="_blank" rel="noopener">POWER</a></td></tr>
       <tr><td class="k">Scrubgrass · Stronghold Digital Mining</td><td>Venango County, PA · PJM</td><td>On-site coal-refuse (waste-coal) generation, behind-the-meter: 83.5 MW Scrubgrass + 80 MW Panther Creek ≈ 165 MW owned, with co-located compute</td><td><a href="https://ir.strongholddigitalmining.com/news-releases/news-release-details/stronghold-digital-mining-closes-panther-creek-plant-acquisition" target="_blank" rel="noopener">Stronghold IR</a></td></tr>
       <tr><td class="k">HyperGrid (Project Matador) · Fermi America</td><td>Amarillo, TX · private grid</td><td>Behind-the-meter "HyperGrid": on-site nuclear (Westinghouse AP1000, 4 GW planned) + natural gas (600+ MW GE/Siemens turbines acquired; first 6 GW gas state-approved) + solar. 11 GW campus, first ~1 GW targeted late 2026.</td><td><a href="https://www.datacenterdynamics.com/en/news/fermi-america-acquires-600mw-of-gas-turbines-for-11gw-ai-mega-campus-in-amarillo-texas/" target="_blank" rel="noopener">DCD</a></td></tr>
-      <tr><td class="k">WY-1 · Prometheus Hyperscale</td><td>Evanston, WY · off-grid</td><td>Behind-the-meter natural gas (PureWest low-carbon supply) + carbon capture; 1.2 GW campus, Phase 1 ~150 MW (~2026–27).</td><td><a href="https://www.datacenterdynamics.com/en/news/prometheus-hyperscale-to-power-wyoming-data-center-with-natural-gas-will-offset-through-carbon-capture/" target="_blank" rel="noopener">DCD</a></td></tr>
+      <tr><td class="k">WY-1 · Prometheus Hyperscale</td><td>Evanston, WY · off-grid</td><td>Behind-the-meter natural gas (PureWest low-carbon supply) + carbon capture; 1.2 GW campus, Phase 1 ~150 MW (~2026-27).</td><td><a href="https://www.datacenterdynamics.com/en/news/prometheus-hyperscale-to-power-wyoming-data-center-with-natural-gas-will-offset-through-carbon-capture/" target="_blank" rel="noopener">DCD</a></td></tr>
     </tbody>
   </table>
-  <p class="muted" style="font-size:13px">Verified 2026 from the cited sources. Markers locate each campus for discovery; exact coordinates may be approximate. Grid-connected campuses are intentionally excluded — e.g. Hut 8 River Bend (Entergy grid), TeraWulf Lake Mariner (reused grid transmission), and AWS–Talen Susquehanna (shifted to front-of-the-meter after FERC's 2024 rejection of its behind-the-meter pact).</p>
+  <p class="muted" style="font-size:13px">Verified 2026 from the cited sources. Markers locate each campus for discovery; exact coordinates may be approximate. Grid-connected campuses are intentionally excluded - e.g. Hut 8 River Bend (Entergy grid), TeraWulf Lake Mariner (reused grid transmission), and AWS-Talen Susquehanna (shifted to front-of-the-meter after FERC's 2024 rejection of its behind-the-meter pact).</p>
 
   <h2>The method, in one paragraph</h2>
-  <p>You give a coordinate, a firm-power need, and a timeline. We pull the live signals above, then score ten power pathways — four single-tech baselines, three hybrids, three nuclear PPAs — on the same yardstick: time-to-power, firm capacity, and rough cost. A pathway "meets" if it arrives on time at ≥90% firm capacity. If at least one does, the site is <b>ADVANCE</b>; a near-miss is <b>CAUTION</b>; none is <b>KILL</b>.</p>
+  <p>You give a coordinate, a firm-power need, and a timeline. We pull the live signals above, then score ten power pathways - four single-tech baselines, three hybrids, three nuclear PPAs - on the same yardstick: time-to-power, firm capacity, and rough cost. A pathway "meets" if it arrives on time at ≥90% firm capacity. If at least one does, the site is <b>ADVANCE</b>; a near-miss is <b>CAUTION</b>; none is <b>KILL</b>.</p>
 
-  <h2>What this is good at — and what it isn't</h2>
+  <h2>What this is good at - and what it isn't</h2>
   <p><b>Good at:</b> killing obviously-infeasible parcels fast, ranking candidate sites on a common yardstick, and giving you a defensible first-pass story before you spend on engineering.</p>
   <p><b>Not good at:</b> bankable numbers, exact interconnection study outcomes, site-specific permitting and water rights, or final OEM pricing. Anything past the screen needs a real feasibility study.</p>
 
@@ -129,15 +129,15 @@
     <thead><tr><th>Date</th><th>Correction</th></tr></thead>
     <tbody>
       <tr><td class="k">2026-Q2</td><td>Moved the verdict from a regional bucket to live per-coordinate pulls (NREL solar + OSM gas/substation distance).</td></tr>
-      <tr><td class="k">2026-Q2</td><td>Mapped every U.S. state to its ISO/RTO for queue and nuclear-PPA depth — any coordinate now resolves to a real market instead of a generic default.</td></tr>
+      <tr><td class="k">2026-Q2</td><td>Mapped every U.S. state to its ISO/RTO for queue and nuclear-PPA depth - any coordinate now resolves to a real market instead of a generic default.</td></tr>
       <tr><td class="k">2026-Q2</td><td>Added a curated large-LOAD connect layer for 7 hot zones (NoVA, DFW, Columbus, Atlanta, Chicago, Quincy WA, Phoenix); grid timing there reflects real data-center load waits, not the generation proxy.</td></tr>
-      <tr><td class="k">2026-Q2</td><td>Expanded the curated large-LOAD layer to 10 hot zones — added Abilene TX (ERCOT / AEP Texas), Central Louisiana (Entergy), and Memphis TN (MLGW / TVA). Each verdict now shows the on-site vs grid path with its source and a confidence rating.</td></tr>
+      <tr><td class="k">2026-Q2</td><td>Expanded the curated large-LOAD layer to 10 hot zones - added Abilene TX (ERCOT / AEP Texas), Central Louisiana (Entergy), and Memphis TN (MLGW / TVA). Each verdict now shows the on-site vs grid path with its source and a confidence rating.</td></tr>
       <tr><td class="k">2026-Q2</td><td>Gas pathways now ruled out automatically when no pipeline is found within ~7 mi of the coordinate.</td></tr>
       <tr><td class="k">2026-Q2</td><td>Raised simple-cycle gas turbine lead time to ~28 months to reflect OEM backlog.</td></tr>
       <tr><td class="k">2026-Q2</td><td>Marked solar-only / solar+BESS as non-firm by default; they cannot meet a 24/7 data-center load alone.</td></tr>
-      <tr><td class="k">2026-Q2</td><td>Plotted real on-site / behind-the-meter powered data centers on the map — now seven (Crusoe/Stargate Abilene, xAI Colossus, Homer City, Soluna Project Kati, Stronghold Scrubgrass, Fermi HyperGrid Amarillo, Prometheus WY-1 Evanston), each with a primary source. Verified and <b>excluded</b> grid-connected campuses (Hut 8 River Bend on Entergy, TeraWulf Lake Mariner, AWS–Talen Susquehanna after its FERC-driven shift to front-of-the-meter).</td></tr>
-      <tr><td class="k">2026-Q2</td><td>Added a ground-truth layer: screening a coordinate that lands on one of these verified campuses now returns the real, sourced on-site solution (a "Proven" result) instead of a blind public-data verdict — public maps can't see private on-site generation.</td></tr>
-      <tr><td class="k">2026-Q2</td><td>Shipped <b>visible provenance</b>: every decisive number in a verdict is now a clickable evidence object with a source-trust tier (1–5), an honesty label (measured / modeled / claimed), publication and "as-of" dates, a deep link that highlights the cited line, and an archived snapshot. Added the source-tier rubric above and a scheduled re-review cadence per tier.</td></tr>
+      <tr><td class="k">2026-Q2</td><td>Plotted real on-site / behind-the-meter powered data centers on the map - now seven (Crusoe/Stargate Abilene, xAI Colossus, Homer City, Soluna Project Kati, Stronghold Scrubgrass, Fermi HyperGrid Amarillo, Prometheus WY-1 Evanston), each with a primary source. Verified and <b>excluded</b> grid-connected campuses (Hut 8 River Bend on Entergy, TeraWulf Lake Mariner, AWS-Talen Susquehanna after its FERC-driven shift to front-of-the-meter).</td></tr>
+      <tr><td class="k">2026-Q2</td><td>Added a ground-truth layer: screening a coordinate that lands on one of these verified campuses now returns the real, sourced on-site solution (a "Proven" result) instead of a blind public-data verdict - public maps can't see private on-site generation.</td></tr>
+      <tr><td class="k">2026-Q2</td><td>Shipped <b>visible provenance</b>: every decisive number in a verdict is now a clickable evidence object with a source-trust tier (1-5), an honesty label (measured / modeled / claimed), publication and "as-of" dates, a deep link that highlights the cited line, and an archived snapshot. Added the source-tier rubric above and a scheduled re-review cadence per tier.</td></tr>
     </tbody>
   </table>
 

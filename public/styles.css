@@ -1,5 +1,5 @@
 /* ===========================================================
-   On-Site Power Intelligence — onsitespower.com
+   On-Site Power Intelligence - onsitespower.com
    Shared design system. Precision-instrument / editorial B2B.
    =========================================================== */
 
@@ -292,7 +292,7 @@ tr.win .scen::after{content:" ◀ fastest viable";font-family:var(--sans);font-s
 .print-only{display:none}
 
 /* ===========================================================
-   APP — map + live-data tool additions
+   APP - map + live-data tool additions
    =========================================================== */
 .maphero{position:relative;margin-top:8px;width:98vw;max-width:98vw;margin-left:calc(50% - 49vw)}
 #map{height:clamp(460px,78vh,1100px);border-radius:var(--radius);border:1px solid var(--line);overflow:hidden;z-index:0}

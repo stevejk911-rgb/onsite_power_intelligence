@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<title>Screen a site — On-Site Power Intelligence</title>
+<title>Screen a site - On-Site Power Intelligence</title>
 <meta name="description" content="Drop a coordinate, get a live behind-the-meter ADVANCE / KILL verdict across 10 power options in 60 seconds. Real NREL + OSM data. Screening-grade ±40%.">
 <link rel="canonical" href="https://onsitespower.com/app.html">
 <meta name="robots" content="noindex,nofollow">
@@ -11,7 +11,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="On-Site Power Intelligence">
 <meta property="og:url" content="https://onsitespower.com/app.html">
-<meta property="og:title" content="Screen a site — On-Site Power Intelligence">
+<meta property="og:title" content="Screen a site - On-Site Power Intelligence">
 <meta property="og:description" content="Drop a coordinate, get a live behind-the-meter ADVANCE / KILL verdict across 10 power options in 60 seconds.">
 <meta property="og:image" content="https://onsitespower.com/og.png">
 <meta name="twitter:card" content="summary_large_image">
@@ -51,7 +51,7 @@
   .steps3 .st{display:flex;gap:12px;align-items:flex-start;background:#fff;border:1px solid var(--line-2);border-radius:14px;padding:13px 15px;cursor:pointer;transition:border-color .15s,box-shadow .15s,transform .15s;outline:none}
   .steps3 .st:hover,.steps3 .st:focus-visible{border-color:#1E50E6;box-shadow:0 2px 10px rgba(30,80,230,.12);transform:translateY(-1px)}
   .steps3 .st:active{transform:translateY(0)}
-  /* crisp blue highlight when a step card is clicked — sharp ring + soft halo that dissipates */
+  /* crisp blue highlight when a step card is clicked - sharp ring + soft halo that dissipates */
   .flash{animation:flashGlow 1.5s cubic-bezier(.33,0,.15,1) forwards;border-radius:14px;position:relative;z-index:5}
   @keyframes flashGlow{
     0%{box-shadow:0 0 0 2px rgba(30,80,230,.95),0 0 0 4px rgba(30,80,230,.22),0 8px 24px rgba(30,80,230,.18)}
@@ -186,7 +186,7 @@
   .screen-btn.is-screening{opacity:.92;cursor:progress;display:inline-flex;align-items:center;gap:7px}
   .btn-spin{display:inline-block;width:13px;height:13px;border:2px solid rgba(255,255,255,.45);border-top-color:#fff;border-radius:50%;animation:btnspin .7s linear infinite;flex:none}
   @keyframes btnspin{to{transform:rotate(360deg)}}
-  /* plain small-text assumptions — no box, blends with the page */
+  /* plain small-text assumptions - no box, blends with the page */
   .yard{margin-top:16px;font-family:var(--sans)}
   .yard-row{display:flex;gap:12px;align-items:baseline;padding:2px 2px;font-size:11.5px;color:#7a838f;line-height:1.55}
   .yard-row b{flex:0 0 116px;color:#98a1ad;font-weight:700;font-size:9.5px;text-transform:uppercase;letter-spacing:.05em}
@@ -219,7 +219,7 @@
 <div class="app-shell">
 
   <div class="print-only" style="border-bottom:2px solid #000;padding-bottom:10px;margin-bottom:18px">
-    <strong>On-Site Power Intelligence</strong> — Behind-the-Meter Pre-screen · <span id="printMeta"></span> · Screening-grade ±40% · onsitespower.com
+    <strong>On-Site Power Intelligence</strong> - Behind-the-Meter Pre-screen · <span id="printMeta"></span> · Screening-grade ±40% · onsitespower.com
   </div>
 
   <div class="app-head no-print">
@@ -229,21 +229,21 @@
     <div class="steps3">
       <div class="st" role="button" tabindex="0" onclick="focusStep(1)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();focusStep(1)}"><span class="stn">1</span><div><b>Drop a pin.</b><i>On the map, or by address.</i></div></div>
       <div class="st" role="button" tabindex="0" onclick="focusStep(2)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();focusStep(2)}"><span class="stn">2</span><div><b>Set the load.</b><i>How many MW, by when.</i></div></div>
-      <div class="st" role="button" tabindex="0" onclick="focusStep(3)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();focusStep(3)}"><span class="stn">3</span><div><b>Get the verdict.</b><i>Advance or kill — 10 options, sources.</i></div></div>
+      <div class="st" role="button" tabindex="0" onclick="focusStep(3)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();focusStep(3)}"><span class="stn">3</span><div><b>Get the verdict.</b><i>Advance or kill - 10 options, sources.</i></div></div>
     </div>
   </div>
 
   <!-- MAP -->
   <div class="maphero no-print" id="step1">
     <div class="map-controls">
-      <div class="cue" id="cue">Start here — drop a pin or type an address</div>
+      <div class="cue" id="cue">Start here - drop a pin or type an address</div>
       <input id="addr" placeholder="Enter a site address, or click the map" autocomplete="off"
              onkeydown="if(event.key==='Enter')runScreen()">
       <button class="screen-btn" onclick="runScreen()">Screen</button>
     </div>
     <div id="map"></div>
     <button id="undoBtn" class="undo-fab no-print" onclick="undoPin()" title="Back to the previous pin (Ctrl/Cmd+Z)" style="display:none">↶ Previous pin</button>
-    <div class="maphelp" id="maphelp"><b>Click the map to drop your site</b> — drag the pin to adjust · scroll or +/− to zoom · ⌘/Ctrl+Z (or “↶ Previous pin”) to undo.</div>
+    <div class="maphelp" id="maphelp"><b>Click the map to drop your site</b> - drag the pin to adjust · scroll or +/− to zoom · ⌘/Ctrl+Z (or “↶ Previous pin”) to undo.</div>
   </div>
 
   <!-- SETTINGS -->
@@ -312,7 +312,7 @@ function focusStep(n){
   if(n === 2){ flashEl(document.getElementById('step2')); return; }
   // step 3: the verdict. If nothing has been screened yet, guide to the input.
   if(hasResult){ flashEl(resultEl); return; }
-  // no screening yet — highlight the search box IN PLACE (no scroll, no jitter) + cue
+  // no screening yet - highlight the search box IN PLACE (no scroll, no jitter) + cue
   ringEl(document.querySelector('.map-controls'));
   var a = document.getElementById('addr'); if(a){ try{ a.focus({preventScroll:true}); }catch(e){} }
   var cue = document.getElementById('cue');
@@ -330,14 +330,14 @@ var lmap=null, marker=null, picked=null, DEFAULT=[39.0438,-77.4874]; // Ashburn,
 var lastCtx=null;
 
 /* =====================================================================
-   VISIBLE PROVENANCE — every decisive number carries a sourced, tiered,
+   VISIBLE PROVENANCE - every decisive number carries a sourced, tiered,
    dated evidence object you can open and verify. Three labels:
      measured = live pull this run   modeled = our estimate/synthesis (±)
      claimed  = third-party stated (we cite, we don't assert)
    Tiers (citation trust): 1 gov/regulator/ISO/national-lab ·
      2 primary company disclosure (SEC/IR) · 3 established trade press ·
      4 general news · 5 blog/forum/social (lead only, never a verdict basis)
-   We store facts + a SHORT quote + a deep link + a snapshot — never a
+   We store facts + a SHORT quote + a deep link + a snapshot - never a
    copy of the source text (keeps us inside fair use / public-domain).
    ===================================================================== */
 var TODAY = new Date().toISOString().slice(0,10);
@@ -353,34 +353,34 @@ var TIER_META = {
 var LABEL_META = {
   measured:{cls:'lbl-measured', name:'Measured', note:'Pulled live from the source this run.'},
   estimate:{cls:'lbl-modeled', name:'Estimate', note:'The live source did not respond this run, so a screening-grade fallback value was used. Not measured.'},
-  realized:{cls:'lbl-measured', name:'Realized', note:'Actual completed-project outcomes — what really happened in the field, not our estimate.'},
-  modeled:{cls:'lbl-modeled', name:'Modeled', note:'Our screening estimate / synthesis of filings — planning-grade, ±40%.'},
+  realized:{cls:'lbl-measured', name:'Realized', note:'Actual completed-project outcomes - what really happened in the field, not our estimate.'},
+  modeled:{cls:'lbl-modeled', name:'Modeled', note:'Our screening estimate / synthesis of filings - planning-grade, ±40%.'},
   claimed:{cls:'lbl-claimed', name:'Claimed', note:'Stated by a third party. We cite it; we do not independently assert it.'}
 };
 /* canonical, deep-linkable sources. quote/frag are filled only where we have a
-   verified short excerpt — never fabricated. cad = review cadence (days). */
+   verified short excerpt - never fabricated. cad = review cadence (days). */
 var SOURCES = {
   nrel:{title:'PVWatts v8 solar model', pub:'NREL (U.S. DOE national lab)', type:'Live solar capacity-factor model', tier:1, label:'measured', kind:'measured', url:'https://pvwatts.nrel.gov/', published:'continuously updated', cad:0,
-    how:'In NREL’s PVWatts tool (search “NREL PVWatts”), enter this coordinate — it returns the same solar capacity factor we used.'},
+    how:'In NREL’s PVWatts tool (search “NREL PVWatts”), enter this coordinate - it returns the same solar capacity factor we used.'},
   osm:{title:'Gas pipelines & substations (Overpass)', pub:'OpenStreetMap contributors', type:'Open primary geospatial data', tier:1, label:'measured', kind:'measured', url:'https://www.openstreetmap.org/', published:'continuously updated', cad:0,
     note:'Crowd-sourced primary geodata; live but completeness varies by region.',
-    how:'These are straight-line distances from your screened point to the nearest gas pipeline and electrical substation in OpenStreetMap. We don’t pinpoint the exact feature — search the location below to inspect the area yourself.'},
+    how:'These are straight-line distances from your screened point to the nearest gas pipeline and electrical substation in OpenStreetMap. We don’t pinpoint the exact feature - search the location below to inspect the area yourself.'},
   osm_gas:{title:'Nearest gas pipeline (Overpass)', pub:'OpenStreetMap contributors', type:'Open primary geospatial data', tier:1, label:'measured', kind:'measured', url:'https://www.openstreetmap.org/', published:'continuously updated', cad:0,
     note:'Crowd-sourced; pipeline coverage varies by region.',
-    how:'We measured the straight-line distance to the nearest gas pipeline in OpenStreetMap. Its location is below — open it on the map to see the pipeline itself.'},
+    how:'We measured the straight-line distance to the nearest gas pipeline in OpenStreetMap. Its location is below - open it on the map to see the pipeline itself.'},
   osm_sub:{title:'Nearest substation (Overpass)', pub:'OpenStreetMap contributors', type:'Open primary geospatial data', tier:1, label:'measured', kind:'measured', url:'https://www.openstreetmap.org/', published:'continuously updated', cad:0,
     note:'Crowd-sourced; substation coverage varies by region.',
-    how:'We measured the straight-line distance to the nearest electrical substation in OpenStreetMap. Its location is below — open it on the map to see the substation itself.'},
+    how:'We measured the straight-line distance to the nearest electrical substation in OpenStreetMap. Its location is below - open it on the map to see the substation itself.'},
   nominatim:{title:'Geocoding (place & state)', pub:'OpenStreetMap / Nominatim', type:'Open geocoder', tier:1, label:'measured', kind:'measured', url:'https://www.openstreetmap.org/', published:'continuously updated', cad:0,
     how:'How we resolved the place, county, and state for this coordinate (OpenStreetMap / Nominatim).'},
   lbnl:{title:'"Queued Up" interconnection-queue study', pub:'Lawrence Berkeley National Laboratory', type:'Generation-queue proxy for grid timing', tier:1, label:'modeled', kind:'cited', url:'https://emp.lbl.gov/queues', published:'2025', cad:90,
-    how:'Search “LBNL Queued Up” for the latest interconnection-queue report and your ISO/RTO’s queue length — the basis for our grid-timing proxy.'},
-  lbnl_realized:{title:'"Queued Up" — realized request→COD durations', pub:'Lawrence Berkeley National Laboratory', type:'Completed-project interconnection timelines', tier:1, label:'realized', kind:'cited', url:'https://emp.lbl.gov/queues', published:'2025', cad:90,
+    how:'Search “LBNL Queued Up” for the latest interconnection-queue report and your ISO/RTO’s queue length - the basis for our grid-timing proxy.'},
+  lbnl_realized:{title:'"Queued Up" - realized request→COD durations', pub:'Lawrence Berkeley National Laboratory', type:'Completed-project interconnection timelines', tier:1, label:'realized', kind:'cited', url:'https://emp.lbl.gov/queues', published:'2025', cad:90,
     how:'In “LBNL Queued Up (2025 Edition)”, see the realized median time from interconnection request to commercial operation for completed projects, and the withdrawal rate.'},
   cleanpower_iso:{title:'Average months in interconnection queue, by ISO', pub:'American Clean Power', type:'Industry fact sheet', tier:3, label:'realized', kind:'cited', url:'https://cleanpower.org/', published:'2023', cad:180,
     how:'Search “American Clean Power interconnection fact sheet” for average months in queue by ISO (CAISO / ERCOT / PJM).'},
   ercot_sb6:{title:'SB6 large-load interconnection (≥75 MW)', pub:'ERCOT / Public Utility Commission of Texas', type:'Large-load study & curtailment rule', tier:1, label:'modeled', kind:'cited', url:'https://www.ercot.com/', published:'2025', cad:90,
-    how:'On ERCOT / PUCT, search "Senate Bill 6 large load" — the interconnection study and curtailment rule behind this connect estimate.'},
+    how:'On ERCOT / PUCT, search "Senate Bill 6 large load" - the interconnection study and curtailment rule behind this connect estimate.'},
   dominion_scc:{title:'Dominion load-service & NoVA capacity', pub:'Virginia State Corporation Commission / Dominion', type:'Utility filing', tier:1, label:'modeled', kind:'cited', url:'https://scc.virginia.gov/', published:'2025-26', cad:90,
     how:'In the Virginia SCC docket system, search Dominion data-center / large-load service filings for Northern Virginia.'},
   puco_aep:{title:'AEP Ohio data-center tariff', pub:'Public Utilities Commission of Ohio / AEP', type:'Tariff & load-study ruling', tier:1, label:'modeled', kind:'cited', url:'https://puco.ohio.gov/', published:'2025', cad:90,
@@ -392,7 +392,7 @@ var SOURCES = {
   eia:{title:'EIA generator & capacity data', pub:'U.S. Energy Information Administration', type:'Federal energy statistics', tier:1, label:'modeled', kind:'cited', url:'https://www.eia.gov/electricity/', published:'2025', cad:90,
     how:'On EIA Electricity, see generator-level capacity and operations data.'},
   sec_nuclear:{title:'Nuclear-PPA depth (Constellation · Vistra · Talen)', pub:'SEC EDGAR filings', type:'Primary company disclosure', tier:2, label:'modeled', kind:'cited', url:'https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany', published:'2025', cad:90,
-    how:'Search SEC EDGAR for Constellation, Vistra, or Talen — their filings set how much nuclear off-take is realistically available in each region.'},
+    how:'Search SEC EDGAR for Constellation, Vistra, or Talen - their filings set how much nuclear off-take is realistically available in each region.'},
   atb_cost:{title:'Tech cost & equipment lead time', pub:'NREL ATB · Lazard LCOE · OEM disclosures', type:'Cost & schedule benchmarks', tier:1, label:'modeled', kind:'cited', url:'https://atb.nrel.gov/', published:'2025', cad:90,
     how:'Search “NREL Annual Technology Baseline (ATB)” for cost & capacity-factor benchmarks; turbine/engine lead times come from GE Vernova / Wärtsilä disclosures.'},
   generic_reg:{title:'Regulatory / utility filing (synthesis)', pub:'State PUC / ISO / utility', type:'Synthesis of public filings', tier:1, label:'modeled', kind:'cited', url:'', published:'2025-26', cad:90,
@@ -436,7 +436,7 @@ function regAdhoc(url,title,pub){
   for(var k in _adhoc){ if(_adhoc[k].url===url) return k; }
   var c=classifySrc(url); var id='ad'+(++_adhocN);
   _adhoc[id]={id:id, title:title||domainOf(url), pub:pub||domainOf(url), type:'Third-party report ('+domainOf(url)+')', tier:c.tier, label:c.label, kind:'cited', url:url, published:'', cad:30, adhoc:true,
-    how:'This figure is from a cited third-party report ('+domainOf(url)+'). Search that outlet for the campus name above to read it — look for the on-site generation capacity (MW/GW), fuel type, and operating status.'};
+    how:'This figure is from a cited third-party report ('+domainOf(url)+'). Search that outlet for the campus name above to read it - look for the on-site generation capacity (MW/GW), fuel type, and operating status.'};
   return id;
 }
 function getSrc(id){ var s=SOURCES[id]||_adhoc[id]||null; if(s && !s.id){ s.id=id; } return s; }
@@ -473,10 +473,10 @@ function locBlock(s){
     var f=window.__feat && window.__feat[s.id==='osm_gas'?'gas':'sub'];
     var what=s.id==='osm_gas'?'gas pipeline':'substation';
     if(f){
-      return '<div class="evpop-loc"><b>Nearest '+what+'</b><div>~'+f.mi.toFixed(1)+' mi '+f.dir+' of your pin</div><div class="evpop-coord">'+(+f.lat).toFixed(4)+', '+(+f.lng).toFixed(4)+'</div><div class="evpop-locsub">The exact OpenStreetMap point we measured to — open it on the map to see the '+what+' itself.</div></div>';
+      return '<div class="evpop-loc"><b>Nearest '+what+'</b><div>~'+f.mi.toFixed(1)+' mi '+f.dir+' of your pin</div><div class="evpop-coord">'+(+f.lat).toFixed(4)+', '+(+f.lng).toFixed(4)+'</div><div class="evpop-locsub">The exact OpenStreetMap point we measured to - open it on the map to see the '+what+' itself.</div></div>';
     }
     var L1=window.__screenLoc;
-    return '<div class="evpop-loc"><b>No '+what+' found</b><div>None found in the local OpenStreetMap scan around your pin'+(L1?(' ('+(+L1.lat).toFixed(4)+', '+(+L1.lng).toFixed(4)+')'):'')+'.</div><div class="evpop-locsub">OSM coverage varies — verify locally before ruling it out.</div></div>';
+    return '<div class="evpop-loc"><b>No '+what+' found</b><div>None found in the local OpenStreetMap scan around your pin'+(L1?(' ('+(+L1.lat).toFixed(4)+', '+(+L1.lng).toFixed(4)+')'):'')+'.</div><div class="evpop-locsub">OSM coverage varies - verify locally before ruling it out.</div></div>';
   }
   return '';
 }
@@ -494,7 +494,7 @@ function openEv(elm){
   var disp=srcDisplay(s);
   var tm=TIER_META[disp.tk], lm=disp.lm;
   var html='<div class="evpop-top"><span class="evtier"><span class="ev-dot '+tm.dot+'"></span>'+tm.name+'</span><button class="evpop-x" onclick="closeEv()" aria-label="close">×</button></div>'
-    +'<div class="evpop-pub">'+s.pub+'</div><div class="evpop-type">'+s.type+(s.title?(' — '+s.title):'')+'</div>'
+    +'<div class="evpop-pub">'+s.pub+'</div><div class="evpop-type">'+s.type+(s.title?(' - '+s.title):'')+'</div>'
     +(s.quote?('<div class="evpop-claim">“'+s.quote+'”</div>'):'')
     +'<div class="evpop-dates">'+(s.published?('Published: '+s.published+' · '):'')+'as of '+(s.asof||TODAY)+'</div>'
     +locBlock(s)
@@ -523,12 +523,12 @@ function gridSrcId(ctx){
   if(/pjm|comed/.test(t)) return 'pjm';
   return 'generic_reg';
 }
-/* the standing evidence base every screen rests on — shown even when a given
+/* the standing evidence base every screen rests on - shown even when a given
    run only inline-cites a couple of them, so the verdict never looks thin */
 var ENGINE_SOURCES=['nrel','nominatim','lbnl','lbnl_realized','sec_nuclear','atb_cost'];
-/* realized base rates — what actually happened to completed projects (LBNL/ACP) */
+/* realized base rates - what actually happened to completed projects (LBNL/ACP) */
 var REALIZED={ nationalMedianYr:4.5, nationalCohort:'projects reaching operation in 2024',
-  priorMedianYr:2, priorCohort:'2000–07', withdrawPct:80, asof:'2025',
+  priorMedianYr:2, priorCohort:'2000-07', withdrawPct:80, asof:'2025',
   isoMonths:{CAISO:43, ERCOT:22, PJM:24} };
 function isoAvgMonths(isoLabel){
   var s=(isoLabel||'').toUpperCase();
@@ -545,19 +545,19 @@ function sourcesPanel(){
   ids.sort(function(a,b){ var sa=getSrc(a),sb=getSrc(b); var ka=sa.label==='measured'?'live':sa.tier, kb=sb.label==='measured'?'live':sb.tier; return order[ka]-order[kb]; });
   var rows=ids.map(function(id){ var s=getSrc(id); var disp=srcDisplay(s); var tm=TIER_META[disp.tk];
     return '<div class="src-row"><span class="ev-dot '+tm.dot+'"></span><div class="src-main">'
-      +'<div class="src-title">'+s.pub+(s.title?(' — '+s.title):'')+'</div>'
+      +'<div class="src-title">'+s.pub+(s.title?(' - '+s.title):'')+'</div>'
       +'<div class="src-meta">'+(s.published?('Published '+s.published+' · '):'')+'as of '+(s.asof||TODAY)+' · '+disp.labName+'</div>'
       +(s.how?('<div class="src-how">'+s.how+'</div>'):'')
       +(function(){var lf=linkFor(s);return lf.href?('<div class="src-links"><a href="'+lf.href+'" target="_blank" rel="noopener">'+lf.label+'</a></div>'):'';})()
       +'</div><span class="src-tierbadge">'+tm.name.split(' · ')[0]+'</span></div>';
   }).join('');
-  return '<div class="srcs no-print" id="srcsPanel"><div class="srcs-h" onclick="document.getElementById(\'srcsPanel\').classList.toggle(\'closed\')"><b>Sources &amp; evidence <span class="srcs-sub">— the live pulls and reference data this screen is built on ('+ids.length+')</span></b><span class="srcs-tog">▾</span></div><div class="srcs-body">'+rows+'</div></div>';
+  return '<div class="srcs no-print" id="srcsPanel"><div class="srcs-h" onclick="document.getElementById(\'srcsPanel\').classList.toggle(\'closed\')"><b>Sources &amp; evidence <span class="srcs-sub">- the live pulls and reference data this screen is built on ('+ids.length+')</span></b><span class="srcs-tog">▾</span></div><div class="srcs-body">'+rows+'</div></div>';
 }
 
 /* ===== regional resolution (queue + nuclear off-take depth) =====
    Live per-coordinate data covers solar/gas/grid-proximity. Interconnection-queue
    timing and nuclear-PPA depth have no free per-coordinate API, so they resolve by
-   ISO/RTO — every U.S. state is mapped, sourced from LBNL queues + SEC/ISO filings.
+   ISO/RTO - every U.S. state is mapped, sourced from LBNL queues + SEC/ISO filings.
    Labeled "regional" in every result. Queue years are ISO-level; nuclear depth is
    per-state based on the operating fleet / contracted off-take in that market. */
 var ISO_QUEUE={PJM:2031,MISO:2030,SPP:2029,ERCOT:2028,CAISO:2032,NYISO:2031,ISONE:2031,SERC:2030,FRCC:2030,WECC:2030,NW:2029};
@@ -588,49 +588,49 @@ function regionFor(stateName){
   return {iso:ISO_LABEL[s[0]],queue:ISO_QUEUE[s[0]],nuke:s[1],nukeCap:s[2], modeled:true};
 }
 
-/* ===== LOAD layer (Approach C, phase 1) — curated large-LOAD interconnection
+/* ===== LOAD layer (Approach C, phase 1) - curated large-LOAD interconnection
    reality for top data-center hot zones. Unlike LBNL (generation-queue proxy),
    this is the actual large-load connect timeline for new data-center load,
    hand-built from utility/ISO/PUC disclosures. Preferred over the gen proxy
    where present; everywhere else we fall back to the regional gen estimate.
    Key: "<State>|<County>" (county with no 'County' suffix). asOf 2026. */
 var HOTZONE_LOAD={
-  // Northern Virginia — Dominion. Most congested DC market on earth.
+  // Northern Virginia - Dominion. Most congested DC market on earth.
   'Virginia|Loudoun':       {u:'Dominion',     y:2032, flag:'NoVA capacity-constrained; queue cited up to ~15 yr', src:'Dominion / Virginia SCC 2025-26'},
   'Virginia|Prince William':{u:'Dominion',     y:2032, flag:'NoVA capacity-constrained; new-load wait multi-year', src:'Dominion / Virginia SCC 2025-26'},
   'Virginia|Fairfax':       {u:'Dominion',     y:2031, flag:'NoVA constrained; transmission-gated', src:'Dominion 2025-26'},
   'Virginia|Fauquier':      {u:'Dominion',     y:2031, flag:'NoVA-adjacent; transmission-gated', src:'Dominion 2025-26'},
-  // Dallas–Fort Worth — ERCOT / Oncor. SB6 (2025) large-load regime.
+  // Dallas-Fort Worth - ERCOT / Oncor. SB6 (2025) large-load regime.
   'Texas|Dallas':   {u:'ERCOT / Oncor', y:2029, flag:'SB6 large-load study (≥75MW); post-2025 curtailment risk', src:'ERCOT SB6 / NPRR1234 2025'},
   'Texas|Tarrant':  {u:'ERCOT / Oncor', y:2029, flag:'SB6 study + curtailment risk', src:'ERCOT SB6 2025'},
   'Texas|Denton':   {u:'ERCOT / Oncor', y:2029, flag:'SB6 study + curtailment risk', src:'ERCOT SB6 2025'},
   'Texas|Collin':   {u:'ERCOT / Oncor', y:2029, flag:'SB6 study + curtailment risk', src:'ERCOT SB6 2025'},
   'Texas|Ellis':    {u:'ERCOT / Oncor', y:2029, flag:'SB6 study + curtailment risk', src:'ERCOT SB6 2025'},
-  // Columbus — AEP Ohio. 2023 moratorium lifted; 2025 DC tariff.
+  // Columbus - AEP Ohio. 2023 moratorium lifted; 2025 DC tariff.
   'Ohio|Franklin':  {u:'AEP Ohio', y:2030, flag:'DC tariff (2025); load study + transmission upgrades', src:'PUCO / AEP Ohio 2025'},
   'Ohio|Licking':   {u:'AEP Ohio', y:2030, flag:'DC tariff (2025); transmission-gated (New Albany cluster)', src:'PUCO / AEP Ohio 2025'},
   'Ohio|Delaware':  {u:'AEP Ohio', y:2030, flag:'DC tariff (2025); study-gated', src:'PUCO / AEP Ohio 2025'},
-  // Atlanta — Georgia Power (regulated). >100MW large-load tariff.
+  // Atlanta - Georgia Power (regulated). >100MW large-load tariff.
   'Georgia|Fulton':  {u:'Georgia Power', y:2030, flag:'>100MW tariff; 15-yr contract + PSC review', src:'Georgia PSC 2025 IRP'},
   'Georgia|Douglas': {u:'Georgia Power', y:2030, flag:'>100MW tariff; new gen 2027-31', src:'Georgia PSC 2025'},
   'Georgia|Coweta':  {u:'Georgia Power', y:2031, flag:'>100MW tariff; 15-yr contract', src:'Georgia PSC 2025'},
   'Georgia|Bartow':  {u:'Georgia Power', y:2031, flag:'>100MW tariff; 15-yr contract', src:'Georgia PSC 2025'},
-  // Chicago — ComEd / PJM. ~8-yr app→COD; transformer lead times.
+  // Chicago - ComEd / PJM. ~8-yr app→COD; transformer lead times.
   'Illinois|Cook':   {u:'ComEd / PJM', y:2032, flag:'PJM ~8-yr app→COD; transformer ~160-wk lead', src:'PJM / ComEd 2025'},
   'Illinois|DuPage': {u:'ComEd / PJM', y:2032, flag:'PJM ~8-yr app→COD; transformer-gated', src:'PJM / ComEd 2025'},
   'Illinois|Will':   {u:'ComEd / PJM', y:2032, flag:'PJM ~8-yr app→COD; transformer-gated', src:'PJM / ComEd 2025'},
   'Illinois|Kane':   {u:'ComEd / PJM', y:2032, flag:'PJM ~8-yr app→COD', src:'PJM / ComEd 2025'},
-  // Quincy WA — Grant County PUD. Load caps until transmission expansion.
+  // Quincy WA - Grant County PUD. Load caps until transmission expansion.
   'Washington|Grant':{u:'Grant County PUD', y:2034, flag:'LOAD CAPS until transmission expansion; 7-10 yr wait', src:'Grant PUD 2025'},
-  // Phoenix — APS / SRP. Subscription model; new gen 2031-33; water-limited.
+  // Phoenix - APS / SRP. Subscription model; new gen 2031-33; water-limited.
   'Arizona|Maricopa':{u:'APS / SRP', y:2032, flag:'subscription model; new gen 2031-33; water-constrained', src:'APS/SRP 2025-26'},
   'Arizona|Pinal':   {u:'APS / SRP', y:2032, flag:'subscription capacity; water-constrained', src:'APS/SRP 2025-26'},
-  // Abilene TX — ERCOT West / AEP Texas. Stargate (OpenAI/Oracle/Crusoe/Lancium) cluster.
+  // Abilene TX - ERCOT West / AEP Texas. Stargate (OpenAI/Oracle/Crusoe/Lancium) cluster.
   'Texas|Taylor':    {u:'ERCOT / AEP Texas', y:2029, flag:'ERCOT West; SB6 large-load study (≥75MW); transmission-gated (Stargate buildout)', src:'ERCOT SB6 / AEP Texas 2025-26'},
-  // Central Louisiana — Entergy (MISO South). Meta Richland Parish; Hut 8 River Bend.
+  // Central Louisiana - Entergy (MISO South). Meta Richland Parish; Hut 8 River Bend.
   'Louisiana|Richland':       {u:'Entergy Louisiana', y:2029, flag:'utility-built gen 2028-29 (Franklin Farms 1.5GW) + 500kV line; LPSC "Lightning" fast-track', src:'Entergy / Louisiana PSC 2025-26'},
   'Louisiana|West Feliciana': {u:'Entergy Louisiana', y:2030, flag:'MISO South; large-load study + transmission upgrades', src:'Entergy / Louisiana PSC 2026'},
-  // Memphis TN — MLGW / TVA. xAI Colossus (on-site gas bridged the grid wait).
+  // Memphis TN - MLGW / TVA. xAI Colossus (on-site gas bridged the grid wait).
   'Tennessee|Shelby':{u:'MLGW / TVA', y:2029, flag:'TVA board approval + MLGW substation-gated; on-site gas bridged xAI Colossus', src:'MLGW / TVA 2025-26'}
 };
 function loadFor(stateName, county){
@@ -647,7 +647,7 @@ function haversineMi(la1,lo1,la2,lo2){
   return 2*R*Math.asin(Math.min(1,Math.sqrt(s)));
 }
 /* nearest point on a line SEGMENT (not just a vertex) via local equirectangular
-   projection — gives the true closest approach to a pipeline/substation edge */
+   projection - gives the true closest approach to a pipeline/substation edge */
 function nearestPointOnSeg(plat,plon,alat,alon,blat,blon){
   var kx=Math.cos(plat*Math.PI/180);
   var ax=alon*kx, ay=alat, bx=blon*kx, by=blat, px=plon*kx, py=plat;
@@ -702,13 +702,13 @@ function buildScenarios(ctx){
   var latAdd = gasLateral?6:0;
   var gasCostAdj = gasLateral?12:0;
   var S=[];
-  // Grid — prefer curated LOAD timeline in covered hot zones, else regional gen proxy
+  // Grid - prefer curated LOAD timeline in covered hot zones, else regional gen proxy
   var gridYear = ctx.load ? ctx.load.y : r.queue;
   var gridNote = ctx.load ? ('load queue · '+ctx.load.u+' · '+ctx.load.flag) : 'queue date, not a build date';
   S.push({grp:'Baseline',name:'Grid interconnection',months:Math.max(0,(gridYear-2026))*12,firm:100,lcoe:42,capex:250,note:gridNote});
   // Gas family (gated by real pipeline distance)
   function gasRow(grp,name,baseMo,firm,baseLcoe,capex,cap,note){
-    if(gasNone) return {grp:grp,name:name,na:true,note:'no pipeline in OpenStreetMap nearby — OSM coverage varies; verify locally'};
+    if(gasNone) return {grp:grp,name:name,na:true,note:'no pipeline in OpenStreetMap nearby - OSM coverage varies; verify locally'};
     return {grp:grp,name:name,months:baseMo+latAdd+(big?4:0),firm:firm,lcoe:Math.round(baseLcoe+gasCostAdj),capex:capex,cap:cap,note:(gasLateral?'gas lateral ~'+(gas.toFixed(0))+' mi':'pipeline '+(gas.toFixed(1))+' mi')+(note?' · '+note:'')};
   }
   S.push(gasRow('Baseline','Fuel cell',12,95,128,1500,200));
@@ -754,9 +754,9 @@ function setupSeg(elId,vals,labels,key){
 /* ===== map ===== */
 /* Real, verified data centers running on ON-SITE / behind-the-meter power.
    Every figure is sourced (see .src). These anchor the map so a first-time
-   visitor immediately sees what this tool is about — and can verify it. */
+   visitor immediately sees what this tool is about - and can verify it. */
 var DC_SITES=[
-  { n:'Stargate · Site 1', op:'Crusoe — OpenAI / Oracle', lat:32.5079, lng:-99.7772, loc:'Abilene, TX · ERCOT', photo:'images/dc-stargate.jpg',
+  { n:'Stargate · Site 1', op:'Crusoe - OpenAI / Oracle', lat:32.5079, lng:-99.7772, loc:'Abilene, TX · ERCOT', photo:'images/dc-stargate.jpg',
     power:'On-site natural gas turbines (captive power for the campus): 360 MW (Unit 1, online 2026) scaling to ~1.4 GW (Unit 2), plus ~191 MW diesel backup. Campus 1.2 GW IT.',
     status:'Phase 1 live · on-site gas units under construction',
     src:'https://www.gem.wiki/Longhorn_Data_Center_power_station' },
@@ -782,7 +782,7 @@ var DC_SITES=[
     src:'https://www.datacenterdynamics.com/en/news/fermi-america-acquires-600mw-of-gas-turbines-for-11gw-ai-mega-campus-in-amarillo-texas/' },
   { n:'Prometheus · WY-1', op:'Prometheus Hyperscale', lat:41.30, lng:-110.82, loc:'Evanston, WY (Project Torch ranch) · off-grid', photo:'images/dc-prometheus.jpg',
     power:'Behind-the-meter natural gas (PureWest low-carbon supply) + carbon capture. 1.2 GW campus; Phase 1 ~150 MW.',
-    status:'Phase 1 ~2026–27 · scaling to 1.2 GW by 2029',
+    status:'Phase 1 ~2026-27 · scaling to 1.2 GW by 2029',
     src:'https://www.datacenterdynamics.com/en/news/prometheus-hyperscale-to-power-wyoming-data-center-with-natural-gas-will-offset-through-carbon-capture/' }
 ];
 function addDcSites(){
@@ -811,7 +811,7 @@ function addDcSites(){
   });
   var legend=L.control({position:'bottomleft'});
   legend.onAdd=function(){ var d=L.DomUtil.create('div','dc-legend');
-    d.innerHTML='<b>⚡ On-site / behind-the-meter powered</b> data centers — click a dot or its label'; return d; };
+    d.innerHTML='<b>⚡ On-site / behind-the-meter powered</b> data centers - click a dot or its label'; return d; };
   legend.addTo(lmap);
 }
 function screenDc(lat,lng){ if(lmap){ lmap.closePopup(); } setMarker(lat,lng); lmap.setView([lat,lng],12); runScreen(); }
@@ -819,7 +819,7 @@ window.screenDc=screenDc; window.DC_SITES=DC_SITES;
 /* Ground-truth layer: the verified on-site solution actually built at each
    campus. When a screened coordinate lands on one of these, we show the real,
    sourced answer instead of a blind public-data verdict (OSM can't see private
-   on-site generation — that gap is exactly what this layer closes). */
+   on-site generation - that gap is exactly what this layer closes). */
 var DC_PROVEN={
   'Stargate · Site 1':{type:'on-site natural-gas turbines (GE Vernova)', mw:'360 MW → ~1.4 GW', state:'Phase 1 live; gas units in construction'},
   'xAI Colossus':{type:'on-site natural-gas turbines', mw:'~420 MW', state:'operating'},
@@ -827,12 +827,12 @@ var DC_PROVEN={
   'Soluna · Project Kati':{type:'behind-the-meter wind PPA (Las Majadas)', mw:'up to 166 MW', state:'Phase 1 ~2026'},
   'Stronghold · Scrubgrass':{type:'on-site waste-coal generation', mw:'~165 MW', state:'operating'},
   'Fermi · HyperGrid':{type:'on-site nuclear + natural gas + solar (HyperGrid)', mw:'~1 GW (2026) → 11 GW', state:'first ~1 GW targeted late 2026; 6 GW gas state-approved'},
-  'Prometheus · WY-1':{type:'on-site natural gas (PureWest low-carbon) + carbon capture', mw:'150 MW → 1.2 GW', state:'Phase 1 ~2026–27'}
+  'Prometheus · WY-1':{type:'on-site natural gas (PureWest low-carbon) + carbon capture', mw:'150 MW → 1.2 GW', state:'Phase 1 ~2026-27'}
 };
 function knownSiteFor(lat,lng){
   if(!window.DC_SITES) return null;
   for(var i=0;i<DC_SITES.length;i++){ var s=DC_SITES[i];
-    if(haversineMi(lat,lng,s.lat,s.lng) <= 2.5){   // true radius — only when the pin is ON the campus, not ~14 mi away
+    if(haversineMi(lat,lng,s.lat,s.lng) <= 2.5){   // true radius - only when the pin is ON the campus, not ~14 mi away
       var p=DC_PROVEN[s.n]||{};
       return { n:s.n, op:s.op, loc:s.loc, src:s.src, type:p.type||'on-site generation', mw:p.mw||'', state:p.state||(s.status||'') };
     } }
@@ -843,7 +843,7 @@ function initMap(){
   lmap=L.map('map').setView([38.2,-92],5);   // open zoomed on the central/eastern US so the on-site-powered DCs are visible
   L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',{maxZoom:19,subdomains:'abcd',attribution:'&copy; OpenStreetMap &copy; CARTO'}).addTo(lmap);
   /* Drop a pin only on a deliberate single click. A double-click (zoom in) fires
-     a click first — we delay the pin ~260 ms and cancel it if a dblclick follows,
+     a click first - we delay the pin ~260 ms and cancel it if a dblclick follows,
      so zooming never moves the pin to the wrong place. */
   lmap.on('click',function(e){
     if(lmap.__pinT) return;
@@ -854,7 +854,7 @@ function initMap(){
   addDcSites();
   setTimeout(function(){ lmap.invalidateSize(); },150);
 }
-/* brand-blue teardrop pin (SVG) — matches the headline / CTA blue (#1E50E6) */
+/* brand-blue teardrop pin (SVG) - matches the headline / CTA blue (#1E50E6) */
 function brandPinIcon(){
   var svg='<svg width="32" height="44" viewBox="0 0 32 44" xmlns="http://www.w3.org/2000/svg">'
     +'<defs><linearGradient id="bpg" x1="0" y1="0" x2="0" y2="1">'
@@ -867,7 +867,7 @@ function brandPinIcon(){
 }
 function attachPin(lat,lng){
   marker=L.marker([lat,lng],{draggable:true, autoPan:true, title:'Drag to fine-tune', icon:brandPinIcon()}).addTo(lmap);
-  /* drag the pin to adjust — no need to re-find the spot by clicking */
+  /* drag the pin to adjust - no need to re-find the spot by clicking */
   marker.on('dragend',function(){ var ll=marker.getLatLng(); writePin(ll.lat,ll.lng); track('action','pin_dragged'); });
   return marker;
 }
@@ -919,7 +919,7 @@ function setScreening(on){
     if(on){ if(b.dataset.orig===undefined){ b.dataset.orig=b.innerHTML; } b.innerHTML='<span class="btn-spin"></span>Screening…'; b.disabled=true; b.classList.add('is-screening'); }
     else { if(b.dataset.orig!==undefined){ b.innerHTML=b.dataset.orig; } b.disabled=false; b.classList.remove('is-screening'); }
   }
-  var mh=document.getElementById('maphelp'); if(mh){ mh.innerHTML = on ? '<b>Screening this site…</b> reading live solar, gas & grid data.' : '<b>Click the map to drop your site</b> — drag the pin to adjust · scroll or +/− to zoom · ⌘/Ctrl+Z (or “↶ Previous pin”) to undo.'; }
+  var mh=document.getElementById('maphelp'); if(mh){ mh.innerHTML = on ? '<b>Screening this site…</b> reading live solar, gas & grid data.' : '<b>Click the map to drop your site</b> - drag the pin to adjust · scroll or +/− to zoom · ⌘/Ctrl+Z (or “↶ Previous pin”) to undo.'; }
 }
 async function runScreen(auto){
   var addr=document.getElementById('addr').value.trim();
@@ -934,7 +934,7 @@ async function runScreen(auto){
     else { site=DEFAULT.slice(); }
   }catch(e){ site=DEFAULT.slice(); }
   setMarker(site[0],site[1]);
-  // keep the user's current zoom & pan — only recenter if the pin is off-screen
+  // keep the user's current zoom & pan - only recenter if the pin is off-screen
   try{ if(!lmap.getBounds().contains(L.latLng(site[0],site[1]))){ lmap.setView(site, lmap.getZoom()); } }
   catch(e){ lmap.setView(site,12); }
 
@@ -977,7 +977,7 @@ function render(ctx){
   _used={};   // reset cited-source set for this render
   var S=buildScenarios(ctx);
   var st=S.map(function(s){return statusOf(s,ctx.needMW,ctx.byMonths);});
-  /* the verdict is about ON-SITE / PPA feasibility — the grid-only row is the
+  /* the verdict is about ON-SITE / PPA feasibility - the grid-only row is the
      slow baseline we're screening against, so it never drives Advance/Caution */
   var hasOk=false, hasWarn=false;
   S.forEach(function(s,i){ if(s.name==='Grid interconnection') return; if(st[i]==='ok') hasOk=true; else if(st[i]==='warn') hasWarn=true; });
@@ -995,13 +995,13 @@ function render(ctx){
   var gridKnown = (effGridYear != null);
   var gridYearTxt = gridKnown ? ('~'+effGridYear) : 'not modeled here';
   var gridWhich = ctx.load ? (ctx.load.u+' load queue') : (ctx.region.iso+(gridKnown?' gen-queue proxy':''));
-  var gridClause = gridKnown ? (' The grid alone arrives '+gridYearTxt+' ('+gridWhich+').') : (' Grid timing here is '+gridWhich+' — not modeled.');
+  var gridClause = gridKnown ? (' The grid alone arrives '+gridYearTxt+' ('+gridWhich+').') : (' Grid timing here is '+gridWhich+' - not modeled.');
   var V={
     advance:{badge:'Advance',cls:'v-advance',title:'Worth a feasibility study.',
       sum:'At least one on-site path delivers '+powerLbl+' firm within your '+ctx.byMonths+'-month window.'+gridClause+' Advance this parcel to EPC feasibility.'},
-    caution:{badge:'Caution',cls:'v-caution',title:'Borderline — tighten before you spend.',
-      sum:'No clean on-site path meets '+powerLbl+' firm in '+ctx.byMonths+' months; nearest viable is ~'+(isFinite(onsite)?onsite+' mo':'—')+'. Re-scope power or timeline before committing the $50k.'},
-    kill:{badge:'Kill',cls:'v-kill',title:'Screen out — don’t spend the $50k.',
+    caution:{badge:'Caution',cls:'v-caution',title:'Borderline - tighten before you spend.',
+      sum:'No clean on-site path meets '+powerLbl+' firm in '+ctx.byMonths+' months; nearest viable is ~'+(isFinite(onsite)?onsite+' mo':'-')+'. Re-scope power or timeline before committing the $50k.'},
+    kill:{badge:'Kill',cls:'v-kill',title:'Screen out - don’t spend the $50k.',
       sum:'No on-site or PPA path meets '+powerLbl+' firm within '+ctx.byMonths+' months here.'+gridClause+' Kill this parcel before EPC.'}
   }[verdict];
 
@@ -1010,7 +1010,7 @@ function render(ctx){
   var gridConf = ctx.load ? 'high' : 'low';
   var gridConfCls = gridConf==='high'?'conf-high':'conf-low';
   var gridSrc = ctx.load ? ctx.load.src : (gridKnown ? (ctx.region.iso+' generation-queue proxy · LBNL/ISO') : 'no modeled market');
-  var gridDetail = ctx.load ? (ctx.load.u+' load queue · '+ctx.load.flag) : (gridKnown ? (ctx.region.iso+' gen-queue proxy · a queue date, not a build date') : 'outside our modeled U.S. markets — grid timing not estimated here');
+  var gridDetail = ctx.load ? (ctx.load.u+' load queue · '+ctx.load.flag) : (gridKnown ? (ctx.region.iso+' gen-queue proxy · a queue date, not a build date') : 'outside our modeled U.S. markets - grid timing not estimated here');
   var win = winIdx>=0 ? S[winIdx] : null, hasOnsite = !!win, onsiteMo = win ? win.months : null;
   var onsiteConf = hasOnsite ? ((win.firm>=95 && win.months<=ctx.byMonths) ? 'high' : 'medium') : 'na';
   var onsiteConfCls = onsiteConf==='high'?'conf-high':'conf-med';
@@ -1018,7 +1018,7 @@ function render(ctx){
     +'<div class="plab">Fastest on-site path</div>'
     +'<div class="pnum">'+(hasOnsite?('~'+onsiteMo+' mo'):'none in window')+'</div>'
     +'<div class="pmeta">'+(hasOnsite?(win.name+' · '+win.firm+'% firm'+(win.note?' · '+win.note:'')):('no on-site path meets '+powerLbl+' firm in '+ctx.byMonths+' mo'))+'</div>'
-    +'<div class="psrc">'+(hasOnsite?('confidence <span class="conf '+onsiteConfCls+'">'+onsiteConf+'</span> · equipment lead-time + live gas/solar'):'—')+'</div>'
+    +'<div class="psrc">'+(hasOnsite?('confidence <span class="conf '+onsiteConfCls+'">'+onsiteConf+'</span> · equipment lead-time + live gas/solar'):'-')+'</div>'
     +'</div>';
   var gsid=gridSrcId(ctx);
   var gridCard='<div class="path">'
@@ -1030,7 +1030,7 @@ function render(ctx){
   var bankable;
   if(hasOnsite){
     var aheadYrs=gridKnown?Math.max(0,Math.round((gridMo-onsiteMo)/12)):0;
-    bankable='<div class="bankable">Fastest <b>bankable</b> path: <b>'+win.name+', ~'+onsiteMo+' mo</b>'+(aheadYrs>0?(' — about '+aheadYrs+' year'+(aheadYrs>1?'s':'')+' ahead of grid-only ('+gridYearTxt+').'):'.')+'</div>';
+    bankable='<div class="bankable">Fastest <b>bankable</b> path: <b>'+win.name+', ~'+onsiteMo+' mo</b>'+(aheadYrs>0?(' - about '+aheadYrs+' year'+(aheadYrs>1?'s':'')+' ahead of grid-only ('+gridYearTxt+').'):'.')+'</div>';
   } else {
     bankable='<div class="bankable">No bankable on-site path inside your '+ctx.byMonths+'-month window.'+(gridKnown?(' Grid-only arrives '+gridYearTxt+'.'):'')+'</div>';
   }
@@ -1041,38 +1041,38 @@ function render(ctx){
     verdict='advance';
     V={ badge:'Proven', cls:'v-advance',
         title:'A real, on-site-powered campus.',
-        sum:k.op+' powers '+k.n+' with '+k.type+' ('+k.mw+') — '+k.state+'. This is a working behind-the-meter site. The blind public-data screen below can’t see private on-site generation, which is exactly the gap this map closes.' };
-    var adId=regAdhoc(k.src, k.n+' — on-site power', k.op);
+        sum:k.op+' powers '+k.n+' with '+k.type+' ('+k.mw+') - '+k.state+'. This is a working behind-the-meter site. The blind public-data screen below can’t see private on-site generation, which is exactly the gap this map closes.' };
+    var adId=regAdhoc(k.src, k.n+' - on-site power', k.op);
     onsiteCard='<div class="path proven">'
-      +'<div class="plab">On-site power — built &amp; running</div>'
+      +'<div class="plab">On-site power - built &amp; running</div>'
       +'<div class="pnum">'+ev(k.mw, adId, {label:'claimed'})+'</div>'
       +'<div class="pmeta">'+k.type+' · '+k.op+'</div>'
       +'<div class="psrc">confidence <span class="conf conf-high">verified</span> · '+k.state+' · tap the figure for the source</div>'
       +'</div>';
-    bankable='<div class="bankable">✅ <b>'+k.n+'</b> already runs on-site power ('+k.mw+' · '+k.type+'). Grid-only here would arrive ~'+effGridYear+' — building power on-site is how this campus skipped that wait.</div>';
-    matrixNote='<p class="assump" style="margin-top:18px"><b>Reference screen (blind):</b> the table below scores this exact coordinate against your inputs ('+powerLbl+' by '+ctx.byMonths+' mo) using only public live data — it intentionally excludes the verified on-site generation shown above.</p>';
+    bankable='<div class="bankable">✅ <b>'+k.n+'</b> already runs on-site power ('+k.mw+' · '+k.type+'). Grid-only here would arrive ~'+effGridYear+' - building power on-site is how this campus skipped that wait.</div>';
+    matrixNote='<p class="assump" style="margin-top:18px"><b>Reference screen (blind):</b> the table below scores this exact coordinate against your inputs ('+powerLbl+' by '+ctx.byMonths+' mo) using only public live data - it intentionally excludes the verified on-site generation shown above.</p>';
   }
   /* correction inbox: an expert fixes the decisive grid number. Goes to a review
-     queue — never changes the live verdict. (context captured here) */
+     queue - never changes the live verdict. (context captured here) */
   window.OSP_CORRECT={ lat:ctx.site[0], lng:ctx.site[1], market:(ctx.load?ctx.load.u:ctx.region.iso), our_value:gridYearTxt, field:'grid_year' };
   var correctBlock='<div class="correct">'
     +'<a class="corr-link" onclick="openCorrect(this)">Off for your deal? Correct the grid timing →</a>'
     +'<div class="corr-form hidden">'
       +'<div class="corr-q">What is the real connect timing here, and how do you know? We review every correction; it never auto-changes the number.</div>'
       +'<input class="corr-val" placeholder="The real connect timing (e.g., 2034, or ~6 yr)">'
-      +'<input class="corr-src" placeholder="How you know — optional (your deal, utility study, filing)">'
-      +'<input class="corr-who" placeholder="You are — optional (name, company)">'
+      +'<input class="corr-src" placeholder="How you know - optional (your deal, utility study, filing)">'
+      +'<input class="corr-who" placeholder="You are - optional (name, company)">'
       +'<button class="corr-send" onclick="sendCorrection(this)">Submit correction</button>'
       +'<span class="corr-thx"></span>'
     +'</div></div>';
-  /* realized base-rate reality check — actual completed-project outcomes vs our estimate */
+  /* realized base-rate reality check - actual completed-project outcomes vs our estimate */
   var isoMo=isoAvgMonths(ctx.region.iso);
-  var realityBlock='<div class="reality"><div class="reality-h">Reality check — what actually happened</div>'
-    +'<div class="reality-b">Across completed U.S. grid projects, the median time from interconnection request to <b>energized</b> climbed to <b>~'+REALIZED.nationalMedianYr+' years</b> ('+REALIZED.nationalCohort+'), up from under '+REALIZED.priorMedianYr+' years in '+REALIZED.priorCohort+' — and <b>~'+REALIZED.withdrawPct+'%</b> of queued projects withdraw before ever connecting.'
+  var realityBlock='<div class="reality"><div class="reality-h">Reality check - what actually happened</div>'
+    +'<div class="reality-b">Across completed U.S. grid projects, the median time from interconnection request to <b>energized</b> climbed to <b>~'+REALIZED.nationalMedianYr+' years</b> ('+REALIZED.nationalCohort+'), up from under '+REALIZED.priorMedianYr+' years in '+REALIZED.priorCohort+' - and <b>~'+REALIZED.withdrawPct+'%</b> of queued projects withdraw before ever connecting.'
     +(isoMo?(' In '+ctx.region.iso+', the average queue wait has run ~'+isoMo+' months.'):'')
     +' Our modeled grid date above ('+gridYearTxt+') is a screening estimate; these are the realized base rates.'
-    +'<div class="reality-src">'+ev('LBNL Queued Up — realized','lbnl_realized',{pill:false})+(isoMo?(' · '+ev('ACP by-ISO','cleanpower_iso',{pill:false})):'')+'</div>'
-    +'<div class="reality-note">Market- and utility-specific realized timelines are being collected from real projects — tracked openly in our <a href="ledger.html">accuracy ledger</a>.</div>'
+    +'<div class="reality-src">'+ev('LBNL Queued Up - realized','lbnl_realized',{pill:false})+(isoMo?(' · '+ev('ACP by-ISO','cleanpower_iso',{pill:false})):'')+'</div>'
+    +'<div class="reality-note">Market- and utility-specific realized timelines are being collected from real projects - tracked openly in our <a href="ledger.html">accuracy ledger</a>.</div>'
     +'</div>';
   var PATHS_HTML='<div class="paths">'+onsiteCard+gridCard+'</div>'+bankable+realityBlock+correctBlock;
 
@@ -1081,7 +1081,7 @@ function render(ctx){
   S.forEach(function(s,i){
     var c=st[i], chip=c==='ok'?'<span class="status-chip chip-ok">✓ meets</span>':c==='warn'?'<span class="status-chip chip-warn">▲ near-miss</span>':'<span class="status-chip chip-no">✗ fails</span>';
     var win=(i===winIdx)?' class="win"':'';
-    if(s.na){ var naChip='<span class="status-chip chip-na">— unverified</span>'; rows+='<tr><td class="scen">'+s.name+'<span class="grp">'+s.grp+(s.note?' · '+s.note:'')+'</span></td><td class="num muted">—</td><td class="num muted">—</td><td class="num muted">—</td><td class="num muted">—</td><td>'+naChip+'</td></tr>'; }
+    if(s.na){ var naChip='<span class="status-chip chip-na">- unverified</span>'; rows+='<tr><td class="scen">'+s.name+'<span class="grp">'+s.grp+(s.note?' · '+s.note:'')+'</span></td><td class="num muted">-</td><td class="num muted">-</td><td class="num muted">-</td><td class="num muted">-</td><td>'+naChip+'</td></tr>'; }
     else{
       var mo=s.months===0?'0 mo':(s.name==='Grid interconnection'?gridYearTxt:(s.months+' mo'));
       var capex=s.capex?('$'+s.capex.toLocaleString()):'PPA';
@@ -1100,8 +1100,8 @@ function render(ctx){
   /* relabel the solar source to whichever provider actually answered this run */
   var SOLAR_PROV={
     'NREL PVWatts v8':{pub:'NREL (U.S. DOE national lab)', title:'PVWatts v8 solar model', short:'NREL', how:'In NREL’s PVWatts tool (search “NREL PVWatts”), enter this coordinate to reproduce the solar capacity factor.'},
-    'PVGIS (EU JRC)':{pub:'European Commission · JRC', title:'PVGIS PV model', short:'PVGIS', how:'Search “PVGIS” (EU JRC), enter this coordinate, and read the yearly PV yield — our capacity factor is that yield ÷ 8,760 h.'},
-    'NASA POWER':{pub:'NASA POWER', title:'satellite solar resource', short:'NASA', how:'Search “NASA POWER data access”, enter this coordinate, and read annual ALLSKY_SFC_SW_DWN (GHI) — the basis for this value.'},
+    'PVGIS (EU JRC)':{pub:'European Commission · JRC', title:'PVGIS PV model', short:'PVGIS', how:'Search “PVGIS” (EU JRC), enter this coordinate, and read the yearly PV yield - our capacity factor is that yield ÷ 8,760 h.'},
+    'NASA POWER':{pub:'NASA POWER', title:'satellite solar resource', short:'NASA', how:'Search “NASA POWER data access”, enter this coordinate, and read annual ALLSKY_SFC_SW_DWN (GHI) - the basis for this value.'},
     'estimate':{pub:'Solar resource (fallback)', title:'screening estimate', short:'est.', how:'No live solar provider responded this run, so a screening-grade fallback value was used.'}
   };
   var sp=SOLAR_PROV[ctx.solarProvider]||SOLAR_PROV['estimate'];
@@ -1129,20 +1129,20 @@ function render(ctx){
       '<button class="btn btn-ghost" onclick="copyLink()">Copy shareable link</button><span class="hint" id="copyMsg"></span></div>'+
     matrixNote+'<div class="matrix-wrap"><table class="matrix"><thead><tr><th>Scenario</th><th>Time to power</th><th>Firm capacity</th><th>~$/MWh</th><th>~$/kW capex</th><th>On your yardstick</th></tr></thead><tbody>'+rows+'</tbody></table></div>'+
     '<div class="yard">'+
-      '<div class="yard-row"><b>Yardstick</b><span>'+powerLbl+' firm, online within '+ctx.byMonths+' months. <b style="font-weight:600">Meets</b> = on time at ≥90% firm; <b style="font-weight:600">near-miss</b> = within 6 months or 60–90% firm.</span></div>'+
+      '<div class="yard-row"><b>Yardstick</b><span>'+powerLbl+' firm, online within '+ctx.byMonths+' months. <b style="font-weight:600">Meets</b> = on time at ≥90% firm; <b style="font-weight:600">near-miss</b> = within 6 months or 60-90% firm.</span></div>'+
       '<div class="yard-row"><b>Live this run</b><span>'
-        +'Solar CF '+(ctx.solarLive?('('+sp.pub.replace(/ ·.*/,'')+', live)'):'(estimate — no live provider responded)')+' · '
+        +'Solar CF '+(ctx.solarLive?('('+sp.pub.replace(/ ·.*/,'')+', live)'):'(estimate - no live provider responded)')+' · '
         +'gas-pipeline &amp; substation distance '+(ctx.infraLive?'(OpenStreetMap, live)':'(unavailable)')+' · '
         +'geocode '+(geoLive?'(Nominatim, live)':'(unavailable)')+'.</span></div>'+
-      '<div class="yard-row"><b>Grid timing</b><span>'+(ctx.load?('Curated large-load connect estimate — '+ctx.load.u+' ('+ctx.load.src+').'):'Regional generation-queue proxy (LBNL / ISO).')+'</span></div>'+
+      '<div class="yard-row"><b>Grid timing</b><span>'+(ctx.load?('Curated large-load connect estimate - '+ctx.load.u+' ('+ctx.load.src+').'):'Regional generation-queue proxy (LBNL / ISO).')+'</span></div>'+
       '<div class="yard-row"><b>Nuclear-PPA depth</b><span>Regional (SEC / ISO).</span></div>'+
-      '<div class="yard-foot">Screening-grade ±40% — verify with utility, OEM, EPC, and counsel before any commitment.</div>'+
+      '<div class="yard-foot">Screening-grade ±40% - verify with utility, OEM, EPC, and counsel before any commitment.</div>'+
     '</div>'+
     sourcesPanel()+
     '<div class="feedback no-print"><input id="fbtext" placeholder="See something off? Tell us in one line" onkeydown="if(event.key===\'Enter\')sendFb()"><button onclick="sendFb()">Send</button></div>'+
-    '<div class="fbthx hidden no-print" id="fbthx">Thanks — that is exactly how this gets sharper.</div>';
+    '<div class="fbthx hidden no-print" id="fbthx">Thanks - that is exactly how this gets sharper.</div>';
 
-  /* only record a screening when the USER ran it — the auto demo on page load
+  /* only record a screening when the USER ran it - the auto demo on page load
      (default Ashburn) is shown but never logged, so metrics reflect real intent */
   if(!ctx.auto){
     logSitecheck(ctx,verdict,onsite,winIdx>=0?S[winIdx].name:'',okCount);
@@ -1172,7 +1172,7 @@ function sendCorrection(btn){
   function done(){
     box.querySelector('.corr-form').style.display='none';
     box.querySelector('.corr-link').style.display='none';
-    box.querySelector('.corr-thx').textContent='Thanks — a developer’s correction is exactly how this gets sharper. We review every one.';
+    box.querySelector('.corr-thx').textContent='Thanks - a developer’s correction is exactly how this gets sharper. We review every one.';
   }
   track('action','correct_send');
 }
@@ -1190,7 +1190,7 @@ function copyLink(){
   if(picked){ u.searchParams.set('lat',picked[0].toFixed(4)); u.searchParams.set('lng',picked[1].toFixed(4)); }
   u.searchParams.set('mw',state.powerMW); u.searchParams.set('by',state.byMonths); u.searchParams.set('n',state.nuclear?1:0);
   if(navigator.clipboard) navigator.clipboard.writeText(u.toString());
-  var m=document.getElementById('copyMsg'); if(m) m.textContent='Link copied — share it, no login needed.';
+  var m=document.getElementById('copyMsg'); if(m) m.textContent='Link copied - share it, no login needed.';
   track('action','copy_link');
 }
 function sendFb(){
@@ -1211,7 +1211,7 @@ function restore(){
 }
 
 /* ===== init ===== */
-/* always open at the very top on refresh — ignore the browser's scroll restoration */
+/* always open at the very top on refresh - ignore the browser's scroll restoration */
 if('scrollRestoration' in history){ try{ history.scrollRestoration='manual'; }catch(e){} }
 window.scrollTo(0,0);
 restore();
