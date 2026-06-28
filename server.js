@@ -338,7 +338,12 @@ async function liveNow(){
 }
 
 /* ---- API routes ----------------------------------------------------------- */
+const screenRoute = require("./lib/screen_route");
+
 const api = {
+
+  "/api/screen":      (q) => screenRoute.screen(q),
+  "/api/screen_vote": (q) => screenRoute.feedback(q),
   "/api/geo": async (q) => {
     if(q.get("q")){
       const term = q.get("q");
