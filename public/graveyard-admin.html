@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex, nofollow" />
+<title>Graveyard · Operator</title>
+<style>
+  :root{ --ink:#1d1d1f; --muted:#6e6e73; --muted2:#86868b; --line:#e6e6ea; --bg:#fbfbfd;
+    --panel:#fff; --link:#0071e3; --dead:#b3261e; --good:#15803d; --tile:#f5f5f7;
+    --font:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",Arial,sans-serif; }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:940px;margin:0 auto;padding:28px 22px 60px;}
+  h1{font-size:20px;font-weight:600;margin:0;letter-spacing:-.015em;}
+  .sub{color:var(--muted);font-size:12px;margin-top:3px;}
+  .row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+  button{font:inherit;color:#fff;background:var(--ink);border:none;border-radius:9px;padding:9px 16px;cursor:pointer;}
+  button.ghost{background:transparent;color:var(--ink);border:.5px solid var(--line);}
+  button:active{transform:scale(.99)}
+  input{font:inherit;border:.5px solid var(--line);border-radius:9px;padding:9px 12px;width:260px;background:#fff;}
+  .grid{display:grid;gap:14px;}
+  .kpis{grid-template-columns:repeat(4,1fr);margin:20px 0;}
+  .kpi{background:var(--tile);border-radius:12px;padding:16px 16px;}
+  .kpi .l{font-size:12px;color:var(--muted);}
+  .kpi .v{font-size:30px;font-weight:600;margin-top:6px;letter-spacing:-.02em;}
+  .kpi.hl .v{color:var(--dead);}
+  .card{background:var(--panel);border:.5px solid var(--line);border-radius:14px;padding:16px 18px;margin-top:14px;}
+  .card h2{font-size:13px;font-weight:600;margin:0 0 12px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;}
+  table{width:100%;border-collapse:collapse;font-size:13px;}
+  th,td{text-align:left;padding:9px 8px;border-bottom:.5px solid var(--line);white-space:nowrap;}
+  th{color:var(--muted);font-weight:500;font-size:11px;text-transform:uppercase;letter-spacing:.05em;}
+  td.email{font-weight:600;white-space:normal;}
+  td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;}
+  .muted{color:var(--muted);} .err{color:#b91c1c;font-size:13px;margin-top:10px;}
+  a{color:var(--link);text-decoration:none;}
+  #login{max-width:360px;margin:12vh auto;text-align:center;}
+  #login .card{padding:26px 24px;}
+  .hide{display:none;}
+  label.chk{display:inline-flex;align-items:center;gap:7px;font-size:13px;color:var(--muted);cursor:pointer;}
+  .pill{display:inline-block;font-size:11px;font-weight:600;padding:2px 8px;border-radius:100px;background:var(--tile);color:var(--muted);}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div id="login">
+    <div class="card">
+      <h1>Graveyard · Operator</h1>
+      <p class="sub" style="margin:6px 0 18px;">Enter the admin key.</p>
+      <input id="key" type="password" placeholder="Admin key" autocomplete="off" />
+      <div style="margin-top:14px;"><button id="enter">Open</button></div>
+      <div id="loginErr" class="err"></div>
+    </div>
+  </div>
+
+  <div id="dash" class="hide">
+    <div class="row" style="justify-content:space-between;">
+      <div>
+        <h1>The Data Center Graveyard · Operator</h1>
+        <div class="sub" id="rangeNote">Rolling 14 days · <a href="graveyard" target="_blank">view the page →</a></div>
+      </div>
+      <div class="row">
+        <label class="chk"><input type="checkbox" id="allScope"> include my/test traffic</label>
+        <button class="ghost" id="refresh">Refresh</button>
+        <button class="ghost" id="logout">Log out</button>
+      </div>
+    </div>
+
+    <div id="dashErr" class="err"></div>
+
+    <div class="grid kpis">
+      <div class="kpi"><div class="l">Visitors to /graveyard</div><div class="v" id="k-visits">–</div></div>
+      <div class="kpi"><div class="l">Checked their market</div><div class="v" id="k-market">–</div></div>
+      <div class="kpi"><div class="l">Ran the self-check</div><div class="v" id="k-self">–</div></div>
+      <div class="kpi hl"><div class="l">Submitted email</div><div class="v" id="k-sub">–</div></div>
+    </div>
+
+    <div class="card">
+      <h2>Submitted emails <span class="pill" id="subCount">0</span></h2>
+      <div style="overflow:auto;">
+        <table id="emails"><thead><tr>
+          <th>When</th><th>Email</th><th>Market (lat,lng)</th>
+        </tr></thead><tbody></tbody></table>
+      </div>
+      <div class="muted" id="emailsEmpty" style="display:none;font-size:13px;margin-top:6px;">No submissions yet.</div>
+    </div>
+
+    <div class="card">
+      <h2>Recent graveyard activity</h2>
+      <div style="overflow:auto;">
+        <table id="recent"><thead><tr>
+          <th>Session</th><th>First seen</th><th>Last seen</th><th class="num">Events</th><th>Source</th><th>Last action</th>
+        </tr></thead><tbody></tbody></table>
+      </div>
+      <div class="muted" id="recentEmpty" style="display:none;font-size:13px;margin-top:6px;">No graveyard activity yet.</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  var KEY="opi_admin_key";
+  var $=function(id){return document.getElementById(id);};
+  function fmt(n){ return (n==null?"–":Number(n).toLocaleString()); }
+  function scope(){ return $("allScope").checked ? "all" : "external"; }
+  function timeAgo(iso){ if(!iso) return "–"; var d=new Date(iso); var s=(Date.now()-d.getTime())/1000;
+    if(s<60) return Math.floor(s)+"s ago"; if(s<3600) return Math.floor(s/60)+"m ago";
+    if(s<86400) return Math.floor(s/3600)+"h ago"; return d.toISOString().slice(5,16).replace("T"," "); }
+  function show(dash){ $("login").classList.toggle("hide",dash); $("dash").classList.toggle("hide",!dash); }
+
+  function nameVal(arr,name){ if(!arr) return 0; for(var i=0;i<arr.length;i++){ if(arr[i].name===name) return arr[i].sessions; } return 0; }
+
+  // parse "graveyard_subscribe: you@co.com | market 32.10,-110.98"
+  function parseSub(text){
+    var t=String(text||"");
+    var body=t.replace(/^\s*graveyard_subscribe:\s*/i,"");
+    var email=body, market="";
+    var bar=body.indexOf("|");
+    if(bar>=0){ email=body.slice(0,bar).trim(); var m=body.slice(bar+1).replace(/^\s*market\s*/i,"").trim(); market=m; }
+    return { email:email.trim(), market:market };
+  }
+
+  function loadStats(key){
+    return fetch("/api/admin/stats?scope="+scope()+"&key="+encodeURIComponent(key)).then(function(r){
+      if(r.status===401){ throw new Error("401"); } return r.json();
+    });
+  }
+  function loadFeedback(key){
+    return fetch("/api/admin/feedback?scope="+scope()+"&key="+encodeURIComponent(key)).then(function(r){
+      if(r.status===401){ throw new Error("401"); } return r.json();
+    });
+  }
+
+  function render(stats, fb){
+    // KPIs
+    $("k-visits").textContent=fmt(nameVal(stats.pages,"graveyard"));
+    $("k-market").textContent=fmt(nameVal(stats.actions_all,"market_check"));
+    $("k-self").textContent  =fmt(nameVal(stats.actions_all,"selfcheck_engaged"));
+    $("k-sub").textContent   =fmt(nameVal(stats.actions_all,"graveyard_subscribe"));
+
+    // emails from feedback
+    var subs=(fb.items||[]).filter(function(x){ return /^\s*graveyard_subscribe:/i.test(x.text||""); });
+    $("subCount").textContent=subs.length;
+    var tb=$("emails").querySelector("tbody"); tb.innerHTML="";
+    $("emailsEmpty").style.display=subs.length?"none":"block";
+    subs.forEach(function(x){
+      var p=parseSub(x.text);
+      var tr=document.createElement("tr");
+      tr.innerHTML='<td>'+timeAgo(x.ts)+'</td><td class="email">'+esc(p.email)+'</td><td class="muted">'+esc(p.market||"–")+'</td>';
+      tb.appendChild(tr);
+    });
+
+    // recent graveyard activity (sessions whose last action is graveyard-related)
+    var gact={market_check:1,selfcheck_engaged:1,graveyard_subscribe:1};
+    var rec=(stats.recent||[]).filter(function(r){ return gact[r.last_action]; });
+    var rb=$("recent").querySelector("tbody"); rb.innerHTML="";
+    $("recentEmpty").style.display=rec.length?"none":"block";
+    rec.forEach(function(r){
+      var src=r.utm||(r.referrer?(function(){try{return new URL(r.referrer).hostname.replace(/^www\./,"");}catch(e){return "other";}})():"direct");
+      var tr=document.createElement("tr");
+      tr.innerHTML='<td>'+(r.session||"").slice(0,10)+'</td><td>'+timeAgo(r.first)+'</td><td>'+timeAgo(r.last)+'</td><td class="num">'+fmt(r.events)+'</td><td>'+esc(src)+'</td><td>'+esc(r.last_action||"–")+'</td>';
+      rb.appendChild(tr);
+    });
+  }
+  function esc(s){ return String(s==null?"":s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+
+  function load(){
+    var key=sessionStorage.getItem(KEY); if(!key){ show(false); return; }
+    $("dashErr").textContent="Loading…";
+    Promise.all([loadStats(key),loadFeedback(key)]).then(function(res){
+      var stats=res[0], fb=res[1];
+      if(stats && stats.ok===false){ $("dashErr").textContent=stats.error||"No data (is DATABASE_URL set?)."; return; }
+      $("dashErr").textContent=""; render(stats, fb||{items:[]});
+    }).catch(function(e){
+      if(String(e.message)==="401"){ sessionStorage.removeItem(KEY); show(false); $("loginErr").textContent="Wrong key."; }
+      else $("dashErr").textContent="Error loading stats.";
+    });
+  }
+
+  $("enter").onclick=function(){ var k=$("key").value.trim(); if(!k) return; sessionStorage.setItem(KEY,k); $("loginErr").textContent=""; show(true); load(); };
+  $("key").addEventListener("keydown",function(e){ if(e.key==="Enter") $("enter").click(); });
+  $("refresh").onclick=load;
+  $("allScope").onchange=load;
+  $("logout").onclick=function(){ sessionStorage.removeItem(KEY); show(false); };
+
+  if(sessionStorage.getItem(KEY)){ show(true); load(); } else { show(false); }
+})();
+</script>
+</body>
+</html>
