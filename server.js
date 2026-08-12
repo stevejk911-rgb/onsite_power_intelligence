@@ -1,5 +1,3 @@
-// clean URL for the graveyard page
-if (req.url === '/graveyard' || req.url === '/graveyard/') req.url = '/graveyard.html';
 
 "use strict";
 /* =============================================================================
@@ -442,6 +440,7 @@ const MIME = { ".html":"text/html; charset=utf-8", ".js":"text/javascript", ".cs
 function serveStatic(req, res){
   let p = decodeURIComponent(new URL(req.url, "http://x").pathname);
   if(p === "/") p = "/index.html";
+  else if(p === "/graveyard" || p === "/graveyard/") p = "/graveyard.html";  // clean URL
   const fp = path.join(PUBLIC, path.normalize(p).replace(/^(\.\.[\/\\])+/, ""));
   if(fp.indexOf(PUBLIC) !== 0){ res.writeHead(403); res.end("Forbidden"); return; }
   fs.readFile(fp, (err, buf) => {
