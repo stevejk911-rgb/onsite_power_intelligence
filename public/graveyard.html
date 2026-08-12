@@ -5,11 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>The Data Center Graveyard — Autopsies of billion-dollar projects that died</title>
 <meta name="description" content="Forensic autopsies of the data-center projects killed or stalled by local opposition — what killed them, what saved the survivors, and how your project compares. Built on public records.">
-<link rel="canonical" href="https://onsitespower.com/graveyard.html">
+<link rel="canonical" href="https://onsitespower.com/graveyard">
 <meta property="og:title" content="The Data Center Graveyard">
 <meta property="og:description" content="Autopsies of billion-dollar data-center projects that died — and the pattern that keeps killing them.">
 <meta property="og:type" content="website">
-<meta property="og:url" content="https://onsitespower.com/graveyard.html">
+<meta property="og:url" content="https://onsitespower.com/graveyard">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
@@ -19,7 +19,6 @@
     --link:#0066cc; --dead:#b3261e; --dead-bg:#fdf0ef; --survived:#1a7f45; --survived-bg:#eef7f1;
     --template:#8a5a00; --template-bg:#fbf4e6;
     --sans:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue",Arial,sans-serif;
-    --serif:"New York","Times New Yorker",Georgia,"Times New Roman",serif;
   }
   *{box-sizing:border-box}
   html{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
@@ -28,7 +27,6 @@
   a{color:var(--link);text-decoration:none}
   a:hover{text-decoration:underline}
 
-  /* nav */
   nav.top{position:sticky;top:0;z-index:50;background:rgba(251,251,253,.8);backdrop-filter:saturate(180%) blur(20px);border-bottom:1px solid var(--line)}
   nav.top .wrap{display:flex;align-items:center;justify-content:space-between;height:52px}
   nav.top .brand{display:flex;align-items:center;gap:9px;color:var(--ink);font-weight:600;font-size:15px;letter-spacing:-.02em}
@@ -36,27 +34,23 @@
   nav.top .navlinks{display:flex;gap:22px;font-size:14px}
   nav.top .navlinks a{color:var(--muted)}
 
-  /* hero */
   header.hero{padding:96px 0 44px;text-align:center}
   .eyebrow{font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--muted-2)}
   header.hero h1{font-size:clamp(40px,7vw,72px);line-height:1.02;font-weight:600;letter-spacing:-.03em;margin:20px 0 0}
   header.hero .sub{font-size:clamp(19px,2.4vw,23px);color:var(--ink-2);max-width:600px;margin:22px auto 0;line-height:1.45;font-weight:400}
   header.hero .kicker{margin-top:20px;font-size:14px;color:var(--muted)}
 
-  /* stat strip */
   .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:20px;overflow:hidden;margin:56px 0}
   .stats .s{background:var(--panel);padding:26px 20px;text-align:center}
   .stats .s .n{font-size:34px;font-weight:600;letter-spacing:-.03em;line-height:1}
   .stats .s .n.red{color:var(--dead)}
   .stats .s .l{margin-top:9px;font-size:13px;color:var(--muted);line-height:1.4}
 
-  /* section rhythm */
   section{padding:36px 0}
   .lead{font-size:22px;line-height:1.5;color:var(--ink);font-weight:400;letter-spacing:-.015em}
   .lead b{font-weight:600}
   .seclabel{font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted-2);margin-bottom:22px}
 
-  /* autopsy card */
   .case{background:var(--panel);border:1px solid var(--line);border-radius:22px;padding:34px 34px 30px;margin:22px 0;box-shadow:0 1px 2px rgba(0,0,0,.03)}
   .case .top{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
   .case .no{font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted-2)}
@@ -86,7 +80,6 @@
   .qbox .qk{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--dead);display:block;margin-bottom:7px}
   .src{margin-top:16px;font-size:12.5px;color:var(--muted-2);line-height:1.5}
 
-  /* pattern */
   .pattern{background:var(--ink);color:#f5f5f7;border-radius:24px;padding:44px 38px;margin:20px 0}
   .pattern .seclabel{color:#a1a1a6}
   .pattern h3{font-size:30px;font-weight:600;letter-spacing:-.025em;margin:0 0 6px;color:#fff}
@@ -97,7 +90,6 @@
   .mode .mt{font-size:18px;font-weight:600;margin:6px 0 6px;color:#fff;letter-spacing:-.02em}
   .mode .md{font-size:14px;color:#c7c7cc;line-height:1.5}
 
-  /* check your market */
   .check{background:var(--panel);border:1px solid var(--line);border-radius:24px;padding:36px 34px;margin:20px 0}
   .check h3{font-size:30px;font-weight:600;letter-spacing:-.025em;margin:0 0 8px}
   .check .i{font-size:17px;color:var(--ink-2);margin:0 0 22px;max-width:600px}
@@ -130,7 +122,6 @@
   .verdict.high{background:var(--dead-bg);border:1px solid #f3dcd9;color:var(--ink)}
   .verdict b{font-weight:600}
 
-  /* soft cta */
   .cta{text-align:center;padding:60px 0 30px}
   .cta h3{font-size:30px;font-weight:600;letter-spacing:-.025em;margin:0 0 10px}
   .cta p{color:var(--ink-2);max-width:520px;margin:0 auto 22px;font-size:17px}
@@ -278,7 +269,7 @@
       <ol class="mistakes">
         <li><b>Depended on discretionary incentives</b> — a lever the resentful public can yank away.</li>
         <li><b>Fought the last war (zoning), lost the new one (the ballot).</b> Opposition innovated a new instrument; the developer was still playing permitting.</li>
-        <li><b>Let "costs vs. benefits" become the frame.</b> Once 70% of voters believe costs outweigh benefits, every ballot mechanism turns hostile.</li>
+        <li><b>Let "costs vs. benefits" become the frame.</b> Once ~70% of voters believe costs outweigh benefits, every ballot mechanism turns hostile.</li>
         <li><b>No local economic narrative that survived a vote.</b> Nothing made residents feel they gained enough to approve the subsidy.</li>
       </ol>
     </div>
@@ -327,7 +318,7 @@
         <div class="selftitle">Now run your own project against the four failure modes</div>
         <div class="q" onclick="tog(this)"><div class="tog"></div><div><div class="qt"><b>Mode 1 — Fatal dependency.</b> Does your power, water, or land access depend on a single source you don't control (a city, one utility, an annexation)?</div><div class="qhit">→ This is what lost Project Blue its 7–0 city vote — and what its comeback engineered out.</div></div></div>
         <div class="q" onclick="tog(this)"><div class="tog"></div><div><div class="qt"><b>Mode 2 — Veto point.</b> Does approval run through one elected body, a challengeable rezoning, or a jurisdiction where a referendum could be called?</div><div class="qhit">→ A procedural challenge killed PW Digital Gateway; a ballot measure gated Port Washington.</div></div></div>
-        <div class="q" onclick="tog(this)"><div class="tog"></div><div><div class="qt"><b>Mode 3 — The frame.</b> If residents were polled today, would a majority say your project costs them more than it gives?</div><div class="qhit">→ Once that number crossed 70% in Wisconsin, every ballot mechanism turned hostile.</div></div></div>
+        <div class="q" onclick="tog(this)"><div class="tog"></div><div><div class="qt"><b>Mode 3 — The frame.</b> If residents were polled today, would a majority say your project costs them more than it gives?</div><div class="qhit">→ Once that number crossed ~70% in Wisconsin, every ballot mechanism turned hostile.</div></div></div>
         <div class="q" onclick="tog(this)"><div class="tog"></div><div><div class="qt"><b>Mode 4 — Timing.</b> Have you put concrete community benefits on the table <i>before</i> organized opposition appeared?</div><div class="qhit">→ In all three cases, concessions arrived late — or never.</div></div></div>
         <div class="verdict" id="verdict"></div>
       </div>
@@ -422,11 +413,11 @@ function tog(el){
   if(!selfEng){ selfEng=true; track('action','selfcheck_engaged'); }
   var on=document.querySelectorAll('.q.on').length;
   var v=document.getElementById('verdict');
-  v.className='verdict show '+(on>=3?'high':on>=1?'mid':'low');
   if(on===0){ v.className='verdict'; return; }
+  v.className='verdict show '+(on>=3?'high':'mid');
   var msg;
   if(on>=3) msg='<b>Three or more failure modes exposed.</b> That is the exact profile of the projects above. Each one is fixable — but only before capital and opposition both harden. This is the moment to design them out.';
-  else if(on>=1) msg='<b>At least one failure mode is live.</b> One dependency or one veto point is all it took in each case above. Worth closing before it becomes the story.';
+  else msg='<b>At least one failure mode is live.</b> One dependency or one veto point is all it took in each case above. Worth closing before it becomes the story.';
   v.innerHTML=msg;
 }
 function subscribe(){
