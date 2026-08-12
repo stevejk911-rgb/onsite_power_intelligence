@@ -1,3 +1,6 @@
+// clean URL for the graveyard page
+if (req.url === '/graveyard' || req.url === '/graveyard/') req.url = '/graveyard.html';
+
 "use strict";
 /* =============================================================================
  * On-Site Power Intelligence - backend
