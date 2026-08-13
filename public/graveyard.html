@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>The Data Center Graveyard — Autopsies of billion-dollar projects that died</title>
-<meta name="description" content="Forensic autopsies of the data-center projects killed or stalled by local opposition — what killed them, what saved the survivors, and how your project compares. Built on public records.">
+<title>The Data Center Graveyard: Autopsies of billion-dollar projects that died</title>
+<meta name="description" content="Forensic autopsies of the data-center projects killed or stalled by local opposition. What killed them, what saved the survivors, and how your project compares. Built on public records.">
 <link rel="canonical" href="https://onsitespower.com/graveyard">
 <meta property="og:title" content="The Data Center Graveyard">
-<meta property="og:description" content="Autopsies of billion-dollar data-center projects that died — and the pattern that keeps killing them.">
+<meta property="og:description" content="Autopsies of billion-dollar data-center projects that died, and the pattern that keeps killing them.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://onsitespower.com/graveyard">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
@@ -67,7 +67,7 @@
   .block .h{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted-2);margin-bottom:9px}
   .cause{font-size:18px;line-height:1.5;color:var(--ink)}
   .cause b{color:var(--dead);font-weight:600}
-  ol.mistakes,ul.anti{margin:0;padding:0;list-style:none}
+  ol.mistakes,ul.anti,ul.sig{margin:0;padding:0;list-style:none}
   ol.mistakes li{position:relative;padding:9px 0 9px 40px;border-top:1px solid var(--line);font-size:15.5px;line-height:1.5;color:var(--ink-2);counter-increment:mk}
   ol.mistakes li:first-child{border-top:0}
   ol.mistakes li::before{content:counter(mk);position:absolute;left:0;top:9px;width:24px;height:24px;border-radius:50%;background:var(--dead-bg);color:var(--dead);font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center}
@@ -76,6 +76,11 @@
   ul.anti li{position:relative;padding:8px 0 8px 26px;font-size:15.5px;line-height:1.5;color:var(--ink-2)}
   ul.anti li::before{content:"";position:absolute;left:2px;top:14px;width:7px;height:7px;border-radius:50%;background:var(--survived)}
   ul.anti li b{color:var(--ink);font-weight:600}
+  ul.sig li{position:relative;padding:8px 0 8px 26px;font-size:15px;line-height:1.5;color:var(--ink-2)}
+  ul.sig li::before{content:"";position:absolute;left:2px;top:13px;width:7px;height:7px;border-radius:2px;background:var(--muted-2)}
+  ul.sig li b{color:var(--ink);font-weight:600}
+  .sigwrap{margin-top:20px;padding:18px 20px;background:var(--bg);border:1px solid var(--line);border-radius:16px}
+  .sigwrap .h{color:var(--dead)}
   .qbox{margin-top:24px;padding:20px 22px;background:var(--bg);border:1px solid var(--line);border-radius:16px;font-size:16.5px;line-height:1.5;color:var(--ink)}
   .qbox .qk{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--dead);display:block;margin-bottom:7px}
   .src{margin-top:16px;font-size:12.5px;color:var(--muted-2);line-height:1.5}
@@ -92,7 +97,8 @@
 
   .check{background:var(--panel);border:1px solid var(--line);border-radius:24px;padding:36px 34px;margin:20px 0}
   .check h3{font-size:30px;font-weight:600;letter-spacing:-.025em;margin:0 0 8px}
-  .check .i{font-size:17px;color:var(--ink-2);margin:0 0 22px;max-width:600px}
+  .check .i{font-size:17px;color:var(--ink-2);margin:0 0 12px;max-width:620px}
+  .check .i.small{font-size:15px;color:var(--muted);margin-bottom:22px}
   .checkbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px}
   .checkbar input{flex:1;min-width:220px;font:inherit;font-size:16px;padding:13px 16px;border:1px solid var(--line-2);border-radius:12px;background:#fff;color:var(--ink);letter-spacing:-.01em}
   .checkbar input:focus{outline:none;border-color:var(--link);box-shadow:0 0 0 3px rgba(0,102,204,.12)}
@@ -117,14 +123,13 @@
   .q.on .qhit{display:block}
   .verdict{display:none;margin-top:22px;padding:20px 22px;border-radius:16px;font-size:16px;line-height:1.5}
   .verdict.show{display:block}
-  .verdict.low{background:var(--survived-bg);border:1px solid #cfe9d8;color:var(--ink)}
   .verdict.mid{background:var(--template-bg);border:1px solid #efe1c2;color:var(--ink)}
   .verdict.high{background:var(--dead-bg);border:1px solid #f3dcd9;color:var(--ink)}
   .verdict b{font-weight:600}
 
   .cta{text-align:center;padding:60px 0 30px}
   .cta h3{font-size:30px;font-weight:600;letter-spacing:-.025em;margin:0 0 10px}
-  .cta p{color:var(--ink-2);max-width:520px;margin:0 auto 22px;font-size:17px}
+  .cta p{color:var(--ink-2);max-width:540px;margin:0 auto 22px;font-size:17px}
   .cta .row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
   .cta input{font:inherit;font-size:16px;padding:13px 16px;border:1px solid var(--line-2);border-radius:12px;min-width:260px;background:#fff}
   .cta input:focus{outline:none;border-color:var(--link);box-shadow:0 0 0 3px rgba(0,102,204,.12)}
@@ -161,8 +166,8 @@
   <div class="wrap">
     <div class="eyebrow">Field notes · Public records</div>
     <h1>The Data&nbsp;Center Graveyard</h1>
-    <p class="sub">Forensic autopsies of billion-dollar projects that local opposition killed or stalled — what killed them, what saved the survivors, and one quiet question for your own pipeline.</p>
-    <p class="kicker">Every figure below is from public court rulings, ballots, and press. Screening-grade, sourced, no spin.</p>
+    <p class="sub">Forensic autopsies of billion-dollar projects that local opposition killed or stalled. What killed them, what saved the survivors, and one quiet question for your own pipeline.</p>
+    <p class="kicker">Every figure below comes from public court rulings, ballots, and filings. Screening-grade, sourced, no spin.</p>
   </div>
 </header>
 
@@ -170,118 +175,148 @@
   <div class="stats">
     <div class="s"><div class="n red">~$130B</div><div class="l">of projects blocked or delayed in Q1 2026 alone</div></div>
     <div class="s"><div class="n">~100</div><div class="l">local moratoriums in place by mid-2026</div></div>
-    <div class="s"><div class="n">833</div><div class="l">grassroots opposition groups — more than doubled since late 2025</div></div>
+    <div class="s"><div class="n">833</div><div class="l">grassroots opposition groups, up more than 2x since late 2025</div></div>
   </div>
 
   <section>
-    <p class="lead">Power and land are no longer the only things that kill a data center. <b>The community is.</b> The projects below didn't fail on economics — they failed on water, on a paperwork defect, on a tax break the public voted away. The pattern repeats. Here are the autopsies.</p>
+    <p class="lead">Power and land are no longer the only things that kill a data center. <b>The community is.</b> The projects below did not fail on economics. They failed on water, on a paperwork defect, on a tax break the public voted away. The pattern repeats. Here are the autopsies.</p>
   </section>
 
   <!-- CASE 01 -->
   <div class="case" id="case-1">
     <div class="top"><span class="no">Autopsy 01</span><span class="chip dead">Dead</span></div>
     <h2>PW Digital Gateway</h2>
-    <p class="deck">One of the largest campuses ever proposed. Killed by a paperwork defect — avoidable from day one.</p>
+    <p class="deck">One of the largest campuses ever proposed. A $24.7B plan killed by a paperwork defect that was checkable from day one.</p>
     <div class="meta">
       <span class="m"><b>Where</b> · Prince William County, VA</span>
-      <span class="m"><b>Who</b> · QTS + Compass</span>
-      <span class="m"><b>Size</b> · ~1,790 acres</span>
-      <span class="m"><b>Died</b> · Jul 2026</span>
+      <span class="m"><b>Who</b> · QTS + Compass Datacenters</span>
+      <span class="m"><b>Scale</b> · 2,100+ acres · 37 data centers · 23M sq ft</span>
+      <span class="m"><b>Value</b> · $24.7B / $400.5M yr tax (county est.)</span>
+      <span class="m"><b>Approved</b> · 4-3-1 vote, Dec 2023</span>
+      <span class="m"><b>Died</b> · Jul 2, 2026</span>
     </div>
     <div class="block">
       <div class="h">Cause of death</div>
-      <p class="cause">Not water, not the grid, not economics — <b>a public-notice defect in the county's own rezoning.</b> The approval was legally fragile the day it passed. Opponents didn't argue the merits; they sued on process, and won.</p>
+      <p class="cause">Not water, not the grid, not economics. <b>A public-notice defect in the county's own rezoning.</b> The rezoning passed on a razor-thin 4-3-1 board vote after a 29-hour hearing, then opponents sued on process, not merits. A judge found the county published newspaper notices at the wrong intervals, failed to make the ordinances available for inspection, and held the hearing too soon after final notice. The rezoning was voided in 2025, the Court of Appeals affirmed on Mar 31, 2026, and QTS dropped its final appeal on Jul 2, 2026.</p>
     </div>
     <div class="block">
       <div class="h">The 4 fatal mistakes</div>
       <ol class="mistakes">
-        <li><b>Built on a cracked legal foundation.</b> A multi-year, multi-billion effort resting on a rezoning with notice defects — one litigable flaw, one point of failure, never stress-tested.</li>
-        <li><b>Maximized opposition intensity.</b> Forcing a mega-approval through a 29-hour hostile hearing created the motivated, litigation-capable opposition — and the record it used to win.</li>
-        <li><b>No off-ramp, no phasing.</b> One all-or-nothing rezoning. When the one thing broke, everything broke.</li>
-        <li><b>Misread the opponent.</b> This was a disciplined legal campaign. They brought a construction plan to a courtroom fight.</li>
+        <li><b>Built on a cracked legal foundation.</b> A $24.7B, multi-year effort rested on a rezoning with notice defects. One litigable flaw, one point of failure, never stress-tested.</li>
+        <li><b>Maximized opposition intensity.</b> A 29-hour hostile hearing and a 4-3-1 split produced a motivated, litigation-capable opposition, plus the public record it used to win.</li>
+        <li><b>No off-ramp, no phasing.</b> One all-or-nothing rezoning across 2,100+ acres. When the one thing broke, everything broke.</li>
+        <li><b>Misread the opponent.</b> This was a disciplined legal campaign. The developers brought a construction plan to a courtroom fight.</li>
       </ol>
+    </div>
+    <div class="block sigwrap">
+      <div class="h">Signals that sat in the public record before it died</div>
+      <ul class="sig">
+        <li>A <b>4-3-1</b> approval with one abstention: a fragile political mandate, not a durable one.</li>
+        <li>A <b>29-hour hearing</b> with organized, litigation-ready opponents who filed suit almost immediately.</li>
+        <li>The <b>notice-compliance record</b> itself, a public procedural checklist any counsel could have audited before the land spend.</li>
+      </ul>
     </div>
     <div class="block">
       <div class="h">What would have saved it</div>
       <ul class="anti">
-        <li>A <b>procedural pre-mortem</b> — verify every notice and hearing-timing rule is bulletproof before capital goes in. What killed this was findable in advance.</li>
+        <li>A <b>procedural pre-mortem</b>: verify every notice and hearing-timing rule is bulletproof before capital goes in. What killed this was findable in advance.</li>
         <li><b>Phase and scale</b> the ask to remove the all-or-nothing failure mode.</li>
-        <li><b>Concessions that make suing not worth it</b> — benefits, buffers, bring-your-own-power to defuse the ratepayer argument.</li>
+        <li><b>Concessions that make suing not worth it</b>: benefits, buffers, on-site power to defuse the ratepayer argument.</li>
       </ul>
     </div>
-    <div class="qbox"><span class="qk">The uncomfortable question</span>Your approval is only as strong as its weakest procedural link and its most motivated opponent. Do you know where both are — before the capital goes in?</div>
-    <p class="src">Sources: Court of Appeals of Virginia; InsideNoVa; Virginia Business; DataCenterDynamics.</p>
+    <div class="qbox"><span class="qk">The question for your deal</span>Your approval is only as strong as its weakest procedural link and its most motivated opponent. Do you know where both are, before the capital goes in?</div>
+    <p class="src">Sources: Court of Appeals of Virginia; InsideNoVa; Prince William Times; Virginia Business; Data Center Frontier.</p>
   </div>
 
   <!-- CASE 02 -->
   <div class="case" id="case-2">
-    <div class="top"><span class="no">Autopsy 02</span><span class="chip survived">Rejected → Survived</span></div>
+    <div class="top"><span class="no">Autopsy 02</span><span class="chip survived">Rejected, then revived</span></div>
     <h2>Project Blue</h2>
-    <p class="deck">Rejected 7–0 by the city. Then resurrected one jurisdiction over. The comeback is the real lesson.</p>
+    <p class="deck">Rejected 7-0 by the city, then revived one jurisdiction over. The comeback is the real lesson.</p>
     <div class="meta">
       <span class="m"><b>Where</b> · near Tucson, Pima County, AZ</span>
       <span class="m"><b>Who</b> · Beale Infrastructure (Blue Owl); AWS reported</span>
-      <span class="m"><b>Size</b> · 600 MW · ~$3.6B</span>
-      <span class="m"><b>City vote</b> · Aug 2025</span>
+      <span class="m"><b>Size</b> · 600 MW · ~$3.6B · 290 acres</span>
+      <span class="m"><b>Water</b> · up to ~283M gallons/yr reported (~3,000 homes)</span>
+      <span class="m"><b>City vote</b> · 7-0 reject, Aug 6, 2025</span>
+      <span class="m"><b>Revived</b> · county deal 3-2, Dec 16, 2025</span>
     </div>
     <div class="block">
       <div class="h">Cause of the rejection</div>
-      <p class="cause"><b>Water + secrecy + a jurisdiction that could say no.</b> The original design needed City of Tucson water and annexation to get it — in an arid, drought-anxious region — while the end user was kept undisclosed. That handed opponents a clean "corporate water grab, in secret" story, and the city had the votes to reject it 7–0.</p>
+      <p class="cause"><b>Water, secrecy, and a jurisdiction that could say no.</b> The original design needed City of Tucson water, and annexation to get it, in an arid, drought-anxious region. Reported draw ran up to roughly 283 million gallons a year, about 3,000 households, while the end user stayed undisclosed. That handed opponents a clean "corporate water grab, in secret" story, and the city council had the votes to reject it 7-0.</p>
     </div>
     <div class="block">
-      <div class="h">The 4 fatal mistakes (that lost the city)</div>
+      <div class="h">The 4 fatal mistakes that lost the city</div>
       <ol class="mistakes">
-        <li><b>Picked a fight over water it didn't need.</b> Designing around city water in a drought region made the most inflammable objection possible.</li>
+        <li><b>Picked a water fight it did not need.</b> Designing around city water in a drought region made the most inflammable objection possible.</li>
         <li><b>Secrecy backfired.</b> Hiding the end user converted uncertainty into distrust.</li>
-        <li><b>Chose a jurisdiction that could veto.</b> A politically exposed city council = a single winnable target.</li>
+        <li><b>Chose a jurisdiction that could veto.</b> A politically exposed city council is a single winnable target.</li>
         <li><b>Led with the ask, not the concessions.</b> No water-neutrality or benefit story arrived before the opposition did.</li>
       </ol>
     </div>
-    <div class="block">
-      <div class="h">The comeback = the antidote</div>
-      <ul class="anti">
-        <li><b>Removed the fatal dependency:</b> switched to closed-loop cooling, killing the "water grab" argument at the root.</li>
-        <li><b>Changed the venue:</b> moved to Pima County — different politics, different outcome — and closed on the land by Christmas.</li>
-        <li><b>Locked power early</b> via the Arizona Corporation Commission, removing the energy-uncertainty attack.</li>
+    <div class="block sigwrap">
+      <div class="h">Signals that sat in the public record before the vote</div>
+      <ul class="sig">
+        <li>A <b>water-dependent design</b> in a metro already fighting over supply.</li>
+        <li>An <b>undisclosed end user</b>, reliably read by communities as something to hide.</li>
+        <li>Approval that <b>required annexation and a council vote</b>: a discretionary gate, not a right.</li>
       </ul>
     </div>
-    <div class="qbox"><span class="qk">The uncomfortable question</span>What single resource dependency — water, city power, annexation — is your project's kill switch, and are you engineering it <i>out</i> before opponents find it?</div>
-    <p class="src">Sources: AZ Luminaria; AZPM; KJZZ; Democracy Now!; Businesswire; DataCenterDynamics. AWS end-user per reporting; sponsors did not confirm.</p>
+    <div class="block">
+      <div class="h">The comeback, which is the antidote</div>
+      <ul class="anti">
+        <li><b>Removed the fatal dependency:</b> switched to closed-loop cooling, which killed the "water grab" argument at the root.</li>
+        <li><b>Changed the venue:</b> moved to Pima County, where a 3-2 board vote approved a binding agreement (with independent annual verification that 100% of energy is matched with renewables), and closed on the land in December 2025.</li>
+        <li><b>Locked power early</b> through the Arizona Corporation Commission, removing the energy-uncertainty attack.</li>
+      </ul>
+    </div>
+    <div class="qbox"><span class="qk">The question for your deal</span>What single resource dependency, water, city power, or annexation, is your project's kill switch, and are you engineering it <i>out</i> before opponents find it?</div>
+    <p class="src">Sources: AZ Luminaria; AZPM; KJZZ; Tucson Sentinel; Democracy Now!; DataCenterDynamics. AWS end user per reporting; sponsors did not confirm. Water figure as reported.</p>
   </div>
 
   <!-- CASE 03 -->
   <div class="case" id="case-3">
     <div class="top"><span class="no">Autopsy 03</span><span class="chip template">National template</span></div>
     <h2>Port Washington</h2>
-    <p class="deck">Opponents didn't fight the zoning. They made the developer's financing a public vote — and gave every town in America the template.</p>
+    <p class="deck">Opponents did not fight the zoning. They put the developer's tax incentives to a public vote, and handed every town in America the template.</p>
     <div class="meta">
       <span class="m"><b>Where</b> · Port Washington, WI</span>
       <span class="m"><b>Who</b> · Vantage; land via Cloverleaf Infrastructure</span>
-      <span class="m"><b>Vote</b> · ~66% yes</span>
-      <span class="m"><b>Date</b> · Apr 7, 2026</span>
+      <span class="m"><b>Scale</b> · up to 3.5 GW reported</span>
+      <span class="m"><b>Referendum</b> · ~66% yes, Apr 7, 2026</span>
+      <span class="m"><b>Rule</b> · any incentive over $10M needs a public vote</span>
+      <span class="m"><b>First</b> · anti-DC referendum in the U.S.</span>
     </div>
     <div class="block">
       <div class="h">Cause of death</div>
-      <p class="cause">Not the zoning — <b>the financing assumption.</b> Big deals lean on tax-increment financing and local tax breaks. Opponents went to the ballot box and made any incentive over $10M require a public vote — turning the developer's economic model into a referendum they were nearly certain to win.</p>
+      <p class="cause">Not the zoning, <b>the financing assumption.</b> Big deals lean on tax-increment financing and local tax breaks. Opponents went to the ballot box and made any incentive over $10M require a public vote, turning the developer's economic model into a referendum they were nearly certain to win. It passed roughly 66%, and organizers pitched it openly as a national model.</p>
     </div>
     <div class="block">
       <div class="h">The 4 fatal mistakes</div>
       <ol class="mistakes">
-        <li><b>Depended on discretionary incentives</b> — a lever the resentful public can yank away.</li>
-        <li><b>Fought the last war (zoning), lost the new one (the ballot).</b> Opposition innovated a new instrument; the developer was still playing permitting.</li>
-        <li><b>Let "costs vs. benefits" become the frame.</b> Once ~70% of voters believe costs outweigh benefits, every ballot mechanism turns hostile.</li>
+        <li><b>Depended on discretionary incentives,</b> a lever the resentful public can yank away.</li>
+        <li><b>Fought the last war (zoning) and lost the new one (the ballot).</b> Opposition invented a new instrument while the developer was still playing permitting.</li>
+        <li><b>Let "costs vs. benefits" become the frame.</b> Once about 70% of voters believe costs outweigh benefits, every ballot mechanism turns hostile.</li>
         <li><b>No local economic narrative that survived a vote.</b> Nothing made residents feel they gained enough to approve the subsidy.</li>
       </ol>
+    </div>
+    <div class="block sigwrap">
+      <div class="h">Signals that sat in the public record before the vote</div>
+      <ul class="sig">
+        <li>An economic model that <b>leaned on a discretionary tax break</b> a local body could revoke.</li>
+        <li><b>Marquette polling already moving against it</b>: statewide "costs outweigh benefits" climbed from 55% to 70%.</li>
+        <li>A <b>ballot mechanism available to organizers</b>, waiting to be used.</li>
+      </ul>
     </div>
     <div class="block">
       <div class="h">What would have saved it</div>
       <ul class="anti">
-        <li><b>Don't build the model on incentives residents can revoke</b> — or lock them before opposition organizes.</li>
-        <li><b>Win "costs vs. benefits" early</b> with concrete per-household benefits (bill relief, community fund) before the number crosses 50%.</li>
+        <li><b>Do not build the model on incentives residents can revoke,</b> or lock them before opposition organizes.</li>
+        <li><b>Win "costs vs. benefits" early</b> with concrete per-household benefits (bill relief, a community fund) before the number crosses 50%.</li>
         <li><b>Assume the ballot box is now a venue.</b> Referendums are contagious.</li>
       </ul>
     </div>
-    <div class="qbox"><span class="qk">The uncomfortable question</span>If your economics depend on a tax break, could a citizen vote take it away — and have you already lost the "costs vs. benefits" argument in that community?</div>
+    <div class="qbox"><span class="qk">The question for your deal</span>If your economics depend on a tax break, could a citizen vote take it away, and have you already lost the "costs vs. benefits" argument in that community?</div>
     <p class="src">Sources: NOTUS; Wisconsin Watch; WPR; FOX6 Milwaukee; Marquette Law School Poll. Campus scale reported up to 3.5 GW; figures per public reporting.</p>
   </div>
 
@@ -290,12 +325,12 @@
     <div class="pattern">
       <div class="seclabel">The pattern</div>
       <h3>Three deaths, one anatomy.</h3>
-      <p class="i">Different states, different triggers — the same four failure modes. Every project that dies has at least one. Every project that survives designs them out.</p>
+      <p class="i">Different states, different triggers, the same four failure modes. Every project that dies has at least one. Every project that survives designs them out.</p>
       <div class="modes">
-        <div class="mode"><div class="mn">MODE 1</div><div class="mt">A fatal dependency</div><div class="md">Water, city power, annexation, or a tax break you don't control. The dependency is the vulnerability.</div></div>
+        <div class="mode"><div class="mn">MODE 1</div><div class="mt">A fatal dependency</div><div class="md">Water, city power, annexation, or a tax break you do not control. The dependency is the vulnerability.</div></div>
         <div class="mode"><div class="mn">MODE 2</div><div class="mt">A veto point</div><div class="md">An elected body that can say no, a rezoning that can be challenged, a ballot that can be run. A single winnable target.</div></div>
-        <div class="mode"><div class="mn">MODE 3</div><div class="mt">Lost the "costs vs. benefits" frame</div><div class="md">Once residents believe the project costs them more than it gives, every mechanism turns against you.</div></div>
-        <div class="mode"><div class="mn">MODE 4</div><div class="mt">Concessions arrived late</div><div class="md">Benefits offered after opposition organized are read as damage control, not good faith. Timing is everything.</div></div>
+        <div class="mode"><div class="mn">MODE 3</div><div class="mt">The "costs vs. benefits" frame is lost</div><div class="md">Once residents believe the project costs them more than it gives, every mechanism turns against you.</div></div>
+        <div class="mode"><div class="mn">MODE 4</div><div class="mt">Concessions arrived late</div><div class="md">Benefits offered after opposition organized read as damage control, not good faith. Timing is everything.</div></div>
       </div>
     </div>
   </section>
@@ -305,21 +340,22 @@
     <div class="check">
       <div class="seclabel">Apply it</div>
       <h3>How does your project compare?</h3>
-      <p class="i">Drop your site on the map to see the nearest autopsied failure — then run the four failure modes against your own project. Nothing is stored unless you ask us to follow up.</p>
+      <p class="i">Every fact in these autopsies sat in the public record before the project died: the vote counts, the notice filings, the polling, the water math. Assembling that for a single site is days of digging across court dockets, utility filings, council minutes, and local press. That is the pass this tool is built to run.</p>
+      <p class="i small">Drop your site on the map to see the nearest autopsied failure, then run the four failure modes against your own project. Nothing is stored unless you ask us to follow up.</p>
       <div class="checkbar">
         <input id="addr" placeholder="Your site address or market (or click the map)" autocomplete="off" onkeydown="if(event.key==='Enter')runCheck()">
         <button onclick="runCheck()">Check my market</button>
       </div>
       <div id="gmap"></div>
-      <div class="maptip">Red = a project that died or stalled. Green = rejected but survived by re-routing.</div>
+      <div class="maptip">Red is a project that died or stalled. Green is rejected but revived by re-routing.</div>
 
       <div id="result">
         <div class="nearest" id="nearest"></div>
         <div class="selftitle">Now run your own project against the four failure modes</div>
-        <div class="q" onclick="tog(this)"><div class="tog"></div><div><div class="qt"><b>Mode 1 — Fatal dependency.</b> Does your power, water, or land access depend on a single source you don't control (a city, one utility, an annexation)?</div><div class="qhit">→ This is what lost Project Blue its 7–0 city vote — and what its comeback engineered out.</div></div></div>
-        <div class="q" onclick="tog(this)"><div class="tog"></div><div><div class="qt"><b>Mode 2 — Veto point.</b> Does approval run through one elected body, a challengeable rezoning, or a jurisdiction where a referendum could be called?</div><div class="qhit">→ A procedural challenge killed PW Digital Gateway; a ballot measure gated Port Washington.</div></div></div>
-        <div class="q" onclick="tog(this)"><div class="tog"></div><div><div class="qt"><b>Mode 3 — The frame.</b> If residents were polled today, would a majority say your project costs them more than it gives?</div><div class="qhit">→ Once that number crossed ~70% in Wisconsin, every ballot mechanism turned hostile.</div></div></div>
-        <div class="q" onclick="tog(this)"><div class="tog"></div><div><div class="qt"><b>Mode 4 — Timing.</b> Have you put concrete community benefits on the table <i>before</i> organized opposition appeared?</div><div class="qhit">→ In all three cases, concessions arrived late — or never.</div></div></div>
+        <div class="q" onclick="tog(this)"><div class="tog"></div><div><div class="qt"><b>Mode 1, fatal dependency.</b> Does your power, water, or land access depend on a single source you do not control (a city, one utility, an annexation)?</div><div class="qhit">This is what lost Project Blue its 7-0 city vote, and what its comeback engineered out.</div></div></div>
+        <div class="q" onclick="tog(this)"><div class="tog"></div><div><div class="qt"><b>Mode 2, veto point.</b> Does approval run through one elected body, a challengeable rezoning, or a jurisdiction where a referendum could be called?</div><div class="qhit">A procedural challenge killed PW Digital Gateway; a ballot measure gated Port Washington.</div></div></div>
+        <div class="q" onclick="tog(this)"><div class="tog"></div><div><div class="qt"><b>Mode 3, the frame.</b> If residents were polled today, would a majority say your project costs them more than it gives?</div><div class="qhit">Once that number crossed about 70% in Wisconsin, every ballot mechanism turned hostile.</div></div></div>
+        <div class="q" onclick="tog(this)"><div class="tog"></div><div><div class="qt"><b>Mode 4, timing.</b> Have you put concrete community benefits on the table <i>before</i> organized opposition appeared?</div><div class="qhit">In all three cases, concessions arrived late, or never.</div></div></div>
         <div class="verdict" id="verdict"></div>
       </div>
     </div>
@@ -327,21 +363,21 @@
 
   <!-- SOFT CTA -->
   <section class="cta">
-    <h3>We're autopsying the next ten.</h3>
-    <p>The ~$130B blocked in Q1 2026 is a lot of case studies. Want the next autopsies as they publish — and a read on the failure modes most active in your market?</p>
+    <h3>We are autopsying the next ten.</h3>
+    <p>The ~$130B blocked in Q1 2026 is a lot of case studies. Want the next autopsies as they publish, plus a read on the failure modes most active in your market?</p>
     <div class="row">
       <input id="email" type="email" placeholder="you@company.com" autocomplete="off">
       <button onclick="subscribe()">Send me the series</button>
     </div>
     <div class="thx" id="thx">On the list. The next autopsy lands in your inbox.</div>
-    <div class="alt">Or <a href="app.html">screen a specific site's power path →</a></div>
+    <div class="alt">Or <a href="app.html">screen a specific site's power path</a>.</div>
   </section>
 </div>
 
 <footer>
   <div class="wrap">
     <div class="fl"><a href="index.html">Home</a><a href="app.html">Screen a site</a><a href="data-sources.html">Data</a></div>
-    <p class="disc">Autopsies are compiled from public court rulings, ballots, regulatory filings, and press coverage, and are provided for planning and educational purposes only — not investment, legal, or engineering advice. Company and figure references reflect public reporting; some end-users and scales are as reported, not confirmed. Locations shown on the map are approximate. Verify with counsel and primary sources before any commitment. © 2026 On-Site Power Intelligence · onsitespower.com</p>
+    <p class="disc">Autopsies are compiled from public court rulings, ballots, regulatory filings, and press coverage, and are provided for planning and educational purposes only, not investment, legal, or engineering advice. Company and figure references reflect public reporting; some end users and scales are as reported, not confirmed. Locations shown on the map are approximate. Verify with counsel and primary sources before any commitment. © 2026 On-Site Power Intelligence · onsitespower.com</p>
   </div>
 </footer>
 
@@ -358,8 +394,8 @@
 
 /* ===== case data (approx. locations, public records) ===== */
 var CASES=[
-  {name:'PW Digital Gateway', where:'Prince William County, VA', lat:38.81, lon:-77.61, status:'dead',    cause:'a public-notice defect in the rezoning — died in court, not on the merits'},
-  {name:'Project Blue',        where:'near Tucson, AZ',           lat:32.10, lon:-110.98, status:'survived',cause:'a city 7–0 rejection over water & secrecy — survived by re-routing to the county'},
+  {name:'PW Digital Gateway', where:'Prince William County, VA', lat:38.81, lon:-77.61, status:'dead',    cause:'a public-notice defect voided the rezoning; it died in court, not on the merits'},
+  {name:'Project Blue',        where:'near Tucson, AZ',           lat:32.10, lon:-110.98, status:'survived',cause:'a 7-0 city rejection over water and secrecy, then revived by re-routing to the county'},
   {name:'Port Washington',     where:'Port Washington, WI',       lat:43.39, lon:-87.87,  status:'template',cause:'a citizen referendum that put its tax incentives to a public vote'}
 ];
 
@@ -396,14 +432,14 @@ async function runCheck(){
   else{
     try{ var r=await fetch('/api/geo?q='+encodeURIComponent(v)).then(function(x){return x.json();});
       if(Array.isArray(r)&&r.length){ lat=parseFloat(r[0].lat); lng=parseFloat(r[0].lon); } else throw 0;
-    }catch(e){ alert('Could not find that location — try clicking the map instead.'); return; }
+    }catch(e){ alert('Could not find that location. Try clicking the map instead.'); return; }
   }
   setPin(lat,lng); gmap.setView([lat,lng],7); showResult(); track('action','market_check');
 }
 function showResult(){
   if(!picked) return;
   var n=nearest(picked[0],picked[1]);
-  document.getElementById('nearest').innerHTML='Your nearest autopsied project is <b>'+n.c.name+'</b> (~'+n.mi+' mi, '+n.c.where+') — '+n.c.cause+'. The failure modes are national, not local; run yours below.';
+  document.getElementById('nearest').innerHTML='Your nearest autopsied project is <b>'+n.c.name+'</b> (about '+n.mi+' mi, '+n.c.where+'): '+n.c.cause+'. The failure modes are national, not local, so run yours below.';
   var box=document.getElementById('result'); box.classList.add('show');
   box.scrollIntoView({behavior:'smooth',block:'nearest'});
 }
@@ -416,7 +452,7 @@ function tog(el){
   if(on===0){ v.className='verdict'; return; }
   v.className='verdict show '+(on>=3?'high':'mid');
   var msg;
-  if(on>=3) msg='<b>Three or more failure modes exposed.</b> That is the exact profile of the projects above. Each one is fixable — but only before capital and opposition both harden. This is the moment to design them out.';
+  if(on>=3) msg='<b>Three or more failure modes exposed.</b> That is the exact profile of the projects above. Each one is fixable, but only before capital and opposition both harden. This is the moment to design them out.';
   else msg='<b>At least one failure mode is live.</b> One dependency or one veto point is all it took in each case above. Worth closing before it becomes the story.';
   v.innerHTML=msg;
 }
