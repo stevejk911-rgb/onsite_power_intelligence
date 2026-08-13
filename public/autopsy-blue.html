@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Autopsy: Project Blue | The Data Center Graveyard</title>
+<meta name="description" content="Full autopsy of Project Blue near Tucson: rejected 7-0 by the city over water and secrecy, then revived one jurisdiction over. Timeline, the comeback, and the insight to carry away. Sourced from public records.">
+<link rel="canonical" href="https://onsitespower.com/autopsy-blue.html">
+<style>
+  :root{--ink:#1d1d1f;--ink-2:#3a3a3c;--muted:#6e6e73;--muted-2:#86868b;--bg:#fbfbfd;--panel:#fff;--line:#e8e8ed;--line-2:#dcdce1;--tile:#f5f5f7;--link:#0066cc;--dead:#b3261e;--dead-bg:#fdf0ef;--survived:#1a7f45;--survived-bg:#eef7f1;--sans:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue",Arial,sans-serif;}
+  *{box-sizing:border-box}
+  html{-webkit-font-smoothing:antialiased}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:17px;line-height:1.65;letter-spacing:-.01em}
+  .wrap{max-width:720px;margin:0 auto;padding:0 24px}
+  a{color:var(--link);text-decoration:none}a:hover{text-decoration:underline}
+  nav.top{position:sticky;top:0;z-index:20;background:rgba(251,251,253,.82);backdrop-filter:saturate(180%) blur(20px);border-bottom:1px solid var(--line)}
+  nav.top .wrap{display:flex;align-items:center;justify-content:space-between;height:52px}
+  nav.top .brand{display:flex;align-items:center;gap:9px;color:var(--ink);font-weight:600;font-size:15px;letter-spacing:-.02em}
+  nav.top .brand .dot{width:9px;height:9px;border-radius:50%;background:var(--ink)}
+  nav.top .navlinks{display:flex;gap:22px;font-size:14px}nav.top .navlinks a{color:var(--muted)}
+  .back{display:inline-flex;align-items:center;gap:7px;font-size:14px;color:var(--muted);margin:26px 0 8px}
+  .eyebrow{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted-2)}
+  .chip{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;padding:4px 10px;border-radius:100px;text-transform:uppercase;background:var(--survived-bg);color:var(--survived);margin-left:8px}
+  h1{font-size:clamp(34px,5.4vw,50px);font-weight:600;letter-spacing:-.03em;line-height:1.05;margin:14px 0 10px}
+  .dek{font-size:20px;color:var(--ink-2);line-height:1.45;margin:0 0 26px;font-weight:400}
+  .facts{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-bottom:34px}
+  .facts .f{background:var(--panel);padding:12px 14px;min-width:0}
+  .facts .fl{font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted-2)}
+  .facts .fv{font-size:14px;font-weight:600;color:var(--ink);margin-top:3px;line-height:1.3}
+  .facts .fv.dead{color:var(--dead)}.facts .fv.good{color:var(--survived)}
+  .sec{margin:0 0 30px}
+  .sec h2{font-size:14px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--dead);margin:0 0 12px}
+  .sec.win h2{color:var(--survived)}
+  .sec p{margin:0 0 14px}.sec p:last-child{margin-bottom:0}.sec b{font-weight:600}
+  .tl{list-style:none;margin:0;padding:0}
+  .tl li{position:relative;padding:0 0 16px 22px;border-left:2px solid var(--line);margin-left:4px}
+  .tl li:last-child{border-left-color:transparent;padding-bottom:0}
+  .tl li::before{content:"";position:absolute;left:-6px;top:4px;width:10px;height:10px;border-radius:50%;background:var(--dead);border:2px solid var(--bg)}
+  .tl li.g::before{background:var(--survived)}
+  .tl .d{font-weight:700;font-size:14px;color:var(--ink);display:block;margin-bottom:2px}
+  .tl .t{font-size:15px;color:var(--ink-2);line-height:1.5}
+  ol.mistakes{list-style:none;margin:0;padding:0;counter-reset:mk}
+  ol.mistakes li{position:relative;padding:12px 0 12px 44px;border-top:1px solid var(--line);counter-increment:mk;font-size:15.5px;line-height:1.55;color:var(--ink-2)}
+  ol.mistakes li:first-child{border-top:0}
+  ol.mistakes li::before{content:counter(mk);position:absolute;left:0;top:12px;width:26px;height:26px;border-radius:50%;background:var(--dead-bg);color:var(--dead);font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center}
+  ol.mistakes li b{color:var(--ink);font-weight:600}
+  ul.sig,ul.anti{list-style:none;margin:0;padding:0}
+  ul.sig li{position:relative;padding:7px 0 7px 24px;font-size:15.5px;line-height:1.5;color:var(--ink-2)}
+  ul.sig li::before{content:"";position:absolute;left:2px;top:14px;width:7px;height:7px;border-radius:2px;background:var(--muted-2)}
+  ul.anti li{position:relative;padding:7px 0 7px 24px;font-size:15.5px;line-height:1.5;color:var(--ink-2)}
+  ul.anti li::before{content:"";position:absolute;left:2px;top:14px;width:7px;height:7px;border-radius:50%;background:var(--survived)}
+  ul.sig li b,ul.anti li b{color:var(--ink);font-weight:600}
+  .insight{background:#0b1220;color:#eef2ff;border-radius:18px;padding:26px 28px;margin:34px 0}
+  .insight .ik{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#8ea0ff;margin-bottom:14px}
+  .insight ul{list-style:none;margin:0;padding:0}
+  .insight li{position:relative;padding:8px 0 8px 24px;font-size:16px;line-height:1.55;color:#dfe4f5;border-top:1px solid rgba(255,255,255,.08)}
+  .insight li:first-child{border-top:0}
+  .insight li::before{content:"";position:absolute;left:2px;top:16px;width:7px;height:7px;border-radius:50%;background:#6c86ff}
+  .insight li b{color:#fff;font-weight:600}
+  ul.sources{list-style:none;margin:0;padding:0}
+  ul.sources li{padding:8px 0;border-top:1px solid var(--line);font-size:14.5px;line-height:1.45}
+  ul.sources li:first-child{border-top:0}
+  ul.sources .pub{color:var(--muted);font-weight:600}
+  .endcta{border-top:1px solid var(--line);margin-top:36px;padding-top:26px;display:flex;gap:12px;flex-wrap:wrap}
+  .endcta a{display:inline-flex;align-items:center;gap:7px;font-size:15px;font-weight:600;padding:11px 18px;border-radius:12px;border:1px solid var(--line-2);color:var(--ink)}
+  .endcta a.primary{background:var(--ink);color:#fff;border-color:var(--ink)}
+  footer{border-top:1px solid var(--line);margin-top:40px;padding:28px 0 56px}
+  footer .disc{font-size:12px;color:var(--muted-2);line-height:1.6}
+  @media(max-width:640px){.facts{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<nav class="top"><div class="wrap">
+  <a class="brand" href="index.html"><span class="dot"></span>On-Site Power Intelligence</a>
+  <div class="navlinks"><a href="graveyard">Graveyard</a><a href="app.html">Screen a site</a></div>
+</div></nav>
+
+<div class="wrap">
+  <a class="back" href="graveyard">&#8249; All autopsies</a>
+  <div class="eyebrow">Autopsy 02<span class="chip">Rejected, then revived</span></div>
+  <h1>Project Blue</h1>
+  <p class="dek">Rejected 7-0 by the city over water and secrecy, then rebuilt one jurisdiction over. The most useful part is not why it died, but exactly how it came back.</p>
+
+  <div class="facts">
+    <div class="f"><div class="fl">Location</div><div class="fv">near Tucson, Pima County, AZ</div></div>
+    <div class="f"><div class="fl">Developer</div><div class="fv">Beale Infrastructure (Blue Owl)</div></div>
+    <div class="f"><div class="fl">End user</div><div class="fv">AWS (reported, unconfirmed)</div></div>
+    <div class="f"><div class="fl">Size</div><div class="fv">600 MW · ~$3.6B · 290 ac</div></div>
+    <div class="f"><div class="fl">Water (reported)</div><div class="fv">up to ~283M gal/yr</div></div>
+    <div class="f"><div class="fl">Status</div><div class="fv good">Revived via county, Dec 2025</div></div>
+  </div>
+
+  <div class="sec">
+    <h2>The setup</h2>
+    <p>Project Blue was a hyperscale campus near Tucson, developed by Beale Infrastructure and backed by Blue Owl Capital, with Amazon Web Services reported as the end user, though the sponsors never confirmed it. The plan: roughly 290 acres, up to ten buildings, about 2 million square feet, 600 MW, and around $3.6 billion in investment, phased from 2026 to 2029.</p>
+    <p>The flashpoint was water. The original design used evaporative cooling that needed City of Tucson water, and the developer sought to have the county land annexed into the city to get it. Reporting put consumption at up to roughly 283 million gallons a year, framed against thousands of households, in an arid region already anxious about Colorado River cuts. Layered on top: secrecy. The end user was withheld and the project advanced under non-disclosure agreements, which turned uncertainty into suspicion.</p>
+  </div>
+
+  <div class="sec">
+    <h2>Timeline</h2>
+    <ul class="tl">
+      <li><span class="d">Jun 2025</span><span class="t">Pima County approves a land deal, but it is contingent on the city annexing the site and providing water service.</span></li>
+      <li><span class="d">Jul 2025</span><span class="t">Public scrutiny escalates around water use and the undisclosed end user.</span></li>
+      <li><span class="d">Aug 6, 2025</span><span class="t">The Tucson City Council votes 7-0 to reject the project. Because the June county deal depended on annexation and water, the rejection effectively kills it.</span></li>
+      <li><span class="d">Aug 8, 2025</span><span class="t">Beale cancels its Tucson reclaimed-water system expansion plans.</span></li>
+      <li><span class="d">Late Aug 2025</span><span class="t">Beale files an energy supply agreement with the Arizona Corporation Commission and pivots to building on unincorporated Pima County land, which needs no city annexation.</span></li>
+      <li><span class="d">Dec 16, 2025</span><span class="t">The Pima County Board of Supervisors approves a binding Memorandum of Agreement with Beale on a 3-2 vote. It includes independent annual verification that Beale matches 100% of the project's energy with renewables. Cooling is switched to a closed-loop system that does not draw city water.</span></li>
+      <li><span class="d g">Dec 24, 2025</span><span class="t">The developers close on the purchase of the 290-acre county land. The campus rejected 7-0 in August is alive again by Christmas.</span></li>
+    </ul>
+  </div>
+
+  <div class="sec">
+    <h2>Cause of the rejection, in detail</h2>
+    <p>Three vulnerabilities compounded. First, a <b>water-dependent design in a drought region</b> gave opponents the single most resonant grievance available. Second, <b>secrecy about the end user</b> converted normal uncertainty into active distrust; a large, unnamed corporate water user is a story that writes itself. Third, approval ran through a <b>discretionary city vote</b>: annexation was a gate the council could simply close, and it had both the political will and the legal authority to do so, unanimously.</p>
+  </div>
+
+  <div class="sec">
+    <h2>The four mistakes that lost the city</h2>
+    <ol class="mistakes">
+      <li><b>Picked a water fight it did not need.</b> Designing around scarce municipal water in a drought region created the most inflammable objection possible, before a single benefit was on the table.</li>
+      <li><b>Let secrecy define the narrative.</b> Withholding the end user did not lower the temperature; it handed opponents a "what are they hiding" frame.</li>
+      <li><b>Chose a jurisdiction that could veto.</b> Routing the deal through a politically exposed city council created a single, winnable target for the opposition.</li>
+      <li><b>Led with the ask, not the concessions.</b> No water-neutrality plan or community-benefit story arrived before the opposition organized. By the time commitments came, distrust was already set.</li>
+    </ol>
+  </div>
+
+  <div class="sec win">
+    <h2>The comeback, which is the real lesson</h2>
+    <p>What makes Project Blue worth studying is that the developer did not simply appeal or relitigate. It re-engineered around each fatal point.</p>
+    <ul class="anti">
+      <li><b>Removed the dependency.</b> Switching to closed-loop cooling neutralized the "corporate water grab" argument at the root.</li>
+      <li><b>Changed the venue.</b> Moving to unincorporated Pima County removed the city's veto and reset the politics.</li>
+      <li><b>Bought political cover.</b> A binding agreement with independent 100% renewable-energy-match verification gave county supervisors something defensible to vote for.</li>
+      <li><b>Locked power early.</b> Filing the energy supply agreement with the Arizona Corporation Commission removed the energy-uncertainty attack.</li>
+    </ul>
+  </div>
+
+  <div class="sec">
+    <h2>Signals that were public beforehand</h2>
+    <ul class="sig">
+      <li>A <b>water-dependent design</b> in a metro already fighting over supply.</li>
+      <li>An <b>undisclosed end user</b>, which communities reliably read as something to hide.</li>
+      <li>An approval path that <b>required annexation and a council vote</b>, a discretionary gate rather than a right.</li>
+    </ul>
+  </div>
+
+  <div class="insight">
+    <div class="ik">The insight to carry away</div>
+    <ul>
+      <li><b>A resource dependency you do not control is a kill switch.</b> Water, city power, or annexation. Design it out (closed-loop, on-site generation, by-right land) rather than spending political capital defending it.</li>
+      <li><b>Venue selection is strategy, not paperwork.</b> A discretionary vote is a veto point. A by-right or friendlier jurisdiction removes the single target opponents need.</li>
+      <li><b>Secrecy raises opposition; disclosure plus binding commitments lowers it.</b> Verifiable community benefits buy the political cover a deal actually needs.</li>
+      <li><b>A rejection is not always a death.</b> A re-engineered project in a friendlier venue can survive, but only if the fatal dependency is genuinely removed, not just re-argued.</li>
+    </ul>
+  </div>
+
+  <div class="sec">
+    <h2>Sources</h2>
+    <ul class="sources">
+      <li><span class="pub">AZ Luminaria</span> &middot; <a href="https://azluminaria.org/2025/08/06/tucson-city-council-rejects-project-blue-amid-intense-community-pressure/" target="_blank" rel="noopener">Tucson City Council rejects Project Blue amid intense community pressure</a></li>
+      <li><span class="pub">Democracy Now!</span> &middot; <a href="https://www.democracynow.org/2025/8/7/headlines/tucson_city_council_votes_unanimously_to_reject_project_blue_a_proposed_data_center_linked_to_amazon" target="_blank" rel="noopener">Tucson council votes unanimously to reject Project Blue</a></li>
+      <li><span class="pub">KJZZ</span> &middot; <a href="https://www.kjzz.org/fronteras-desk/2025-08-11/project-blue-would-have-used-millions-of-gallons-of-tucson-water-residents-city-leaders-said-no" target="_blank" rel="noopener">Project Blue would have used millions of gallons of Tucson water</a></li>
+      <li><span class="pub">Businesswire</span> &middot; <a href="https://www.businesswire.com/news/home/20250808323494/en" target="_blank" rel="noopener">Beale Infrastructure cancels reclaimed water system expansion for Tucson</a></li>
+      <li><span class="pub">AZ Luminaria</span> &middot; <a href="https://azluminaria.org/2025/08/27/project-blue-data-center-pima-county-beale-infrastructure-tep/" target="_blank" rel="noopener">Project Blue is back: Beale moving ahead on county land</a></li>
+      <li><span class="pub">AZ Luminaria</span> &middot; <a href="https://azluminaria.org/2025/12/16/pima-county-supervisors-approve-agreement-outlining-beales-commitments-on-project-blue/" target="_blank" rel="noopener">Pima County supervisors approve agreement on Beale's commitments</a></li>
+      <li><span class="pub">Tucson Sentinel</span> &middot; <a href="https://www.tucsonsentinel.com/local/report/122425_project_blue_close/" target="_blank" rel="noopener">Developers close on purchase of Pima County land</a></li>
+    </ul>
+  </div>
+
+  <div class="endcta">
+    <a class="primary" href="app.html">Screen your own site &#8250;</a>
+    <a href="graveyard">Back to all autopsies</a>
+  </div>
+</div>
+
+<footer><div class="wrap">
+  <p class="disc">Compiled from public filings and press coverage for planning and educational purposes only, not investment, legal, or engineering advice. The end user (AWS) and water figures are as reported; sponsors did not confirm the end user. Verify with counsel and primary sources before any commitment. © 2026 On-Site Power Intelligence · onsitespower.com</p>
+</div></footer>
+
+<script>
+(function(){function sid(){try{var k='osp_sid',v=localStorage.getItem(k);if(!v){v=Math.random().toString(36).slice(2)+Date.now().toString(36);localStorage.setItem(k,v);}return v;}catch(e){return 'anon';}}var utm='';try{var p=new URLSearchParams(location.search);utm=p.get('utm_source')?(p.get('utm_source')+'/'+(p.get('utm_medium')||'')):'';}catch(e){}var ops=false;try{ops=localStorage.getItem('osp_ops')==='1';}catch(e){}window.track=function(type,name){try{var b=JSON.stringify({session:sid(),type:type,name:name,path:location.pathname,referrer:document.referrer,utm:utm,internal:ops?1:0});if(navigator.sendBeacon){navigator.sendBeacon('/api/track',new Blob([b],{type:'application/json'}));}else{fetch('/api/track',{method:'POST',headers:{'Content-Type':'application/json'},body:b,keepalive:true}).catch(function(){});}}catch(e){}};track('pageview','autopsy_blue_full');})();
+</script>
+</body>
+</html>

@@ -53,8 +53,11 @@
 
   /* ===== carousel ===== */
   .deckwrap{margin:6px 0}
-  .deckbar{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px}
-  .deckhint{font-size:13px;color:var(--muted-2)}
+  .deckhead{margin:0 0 20px;max-width:680px}
+  .deckhead .eyebrow{color:var(--muted-2)}
+  .deckhl{font-size:clamp(30px,4.6vw,46px);font-weight:600;letter-spacing:-.03em;line-height:1.04;margin:8px 0 10px}
+  .decksub{font-size:18px;color:var(--ink-2);line-height:1.45;margin:0}
+  .decksub .hint{color:var(--muted-2);font-size:15px;white-space:nowrap}
   .deck-track{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;align-items:stretch}
   .deck-track::-webkit-scrollbar{display:none}
   .slide{flex:0 0 100%;scroll-snap-align:start;padding:2px}
@@ -109,6 +112,7 @@
   .qbox{margin-top:16px;padding:13px 16px;background:var(--bg);border:1px solid var(--line);border-radius:12px;font-size:14.5px;line-height:1.45;color:var(--ink)}
   .qbox .qk{font-size:10.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--dead);display:block;margin-bottom:5px}
   .src{margin:12px 0 0;font-size:11.5px;color:var(--muted-2);line-height:1.5}
+  .readmore{display:inline-flex;align-items:center;gap:6px;margin-top:12px;font-size:14px;font-weight:600;color:var(--link)}
 
   /* nav: dots + arrows only */
   .deck-nav{display:flex;align-items:center;justify-content:center;gap:20px;margin-top:16px}
@@ -184,6 +188,7 @@
     .case{padding:22px 20px}
     .pattern,.check{padding:30px 22px}
     header.hero{padding:52px 0 24px}
+    .decksub .hint{white-space:normal}
   }
 </style>
 </head>
@@ -221,9 +226,10 @@
   <!-- ===== AUTOPSY CAROUSEL ===== -->
   <section style="padding-top:6px">
     <div class="deckwrap">
-      <div class="deckbar">
-        <div class="seclabel">The autopsies</div>
-        <div class="deckhint">Swipe, or use the arrows</div>
+      <div class="deckhead">
+        <div class="eyebrow">The case files</div>
+        <h2 class="deckhl">The autopsies</h2>
+        <p class="decksub">Three billion-dollar projects, three ways a data center dies. Read one, then run your own site against it. <span class="hint">Swipe or use the arrows.</span></p>
       </div>
 
       <div class="deck-track" id="deckTrack">
@@ -279,6 +285,7 @@
             </div>
             <div class="qbox"><span class="qk">The question for your deal</span>Your approval is only as strong as its weakest procedural link and its most motivated opponent. Do you know where both are, before the capital goes in?</div>
             <p class="src">Sources: Court of Appeals of Virginia; InsideNoVa; Prince William Times; Virginia Business; Data Center Frontier.</p>
+            <a class="readmore" href="autopsy-pw.html">Read the full autopsy &#8250;</a>
           </article>
         </div>
 
@@ -333,6 +340,7 @@
             </div>
             <div class="qbox"><span class="qk">The question for your deal</span>What single resource dependency, water, city power, or annexation, is your project's kill switch, and are you engineering it <i>out</i> before opponents find it?</div>
             <p class="src">Sources: AZ Luminaria; AZPM; KJZZ; Tucson Sentinel; Democracy Now!; DataCenterDynamics. AWS end user per reporting; sponsors did not confirm.</p>
+            <a class="readmore" href="autopsy-blue.html">Read the full autopsy &#8250;</a>
           </article>
         </div>
 
@@ -387,6 +395,7 @@
             </div>
             <div class="qbox"><span class="qk">The question for your deal</span>If your economics depend on a tax break, could a citizen vote take it away, and have you already lost the "costs vs. benefits" argument in that community?</div>
             <p class="src">Sources: NOTUS; Wisconsin Watch; WPR; FOX6 Milwaukee; Marquette Law School Poll. Campus scale reported up to 3.5 GW.</p>
+            <a class="readmore" href="autopsy-portwashington.html">Read the full autopsy &#8250;</a>
           </article>
         </div>
 

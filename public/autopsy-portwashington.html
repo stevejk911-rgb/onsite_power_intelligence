@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Autopsy: Port Washington | The Data Center Graveyard</title>
+<meta name="description" content="Full autopsy of Port Washington, Wisconsin: the first US anti-data-center referendum. Opponents put the developer's tax incentives to a public vote and built a national template. Timeline, sources, and the insight to carry away.">
+<link rel="canonical" href="https://onsitespower.com/autopsy-portwashington.html">
+<style>
+  :root{--ink:#1d1d1f;--ink-2:#3a3a3c;--muted:#6e6e73;--muted-2:#86868b;--bg:#fbfbfd;--panel:#fff;--line:#e8e8ed;--line-2:#dcdce1;--tile:#f5f5f7;--link:#0066cc;--dead:#b3261e;--dead-bg:#fdf0ef;--template:#8a5a00;--template-bg:#fbf4e6;--sans:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue",Arial,sans-serif;}
+  *{box-sizing:border-box}
+  html{-webkit-font-smoothing:antialiased}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:17px;line-height:1.65;letter-spacing:-.01em}
+  .wrap{max-width:720px;margin:0 auto;padding:0 24px}
+  a{color:var(--link);text-decoration:none}a:hover{text-decoration:underline}
+  nav.top{position:sticky;top:0;z-index:20;background:rgba(251,251,253,.82);backdrop-filter:saturate(180%) blur(20px);border-bottom:1px solid var(--line)}
+  nav.top .wrap{display:flex;align-items:center;justify-content:space-between;height:52px}
+  nav.top .brand{display:flex;align-items:center;gap:9px;color:var(--ink);font-weight:600;font-size:15px;letter-spacing:-.02em}
+  nav.top .brand .dot{width:9px;height:9px;border-radius:50%;background:var(--ink)}
+  nav.top .navlinks{display:flex;gap:22px;font-size:14px}nav.top .navlinks a{color:var(--muted)}
+  .back{display:inline-flex;align-items:center;gap:7px;font-size:14px;color:var(--muted);margin:26px 0 8px}
+  .eyebrow{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted-2)}
+  .chip{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;padding:4px 10px;border-radius:100px;text-transform:uppercase;background:var(--template-bg);color:var(--template);margin-left:8px}
+  h1{font-size:clamp(34px,5.4vw,50px);font-weight:600;letter-spacing:-.03em;line-height:1.05;margin:14px 0 10px}
+  .dek{font-size:20px;color:var(--ink-2);line-height:1.45;margin:0 0 26px;font-weight:400}
+  .facts{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-bottom:34px}
+  .facts .f{background:var(--panel);padding:12px 14px;min-width:0}
+  .facts .fl{font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted-2)}
+  .facts .fv{font-size:14px;font-weight:600;color:var(--ink);margin-top:3px;line-height:1.3}
+  .facts .fv.tm{color:var(--template)}
+  .sec{margin:0 0 30px}
+  .sec h2{font-size:14px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--template);margin:0 0 12px}
+  .sec p{margin:0 0 14px}.sec p:last-child{margin-bottom:0}.sec b{font-weight:600}
+  .tl{list-style:none;margin:0;padding:0}
+  .tl li{position:relative;padding:0 0 16px 22px;border-left:2px solid var(--line);margin-left:4px}
+  .tl li:last-child{border-left-color:transparent;padding-bottom:0}
+  .tl li::before{content:"";position:absolute;left:-6px;top:4px;width:10px;height:10px;border-radius:50%;background:var(--template);border:2px solid var(--bg)}
+  .tl .d{font-weight:700;font-size:14px;color:var(--ink);display:block;margin-bottom:2px}
+  .tl .t{font-size:15px;color:var(--ink-2);line-height:1.5}
+  ol.mistakes{list-style:none;margin:0;padding:0;counter-reset:mk}
+  ol.mistakes li{position:relative;padding:12px 0 12px 44px;border-top:1px solid var(--line);counter-increment:mk;font-size:15.5px;line-height:1.55;color:var(--ink-2)}
+  ol.mistakes li:first-child{border-top:0}
+  ol.mistakes li::before{content:counter(mk);position:absolute;left:0;top:12px;width:26px;height:26px;border-radius:50%;background:var(--template-bg);color:var(--template);font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center}
+  ol.mistakes li b{color:var(--ink);font-weight:600}
+  ul.sig{list-style:none;margin:0;padding:0}
+  ul.sig li{position:relative;padding:7px 0 7px 24px;font-size:15.5px;line-height:1.5;color:var(--ink-2)}
+  ul.sig li::before{content:"";position:absolute;left:2px;top:14px;width:7px;height:7px;border-radius:2px;background:var(--muted-2)}
+  ul.sig li b{color:var(--ink);font-weight:600}
+  .insight{background:#0b1220;color:#eef2ff;border-radius:18px;padding:26px 28px;margin:34px 0}
+  .insight .ik{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#e9c884;margin-bottom:14px}
+  .insight ul{list-style:none;margin:0;padding:0}
+  .insight li{position:relative;padding:8px 0 8px 24px;font-size:16px;line-height:1.55;color:#dfe4f5;border-top:1px solid rgba(255,255,255,.08)}
+  .insight li:first-child{border-top:0}
+  .insight li::before{content:"";position:absolute;left:2px;top:16px;width:7px;height:7px;border-radius:50%;background:#e0b366}
+  .insight li b{color:#fff;font-weight:600}
+  ul.sources{list-style:none;margin:0;padding:0}
+  ul.sources li{padding:8px 0;border-top:1px solid var(--line);font-size:14.5px;line-height:1.45}
+  ul.sources li:first-child{border-top:0}
+  ul.sources .pub{color:var(--muted);font-weight:600}
+  .endcta{border-top:1px solid var(--line);margin-top:36px;padding-top:26px;display:flex;gap:12px;flex-wrap:wrap}
+  .endcta a{display:inline-flex;align-items:center;gap:7px;font-size:15px;font-weight:600;padding:11px 18px;border-radius:12px;border:1px solid var(--line-2);color:var(--ink)}
+  .endcta a.primary{background:var(--ink);color:#fff;border-color:var(--ink)}
+  footer{border-top:1px solid var(--line);margin-top:40px;padding:28px 0 56px}
+  footer .disc{font-size:12px;color:var(--muted-2);line-height:1.6}
+  @media(max-width:640px){.facts{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<nav class="top"><div class="wrap">
+  <a class="brand" href="index.html"><span class="dot"></span>On-Site Power Intelligence</a>
+  <div class="navlinks"><a href="graveyard">Graveyard</a><a href="app.html">Screen a site</a></div>
+</div></nav>
+
+<div class="wrap">
+  <a class="back" href="graveyard">&#8249; All autopsies</a>
+  <div class="eyebrow">Autopsy 03<span class="chip">National template</span></div>
+  <h1>Port Washington</h1>
+  <p class="dek">The opponents never argued about zoning. They put the developer's tax incentives on a ballot, won roughly 2 to 1, and built a tactic every town in America can now copy.</p>
+
+  <div class="facts">
+    <div class="f"><div class="fl">Location</div><div class="fv">Port Washington, WI</div></div>
+    <div class="f"><div class="fl">Developer</div><div class="fv">Vantage / Cloverleaf Infra.</div></div>
+    <div class="f"><div class="fl">Scale (reported)</div><div class="fv">up to 3.5 GW</div></div>
+    <div class="f"><div class="fl">Referendum</div><div class="fv tm">~66% yes · Apr 7, 2026</div></div>
+    <div class="f"><div class="fl">New rule</div><div class="fv">incentives &gt;$10M need a public vote</div></div>
+    <div class="f"><div class="fl">Significance</div><div class="fv tm">First anti-DC referendum in the U.S.</div></div>
+  </div>
+
+  <div class="sec">
+    <h2>The setup</h2>
+    <p>Port Washington is a small city on Lake Michigan north of Milwaukee. A large data-center campus was advanced there by Vantage Data Centers, with Cloverleaf Infrastructure, a Houston-based, private-equity-backed firm, acquiring land and permitting. Reporting put the potential scale at up to 3.5 GW.</p>
+    <p>Like most large data-center deals, the economics leaned on local tax incentives, including tax-increment financing. And the political ground was shifting under it. Marquette Law School polling showed the share of Wisconsin voters who believe data centers' costs outweigh their benefits climbing from 55% in the fall to about 70% by early 2026. Residents were focused on three things: electricity prices, water, and public subsidies.</p>
+  </div>
+
+  <div class="sec">
+    <h2>Timeline</h2>
+    <ul class="tl">
+      <li><span class="d">2025 to 2026</span><span class="t">Vantage and Cloverleaf advance the campus. A tax-incentive package is on the table, and local opposition organizes around cost and subsidy.</span></li>
+      <li><span class="d">Early 2026</span><span class="t">Marquette polling shows a majority of Wisconsin voters now say data centers' costs outweigh benefits, and the number is rising.</span></li>
+      <li><span class="d">Apr 7, 2026</span><span class="t">Voters pass a citizen referendum by roughly 66%. It requires city leaders to obtain voter approval before granting any tax incentive exceeding $10 million. It is the first anti-data-center referendum in the country, and organizers frame it explicitly as a national model.</span></li>
+      <li><span class="d">After</span><span class="t">The project's incentive path is now gated by a public vote it is unlikely to win, and the tactic is available to any town with a citizen-initiative process.</span></li>
+    </ul>
+  </div>
+
+  <div class="sec">
+    <h2>Cause of death, in detail</h2>
+    <p>The opposition's innovation was to attack the <b>financing assumption, not the land use</b>. Rather than trying to out-argue the project on zoning, where developers are well resourced and well practiced, they went to the ballot box and made any incentive over $10 million require a public referendum.</p>
+    <p>That single move did two things. It converted the developer's economic model into a vote, and it chose a vote the developer was almost certain to lose, because polling already ran about 70% against. And because most citizen-initiative states allow exactly this kind of measure, the tactic is portable. That is why it is not just a loss; it is a template.</p>
+  </div>
+
+  <div class="sec">
+    <h2>The four fatal mistakes</h2>
+    <ol class="mistakes">
+      <li><b>Depended on discretionary incentives.</b> The pro forma leaned on a subsidy the public resented and a local body could revoke, which made the deal only as durable as public opinion.</li>
+      <li><b>Fought the last war.</b> The developer was still playing the permitting and zoning game while the opposition invented a new instrument, the incentive referendum, and won on a different field.</li>
+      <li><b>Let "costs vs. benefits" become the frame.</b> Once about 70% of voters believed the project cost them more than it gave, every mechanism that touched a ballot turned hostile.</li>
+      <li><b>Offered no local economic narrative that could survive a vote.</b> Nothing made residents feel they personally gained enough to approve the subsidy.</li>
+    </ol>
+  </div>
+
+  <div class="sec">
+    <h2>Signals that were public beforehand</h2>
+    <ul class="sig">
+      <li>An economic model <b>leaning on a discretionary tax break</b> a local body could revoke.</li>
+      <li><b>Marquette polling already moving against data centers</b>, from 55% to about 70% "costs outweigh benefits."</li>
+      <li>A <b>citizen-initiative mechanism</b> available to organizers, waiting to be used.</li>
+    </ul>
+  </div>
+
+  <div class="insight">
+    <div class="ik">The insight to carry away</div>
+    <ul>
+      <li><b>A subsidy in your pro forma is a political liability.</b> If the deal only works with a discretionary public incentive, that incentive can be taken back, increasingly by ballot. De-risk the model or lock incentives before opposition organizes.</li>
+      <li><b>The "costs vs. benefits" frame decides everything.</b> Once it crosses a majority against, hostile mechanisms follow. Win it early with concrete, per-household local benefits, not corporate talking points.</li>
+      <li><b>Opposition is innovating faster than developers.</b> The venue is no longer just the zoning board; assume the ballot box is in play and plan for it.</li>
+      <li><b>Templates spread.</b> A tactic that works in one town becomes a national playbook within a cycle. Watch what is winning elsewhere, because it is coming to your market.</li>
+    </ul>
+  </div>
+
+  <div class="sec">
+    <h2>Sources</h2>
+    <ul class="sources">
+      <li><span class="pub">NOTUS</span> &middot; <a href="https://www.notus.org/climate-environment/data-center-moratorium-voters-tax-breaks-referendum-wisconsin-congress" target="_blank" rel="noopener">Wisconsin city passes America's first anti-data-center referendum</a></li>
+      <li><span class="pub">Wisconsin Watch</span> &middot; <a href="https://wisconsinwatch.org/2026/04/port-washington-data-center-project-voters-referendum-tif-district-wisconsin/" target="_blank" rel="noopener">Did Port Washington voters stop a data-center project?</a></li>
+      <li><span class="pub">The Hill</span> &middot; <a href="https://thehill.com/policy/technology/5822566-port-washington-data-center-vote/" target="_blank" rel="noopener">Wisconsin city passes nation's first data-center referendum</a></li>
+      <li><span class="pub">Wisconsin Public Radio</span> &middot; <a href="https://www.wpr.org/news/port-washington-referendum-concerns-data-center-project" target="_blank" rel="noopener">Port Washington voters pass referendum over data-center concerns</a></li>
+      <li><span class="pub">FOX6 Milwaukee</span> &middot; <a href="https://www.fox6now.com/news/port-washington-data-centers-referendum-targets-future-developments" target="_blank" rel="noopener">Referendum targets future data-center developments</a></li>
+      <li><span class="pub">Planetizen</span> &middot; <a href="https://www.planetizen.com/news/2026/04/137315-voters-wisconsin-city-pass-nations-first-data-center-referendum" target="_blank" rel="noopener">Voters in Wisconsin city pass nation's first data-center referendum</a></li>
+    </ul>
+  </div>
+
+  <div class="endcta">
+    <a class="primary" href="app.html">Screen your own site &#8250;</a>
+    <a href="graveyard">Back to all autopsies</a>
+  </div>
+</div>
+
+<footer><div class="wrap">
+  <p class="disc">Compiled from public ballots and press coverage for planning and educational purposes only, not investment, legal, or engineering advice. Campus scale and project figures are as reported. Verify with counsel and primary sources before any commitment. © 2026 On-Site Power Intelligence · onsitespower.com</p>
+</div></footer>
+
+<script>
+(function(){function sid(){try{var k='osp_sid',v=localStorage.getItem(k);if(!v){v=Math.random().toString(36).slice(2)+Date.now().toString(36);localStorage.setItem(k,v);}return v;}catch(e){return 'anon';}}var utm='';try{var p=new URLSearchParams(location.search);utm=p.get('utm_source')?(p.get('utm_source')+'/'+(p.get('utm_medium')||'')):'';}catch(e){}var ops=false;try{ops=localStorage.getItem('osp_ops')==='1';}catch(e){}window.track=function(type,name){try{var b=JSON.stringify({session:sid(),type:type,name:name,path:location.pathname,referrer:document.referrer,utm:utm,internal:ops?1:0});if(navigator.sendBeacon){navigator.sendBeacon('/api/track',new Blob([b],{type:'application/json'}));}else{fetch('/api/track',{method:'POST',headers:{'Content-Type':'application/json'},body:b,keepalive:true}).catch(function(){});}}catch(e){}};track('pageview','autopsy_portwashington_full');})();
+</script>
+</body>
+</html>

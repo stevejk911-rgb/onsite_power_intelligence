@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Autopsy: PW Digital Gateway | The Data Center Graveyard</title>
+<meta name="description" content="Full autopsy of the PW Digital Gateway: a $24.7B data-center rezoning voided by a public-notice defect. Timeline, cause of death, mistakes, and the insight to carry away. Sourced from public records.">
+<link rel="canonical" href="https://onsitespower.com/autopsy-pw.html">
+<style>
+  :root{--ink:#1d1d1f;--ink-2:#3a3a3c;--muted:#6e6e73;--muted-2:#86868b;--bg:#fbfbfd;--panel:#fff;--line:#e8e8ed;--line-2:#dcdce1;--tile:#f5f5f7;--link:#0066cc;--dead:#b3261e;--dead-bg:#fdf0ef;--survived:#1a7f45;--template:#8a5a00;--template-bg:#fbf4e6;--sans:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue",Arial,sans-serif;}
+  *{box-sizing:border-box}
+  html{-webkit-font-smoothing:antialiased}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:17px;line-height:1.65;letter-spacing:-.01em}
+  .wrap{max-width:720px;margin:0 auto;padding:0 24px}
+  a{color:var(--link);text-decoration:none}a:hover{text-decoration:underline}
+  nav.top{position:sticky;top:0;z-index:20;background:rgba(251,251,253,.82);backdrop-filter:saturate(180%) blur(20px);border-bottom:1px solid var(--line)}
+  nav.top .wrap{display:flex;align-items:center;justify-content:space-between;height:52px}
+  nav.top .brand{display:flex;align-items:center;gap:9px;color:var(--ink);font-weight:600;font-size:15px;letter-spacing:-.02em}
+  nav.top .brand .dot{width:9px;height:9px;border-radius:50%;background:var(--ink)}
+  nav.top .navlinks{display:flex;gap:22px;font-size:14px}nav.top .navlinks a{color:var(--muted)}
+  .back{display:inline-flex;align-items:center;gap:7px;font-size:14px;color:var(--muted);margin:26px 0 8px}
+  .eyebrow{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted-2)}
+  .chip{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;padding:4px 10px;border-radius:100px;text-transform:uppercase;background:var(--dead-bg);color:var(--dead);margin-left:8px}
+  h1{font-size:clamp(34px,5.4vw,50px);font-weight:600;letter-spacing:-.03em;line-height:1.05;margin:14px 0 10px}
+  .dek{font-size:20px;color:var(--ink-2);line-height:1.45;margin:0 0 26px;font-weight:400}
+  .facts{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-bottom:34px}
+  .facts .f{background:var(--panel);padding:12px 14px;min-width:0}
+  .facts .fl{font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted-2)}
+  .facts .fv{font-size:14px;font-weight:600;color:var(--ink);margin-top:3px;line-height:1.3}
+  .facts .fv.dead{color:var(--dead)}
+  .sec{margin:0 0 30px}
+  .sec h2{font-size:14px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--dead);margin:0 0 12px}
+  .sec p{margin:0 0 14px}
+  .sec p:last-child{margin-bottom:0}
+  .sec b{font-weight:600}
+  .tl{list-style:none;margin:0;padding:0}
+  .tl li{position:relative;padding:0 0 16px 22px;border-left:2px solid var(--line);margin-left:4px}
+  .tl li:last-child{border-left-color:transparent;padding-bottom:0}
+  .tl li::before{content:"";position:absolute;left:-6px;top:4px;width:10px;height:10px;border-radius:50%;background:var(--dead);border:2px solid var(--bg)}
+  .tl .d{font-weight:700;font-size:14px;color:var(--ink);display:block;margin-bottom:2px}
+  .tl .t{font-size:15px;color:var(--ink-2);line-height:1.5}
+  ol.mistakes{list-style:none;margin:0;padding:0;counter-reset:mk}
+  ol.mistakes li{position:relative;padding:12px 0 12px 44px;border-top:1px solid var(--line);counter-increment:mk;font-size:15.5px;line-height:1.55;color:var(--ink-2)}
+  ol.mistakes li:first-child{border-top:0}
+  ol.mistakes li::before{content:counter(mk);position:absolute;left:0;top:12px;width:26px;height:26px;border-radius:50%;background:var(--dead-bg);color:var(--dead);font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center}
+  ol.mistakes li b{color:var(--ink);font-weight:600}
+  ul.sig{list-style:none;margin:0;padding:0}
+  ul.sig li{position:relative;padding:7px 0 7px 24px;font-size:15.5px;line-height:1.5;color:var(--ink-2)}
+  ul.sig li::before{content:"";position:absolute;left:2px;top:14px;width:7px;height:7px;border-radius:2px;background:var(--muted-2)}
+  ul.sig li b{color:var(--ink);font-weight:600}
+  .insight{background:#0b1220;color:#eef2ff;border-radius:18px;padding:26px 28px;margin:34px 0}
+  .insight .ik{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#8ea0ff;margin-bottom:14px}
+  .insight ul{list-style:none;margin:0;padding:0}
+  .insight li{position:relative;padding:8px 0 8px 24px;font-size:16px;line-height:1.55;color:#dfe4f5;border-top:1px solid rgba(255,255,255,.08)}
+  .insight li:first-child{border-top:0}
+  .insight li::before{content:"";position:absolute;left:2px;top:16px;width:7px;height:7px;border-radius:50%;background:#6c86ff}
+  .insight li b{color:#fff;font-weight:600}
+  ul.sources{list-style:none;margin:0;padding:0}
+  ul.sources li{padding:8px 0;border-top:1px solid var(--line);font-size:14.5px;line-height:1.45}
+  ul.sources li:first-child{border-top:0}
+  ul.sources .pub{color:var(--muted);font-weight:600}
+  .endcta{border-top:1px solid var(--line);margin-top:36px;padding-top:26px;display:flex;gap:12px;flex-wrap:wrap}
+  .endcta a{display:inline-flex;align-items:center;gap:7px;font-size:15px;font-weight:600;padding:11px 18px;border-radius:12px;border:1px solid var(--line-2);color:var(--ink)}
+  .endcta a.primary{background:var(--ink);color:#fff;border-color:var(--ink)}
+  footer{border-top:1px solid var(--line);margin-top:40px;padding:28px 0 56px}
+  footer .disc{font-size:12px;color:var(--muted-2);line-height:1.6}
+  @media(max-width:640px){.facts{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<nav class="top"><div class="wrap">
+  <a class="brand" href="index.html"><span class="dot"></span>On-Site Power Intelligence</a>
+  <div class="navlinks"><a href="graveyard">Graveyard</a><a href="app.html">Screen a site</a></div>
+</div></nav>
+
+<div class="wrap">
+  <a class="back" href="graveyard">&#8249; All autopsies</a>
+  <div class="eyebrow">Autopsy 01<span class="chip">Dead</span></div>
+  <h1>PW Digital Gateway</h1>
+  <p class="dek">One of the largest data-center campuses ever proposed in the United States, a $24.7B plan, undone not by power or economics but by a defect in how the county advertised its own vote.</p>
+
+  <div class="facts">
+    <div class="f"><div class="fl">Location</div><div class="fv">Prince William County, VA</div></div>
+    <div class="f"><div class="fl">Developers</div><div class="fv">QTS + Compass Datacenters</div></div>
+    <div class="f"><div class="fl">Scale</div><div class="fv">2,100+ ac · 37 DCs · 23M sf</div></div>
+    <div class="f"><div class="fl">Value (county est.)</div><div class="fv">$24.7B · $400.5M/yr tax</div></div>
+    <div class="f"><div class="fl">Approval</div><div class="fv">4-3-1 board vote · Dec 2023</div></div>
+    <div class="f"><div class="fl">Status</div><div class="fv dead">Dead · Jul 2, 2026</div></div>
+  </div>
+
+  <div class="sec">
+    <h2>The setup</h2>
+    <p>The PW Digital Gateway sat along Pageland Lane in Prince William County, on the western edge of Northern Virginia's "Data Center Alley," the densest data-center market on earth. Developers QTS (owned by Blackstone) and Compass Datacenters proposed rezoning roughly 2,100 acres to allow up to 37 data centers and about 23 million square feet of construction over roughly a decade. County finance staff pegged the potential investment at $24.7 billion and annual tax revenue at $400.5 million.</p>
+    <p>It was also one of the most contested land-use fights in the state. The site bordered the Manassas National Battlefield Park, and opposition fused three usually separate constituencies: neighbors worried about noise and transmission lines, conservation groups, and historic-preservation advocates. That coalition was organized, well funded, and, critically, prepared to litigate.</p>
+  </div>
+
+  <div class="sec">
+    <h2>Timeline</h2>
+    <ul class="tl">
+      <li><span class="d">Dec 2023</span><span class="t">After a marathon public hearing that ran roughly 29 hours, the Board of Supervisors approves the rezoning on a 4-3-1 vote. Chair Ann Wheeler and three Democratic supervisors vote yes; one Democrat abstains; the three Republicans vote no.</span></li>
+      <li><span class="d">Early 2024</span><span class="t">Opponents file suit. The challenge targets not the merits of the project but whether the county followed Virginia's public-notice rules when it advertised and adopted the rezoning.</span></li>
+      <li><span class="d">2025</span><span class="t">Trial in Prince William Circuit Court before Judge Kimberly Irving. Public-notice compliance is the central issue.</span></li>
+      <li><span class="d">Aug 2025</span><span class="t">Judge Irving voids the rezonings. The county published required newspaper notices at the wrong intervals, failed to make the proposed ordinances available for public inspection, and held the hearing too soon after the final notice.</span></li>
+      <li><span class="d">Mar 31, 2026</span><span class="t">The Court of Appeals of Virginia affirms the ruling.</span></li>
+      <li><span class="d">Jul 2, 2026</span><span class="t">After the county board and Compass withdraw their appeals, QTS withdraws its final appeal. The project is officially over.</span></li>
+    </ul>
+  </div>
+
+  <div class="sec">
+    <h2>Cause of death, in detail</h2>
+    <p>Virginia law requires local governments to follow strict procedures before adopting a zoning ordinance: advertise the public hearing in a newspaper at prescribed intervals, make the proposed ordinance available for public inspection, and time the hearing correctly relative to the final notice. These are not formalities. A rezoning adopted without proper notice is <b>void</b>, regardless of how sound the underlying project is.</p>
+    <p>That is exactly what happened. Opponents did not have to win a debate about data centers, water, or transmission. They only had to prove the county cut a procedural corner, and they did. The approval that took years and a 29-hour hearing to secure collapsed on the paperwork that authorized it. Everything downstream, billions in planned investment and years of entitlement work, rested on that single point of failure.</p>
+  </div>
+
+  <div class="sec">
+    <h2>The four fatal mistakes</h2>
+    <ol class="mistakes">
+      <li><b>Built the whole campus on a cracked legal foundation.</b> A $24.7B program rested entirely on one rezoning whose notice compliance was never independently stress-tested. One litigable flaw was enough to void it. Entitlement risk was treated as settled once the vote passed; it was not.</li>
+      <li><b>Maximized opposition intensity, then handed them a record.</b> Forcing a mega-approval through a 29-hour hostile hearing did not just generate political heat; it produced a motivated, litigation-capable opposition and the detailed public record they later used in court.</li>
+      <li><b>Left no off-ramp.</b> One all-or-nothing rezoning across 2,100+ acres meant there was no phased or scaled-down fallback that could survive if the main approval failed. When it broke, the entire project broke with it.</li>
+      <li><b>Misread the opponent.</b> This was a disciplined legal campaign, not NIMBY noise. The developers arrived with a construction and financing plan and met an adversary fighting on procedure and process.</li>
+    </ol>
+  </div>
+
+  <div class="sec">
+    <h2>Signals that were public beforehand</h2>
+    <ul class="sig">
+      <li>A <b>4-3-1 approval with an abstention</b>: a fragile, one-vote mandate, not a durable consensus. Margin of victory is a risk signal.</li>
+      <li>A <b>29-hour hearing and an organized coalition</b> that filed suit almost immediately after the vote.</li>
+      <li>The <b>notice-compliance record itself</b>, a public procedural checklist any competent land-use counsel could have audited before a dollar of construction capital was committed.</li>
+    </ul>
+  </div>
+
+  <div class="sec">
+    <h2>Aftermath</h2>
+    <p>With the rezoning voided and appeals exhausted, the land reverted to its prior, largely rural zoning. The case is now cited across the industry as proof that entitlement and procedural risk, not just power and land, can kill a mega-campus, and that a well-organized community can win in a courtroom what it might lose at the ballot box.</p>
+  </div>
+
+  <div class="insight">
+    <div class="ik">The insight to carry away</div>
+    <ul>
+      <li><b>The government's procedure is your risk.</b> You do not control whether a county advertises its hearing correctly, but you inherit the consequence if it does not. Audit notice and process compliance before you commit capital.</li>
+      <li><b>A narrow approval invites litigation.</b> A 4-3-1 vote is a flashing light. Treat thin margins as a signal to harden the legal foundation and buy political durability, not as a win to bank.</li>
+      <li><b>All-or-nothing entitlements have a single point of failure.</b> Phasing, severability, and legal redundancy turn one fatal flaw into a survivable setback.</li>
+      <li><b>Opposition that can litigate changes the game.</b> When the fight moves from policy to procedure, the winning move is a pre-mortem, not a better slide deck.</li>
+    </ul>
+  </div>
+
+  <div class="sec">
+    <h2>Sources</h2>
+    <ul class="sources">
+      <li><span class="pub">Data Center Frontier</span> &middot; <a href="https://www.datacenterfrontier.com/site-selection/article/33016383/rezoning-for-pw-digital-gateway-data-centers-approved-by-virginias-prince-william-county-supervisors" target="_blank" rel="noopener">Rezoning for PW Digital Gateway approved by Prince William supervisors</a></li>
+      <li><span class="pub">Prince William Times</span> &middot; <a href="https://www.princewilliamtimes.com/news/public-notice-at-issue-as-trial-challenging-the-pw-digital-gateway-begins/article_38b02eee-97aa-4779-8935-596c6172f0d5.html" target="_blank" rel="noopener">Public notice at issue as trial challenging the PW Digital Gateway begins</a></li>
+      <li><span class="pub">DataCenterDynamics</span> &middot; <a href="https://www.datacenterdynamics.com/en/news/judge-rules-zoning-for-pw-digital-gateway-data-center-campus-in-virginia-voided/" target="_blank" rel="noopener">Judge rules zoning for PW Digital Gateway campus voided</a></li>
+      <li><span class="pub">InsideNoVa</span> &middot; <a href="https://www.insidenova.com/news/prince_william/update-second-ruling-voids-digital-gateway-data-center-project-in-prince-william/article_846b8581-c99e-4f00-bb67-512c78952773.html" target="_blank" rel="noopener">Second ruling voids Digital Gateway project</a></li>
+      <li><span class="pub">Virginia Business</span> &middot; <a href="https://virginiabusiness.com/prince-william-digital-gateway-data-center-project-officially-dies/" target="_blank" rel="noopener">Prince William Digital Gateway project officially dies</a></li>
+      <li><span class="pub">FOX 5 DC</span> &middot; <a href="https://www.fox5dc.com/news/qts-drops-appeal-ending-plans-massive-prince-william-county-data-center" target="_blank" rel="noopener">QTS drops appeal, ending plans for the campus</a></li>
+    </ul>
+  </div>
+
+  <div class="endcta">
+    <a class="primary" href="app.html">Screen your own site &#8250;</a>
+    <a href="graveyard">Back to all autopsies</a>
+  </div>
+</div>
+
+<footer><div class="wrap">
+  <p class="disc">Compiled from public court rulings, filings, and press coverage for planning and educational purposes only, not investment, legal, or engineering advice. Figures reflect public reporting. Verify with counsel and primary sources before any commitment. © 2026 On-Site Power Intelligence · onsitespower.com</p>
+</div></footer>
+
+<script>
+(function(){function sid(){try{var k='osp_sid',v=localStorage.getItem(k);if(!v){v=Math.random().toString(36).slice(2)+Date.now().toString(36);localStorage.setItem(k,v);}return v;}catch(e){return 'anon';}}var utm='';try{var p=new URLSearchParams(location.search);utm=p.get('utm_source')?(p.get('utm_source')+'/'+(p.get('utm_medium')||'')):'';}catch(e){}var ops=false;try{ops=localStorage.getItem('osp_ops')==='1';}catch(e){}window.track=function(type,name){try{var b=JSON.stringify({session:sid(),type:type,name:name,path:location.pathname,referrer:document.referrer,utm:utm,internal:ops?1:0});if(navigator.sendBeacon){navigator.sendBeacon('/api/track',new Blob([b],{type:'application/json'}));}else{fetch('/api/track',{method:'POST',headers:{'Content-Type':'application/json'},body:b,keepalive:true}).catch(function(){});}}catch(e){}};track('pageview','autopsy_pw_full');})();
+</script>
+</body>
+</html>
