@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <title>The Data Center Graveyard: Autopsies of billion-dollar projects that died</title>
 <meta name="description" content="Forensic autopsies of the data-center projects killed or stalled by local opposition. What killed them, what saved the survivors, and how your project compares. Built on public records.">
 <link rel="canonical" href="https://onsitespower.com/graveyard">
@@ -51,7 +54,6 @@
   .lead b{font-weight:600}
   .seclabel{font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted-2)}
 
-  /* ===== carousel ===== */
   .deckwrap{margin:6px 0}
   .deckhead{margin:0 0 20px;max-width:680px}
   .deckhead .eyebrow{color:var(--muted-2)}
@@ -222,7 +224,6 @@
     <p class="lead">Power and land are no longer the only things that kill a data center. <b>The community is.</b> The projects below did not fail on economics. They failed on water, on a paperwork defect, on a tax break the public voted away.</p>
   </section>
 
-  <!-- ===== AUTOPSY CAROUSEL ===== -->
   <section style="padding-top:6px">
     <div class="deckwrap">
       <div class="deckhead">
@@ -233,7 +234,6 @@
 
       <div class="deck-track" id="deckTrack">
 
-        <!-- SLIDE 1 -->
         <div class="slide">
           <article class="case">
             <div class="top"><span class="no">Autopsy 01</span><span class="chip dead">Dead</span></div>
@@ -288,7 +288,6 @@
           </article>
         </div>
 
-        <!-- SLIDE 2 -->
         <div class="slide">
           <article class="case">
             <div class="top"><span class="no">Autopsy 02</span><span class="chip survived">Rejected, then revived</span></div>
@@ -343,7 +342,6 @@
           </article>
         </div>
 
-        <!-- SLIDE 3 -->
         <div class="slide">
           <article class="case">
             <div class="top"><span class="no">Autopsy 03</span><span class="chip template">National template</span></div>
@@ -408,7 +406,6 @@
     </div>
   </section>
 
-  <!-- PATTERN -->
   <section>
     <div class="pattern">
       <div class="seclabel">The pattern</div>
@@ -423,7 +420,6 @@
     </div>
   </section>
 
-  <!-- CHECK YOUR MARKET -->
   <section>
     <div class="check">
       <div class="seclabel">Apply it</div>
@@ -450,7 +446,6 @@
     </div>
   </section>
 
-  <!-- SOFT CTA -->
   <section class="cta">
     <h3>We are autopsying the next ten.</h3>
     <p>The ~$130B blocked in Q1 2026 is a lot of case studies. Want the next autopsies as they publish, plus a read on the failure modes most active in your market?</p>
@@ -471,7 +466,6 @@
 </footer>
 
 <script>
-/* ===== analytics (reuses /api/track; no-ops if backend has no DB) ===== */
 (function(){
   function sid(){ try{ var k='osp_sid',v=localStorage.getItem(k); if(!v){v=Math.random().toString(36).slice(2)+Date.now().toString(36);localStorage.setItem(k,v);} return v;}catch(e){return 'anon';} }
   var utm=''; try{ var p=new URLSearchParams(location.search); utm=p.get('utm_source')?(p.get('utm_source')+'/'+(p.get('utm_medium')||'')):''; }catch(e){}
@@ -481,7 +475,6 @@
   track('pageview','graveyard');
 })();
 
-/* ===== autopsy carousel (dots + arrows only) ===== */
 (function(){
   var deckEl=document.getElementById('deckTrack'); if(!deckEl) return;
   var n=deckEl.children.length;
@@ -506,14 +499,12 @@
   update();
 })();
 
-/* ===== case data for the map (approx. locations, public records) ===== */
 var CASES=[
   {name:'PW Digital Gateway', where:'Prince William County, VA', lat:38.81, lon:-77.61, status:'dead',    cause:'a public-notice defect voided the rezoning; it died in court, not on the merits'},
   {name:'Project Blue',        where:'near Tucson, AZ',           lat:32.10, lon:-110.98, status:'survived',cause:'a 7-0 city rejection over water and secrecy, then revived by re-routing to the county'},
   {name:'Port Washington',     where:'Port Washington, WI',       lat:43.39, lon:-87.87,  status:'template',cause:'a citizen referendum that put its tax incentives to a public vote'}
 ];
 
-/* ===== per-state context (public reporting; hedged where thin) ===== */
 var STATE_CTX={
  "Virginia":"is the epicenter. A $24.7B campus (PW Digital Gateway) was voided on procedural grounds, and the SCC created a separate large-load rate class (effective 2027) after JLARC projected data centers could add hundreds of dollars a year to household bills.",
  "Texas":"passed SB6 in 2025, a large-load regime with studies and curtailment rules for sites of 75 MW and up. Water and grid strain are the recurring fights, as in the Abilene / Stargate buildout.",
@@ -530,7 +521,6 @@ var STATE_CTX={
 var STATE_GENERIC="has no high-profile public case mapped here yet. Nationally, 24+ states have adopted large-load tariffs to push costs onto data centers and about 100 localities have passed moratoriums, so treat the four failure modes as live anywhere.";
 function esc(x){ return String(x==null?"":x).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];}); }
 
-/* ===== map ===== */
 var gmap, gmarker, picked=null;
 function initMap(){
   gmap=L.map('gmap',{scrollWheelZoom:false}).setView([39.5,-98.5],4);
