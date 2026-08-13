@@ -72,14 +72,12 @@
   .case h2{font-size:25px;font-weight:600;letter-spacing:-.025em;line-height:1.1;margin:9px 0 5px}
   .subline{font-size:15px;color:var(--ink-2);line-height:1.4;margin:0 0 14px;font-weight:400}
 
-  /* at-a-glance scorecard */
   .facts{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:12px;overflow:hidden;margin-bottom:14px}
   .facts .f{background:var(--panel);padding:9px 12px;min-width:0}
   .facts .fl{font-size:9.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted-2)}
   .facts .fv{font-size:13px;font-weight:600;color:var(--ink);margin-top:2px;line-height:1.25}
   .facts .fv.dead{color:var(--dead)} .facts .fv.good{color:var(--survived)}
 
-  /* cause of death callout */
   .cod{background:var(--dead-bg);border:1px solid #f3dcd9;border-radius:12px;padding:12px 15px;margin-bottom:16px}
   .cod .codk{font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--dead);margin-bottom:5px}
   .cod.good{background:var(--survived-bg);border-color:#cfe9d8}
@@ -89,7 +87,6 @@
   .cod p{margin:0;font-size:14.5px;line-height:1.45;color:var(--ink)}
   .cod b{color:var(--dead)} .cod.good b{color:var(--survived)} .cod.tmpl b{color:var(--template)}
 
-  /* two-column body so a whole report fits one screen */
   .rptbody{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start}
   .col{min-width:0}
   .block{margin:0 0 14px}
@@ -114,7 +111,6 @@
   .src{margin:12px 0 0;font-size:11.5px;color:var(--muted-2);line-height:1.5}
   .readmore{display:inline-flex;align-items:center;gap:6px;margin-top:12px;font-size:14px;font-weight:600;color:var(--link)}
 
-  /* nav: dots + arrows only */
   .deck-nav{display:flex;align-items:center;justify-content:center;gap:20px;margin-top:16px}
   .navbtn{width:42px;height:42px;border-radius:50%;border:1px solid var(--line-2);background:#fff;color:var(--ink);font-size:19px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .15s}
   .navbtn:hover{background:var(--tile)}
@@ -149,6 +145,9 @@
   @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
   .nearest{padding:18px 20px;background:var(--dead-bg);border:1px solid #f3dcd9;border-radius:16px;font-size:15.5px;line-height:1.5;color:var(--ink)}
   .nearest b{color:var(--dead)}
+  .statectx{margin-top:12px;padding:14px 18px;background:var(--tile);border:1px solid var(--line);border-radius:14px;font-size:14.5px;line-height:1.5;color:var(--ink-2)}
+  .statectx .sk{font-weight:700;color:var(--ink)}
+  .statectx .cxn{color:var(--muted-2);font-size:12px}
   .selftitle{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted-2);margin:26px 0 12px}
   .q{display:flex;gap:14px;align-items:flex-start;padding:15px 0;border-top:1px solid var(--line);cursor:pointer}
   .q:first-of-type{border-top:0}
@@ -430,7 +429,7 @@
       <div class="seclabel">Apply it</div>
       <h3>How does your project compare?</h3>
       <p class="i">Every fact in these autopsies sat in the public record before the project died: the vote counts, the notice filings, the polling, the water math. Assembling that for a single site is days of digging across court dockets, utility filings, council minutes, and local press. That is the pass this tool is built to run.</p>
-      <p class="i small">Drop your site on the map to see the nearest autopsied failure, then run the four failure modes against your own project. Nothing is stored unless you ask us to follow up.</p>
+      <p class="i small">Drop your site on the map to see the nearest autopsied failure and what is happening in your state, then run the four failure modes against your own project. Nothing is stored unless you ask us to follow up.</p>
       <div class="checkbar">
         <input id="addr" placeholder="Your site address or market (or click the map)" autocomplete="off" onkeydown="if(event.key==='Enter')runCheck()">
         <button onclick="runCheck()">Check my market</button>
@@ -440,6 +439,7 @@
 
       <div id="result">
         <div class="nearest" id="nearest"></div>
+        <div class="statectx" id="statectx" style="display:none"></div>
         <div class="selftitle">Now run your own project against the four failure modes</div>
         <div class="q" onclick="tog(this)"><div class="tog"></div><div><div class="qt"><b>Mode 1, fatal dependency.</b> Does your power, water, or land access depend on a single source you do not control (a city, one utility, an annexation)?</div><div class="qhit">This is what lost Project Blue its 7-0 city vote, and what its comeback engineered out.</div></div></div>
         <div class="q" onclick="tog(this)"><div class="tog"></div><div><div class="qt"><b>Mode 2, veto point.</b> Does approval run through one elected body, a challengeable rezoning, or a jurisdiction where a referendum could be called?</div><div class="qhit">A procedural challenge killed PW Digital Gateway; a ballot measure gated Port Washington.</div></div></div>
@@ -513,6 +513,23 @@ var CASES=[
   {name:'Port Washington',     where:'Port Washington, WI',       lat:43.39, lon:-87.87,  status:'template',cause:'a citizen referendum that put its tax incentives to a public vote'}
 ];
 
+/* ===== per-state context (public reporting; hedged where thin) ===== */
+var STATE_CTX={
+ "Virginia":"is the epicenter. A $24.7B campus (PW Digital Gateway) was voided on procedural grounds, and the SCC created a separate large-load rate class (effective 2027) after JLARC projected data centers could add hundreds of dollars a year to household bills.",
+ "Texas":"passed SB6 in 2025, a large-load regime with studies and curtailment rules for sites of 75 MW and up. Water and grid strain are the recurring fights, as in the Abilene / Stargate buildout.",
+ "Arizona":"is defined by its water fight. Tucson rejected Project Blue 7-0 over a city-water design; it was revived only after switching to closed-loop cooling in unincorporated Pima County.",
+ "Wisconsin":"set the template. Port Washington passed the first US anti-data-center referendum (about 66%, April 2026), requiring a public vote on any tax incentive over $10M.",
+ "Ohio":"(AEP Ohio) adopted a dedicated data-center tariff in 2025 after congestion in the New Albany cluster. Expect load studies and transmission-gated timelines.",
+ "Georgia":"(Georgia Power) uses a large-load tariff above 100 MW with long contracts and PSC review. The fight is over who pays for new generation.",
+ "Illinois":"sits in PJM, where new large load can face roughly 8-year timelines and long transformer lead times. The ComEd / Chicago cluster is transmission-gated.",
+ "Pennsylvania":"is where the co-location fight played out (Talen-Amazon at FERC), and the PUC advanced a model large-load tariff in 2026 for customers above 50 MW.",
+ "Louisiana":"fast-tracked utility-built generation for large load, such as Entergy for Meta in Richland Parish, so the fight is the build-out and cost allocation.",
+ "Tennessee":"(MLGW / TVA) is substation and board-approval gated. xAI's Colossus bridged the grid wait with on-site gas, which drew its own air-quality scrutiny.",
+ "Missouri":"has seen projects pulled under pressure. A $16B project's rezoning was withdrawn in Franklin County after a packed hearing."
+};
+var STATE_GENERIC="has no high-profile public case mapped here yet. Nationally, 24+ states have adopted large-load tariffs to push costs onto data centers and about 100 localities have passed moratoriums, so treat the four failure modes as live anywhere.";
+function esc(x){ return String(x==null?"":x).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];}); }
+
 /* ===== map ===== */
 var gmap, gmarker, picked=null;
 function initMap(){
@@ -550,11 +567,16 @@ async function runCheck(){
   }
   setPin(lat,lng); gmap.setView([lat,lng],7); showResult(); track('action','market_check');
 }
-function showResult(){
+async function showResult(){
   if(!picked) return;
   var nr=nearest(picked[0],picked[1]);
   document.getElementById('nearest').innerHTML='Your nearest autopsied project is <b>'+nr.c.name+'</b> (about '+nr.mi+' mi, '+nr.c.where+'): '+nr.c.cause+'. The failure modes are national, not local, so run yours below.';
   var box=document.getElementById('result'); box.classList.add('show');
+  var el=document.getElementById('statectx');
+  el.style.display='block'; el.innerHTML='<span class="sk">Local context</span> reading the state...';
+  var st=''; try{ var j=await fetch('/api/geo?lat='+picked[0]+'&lon='+picked[1]).then(function(x){return x.json();}); st=(j&&j.address&&j.address.state)||''; }catch(e){}
+  if(st&&STATE_CTX[st]){ el.innerHTML='<span class="sk">'+esc(st)+'</span> '+STATE_CTX[st]+' <span class="cxn">Public reporting.</span>'; }
+  else{ el.innerHTML='<span class="sk">'+(st?esc(st):'This location')+'</span> '+STATE_GENERIC; }
   box.scrollIntoView({behavior:'smooth',block:'nearest'});
 }
 var selfEng=false;
