@@ -166,15 +166,24 @@
   .verdict.high{background:var(--dead-bg);border:1px solid #f3dcd9;color:var(--ink)}
   .verdict b{font-weight:600}
 
+  /* watch this market (value-first capture, not a subscribe box) */
+  .watch{margin-top:22px;padding:20px 22px;background:#0b1220;color:#eef2ff;border-radius:16px}
+  .watch .wk{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#8ea0ff;margin-bottom:8px}
+  .watch p{margin:0 0 14px;font-size:15px;line-height:1.5;color:#c7d0ea}
+  .watch .wrow{display:flex;gap:10px;flex-wrap:wrap}
+  .watch input{flex:1;min-width:200px;font:inherit;font-size:15px;padding:11px 14px;border:1px solid #2a3550;border-radius:10px;background:#141c2e;color:#fff}
+  .watch input:focus{outline:none;border-color:#6c86ff}
+  .watch input::placeholder{color:#7f8aa6}
+  .watch button{font:inherit;font-size:15px;font-weight:600;padding:11px 18px;border:0;border-radius:10px;background:#fff;color:#0b1220;cursor:pointer}
+  .watch .wthx{display:none;margin-top:10px;font-size:14px;color:#7fe0a3}
+
   .cta{text-align:center;padding:56px 0 30px}
   .cta h3{font-size:29px;font-weight:600;letter-spacing:-.025em;margin:0 0 10px}
-  .cta p{color:var(--ink-2);max-width:540px;margin:0 auto 22px;font-size:17px}
-  .cta .row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
-  .cta input{font:inherit;font-size:16px;padding:13px 16px;border:1px solid var(--line-2);border-radius:12px;min-width:260px;background:#fff}
-  .cta input:focus{outline:none;border-color:var(--link);box-shadow:0 0 0 3px rgba(0,102,204,.12)}
-  .cta button{font:inherit;font-size:16px;font-weight:600;padding:13px 24px;border:0;border-radius:12px;background:var(--ink);color:#fff;cursor:pointer}
-  .cta .thx{display:none;color:var(--survived);font-weight:500;margin-top:14px}
-  .cta .alt{margin-top:18px;font-size:15px}
+  .cta p{color:var(--ink-2);max-width:560px;margin:0 auto 22px;font-size:17px}
+  .cta .row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+  .cta .ctalink{display:inline-flex;align-items:center;padding:11px 18px;border-radius:12px;border:1px solid var(--line-2);color:var(--ink);font-size:15px;font-weight:600}
+  .cta .ctalink:hover{background:var(--tile);text-decoration:none}
+  .cta .alt{margin-top:20px;font-size:15px}
 
   footer{border-top:1px solid var(--line);margin-top:36px;padding:32px 0 56px}
   footer .disc{font-size:12.5px;color:var(--muted-2);line-height:1.6;max-width:720px}
@@ -425,7 +434,7 @@
       <div class="seclabel">Apply it</div>
       <h3>How does your project compare?</h3>
       <p class="i">Every fact in these autopsies sat in the public record before the project died: the vote counts, the notice filings, the polling, the water math. Assembling that for a single site is days of digging across court dockets, utility filings, council minutes, and local press. That is the pass this tool is built to run.</p>
-      <p class="i small">Drop your site on the map to see the nearest autopsied failure and what is happening in your state, then run the four failure modes against your own project. Nothing is stored unless you ask us to follow up.</p>
+      <p class="i small">Drop your site on the map to see the nearest autopsied failure and what is happening in your state, then run the four failure modes against your own project.</p>
       <div class="checkbar">
         <input id="addr" placeholder="Your site address or market (or click the map)" autocomplete="off" onkeydown="if(event.key==='Enter')runCheck()">
         <button onclick="runCheck()">Check my market</button>
@@ -442,18 +451,28 @@
         <div class="q" onclick="tog(this)"><div class="tog"></div><div><div class="qt"><b>Mode 3, the frame.</b> If residents were polled today, would a majority say your project costs them more than it gives?</div><div class="qhit">Once that number crossed about 70% in Wisconsin, every ballot mechanism turned hostile.</div></div></div>
         <div class="q" onclick="tog(this)"><div class="tog"></div><div><div class="qt"><b>Mode 4, timing.</b> Have you put concrete community benefits on the table <i>before</i> organized opposition appeared?</div><div class="qhit">In all three cases, concessions arrived late, or never.</div></div></div>
         <div class="verdict" id="verdict"></div>
+
+        <div class="watch" id="watch">
+          <div class="wk">Keep watch on this market</div>
+          <p>Most weeks, a project somewhere gets blocked. If a moratorium, an organized opposition, or a tariff change lands near this spot, we will flag it for you. Not a newsletter. Just the one alert that matters for the site you are weighing.</p>
+          <div class="wrow">
+            <input id="watchmail" type="email" placeholder="Where should we reach you" autocomplete="off">
+            <button onclick="watchMarket()">Watch this market</button>
+          </div>
+          <div class="wthx" id="wthx">Set. If something moves near here, you will hear from us first.</div>
+        </div>
       </div>
     </div>
   </section>
 
   <section class="cta">
-    <h3>We are autopsying the next ten.</h3>
-    <p>The ~$130B blocked in Q1 2026 is a lot of case studies. Want the next autopsies as they publish, plus a read on the failure modes most active in your market?</p>
+    <h3>Do not become an autopsy.</h3>
+    <p>Each case has the full write-up: the dated timeline, the deal-level detail, every source, and the insight to carry away. Open one, and take the board-ready brief to your next investment committee.</p>
     <div class="row">
-      <input id="email" type="email" placeholder="you@company.com" autocomplete="off">
-      <button onclick="subscribe()">Send me the series</button>
+      <a class="ctalink" href="autopsy-pw.html">PW Digital Gateway</a>
+      <a class="ctalink" href="autopsy-blue.html">Project Blue</a>
+      <a class="ctalink" href="autopsy-portwashington.html">Port Washington</a>
     </div>
-    <div class="thx" id="thx">On the list. The next autopsy lands in your inbox.</div>
     <div class="alt">Or <a href="app.html">screen a specific site's power path</a>.</div>
   </section>
 </div>
@@ -582,13 +601,14 @@ function tog(el){
   else msg='<b>At least one failure mode is live.</b> One dependency or one veto point is all it took in each case above. Worth closing before it becomes the story.';
   v.innerHTML=msg;
 }
-function subscribe(){
-  var e=document.getElementById('email').value.trim();
-  if(!e||e.indexOf('@')<0){ document.getElementById('email').focus(); return; }
-  var body={text:'graveyard_subscribe: '+e+(picked?(' | market '+picked[0].toFixed(2)+','+picked[1].toFixed(2)):''),internal:window.OSP_INTERNAL?1:0};
+function watchMarket(){
+  var e=document.getElementById('watchmail').value.trim();
+  if(!e||e.indexOf('@')<0){ document.getElementById('watchmail').focus(); return; }
+  var near=picked?nearest(picked[0],picked[1]):null;
+  var body={text:'graveyard_watch: '+e+(picked?(' | market '+picked[0].toFixed(3)+','+picked[1].toFixed(3)):'')+(near?(' | nearest '+near.c.name):''),internal:window.OSP_INTERNAL?1:0};
   try{ fetch('/api/feedback',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}).catch(function(){}); }catch(e2){}
-  document.getElementById('email').value=''; document.getElementById('thx').style.display='block';
-  track('action','graveyard_subscribe');
+  document.getElementById('watchmail').value=''; document.getElementById('wthx').style.display='block';
+  track('action','graveyard_watch');
 }
 initMap();
 </script>

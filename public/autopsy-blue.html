@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="icon" type="image/svg+xml" href="/favicon.svg">
-<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
-<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" href="/favicon.ico?v=3" sizes="any">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg?v=3">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=3">
 <title>Autopsy: Project Blue | The Data Center Graveyard</title>
 <meta name="description" content="Full autopsy of Project Blue near Tucson: rejected 7-0 by the city over water and secrecy, then revived one jurisdiction over. Timeline, the comeback, and the insight to carry away. Sourced from public records.">
 <link rel="canonical" href="https://onsitespower.com/autopsy-blue.html">
@@ -25,12 +25,29 @@
   .eyebrow{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted-2)}
   .chip{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;padding:4px 10px;border-radius:100px;text-transform:uppercase;background:var(--survived-bg);color:var(--survived);margin-left:8px}
   h1{font-size:clamp(34px,5.4vw,50px);font-weight:600;letter-spacing:-.03em;line-height:1.05;margin:14px 0 10px}
-  .dek{font-size:20px;color:var(--ink-2);line-height:1.45;margin:0 0 26px;font-weight:400}
-  .facts{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-bottom:34px}
+  .dek{font-size:20px;color:var(--ink-2);line-height:1.45;margin:0 0 12px;font-weight:400}
+  .lastup{font-size:12.5px;color:var(--muted-2);margin:0 0 26px}
+  .lastup b{color:var(--ink);font-weight:600}
+  .facts{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-bottom:26px}
   .facts .f{background:var(--panel);padding:12px 14px;min-width:0}
   .facts .fl{font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted-2)}
   .facts .fv{font-size:14px;font-weight:600;color:var(--ink);margin-top:3px;line-height:1.3}
   .facts .fv.dead{color:var(--dead)}.facts .fv.good{color:var(--survived)}
+
+  .guess{background:#0b1220;color:#eef2ff;border-radius:18px;padding:24px 26px;margin:0 0 34px}
+  .guess .gk{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#8ea0ff;margin-bottom:8px}
+  .guess .gq{font-size:19px;font-weight:600;line-height:1.35;color:#fff;margin-bottom:16px;letter-spacing:-.01em}
+  .gopts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .gopts button{font:inherit;font-size:15px;font-weight:600;text-align:left;padding:13px 16px;border:1px solid #2a3550;border-radius:12px;background:#141c2e;color:#dfe4f5;cursor:pointer;transition:border-color .15s,background .15s}
+  .gopts button:hover{border-color:#6c86ff}
+  .gopts button.right{border-color:#1a7f45;background:#12281b;color:#8ff0b0}
+  .gopts button.wrong{border-color:#5a2530;background:#2a1418;color:#ffb3ab;opacity:.85}
+  .gopts button:disabled{cursor:default}
+  .greveal{display:none;margin-top:16px;font-size:15.5px;line-height:1.55;color:#dfe4f5}
+  .greveal.show{display:block}
+  .greveal b{color:#fff;font-weight:600}
+  @media(max-width:560px){.gopts{grid-template-columns:1fr}}
+
   .sec{margin:0 0 30px}
   .sec h2{font-size:14px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--dead);margin:0 0 12px}
   .sec.win h2{color:var(--survived)}
@@ -60,10 +77,29 @@
   .insight li:first-child{border-top:0}
   .insight li::before{content:"";position:absolute;left:2px;top:16px;width:7px;height:7px;border-radius:50%;background:#6c86ff}
   .insight li b{color:#fff;font-weight:600}
+
+  .updates{border:1px solid var(--line);border-radius:16px;padding:20px 22px;background:var(--panel)}
+  .updates h2{color:var(--ink-2)}
+  ul.ulog{list-style:none;margin:0;padding:0}
+  ul.ulog li{position:relative;padding:9px 0;border-top:1px solid var(--line);font-size:14.5px;line-height:1.5;color:var(--ink-2)}
+  ul.ulog li:first-child{border-top:0}
+  ul.ulog .d{display:inline-block;min-width:96px;font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums}
+  .ulog-note{margin:12px 0 0;font-size:12.5px;color:var(--muted-2)}
+
   ul.sources{list-style:none;margin:0;padding:0}
   ul.sources li{padding:8px 0;border-top:1px solid var(--line);font-size:14.5px;line-height:1.45}
   ul.sources li:first-child{border-top:0}
   ul.sources .pub{color:var(--muted);font-weight:600}
+
+  .deliver{background:var(--tile);border:1px solid var(--line);border-radius:18px;padding:24px 26px;margin:34px 0}
+  .deliver .dk{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--survived);margin-bottom:8px}
+  .deliver p{margin:0 0 14px;font-size:15.5px;line-height:1.5;color:var(--ink-2)}
+  .deliver .drow{display:flex;gap:10px;flex-wrap:wrap}
+  .deliver input{flex:1;min-width:200px;font:inherit;font-size:15px;padding:12px 15px;border:1px solid var(--line-2);border-radius:11px;background:#fff;color:var(--ink)}
+  .deliver input:focus{outline:none;border-color:var(--link);box-shadow:0 0 0 3px rgba(0,102,204,.12)}
+  .deliver button{font:inherit;font-size:15px;font-weight:600;padding:12px 18px;border:0;border-radius:11px;background:var(--ink);color:#fff;cursor:pointer}
+  .deliver .dthx{display:none;margin-top:10px;font-size:14px;color:var(--survived);font-weight:500}
+
   .endcta{border-top:1px solid var(--line);margin-top:36px;padding-top:26px;display:flex;gap:12px;flex-wrap:wrap}
   .endcta a{display:inline-flex;align-items:center;gap:7px;font-size:15px;font-weight:600;padding:11px 18px;border-radius:12px;border:1px solid var(--line-2);color:var(--ink)}
   .endcta a.primary{background:var(--ink);color:#fff;border-color:var(--ink)}
@@ -83,6 +119,7 @@
   <div class="eyebrow">Autopsy 02<span class="chip">Rejected, then revived</span></div>
   <h1>Project Blue</h1>
   <p class="dek">Rejected 7-0 by the city over water and secrecy, then rebuilt one jurisdiction over. The most useful part is not why it died, but exactly how it came back.</p>
+  <div class="lastup">Updated <b>2026-08-14</b> · maintained as new filings and rulings land</div>
 
   <div class="facts">
     <div class="f"><div class="fl">Location</div><div class="fv">near Tucson, Pima County, AZ</div></div>
@@ -91,6 +128,18 @@
     <div class="f"><div class="fl">Size</div><div class="fv">600 MW · ~$3.6B · 290 ac</div></div>
     <div class="f"><div class="fl">Water (reported)</div><div class="fv">up to ~283M gal/yr</div></div>
     <div class="f"><div class="fl">Status</div><div class="fv good">Revived via county, Dec 2025</div></div>
+  </div>
+
+  <div class="guess" id="guess">
+    <div class="gk">Before the autopsy</div>
+    <div class="gq">A $3.6B campus got rejected 7-0 by the city. Best guess: what sank the vote?</div>
+    <div class="gopts">
+      <button data-r="0" onclick="guess(this)">The economics</button>
+      <button data-r="0" onclick="guess(this)">The power grid</button>
+      <button data-r="0" onclick="guess(this)">A zoning technicality</button>
+      <button data-r="1" onclick="guess(this)">Water and secrecy</button>
+    </div>
+    <div class="greveal" id="greveal"></div>
   </div>
 
   <div class="sec">
@@ -157,6 +206,25 @@
     </ul>
   </div>
 
+  <div class="deliver">
+    <div class="dk">Take it to your IC</div>
+    <p>We keep a board-ready one-pager of this autopsy, including the comeback playbook: the timeline, the deal-level detail, and every source, formatted to drop straight into an investment-committee memo. Want it sent over?</p>
+    <div class="drow">
+      <input id="delivmail" type="email" placeholder="Where should we send it" autocomplete="off">
+      <button onclick="deliver()">Send me the one-pager</button>
+    </div>
+    <div class="dthx" id="dthx">On its way. Check your inbox.</div>
+  </div>
+
+  <div class="sec updates">
+    <h2>Updates</h2>
+    <ul class="ulog">
+      <!-- add new dated entries at the top -->
+      <li><span class="d">2026-08-14</span> Autopsy published: full timeline, cause of rejection, the comeback playbook, and sources.</li>
+    </ul>
+    <p class="ulog-note">This file is maintained. As new filings, rulings, or deal detail surface, they get logged here.</p>
+  </div>
+
   <div class="sec">
     <h2>Sources</h2>
     <ul class="sources">
@@ -182,6 +250,29 @@
 
 <script>
 (function(){function sid(){try{var k='osp_sid',v=localStorage.getItem(k);if(!v){v=Math.random().toString(36).slice(2)+Date.now().toString(36);localStorage.setItem(k,v);}return v;}catch(e){return 'anon';}}var utm='';try{var p=new URLSearchParams(location.search);utm=p.get('utm_source')?(p.get('utm_source')+'/'+(p.get('utm_medium')||'')):'';}catch(e){}var ops=false;try{ops=localStorage.getItem('osp_ops')==='1';}catch(e){}window.track=function(type,name){try{var b=JSON.stringify({session:sid(),type:type,name:name,path:location.pathname,referrer:document.referrer,utm:utm,internal:ops?1:0});if(navigator.sendBeacon){navigator.sendBeacon('/api/track',new Blob([b],{type:'application/json'}));}else{fetch('/api/track',{method:'POST',headers:{'Content-Type':'application/json'},body:b,keepalive:true}).catch(function(){});}}catch(e){}};track('pageview','autopsy_blue_full');})();
+
+var guessed=false;
+function guess(btn){
+  if(guessed) return; guessed=true;
+  var right=btn.getAttribute('data-r')==='1';
+  var opts=document.querySelectorAll('.gopts button');
+  Array.prototype.forEach.call(opts,function(b){ b.disabled=true; if(b.getAttribute('data-r')==='1') b.classList.add('right'); });
+  if(!right) btn.classList.add('wrong');
+  var r=document.getElementById('greveal');
+  r.innerHTML = right
+    ? "<b>Yes.</b> A design that needed scarce city water, plus a hidden end user, got it rejected 7-0. The twist: it came back one jurisdiction over. That comeback is the real lesson."
+    : "<b>Nope.</b> Water and secrecy. A city-water design in a drought region plus an undisclosed end user got it rejected 7-0. The twist: it came back. Here is exactly how.";
+  r.classList.add('show');
+  try{ track('action','guess_blue_'+(right?'right':'wrong')); }catch(e){}
+}
+function deliver(){
+  var e=document.getElementById('delivmail').value.trim();
+  if(!e||e.indexOf('@')<0){ document.getElementById('delivmail').focus(); return; }
+  var body={text:'brief_request: project-blue | '+e,internal:(function(){try{return localStorage.getItem('osp_ops')==='1'?1:0;}catch(x){return 0;}})()};
+  try{ fetch('/api/feedback',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}).catch(function(){}); }catch(e2){}
+  document.getElementById('delivmail').value=''; document.getElementById('dthx').style.display='block';
+  try{ track('action','brief_request_blue'); }catch(e3){}
+}
 </script>
 </body>
 </html>
